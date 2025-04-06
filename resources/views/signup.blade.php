@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>AssignPro</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -18,6 +18,7 @@
 
     </head>
  <body>
+  
 <script>      
   window.addEventListener('DOMContentLoaded', () =>{
   
@@ -26,29 +27,27 @@
   
   if (isSignup) {
 
-        wrapper.style.minHeight = "660px";
+        wrapper.style.height = "660px";
         loginForm.style.marginLeft = "-50%";
         loginText.style.marginLeft = "-50%";
         signupRadio.checked = true;
-
-
-if (document.getElementById("error")) {
-    // Extract the numeric part of minHeight and increase it by 50px
-    let currentHeight = parseInt(window.getComputedStyle(wrapper).minHeight);
-    wrapper.style.minHeight = (currentHeight + 20) + "px";
+        
+        if (document.getElementById("error")) {
+    wrapper.style.height = (660 + 20) + "px";
     wrapper.style.marginTop= "50px";
 }
-  
+
     }
+
     else{
+
       if (document.getElementById("error")) {
-        
-    // Extract the numeric part of minHeight and increase it by 50px
-    let currentHeight = parseInt(window.getComputedStyle(wrapper).height);
-    wrapper.style.height = (currentHeight + 40) + "px";
+    wrapper.style.height = (500 + 20) + "px";
 }
-  
+
     }
+    
+   
 
    
   
@@ -63,6 +62,9 @@ $errorShown = false;
 @endphp
 
     <div class="wrapper">
+      
+
+
         <div class="title-text">
           <div class="title login">Login Form</div>
           <div class="title signup">Signup Form</div>
@@ -89,7 +91,7 @@ $errorShown = false;
       @endif
 
               <div class="field">
-                <input type="text" placeholder="Email Address" required name="login_email" value="{{old('login_email')}}">
+                <input type="email" placeholder="Email Address" required name="login_email" value="{{old('login_email')}}">
               </div>
               <div class="field">
                 <input type="password" placeholder="Password" required name="login_pwd">
@@ -393,7 +395,7 @@ form .btnn input[type="submit"]{
     signupBtn.onclick = (()=>{
 
   
-    document.querySelector(".wrapper").style.minHeight = "660px";
+    document.querySelector(".wrapper").style.height = "660px";
 
 
       loginForm.style.marginLeft = "-50%";
