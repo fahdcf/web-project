@@ -31,6 +31,10 @@
 
 </head>
 
+
+
+
+
 <body id="page-top">
 
     <!-- Page Wrapper -->
@@ -40,9 +44,9 @@
         <ul style="background-color: #03346E" class="navbar-nav sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{url('/')}}">
+                <div class="sidebar-brand-icon">
+                    <i class="bi bi-terminal-fill"></i>
                 </div>
                 <div class="sidebar-brand-text mx-3">Assign Pro<sup>+</sup></div>
             </a>
@@ -51,9 +55,9 @@
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
-                <a class="nav-link" href="index.html">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
+            <li class="nav-item {{request()->is('/') ? 'active' : '' }} ">
+                <a  class="nav-link" href="{{url('/')}}">
+                    <i class="bi bi-menu-button-wide"></i>
                     <span>Dashboard</span></a>
             </li>
 
@@ -64,48 +68,60 @@
             <div class="sidebar-heading">
                 Interface
             </div>
-            @if(auth()->user()->role === 'admin')
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{url('/pending_users')}}">
-                            <i class="bi bi-people-fill"></i>
-                            <span>Pending users</span></a>
+          
+                    <li class="nav-item {{request()->is('pending_users') ? 'active' : '' }}">
+                        <a  class="nav-link" href="{{url('/pending_users')}}">
+                            <i class="bi bi-person-exclamation"></i>
+                            <span >Pending users</span></a>
                     </li>            
-            @endif
-           
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                    aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>Components</span>
-                </a>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Components:</h6>
-                        <a class="collapse-item" href="buttons.html">Buttons</a>
-                        <a class="collapse-item" href="cards.html">Cards</a>
-                    </div>
-                </div>
-            </li>
+          
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-buildings-fill"></i>
+                            <span>Departements</span></a>
+                    </li>            
+          
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-book-half"></i>
+                            <span>Filieres</span></a>
+                    </li>  
 
-            <!-- Nav Item - Utilities Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                    aria-expanded="true" aria-controls="collapseUtilities">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Utilities</span>
-                </a>
-                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Utilities:</h6>
-                        <a class="collapse-item" href="utilities-color.html">Colors</a>
-                        <a class="collapse-item" href="utilities-border.html">Borders</a>
-                        <a class="collapse-item" href="utilities-animation.html">Animations</a>
-                        <a class="collapse-item" href="utilities-other.html">Other</a>
-                    </div>
-                </div>
-            </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-person-video3"></i>
+                            <span>Professeurs</span></a>
+                    </li>  
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-people-fill"></i>
+                            <span>Etudiants</span></a>
+                    </li>  
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url('/admins')}}">
+                            <i class="bi bi-person-gear"></i>
+                            <span>Admins</span></a>
+                    </li>  
+           
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-person-circle"></i>
+                            <span>Profile</span></a>
+                    </li>  
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-toggle="modal" data-target="#logoutModal">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Deconnexion</span></a>
+                          
+                    </li>  
+
+               
+
+
 
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -137,6 +153,7 @@
                     </div>
                 </div>
             </li>
+            
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
@@ -166,14 +183,6 @@
          
 
         </ul>
-
-        
-        <li class="nav-item">
-            <a class="nav-link" href="#" data-toggle="modal" data-target="#logoutModal">
-                <i class="bi bi-people-fill"></i>
-                <span>Deconnexion</span></a>
-              
-        </li>  
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->

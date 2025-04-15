@@ -1,5 +1,5 @@
-<x-layout>
-    <div class="container">
+<x-admin_layout>   
+     <div class="container">
         <h1>The list of pending users</h1>
     
         <!-- Make table scrollable on small screens -->
@@ -125,4 +125,4 @@
     }
 </script>
 
-    </x-layout>
+</x-admin_layout>

@@ -19,412 +19,262 @@
     </head>
  <body>
   
-<script>      
-  window.addEventListener('DOMContentLoaded', () =>{
-  
-  
-  const isSignup = localStorage.getItem('issignup') === 'true';
-  
-  if (isSignup) {
-
-        wrapper.style.height = "660px";
-        loginForm.style.marginLeft = "-50%";
-        loginText.style.marginLeft = "-50%";
-        signupRadio.checked = true;
-        
-        if (document.getElementById("error")) {
-    wrapper.style.height = (660 + 20) + "px";
-    wrapper.style.marginTop= "50px";
-}
-
-    }
-
-    else{
-
-      if (document.getElementById("error")) {
-    wrapper.style.height = (500 + 20) + "px";
-}
-
-    }
-    
-   
-
-   
-  
-  });
-
- 
-  
-  </script>
-
 @php
 $errorShown = false;
 @endphp
+<div class="page-wrapper">
+  
 
-    <div class="wrapper">
-      
+<div class="login-container">
+  <div class="logo mb-4">AssignPro</div>
+  <h4>Créer un compte</h4>
+  <p class="text-muted mb-4">Utilisez vos identifiants</p>
 
 
-        <div class="title-text">
-          <div class="title login">Login Form</div>
-          <div class="title signup">Signup Form</div>
-        </div>
-        <div class="form-container">
-          <div class="slide-controls">
-            <input type="radio" name="slide" id="login" checked>
-            <input type="radio" name="slide" id="signup">
-            <label for="login" class="slide login">Login</label>
-            <label for="signup" class="slide signup">Signup</label>
-            <div class="slider-tab"></div>
-          </div>
-          <div class="form-inner">
 
-            <form action="{{url('/login')}}" class="login" method="POST">
-              @csrf
-
-              @if ($errors->has('login_pwd'))
-           <p id="error" style="font-size:13px;" class="text-center alert-danger mt-1">{{ $errors->first('login_pwd') }}</p>
-      @endif
-
-    @if ($errors->has('login_email'))
-    <p id="error" style="font-size:13px;" class="text-center alert-danger mt-1">{{ $errors->first('login_email') }}</p>
-      @endif
-
-              <div class="field">
-                <input type="email" placeholder="Email Address" required name="login_email" value="{{old('login_email')}}">
-              </div>
-              <div class="field">
-                <input type="password" placeholder="Password" required name="login_pwd">
-              </div>
-              <div class="pass-link"><a href="#">Forgot password?</a></div>
-              <div class="field btnn">
-                <div class="btn-layer"></div>
-                <input type="submit" value="Login">
-              </div>
-              <div class="signup-link">Not a member? <a href="">Signup now</a></div>
-            </form>
+  <div class="or-divider"><span>SIGNUP</span></div>
 
             <form action="{{url('/signup')}}" class="signup" method="POST">
             @csrf
 
          
-              <div class="field">
-                    <input type="text" placeholder="First Name" required name="firstname" value="{{old('firstname')}}">
+            <div class="d-flex justify-content-between">
+
+              <div class="field" style="width:48%;">
+                <div class="label">
+                  <label for="firstname" class="label">First name</label>
+                   </div>
+                    <input class="form-control" type="text" placeholder="First Name" required name="firstname" value="{{old('firstname')}}">
+                 
+                    @if (!$errorShown && $errors->has('firstname'))
+                    <p style="font-size:13px;" class="text-center alert alert-danger mt-1 p-1">{{ $errors->first('firstname') }}</p>
+                    @php $errorShown = true; @endphp
+                @endif
                   </div>
 
-                  @if (!$errorShown && $errors->has('firstname'))
-                  <p style="font-size:13px;" class="text-center alert-danger mt-1">{{ $errors->first('firstname') }}</p>
-                  @php $errorShown = true; @endphp
-              @endif
+                
 
-              <div class="field">
-                <input type="text" placeholder="Last Name" required name="lastname" value="{{old('lastname')}}">
+              <div class="field" style="width:48%;">
+                <div class="label">
+                  <label for="lastname" class="label">Last name</label>
+                   </div>
+                <input class="form-control" type="text" placeholder="Last Name" required name="lastname" value="{{old('lastname')}}">
+             
+                @if (!$errorShown && $errors->has('lastname'))
+                <p style="font-size:13px;" class="text-center alert alert-danger mt-1 p-1">{{ $errors->first('lastname') }}</p>
+                 @php $errorShown = true; @endphp
+                     @endif
               </div>
 
-                  @if (!$errorShown && $errors->has('lastname'))
-             <p style="font-size:13px;" class="text-center alert-danger mt-1">{{ $errors->first('lastname') }}</p>
-              @php $errorShown = true; @endphp
-                  @endif
+                
+                  </div>
 
               <div class="field">
-                <input type="text" placeholder="Email Address" required name="email" value="{{ old('email') }}">
+                <div class="label">
+                  <label for="email" class="label">Email Address</label>
+                   </div>
+                <input class="form-control" type="text" placeholder="Email Address" required name="email" value="{{ old('email') }}">
               </div>
 
 
               @if (!$errorShown && $errors->has('email'))
-              <p id="error" style="font-size:13px;" class="text-center alert-danger mt-1">{{ $errors->first('email') }}</p>
+              <p id="error" style="font-size:13px;" class="text-center alert alert-danger mt-1 p-1">{{ $errors->first('email') }}</p>
               @php $errorShown = true; @endphp
              @endif
 
 
               <div class="field">
-                <input type="password" placeholder="Password" required name="password" >
+                <div class="label">
+                  <label for="password" class="label">Password</label>
+                   </div>
+                <input class="form-control" type="password" placeholder="Password" required name="password" >
               </div>
 
 
               @if (!$errorShown && $errors->has('password'))
-              <p style="font-size:13px;" class="text-center alert-danger mt-1">{{ $errors->first('password') }}</p>
+              <p style="font-size:13px;" class="text-center alert alert-danger mt-1 p-1">{{ $errors->first('password') }}</p>
               @php $errorShown = true; @endphp
              @endif
 
 
               <div class="field">
-                <input type="password" placeholder="Confirm password" required name="password_confirmation">
+                <div class="label">
+                  <label for="password_confirmation" class="label">Confirm password</label>
+                   </div>
+                <input class="form-control" type="password" placeholder="Confirm password" required name="password_confirmation">
               </div>
 
               @if (!$errorShown && $errors->has('password_confirmation'))
-              <p style="font-size:13px;" class="text-center alert-danger mt-1">{{ $errors->first('password_confirmation') }}</p>
+              <p style="font-size:13px;" class="text-center alert alert-danger mt-1 p-1">{{ $errors->first('password_confirmation') }}</p>
               @php $errorShown = true; @endphp
             @endif
 
 
-              <div class="field btnn">
-                <div class="btn-layer"></div>
-                <input type="submit" value="Signup">
-              </div>
-              <div class="login-link ">Already have an account? <a href="">Login now</a></div>
+                <button type="submit" class="btn btn-primary w-100">Continuer</button>
+
             </form>
+            <div class="footer-text">
+
+                Vous avez déjà un compte ?
+                  <a href="{{url('/login')}}">Se connecter</a>
+              
+              
           </div>
-        </div>
       </div>
-
-      <style>
-         @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
-*{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
-html,body{
-  width: 100%;
-  place-items: center;
-  background: -webkit-linear-gradient(left, #003366,#004080,#0059b3
-, #0073e6);
-}
-::selection{
-  background: #1a75ff;
-  color: #fff;
-}
-.wrapper{
-    margin-top: 100px;
-  overflow: hidden;
-  max-width: 390px;
-  height: 500px;
-  background: #fff;
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0px 15px 20px rgba(0,0,0,0.1);
-  transition: height 0.3s ease; 
-
-}
-.wrapper .title-text{
-  display: flex;
-  width: 200%;
-}
-.wrapper .title{
-  width: 50%;
-  font-size: 35px;
-  font-weight: 600;
-  text-align: center;
-  transition: all 0.6s cubic-bezier(0.68,-0.55,0.265,1.55);
-}
-.wrapper .slide-controls{
-  position: relative;
-  display: flex;
-  height: 50px;
-  width: 100%;
-  overflow: hidden;
-  margin: 30px 0 10px 0;
-  justify-content: space-between;
-  border: 1px solid lightgrey;
-  border-radius: 15px;
-}
-.slide-controls .slide{
-  height: 100%;
-  width: 100%;
-  color: #fff;
-  font-size: 18px;
-  font-weight: 500;
-  text-align: center;
-  line-height: 48px;
-  cursor: pointer;
-  z-index: 1;
-  transition: all 0.6s ease;
-}
-.slide-controls label.signup{
-  color: #000;
-}
-.slide-controls .slider-tab{
-  position: absolute;
-  height: 100%;
-  width: 50%;
-  left: 0;
-  z-index: 0;
-  border-radius: 15px;
-  background: -webkit-linear-gradient(left,#003366,#004080,#0059b3
-, #0073e6);
-  transition: all 0.6s cubic-bezier(0.68,-0.55,0.265,1.55);
-}
-input[type="radio"]{
-  display: none;
-}
-#signup:checked ~ .slider-tab{
-  left: 50%;
-}
-#signup:checked ~ label.signup{
-  color: #fff;
-  cursor: default;
-  user-select: none;
-}
-#signup:checked ~ label.login{
-  color: #000;
-}
-#login:checked ~ label.signup{
-  color: #000;
-}
-#login:checked ~ label.login{
-  cursor: default;
-  user-select: none;
-}
-.wrapper .form-container{
-  width: 100%;
-  overflow: hidden;
-}
-.form-container .form-inner{
-  display: flex;
-  width: 200%;
-}
-.form-container .form-inner form{
-  width: 50%;
-  transition: all 0.6s cubic-bezier(0.68,-0.55,0.265,1.55);
-}
-.form-inner form .field{
-  height: 50px;
-  width: 100%;
-  margin-top: 20px;
-}
-.form-inner form .field input{
-  height: 100%;
-  width: 100%;
-  outline: none;
-  padding-left: 15px;
-  border-radius: 15px;
-  border: 1px solid lightgrey;
-  border-bottom-width: 2px;
-  font-size: 17px;
-  transition: all 0.3s ease;
-}
-.form-inner form .field input:focus{
-  border-color: #1a75ff;
-  /* box-shadow: inset 0 0 3px #fb6aae; */
-}
-.form-inner form .field input::placeholder{
-  color: #999;
-  transition: all 0.3s ease;
-}
-form .field input:focus::placeholder{
-  color: #1a75ff;
-}
-.form-inner form .pass-link{
-  margin-top: 5px;
-}
-.form-inner form .signup-link{
-  text-align: center;
-  margin-top: 30px;
-}
-
-.form-inner form .login-link{
-  text-align: center;
-  margin-top: 20px;
-}
-.form-inner form .pass-link a,
-.form-inner form .signup-link a, .login-link a{
-  color: #1a75ff;
-  text-decoration: none;
-}
-.form-inner form .pass-link a:hover,
-.form-inner form .signup-link a:hover{
-  text-decoration: underline;
-}
-form .btnn{
-  height: 50px;
-  width: 100%;
-  border-radius: 15px;
-  position: relative;
-  overflow: hidden;
-}
-form .btnn .btn-layer{
-  height: 100%;
-  width: 300%;
-  position: absolute;
-  left: -100%;
-  background: -webkit-linear-gradient(right,#003366,#004080,#0059b3
-, #0073e6);
-  border-radius: 15px;
-  transition: all 0.4s ease;;
-}
-form .btnn:hover .btn-layer{
-  left: 0;
-}
-form .btnn input[type="submit"]{
-  height: 100%;
-  width: 100%;
-  z-index: 1;
-  position: relative;
-  background: none;
-  border: none;
-  color: #fff;
-  padding-left: 0;
-  border-radius: 15px;
-  font-size: 20px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-
-@media (max-width:500px){
-  .wrapper .title{
-    font-size: 23px;
-    font-weight: 600;
-  }
-
-  .wrapper{
-    width: 88%;
-  }
-
- 
-}
-
-      </style>
-
-<script>
+      
+    
+            <footer class="container footer-bottom d-flex justify-content-between align-items-center">
+             <div>
+                 © 2025 AssignPro, Inc. All Rights Reserved.
+              </div>
+              <div class="locale-options">
+                <span>🌍 Maroc</span>
+                <span id="lang-switch" style="cursor: pointer;">🌐 Français</span>
+              </div>
+          </footer>
+    </div> 
+    
   
 
-  
-  const wrapper = document.querySelector(".wrapper");
-    const loginText = document.querySelector(".title-text .login");
-    const loginForm = document.querySelector("form.login");
-    const loginBtn = document.querySelector("label.login");
-    const signupBtn = document.querySelector("label.signup");
-    const signupLink = document.querySelector("form .signup-link a");
-    const loginLink = document.querySelector("form .login-link a");
-    const loginRadio = document.getElementById("login");
-    const signupRadio = document.getElementById("signup");
+            <style>
+              body {
+                font-family: 'Segoe UI', sans-serif;
+                background-color: #fff;
+              }
+          
+              .login-container {
+                  width: 100%;
+                max-width: 500px;
+                margin: 60px auto;
+                text-align: center;
+              
+              }
+          
+              .logo {
+                font-size: 28px;
+                font-weight: bold;
+                color: #0547a9;
+              }
+          
+              .google-btn {
+                background-color: #fff;
+                border: 1px solid #ddd;
+                padding: 10px;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+              }
+          
+              .or-divider {
+                  
+                margin: 20px 0;
+                margin-top: 50px;
+                text-align: center;
+                position: relative;
+              }
+          
+              .or-divider::before, .or-divider::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                width: 40%;
+                height: 1px;
+                background-color: #ccc;
+              }
+          
+              .or-divider::before {
+                left: 0;
+              }
+          
+              .or-divider::after {
+                right: 0;
+              }
+          
+              .or-divider span {
+                background-color: #fff;
+                padding: 0 10px;
+                color: #888;
+              }
+          
+              .form-control {
+                margin-bottom: 15px;
+                box-shadow: 1px 1px 5px 1px rgba(123, 123, 123, 0.048);
+                border-color: #cccfe1a6;
+              }
+          
+              .label{
+                  text-align: start;
+                  padding: 5px;
+                  padding-left: 2px;
+                  font-weight: 500;
+                  color: #4e4e4e;
+          
+              }
+              .btn-primary {
+                background-color: #0547a9;
+                border: none;
+              }
+          
+              .btn-primary:hover {
+                  background-color: #053379;
+              }
+          
+              .footer-text {
+                margin-top: 20px;
+                font-size: 14px;
+              }
+          
+              .footer-text a {
+                color: #062c7d;
+                text-decoration: none;
+                margin: 0 5px;
+                font-weight: 500;
+              }
+              
+              .page-wrapper {
+                display: grid;
+                grid-template-rows: 1fr auto;
+                min-height: 100vh;
+                width: 100%;
+              }
+              footer {
+                text-align: center;
+                margin-top: 60px;
+                font-size: 12px;
+                color: #aaa;
+                padding: 15px 0;
+          
+              }
+          
+          
+              
+          
+              .locale-options {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+                margin-top: 10px;
+              }
+          
+              .locale-options i {
+                font-size: 14px;
+              }
+          
+          
+          
+            </style>
+          
+          <script>
+              document.getElementById('lang-switch').addEventListener('click', function () {
+                // Redirect to English version
+                window.location.href = "{{url('/en/login.html')}}";
+              });
+            </script>
 
-    signupBtn.onclick = (()=>{
 
-  
-    document.querySelector(".wrapper").style.height = "660px";
-
-
-      loginForm.style.marginLeft = "-50%";
-      loginText.style.marginLeft = "-50%";
-
-      localStorage.setItem('issignup', 'true');
-
-    });
-    loginBtn.onclick = (()=>{
-      document.querySelector(".wrapper").style.height="500px";
-
-      loginForm.style.marginLeft = "0%";
-      loginText.style.marginLeft = "0%";
-      localStorage.setItem('issignup', 'false');
-
-    });
-    signupLink.onclick = (()=>{
-
-      signupBtn.click();
-      return false;
-    });
-
-    loginLink.onclick = (()=>{
-
-      loginBtn.click();
-      return false;
-      });
-
-</script>
 
     
  </body>

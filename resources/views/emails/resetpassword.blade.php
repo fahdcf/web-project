@@ -66,19 +66,20 @@
     </style>
 </head>
 <body>
+
+    
+    
     <div class="email-container">
+        
         <div class="header">
-            <h1>Assign Pro - New User Alert 🎉</h1>
+            <h1>Assign Pro - Rest your password</h1>
         </div>
         <div class="content">
             <p><strong>A new user has registered on Assign Pro!</strong></p>
-            <p><strong>Email:</strong> {{ $user['email'] }}</p>
-            <p><strong>Name:</strong> {{ $user['firstname'] }} {{ $user['lastname'] }}</p>
+            <p><strong>Verification code</strong> {{ $code }}</p>
             <p>You can now approve or reject their request to join the platform.</p>
 
-            <div class="actions">
-                <a href="{{ url('/pending_users') }}" class="btn approve">Manage Request</a>
-            </div>
+            
         </div>
         <div class="footer">
             &copy; {{ date('Y') }} Assign Pro. All rights reserved.
