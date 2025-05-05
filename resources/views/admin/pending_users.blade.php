@@ -4,8 +4,8 @@
     
         <!-- Make table scrollable on small screens -->
         <div class="table-responsive mt-4">
-            <table class="table table-bordered table-striped table-hover">
-                <thead style="background-color:rgb(64, 64, 139)">
+            <table class="table table-bordered  table-hover">
+                <thead style="background-color:#371aab">
                     <tr class="text-light">
                         <th>First Name</th>
                         <th>Last Name</th>
@@ -19,17 +19,20 @@
                             <td>{{ $pending_user['firstname'] }}</td>
                             <td>{{ $pending_user['lastname'] }}</td>
                             <td>{{ $pending_user['email'] }}</td>
-                            <td class="d-flex justify-content-center gap-2">
-                               
-                                <input type="number" hidden id="pending_user_id_{{ $pending_user['id'] }}" value="{{ $pending_user['id'] }}">
-                                <button class="btn btn-success btn-sm" onclick="showPopup({{ $pending_user['id'] }})">Approve</button>
-                          
-                                <form action="{{ url('/pending_users/' . $pending_user['id']) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn ml-1 btn-danger btn-sm">Decline</button>
-                                </form>
-                            </td>
+                            <td>
+                                <div  class="d-flex justify-content-center gap-2">
+
+                                    
+                                    <input type="number" hidden id="pending_user_id_{{ $pending_user['id'] }}" value="{{ $pending_user['id'] }}">
+                                    <button class="btn btn-success btn-sm" onclick="showPopup({{ $pending_user['id'] }})">Approve</button>
+                                    
+                                    <form action="{{ url('/pending_users/' . $pending_user['id']) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn ml-1 btn-danger btn-sm">Decline</button>
+                                    </form>
+                                </div>
+                                </td>
                         </tr>
                     @endforeach
                 </tbody>

@@ -1,0 +1,195 @@
+* {
+    box-sizing: border-box;
+  }
+
+#content{
+    background-color:#ecf2f9 ;
+    
+}
+.overview {
+ margin: 20px auto;
+    gap: 15px;
+    box-sizing: border-box;
+  }
+  
+.overview > div {
+    max-width: 100%;
+  }
+
+.overview div{
+    border-radius: 15px;
+    background-color: white;
+    padding: 15px;
+    box-shadow: 0px 3px 15px 1px #3838381d;
+    
+}
+
+.overview > div:first-child {
+    background:linear-gradient(#290c9c,#5f3cee);
+    color:white;
+  }
+
+
+  .overview > div:first-child div{
+    background:transparent;
+    box-shadow:none;
+    padding: 0;
+    
+  }
+
+  .overview > div:last-child {
+    max-height: 256px;
+    width:100% ;
+  }
+
+
+  .overview > div:last-child .task-content {
+    max-height: 180px;
+    overflow-y: auto; /* Enables vertical scrollbar when needed */
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent; 
+  }
+
+  
+/* Chrome, Safari, Edge */
+.overview > div:last-child::-webkit-scrollbar .task-content {
+    width: 5px; /* Smaller scrollbar width */
+  }
+  
+  .overview > div:last-child::-webkit-scrollbar-thumb .task-content{
+    background-color: #999;   /* Scrollbar thumb color */
+    border-radius: 3px;       /* Rounded edges */
+  }
+  
+  .overview > div:last-child::-webkit-scrollbar-track .task-content{
+    background: transparent;  /* Optional: hide track background */
+  }
+
+  .overview > div:last-child div{
+
+   padding: 7px;
+   border-radius: 5px;
+   font-size: 14px;
+   height: auto;
+
+   border: 1px solid rgba(101, 101, 101, 0.3);
+   box-shadow: none;
+
+  }
+
+  .overview > div:last-child div p{
+    margin: 0;
+  }
+
+ 
+  .overview .btn{
+background-color: #e1ecff;
+color: #03346e;
+font-weight: 600;
+font-size: 12px;
+padding: 5px;
+border-radius: 3px;
+width: 100%;
+  }
+
+  #task-add{
+    border: 1px solid #1777ec;
+  }
+#task-input{
+  border: none;
+  height: 21px;
+}
+
+#task-input:focus {
+  outline: none;
+  
+}
+
+ 
+
+
+
+  .dashboard {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+
+    
+
+  }
+
+  .card {
+    flex: 1 1 calc(25% - 1rem); /* 4 columns on large screens */
+    min-width: 200px;
+    border-radius: 20px !important;
+
+
+  }
+
+
+
+
+  .dashboard-card {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 150px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 20px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.05);
+  }
+
+  .dashboard-info {
+    text-align: left;
+    flex: 1;
+  }
+
+  .dashboard-info i {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 5px;
+    display: block;
+  }
+
+  .dashboard-info p {
+    margin: 0;
+    font-weight: 500;
+    color: #444;
+  }
+
+  .chart-container {
+    width: 120px;
+    height: 120px;
+  }
+
+  @media (max-width: 767px) {
+    .dashboard-card {
+      flex-direction: column;
+      align-items: center;
+      height: auto;
+      text-align: center;
+    }
+
+    .dashboard-info {
+      margin-bottom: 10px;
+    }
+  }
+
+
+  
+
+  @media (max-width: 1224px) {
+    .card {
+      flex: 1 1 calc(50% - 1rem); /* 2 columns on tablets */
+    }
+  }
+
+  @media (max-width: 600px) {
+    .card {
+      flex: 1 1 calc(50% - 1rem); /* 2 columns on phones */
+    }
+  }

@@ -1,481 +1,570 @@
 <!DOCTYPE html>
 <html lang="en">
-
-
-
-
-
-
-
-
-
 <head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>AssignPro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
     
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- Custom fonts for this template-->
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
 
-    <!-- Custom styles for this template-->
-    @vite(['resources/css/sb-admin-2.css','resources/vendor/fontawesome-free/css/all.min.css' ,'resources/js/app.js','resources/vendor/jquery/jquery.min.js','resources/vendor/bootstrap/js/bootstrap.bundle.min.js','resources/vendor/jquery-easing/jquery.easing.min.js','resources/js/sb-admin-2.min.js','resources/vendor/chart.js/Chart.min.js','resources/js/demo/chart-area-demo.js','resources/js/demo/chart-pie-demo.js'])
+    @vite(['resources/css/admin-dashboard.css','resources/css/sb-admin-2.css','resources/vendor/fontawesome-free/css/all.min.css' ,'resources/js/app.js','resources/vendor/jquery/jquery.min.js','resources/vendor/bootstrap/js/bootstrap.bundle.min.js','resources/vendor/jquery-easing/jquery.easing.min.js','resources/js/sb-admin-2.min.js','resources/vendor/chart.js/Chart.min.js','resources/js/demo/chart-area-demo.js','resources/js/demo/chart-pie-demo.js'])
+  
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    
 
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap");
+    :root{--header-height: 3rem;--nav-width: 68px;--first-color: #4723D9;--first-color-light: #AFA5D9;--white-color: #F7F6FB;--body-font: 'Montserrat', sans-serif;--normal-font-size: 1rem;--z-fixed: 100}
+    *,::before,::after{box-sizing: border-box}
+    body{position: relative;
+        margin: var(--header-height) 0 0 0;
+        padding: 0 2rem;
+        font-family: var(--body-font);
+        font-size: var(--normal-font-size);
+        transition: .5s ;
+        background-color: #f5f5f5;
+    }
+    
+    .modal-backdrop {
+      position: fixed !important;
+      top: 0;
+      left: 0;
+      width: 100% !important;
+      height: 100% !important;
+      z-index: 1040; /* Bootstrap uses this for modals */
+      background-color: rgba(0, 0, 0, 0.5); /* semi-transparent black */
+    }
+    a{text-decoration: none}
+    .header{
+        width: 100%;
+        height: var(--header-height);
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content:center;
+        background-color: var(--white-color);
+        z-index: var(--z-fixed);
+        transition: .5s;
+    }
+
+
+    .header-content{
+        height: 100%;
+
+        width: 90vw;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 1rem;
+        z-index: var(--z-fixed);
+        transition: .5s;
+        border-radius: 10px;
+        box-shadow: 1px 1px 10px 2px #33333311, 1px -30px 15px 20px #f5f5f5;
+        padding: 10px;
+        background-color: white;
+
+
+
+
+    }
+
+
+    .header_toggle{
+        color: var(--first-color);
+        font-size: 1.5rem;
+        cursor: pointer
+    }
+
+    
+    .l-navbar{position: fixed;top: 0;left: -30%;width: var(--nav-width);height: 100vh;background-color: var(--first-color);padding: .5rem 1rem 0 0;transition: .5s;z-index: var(--z-fixed)}
+    .nav{height: 100%;display: flex;flex-direction: column;justify-content: space-between;overflow: hidden}
+    .nav_logo, .nav_link{display: grid;grid-template-columns: max-content max-content;align-items: center;column-gap: 1rem;padding: .5rem 0 .5rem 1.5rem}
+    .nav_logo{margin-bottom: 2rem}
+    .nav_logo-icon{font-size: 1.25rem;color: var(--white-color)}
+    .nav_logo-name{color: var(--white-color);font-weight: 700}
+    
+    .nav_link{
+         position: relative;
+         color: var(--first-color-light);
+         margin-bottom: 1.5rem;
+         transition: .3s}
+    
+    .nav_link:hover{
+        color: var(--white-color);
+        text-decoration-line: none;
+    
+    
+    }
+    .nav_icon{font-size: 1.25rem}.show{left: 0}
+
+    .body-pd{
+        padding-left: calc(var(--nav-width) + 1rem);
+    }
+    
+    .active{
+        color: var(--white-color)
+    }
+    .active::before{
+        content: '';position: absolute;left: 0;width: 2px;height: 32px;background-color: var(--white-color)
+    }
+    .height-100{height:100vh}
+    @media screen and (min-width: 768px){body{margin: calc(var(--header-height) + 1rem) 0 0 0;padding-left: calc(var(--nav-width) + 2rem)}
+    .header{height: calc(var(--header-height) + 1rem);padding: 0 2rem 0 calc(var(--nav-width) + 2rem)}
+
+    .l-navbar{left: 0;padding: 1rem 1rem 0 0}
+    .l-navbar.show{width: calc(var(--nav-width) + 156px)}
+
+    .l-navbar.show{width: calc(var(--nav-width) + 156px)}
+    .body-pd{padding-left: calc(var(--nav-width) + 188px);
+    
+    
+    }}
+    
+    .search-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: #f1f1f1;
+        border-radius: 20px;
+        padding: 5px 10px;
+        transition: width 0.4s;
+        overflow: hidden;
+        width: 40px; /* collapsed */
+        cursor: pointer;
+    }
+    
+    .search-container.active {
+        width: 200px; /* expanded */
+    }
+    
+    .search-input {
+        border: none;
+        background: transparent;
+        outline: none;
+        width: 100%;
+        margin-left: 10px;
+        display: none;
+    }
+    
+    .search-container.active .search-input {
+        display: block;
+    }
+    
+    #search-icon {
+        font-size: 20px;
+        color: #333;
+    }
+    
+    
+        #profileDropdown img{
+            height: 40px;
+            width: 40px;
+            object-fit:cover;
+            border: 1px solid #8585866b;
+
+            
+        }
+
+    #profileDropdown img:hover{
+        outline: 1px solid #4723D9;
+        
+    
+    }
+    
+    
+    .dropdown {
+        position: relative;
+    }
+    
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        transform: translateY(5px);
+        z-index: 2000;
+    }
+
+    .notifications-container button{
+        border: none;
+        background: none;
+
+    }
+
+    
+    .notifications-container button i{
+        color: #424242 !important;
+        
+        font-size: 25px !important;
+
+    }
+
+    .notifications-container button i:hover {
+    color: #7367f0 !important;
+    transition: color 0.3s ease;
+}
+
+#searshBarContainer{
+    
+height: 100%;
+width: 90vw;
+padding: 0 1rem;
+z-index: var(--z-fixed);
+transition: .5s;
+border-radius: 10px;
+box-shadow: 1px 1px 10px 2px #33333311, 1px -30px 15px 20px #f5f5f5;
+padding: 10px;
+background-color: white;
+
+
+}
+
+
+#searchBar{
+    
+    display: flex;
+    height: 100%;
+    width: 100%;
+    z-index: var(--z-fixed);
+    
+    }
+
+
+#searchBar input{
+    width: 100%;
+    height: 100%;
+    padding-left:10px; 
+    border: none;
+    background: transparent;
+
+}
+
+#searchBar input:focus{
+ outline: none;
+}
+
+#searchBar button{
+    border: none;
+    width: 40px;
+    background: none;
+
+
+}
+
+.hidden {
+  display: none !important;
+}
+    
+
+.dropdown-menu {
+    max-width: 350px;
+    width: 350px;
+    box-shadow: 1px 1px 10px 2px #3333332d;
+    overflow-x: hidden;
+    white-space: normal; /* Allows content to wrap */
+    word-wrap: break-word; /* Support older browsers */
+    overflow-wrap: break-word;
+}
+
+.dropdown-menu li {
+    word-break: break-word;
+    white-space: normal;
+}
+
+/* Optional: add spacing if needed */
+.dropdown-menu a.dropdown-item {
+    font-size: 14px;
+    padding: 10px 15px;
+    white-space: normal;  /* Allow line breaks in the <a> */
+}  
+
+
+</style>
+    
+    
+    
+    
+    
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    
+       
 </head>
 
+    <body id="body-pd">
 
+     
+        @php
+            $notifications = Auth::user()->notifications()->latest()->take(5)->get();
+            $unreadCount = auth()->user()->unreadNotifications->count();
 
+        @endphp
+        
+        <header class="header mt-3" id="header">
 
+            <div id="searshBarContainer" class="hidden">
 
-<body id="page-top">
-
-    <!-- Page Wrapper -->
-    <div id="wrapper">
-
-        <!-- Sidebar -->
-        <ul style="background-color: #03346E" class="navbar-nav sidebar sidebar-dark accordion" id="accordionSidebar">
-
-            <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{url('/')}}">
-                <div class="sidebar-brand-icon">
-                    <i class="bi bi-terminal-fill"></i>
+                <div id="searchBar">
+                    <button><i class='bx bx-search' id="search-icon"></i></button>
+                    <input type="text" name="search" id="search-input" placeholder="search..">
+                    <button onclick="closeSearchBar()"><i style="font-size: 27px;" class="bi bi-x"></i></button>
+                    
                 </div>
-                <div class="sidebar-brand-text mx-3">Assign Pro<sup>+</sup></div>
-            </a>
 
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item {{request()->is('/') ? 'active' : '' }} ">
-                <a  class="nav-link" href="{{url('/')}}">
-                    <i class="bi bi-menu-button-wide"></i>
-                    <span>Dashboard</span></a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Interface
             </div>
-          
-                    <li class="nav-item {{request()->is('pending_users') ? 'active' : '' }}">
-                        <a  class="nav-link" href="{{url('/pending_users')}}">
-                            <i class="bi bi-person-exclamation"></i>
-                            <span >Pending users</span></a>
-                    </li>            
-          
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <i class="bi bi-buildings-fill"></i>
-                            <span>Departements</span></a>
-                    </li>            
-          
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <i class="bi bi-book-half"></i>
-                            <span>Filieres</span></a>
-                    </li>  
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <i class="bi bi-person-video3"></i>
-                            <span>Professeurs</span></a>
-                    </li>  
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <i class="bi bi-people-fill"></i>
-                            <span>Etudiants</span></a>
-                    </li>  
+            <div id="header-content" class="header-content ">
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{url('/admins')}}">
-                            <i class="bi bi-person-gear"></i>
-                            <span>Admins</span></a>
-                    </li>  
-           
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <i class="bi bi-person-circle"></i>
-                            <span>Profile</span></a>
-                    </li>  
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-toggle="modal" data-target="#logoutModal">
-                            <i class="bi bi-box-arrow-right"></i>
-                            <span>Deconnexion</span></a>
-                          
-                    </li>  
-
+                <div class="header_toggle"> 
+                    <i class='bx bx-menu' id="header-toggle"></i> 
+                </div>
+                
                
+                    
+                
+                
+                <div class="d-flex align-items-center">
+                    
+                    <div class="notifications-container ml-2" id="notifications-container">
+                        <button onclick="showSearchBar()"><i class='bx bx-search' id="search-icon"></i></button>
+                    </div>
 
 
+                     <!-- Notification Dropdown -->
+                <div class="dropdown ms-2">
+                 
 
-            <!-- Divider -->
-            <hr class="sidebar-divider">
+                    <div class="notifications-container ml-2" id="notifications-container" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button id="notification" ><i class='bx bx-bell'></i>
+                            @if($unreadCount > 0)
+                            <span class="position-absolute  translate-middle badge rounded-pill bg-danger">
+                                {{ $unreadCount }}
+                            </span>
+                           @endif
+                        </button>
+                    </div>
 
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Addons
-            </div>
+                    <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="notificationDropdown">
+                        <li style="background-color: #4723D9;"><h6 class="dropdown-header" style="color: white;">Notifications</h6></li>
+                        @if (!$notifications)
 
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                    aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Pages</span>
-                </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Login Screens:</h6>
-                        <a class="collapse-item" href="login.html">Login</a>
-                        <a class="collapse-item" href="register.html">Register</a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a>
+                        <li><a class="dropdown-item text-muted" href="#">No notifications</a></li>   
+                    
+                        @else
+                        
+                        @foreach ($notifications as $notification)
+                        <li>
+                            @if (is_null($notification->read_at)) 
+                                <a class="dropdown-item" style="background-color:#1319c70d ; border-bottom: 1px solid #3333331d;" href="{{ route('notifications.read', $notification->id) }}"> 
+                                    {{ $notification->data['message'] }} 
+                                    <br><small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+ 
+                                </a>
+                                @else
+                                <a class="dropdown-item" style="border-bottom: 1px solid #3333331b;" href="{{ route('notifications.read', $notification->id) }}">
+                                    {{ $notification->data['message'] }}
+                                    <br><small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+                                </a>
+                                @endif     
+                                
+                            </li>
+                            @endforeach
+                            <li class="text-center pt-1"><a href="#">Voir tous les notifications</a></li>
+                            
+                        @endif
+                
+                </ul>
+                </div>
 
-                        <a class="collapse-item" href="{{url('/pending_users')}}">Pending users</a>
+                    <div class="d-flex flex-column  ml-3">
+                       
+                        <p style="color: #504f4f; font-weight: 600; font-size: 15px;" class="p-0 m-0">{{Auth()->user()->firstname}} {{Auth()->user()->lastname}}</p>
+                      
+                        @if (auth()->user()->user_details)
+
+                       <p style=" {{Auth()->user()->user_details->status ==='active' ?  'color: #10a386;' :  'color: #cd4c35;'}} font-weight: 500; font-size: 12px;" class="p-0 m-0 text-end">{{Auth()->user()->user_details->status}}</p>
+                      
+                       @else
+                       <p style="color: #cd4c35; font-weight: 500; font-size: 12px;" class="p-0 m-0 text-end">inactive</p>
+
+                       @endif
+
+                        </div>
+
+                    <!-- Profile picture dropdown -->
+                    <div class="dropdown ms-3">
+                        <a href="#" class="d-flex align-items-center" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        @if (Auth()->user()->user_details)
+                        @if (Auth()->user()->user_details->profile_img!=null)
+                        
+                        <img style=" border-radius:50%;" src="{{asset('storage/' . Auth()->user()->user_details->profile_img)}}">
+                        @else
+                        <img style=" border-radius:50%;" src="{{asset('storage/images/default_profile_img.png')}}">
+                        
+                        @endif
+                        
+                        
+                        @else
+                        <img style="width: 35px; border-radius:50%;" src="{{asset('storage/images/default_profile_img.png')}}">
+                        
+                        @endif                    
+                    </a>
+                    
+                    <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="profileDropdown" data-bs-display="static">
+                        <li><a class="dropdown-item" href="{{url("/profile")}}">Profile</a></li>
+                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        
+                        <li>
+                            <form action="{{url('/login')}}" method="post">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="dropdown-item" href="#">Logout</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div> 
+            
+            
+            
+        </div>
+           
+        </header>
+
+<!-- sidebar-->
+
+        <div class="l-navbar" id="nav-bar">
+            <nav class="nav">
+                <div> 
+                    <a href="#" class="nav_logo"> <i class='bx bx-layer nav_logo-icon'></i> <span class="nav_logo-name">AssignPro</span></a>
+                    <div class="nav_list"> 
+                        <!-- sidebar items-->
+                        
+                        <a href="{{url('/')}}" class="nav_link {{request()->is('/') ? 'active' : '' }}"> 
+                            <i class='bx bx-grid-alt nav_icon'></i> 
+                            <span class="nav_name">Dashboard</span> 
+                        </a>
+
+                        @if (optional(auth()->user()->role)->isadmin)
+                            
+                        
+                    
+                        
+                        <a href="{{url('/departements')}}" class="nav_link {{request()->is('departements') ? 'active' : '' }}"> 
+                            <i class='bx bx-buildings nav_icon'></i> 
+                            <span class="nav_name">Departements</span> 
+                        </a>
+                        
+                        <a href="{{url('/filieres')}}" class="nav_link {{request()->is('filieres') ? 'active' : '' }}"> 
+                            <i class='bx bx-book-open nav_icon'></i> 
+                            <span class="nav_name">Filieres</span> 
+                        </a>
+                        
+                        <a href="{{url('/professeurs')}}" class="nav_link {{request()->is('professeurs') ? 'active' : '' }}"> 
+                            <i class="bi bi-person-video3" style="padding-left: 2px; font-size: 17px;"></i>
+                            <span class="nav_name">Professeurs</span> 
+                        </a>
+                        
+                        <a href="{{url('/etudiants')}}" class="nav_link {{request()->is('etudiants') ? 'active' : '' }}"> 
+                            <i class="bi bi-people-fill" style="padding-left: 2px; font-size: 16px;"></i>
+                            <span class="nav_name">Etudiants</span> 
+                        </a>
+                        
+                        <a href="{{url('/admins')}}" class="nav_link {{request()->is('admins') ? 'active' : '' }}"> 
+                            <i class="bi bi-person-gear" style="padding-left: 2px; font-size: 18px;"></i>
+                            <span class="nav_name">Admins</span> 
+                        </a>
+
+                        @endif
+
+                        
+                        <a href="{{url('/profile')}}" class="nav_link {{request()->is('profile') ? 'active' : '' }}"> 
+                            <i class='bx bx-id-card nav_icon'></i> 
+                            <span class="nav_name">Profile</span> 
+                        </a>
+
                     </div>
                 </div>
-            </li>
+                 <a href="{{url('/login')}}" class="nav_link"> <i class='bx bx-log-out nav_icon'></i> <span class="nav_name">Deconnexion
+                   
+                   </span> </a>
+            </nav>
+        </div>
+        <!--Container Main start-->
+
+    
+    {{$slot}}
+    
+        <!--Container Main end-->
+
+        <script>
+
+         function showSearchBar() {
+  document.getElementById('searshBarContainer').classList.remove('hidden');
+  document.getElementById('header-content').classList.add('hidden');
+}
+
+            function closeSearchBar(){
+                document.getElementById('searshBarContainer').classList.add('hidden');
+                document.getElementById('header-content').classList.remove('hidden');
+        
+            }
+        </script>
             
 
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="charts.html">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Charts</span></a>
-            </li>
+        <script>
 
-          
 
-            <!-- Nav Item - Tables -->
-            <li class="nav-item">
-                <a class="nav-link" href="tables.html">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Tables</span></a>
-            </li>
 
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
 
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
-
-            <!-- Sidebar Message -->
-         
-
-        </ul>
-        <!-- End of Sidebar -->
-
-        <!-- Content Wrapper -->
-        <div id="content-wrapper" class="d-flex flex-column">
-
-            <!-- Main Content -->
-            <div id="content">
-
-                <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
-                    <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i style="color: #3169ad" class="fa fa-bars"></i>
-                    </button>
-
-                    <!-- Topbar Search -->
-                    <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                                aria-label="Search" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button style="background-color:#3169ad" class="btn " type="button">
-                                    <i class="fas fa-search fa-sm text-white"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-
-                    <!-- Topbar Navbar -->
-                    <ul class="navbar-nav ml-auto">
-
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li>
-
-                        <!-- Nav Item - Alerts -->
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-bell fa-fw"></i>
-                                <!-- Counter - Alerts -->
-                                <span class="badge badge-danger badge-counter">3+</span>
-                            </a>
-                            <!-- Dropdown - Alerts -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="alertsDropdown">
-                                <h6 class="dropdown-header">
-                                    Alerts Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-primary">
-                                            <i class="fas fa-file-alt text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 12, 2019</div>
-                                        <span class="font-weight-bold">A new monthly report is ready to download!</span>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-success">
-                                            <i class="fas fa-donate text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 7, 2019</div>
-                                        $290.29 has been deposited into your account!
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-warning">
-                                            <i class="fas fa-exclamation-triangle text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 2, 2019</div>
-                                        Spending Alert: We've noticed unusually high spending for your account.
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
-                            </div>
-                        </li>
-
-                        <!-- Nav Item - Messages -->
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-envelope fa-fw"></i>
-                                <!-- Counter - Messages -->
-                                <span class="badge badge-danger badge-counter">7</span>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="messagesDropdown">
-                                <h6 class="dropdown-header">
-                                    Message Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_1.svg"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div class="font-weight-bold">
-                                        <div class="text-truncate">Hi there! I am wondering if you can help me with a
-                                            problem I've been having.</div>
-                                        <div class="small text-gray-500">Emily Fowler · 58m</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_2.svg"
-                                            alt="...">
-                                        <div class="status-indicator"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">I have the photos that you ordered last month, how
-                                            would you like them sent to you?</div>
-                                        <div class="small text-gray-500">Jae Chun · 1d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_3.svg"
-                                            alt="...">
-                                        <div class="status-indicator bg-warning"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Last month's report looks great, I am very happy with
-                                            the progress so far, keep up the good work!</div>
-                                        <div class="small text-gray-500">Morgan Alvarez · 2d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Am I a good boy? The reason I ask is because someone
-                                            told me that people say this to all dogs, even if they aren't good...</div>
-                                        <div class="small text-gray-500">Chicken the Dog · 2w</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
-                            </div>
-                        </li>
-
-                        <div class="topbar-divider d-none d-sm-block"></div>
-
-                        <!-- Nav Item - User Information -->
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{auth()->user()->firstname . " " . auth()->user()->lastname}}</span>
-                               @if (auth()->user()->profile_picture==null)
-                               <i class="bi bi-person-circle " style="color: #3169ad; font-size: 25px; margin-top:2px;"></i>
-
-                               @else
-                               <img class="img-profile rounded-circle "
-                               src="auth()->user()->profile_picture">
-                               @endif
-                            </a>
-                            <!-- Dropdown - User Information -->
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Activity Log
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
-                                </a>
-                            </div>
-                        </li>
-
-                    </ul>
-
-                </nav>
-                <!-- End of Topbar -->
-
-                <!-- Begin Page Content -->
-
-             <!-- content here-->
-
-             {{$slot}}
-
-                <!-- /.container-fluid -->
-
-            </div>
-            <!-- End of Main Content -->
-
-            <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; this is a sticky footer</span>
-                    </div>
-                </div>
-            </footer>
-            <!-- End of Footer -->
-
-        </div>
-        <!-- End of Content Wrapper -->
-
-    </div>
-    <!-- End of Page Wrapper -->
-
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
-
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                 
-                    <form action="{{url("/login")}}" method="post">
-                        @csrf
-                        @method('DELETE')
-
-                    <button  type="submit" class="btn btn-primary">Logout</button>
-                </form>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
-
-    <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
-
+            document.addEventListener("DOMContentLoaded", function(event) {
+       
+       const showNavbar = (toggleId, navId, bodyId, headerId) =>{
+       const toggle = document.getElementById(toggleId),
+       nav = document.getElementById(navId),
+       bodypd = document.getElementById(bodyId),
+       headerpd = document.getElementById(headerId)
+       
+       // Validate that all variables exist
+       if(toggle && nav && bodypd && headerpd){
+       toggle.addEventListener('click', ()=>{
+       // show navbar
+       nav.classList.toggle('show')
+       // change icon
+       toggle.classList.toggle('bx-x')
+       // add padding to body
+       bodypd.classList.toggle('body-pd')
+       // add padding to header
+       headerpd.classList.toggle('body-pd')
+       })
+       }
+       }
+       
+       showNavbar('header-toggle','nav-bar','body-pd','header')
+       
+       /*===== LINK ACTIVE =====*/
+       const linkColor = document.querySelectorAll('.nav_link')
+       
+       function colorLink(){
+       if(linkColor){
+       linkColor.forEach(l=> l.classList.remove('active'))
+       this.classList.add('active')
+       }
+       }
+       linkColor.forEach(l=> l.addEventListener('click', colorLink))
+       
+        // Your code to run since DOM is loaded and ready
+       });
+        </script>
 </body>
 
+
 </html>
+

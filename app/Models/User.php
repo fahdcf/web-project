@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -22,7 +21,7 @@ class User extends Authenticatable
         'lastname',    // Add this field
         'email',
         'password',
-        'role',        // Add 'role' if you're using it as a fillable field
+        'role_column', 'departement',       // Add 'role' if you're using it as a fillable field
     ];
 
     /**
@@ -47,4 +46,15 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function user_details(){
+        return $this->hasOne(user_detail::class);
+
+    }
+    public function role()
+{
+    return $this->hasOne(Role::class, 'user_id');
+}
+    
+
 }

@@ -158,6 +158,8 @@ $errorShown = false;
 
     .form-control {
       margin-bottom: 15px;
+      box-shadow: 1px 1px 5px 1px rgba(123, 123, 123, 0.048);
+      border-color: #cccfe1a6;
     }
 
     .label{
