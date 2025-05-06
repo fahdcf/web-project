@@ -8,7 +8,7 @@
         <h1 style="color: #330bcf; font-weight: 500; text-align: center;">The list of departements</h1>
     
         
-        <a type="submit" href="{{ url('filieres/add') }}"
+        <a type="submit" href="{{ url('departements/add') }}"
         class="btn text-white rounded px-4 pt-2 fw-semibold shadow-sm"
         style=" height:44px; ;background-color: #4723d9; vertical-align: middle;">
          <strong>+ </strong> Ajouter

@@ -106,4 +106,9 @@ class loginController extends Controller
             ->withInput();
     }
     }
+
+    public function exit(){
+        auth()->logout();
+        return view('login');
+    }
 }

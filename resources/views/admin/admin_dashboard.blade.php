@@ -6,40 +6,26 @@
   }
 
 
-
-  #task-add{
-    border: 1px solid #1777ec;
-  }
-#task-input{
-  border: none;
-  height: 21px;
-}
-
-#task-input:focus {
-  outline: none;
-  
-}
-
  
 
 
 
-
-  .main-section div{
+  .main-section > div{
     border-radius: 15px;
-    background-color: white;
-    padding: 15px;
+    background-color: #4723d9;
+    color: white;
+    padding: 0;
     box-shadow: 0px 3px 15px 1px #3838381d;
-  }
-  .side-section div{
-    border-radius: 15px;
-    background-color: white;
+    background-image: url('{{ asset('storage/images/adminavatar.png') }}');
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: 150px auto;
     padding: 15px;
-    box-shadow: 0px 3px 15px 1px #3838381d;
+    width: 100%; /* or your preferred width */
   }
 
 .welcome, .tasks{
-  border-radius: 15px;
+   border-radius: 15px;
     background-color: white;
     padding: 15px;
     box-shadow: 0px 3px 15px 1px #3838381d;
@@ -52,7 +38,8 @@
    font-size: 14px;
    height: auto;
 
-   border: 1px solid rgba(101, 101, 101, 0.3);
+   border-top-left-radius: 15px;
+   border-top-right-radius: 15px;
    box-shadow: none;
 }
 .btn{
@@ -64,30 +51,75 @@ padding: 5px;
 border-radius: 3px;
 width: 100%;
 }
+
+
+.buttons-wrapper button{
+  border:none;
+  background-color: white;
+  border-radius: 5px;
+  padding: 8px 10px;
+  color: #4723d9;
+  font-weight: 500;
+  text-wrap: nowrap;
+
+
+
+
+}
+.tasks-header{
+  padding: 10px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+
+}
+.tasks-header button{
+  border: none;
+  background: none;
+  color: white;
+  font-size: 20px;
+  padding: 0 8px;
+
+  
+}
+
+.tasks-header button:hover{
+  background-color:#5029ef;
+}
+
+.task-item{
+  border-bottom:1px solid #e8e8e8d3;
+  color:#252525;
+}
+
+#task-input{
+  border-radius: 15px !important;
+
+}
+
+#task-add{
+    border: 1px solid #1777ec;
+    border-radius: 7px;
+    padding: 12px;
+  }
+
   </style>
 
 
 
-    <div class="container-fluid p-0 pt-5 ">
+    <div class="container-fluid p-0 pt-5 d-flex " >
 
-      <div class="page-wrapper row">
+      <div class="page-wrapper w-100 row m-0 " >
 
       
-      <section class="main-section col-8">
+      <section class="main-section col-12 col-md-8 p-0 pr-md-4"  >
 
-        <div class="welcome">
+        <div class="welcome p-4 ">
 
-          <h4>Welcome <strong>{{auth()->user()->firstname . " " . auth()->user()->lastname}}</strong> to the Dashboard</h4>
-
-          <div class="d-flex  justify-content-between">
-
-              <div class="mt-5 d-flex flex-column justify-content-between">
-              <button class="btn">Check pending users <i class="bi bi-arrow-right"></i>
-              </button>
-              <p class="text-start">{{ \Carbon\Carbon::today()->toDateString() }}</p>
-            </div>
-           <img style="width: 150px" src="{{ asset('storage/images/adminavatar.png') }}" alt="">
-
+          <div class="d-flex flex-column justify-content-between col-8">
+          <h3 style="font-weight: 500; padding-bottom: 10px;">Welcome <strong>{{auth()->user()->firstname . " " . auth()->user()->lastname}}</strong> to the Dashboard</h3>
+          <p style="font-size: 14px;">Unlock All Premium Songs, no Ads, and more.</p>  
+          
+          <div class="buttons-wrapper d-flex flex-column flex-lg-row  gap-3"><button>Ajeuter un utilisateur</button> <button>voir tous les utilisateurs</button> </div>
 
           </div>
 
@@ -96,27 +128,27 @@ width: 100%;
 
       </section>
 
-      <section class="side-section col-4">
+      <section class="side-section col-12 col-md-4  p-0 pt-4 p-md-0">
    
-     <div class="tasks" style="background-color:#4723d9 ">
+     <div class="tasks p-0 " style="background-color:white ">
 
-                <div style=" border:none; background-color:#4723d9; " class="d-flex justify-content-between align-items-center">
-                    <p style="color: #f1eded; font-size: 15px; font-weight: 600;">Your daily tasks:</p>
-                    <button id="task-add-button" style="background:none;marging-right:0px; border:none ;font-size:20px; margin-top:-29px;margin-right:-15px; color: #f2f1f1;" onclick="addtask()">+</button>
+                <div style=" border:none; background-color:#4723d9; " class="tasks-header d-flex justify-content-between align-items-center ">
+                    <p style="color: #f1eded; font-size: 15px; font-weight: 600; margin:0">Your tasks:</p>
+                    <button id="task-add-button"  onclick="addtask()">+</button>
 
                 </div>
-                <div class="task-content">
+                <div class="task-content p-3 p-md-4">
 
 
                   <div id="task-add" style="display: none">
                     <form action="{{url('/addtask')}}" method="post">
                     @csrf
-                        <input id="task-input" name="task" type="text">
+                        <input id="task-input" name="task" type="text" placeholder="Ajeuter...">
                     </form>
                   </div>
 
                   @foreach ($tasks as $task)
-                  <div class="mt-3">
+                  <div class="task-item mt-3">
                     <p >{{ $task['description']}}</p>
                     </div>
                   @endforeach
