@@ -11,13 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notifications', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('type');
-            $table->morphs('notifiable');
-            $table->text('data');
-            $table->timestamp('read_at')->nullable();
-            $table->timestamps();
+        Schema::table('roles', function (Blueprint $table) {
+            $table->foreign(['user_id'], 'fk_roles_user')->references(['id'])->on('users')->onUpdate('no action')->onDelete('cascade');
         });
     }
 
@@ -26,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notifications');
+        Schema::table('roles', function (Blueprint $table) {
+            $table->dropForeign('fk_roles_user');
+        });
     }
 };
