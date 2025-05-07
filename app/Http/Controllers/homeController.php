@@ -30,7 +30,7 @@ class homeController extends Controller
                 $studentCount=User::where('role_column','student')->count();
                 $professorCount=User::where('role_column','professor')->count();
     
-                $tasks=task::where('user_id',auth()->user()->id)->get();
+                $tasks=task::where('user_id',auth()->user()->id)->latest()->take(5)->get();
                 return view('admin.admin_dashboard',['tasks'=>$tasks,'studentCount'=>$studentCount,'professorCount'=>$professorCount]);
             }
     
