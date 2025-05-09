@@ -6,6 +6,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\user_detail;
+use App\Models\admin_action;
+
 
 use Illuminate\Support\Facades\Auth;
 
@@ -26,14 +28,18 @@ class adminsController extends Controller
 {
     public function index(){
         $departments = Departement::all();
-        $admins = User::where('role_column', 'admin')->paginate(10); 
+        $admins = User::WhereHas('role', function ($query) {
+            $query->where('isadmin', true);
+        })->paginate(10); 
         return view('admin.admins', ['admins' => $admins, 'Departements' => $departments]);
     
     }
 
     public function showadd(){
         $departments = Departement::all();
-        $professeurs = User::where('role_column', 'professor')->get();
+        $professeurs = User::WhereHas('role', function ($query) {
+            $query->where('isprof', true);
+        })->get();
     
     
         return view('admin.add_admin',['professeurs'=>$professeurs,'Departements' => $departments]);
@@ -45,7 +51,7 @@ class adminsController extends Controller
         request()->validate([
             'firstname'=>'required|string|max:255|min:2',
             'lastname'=>'required|string|max:255|min:2',
-            'email'=>'required|email',
+            'email' => 'required|email|max:255|unique:users,email',
             'password'=>'required',
             'status'=>'required',
             'hours' => 'required|numeric',
@@ -66,7 +72,6 @@ class adminsController extends Controller
             'lastname'=>request('lastname'),
             'email'=>request('email'),
             'password'=>password_hash(request('password'), PASSWORD_BCRYPT),
-            'role_column'=>'admin',
             'departement' =>request('departement'),
 
 
@@ -99,7 +104,17 @@ class adminsController extends Controller
 
 
 
-
+        $actionDetails=[
+            'admin_id'=>auth()->user()->id,
+            'action_type' =>'create',
+            'description'=>auth()->user()->firstname . " " . auth()->user()->lastname ." a ajeuté l'admin " . $newadmin->firstname ." " . $newadmin->lastname,
+            'target_table' =>'users',
+            'target_id' => $newadmin->id,
+        ];
+        
+        
+        admin_action::create($actionDetails);
+    
 return redirect('admins');
 
     }
@@ -110,7 +125,6 @@ return redirect('admins');
         ]);
         
         $prof=User::findOrFail(request('professeur_id'));
-        $prof->role_column='admin';
         
         
         if($prof->role){
@@ -124,6 +138,18 @@ return redirect('admins');
         }
     
     
+        $actionDetails=[
+            'admin_id'=>auth()->user()->id,
+            'action_type' =>'create',
+            'description'=>auth()->user()->firstname . " " . auth()->user()->lastname ." a assigné le professeur " . $prof->firstname ." " . $prof->lastname ." comme Admin",
+            'target_table' =>'users',
+            'target_id' => $prof->id,
+        ];
+        
+        
+        admin_action::create($actionDetails);
+    
+
         return redirect('admins');     
     }
     public function showmodify($id){
@@ -142,7 +168,7 @@ return view('admin.modify_admins',['admin'=>$admin]);
 request()->validate([
     'firstname'=>'required|string|max:255|min:2',
     'lastname'=>'required|string|max:255|min:2',
-    'email' => 'required|email|max:255',
+    'email' => 'required|email|max:255|unique:users,email',
     'status'=>'required',
 
 
@@ -212,17 +238,35 @@ if (request()->hasFile('profile_img')) {
 user_detail::create($userdetails);
 
 
+
+
 }
 
 
 
 $admin->save();
 
+$actionDetails=[
+    'admin_id'=>auth()->user()->id,
+    'action_type' =>'update',
+    'description'=>auth()->user()->firstname . " " . auth()->user()->lastname ." a modifié les informations de l'admin " . $admin->firstname  . " " . $admin->lastname,
+    'target_table' =>'users',
+    'target_id' => $admin->id,
+];
+
+
+admin_action::create($actionDetails);
+
+
     return redirect('admins');
     }
 
     public function filter() {
-        $query = User::where('role_column', 'admin');
+        $query = User::WhereHas('role', function ($query) {
+            $query->where('isadmin', true);
+        });
+
+
 
         if (request('search')) {
             $search = request('search');
@@ -257,7 +301,20 @@ $admin->save();
     }
 
     public function delete($id){
-        User::find($id)->delete();
+        $deletedAdmin=User::find($id);
+
+        $actionDetails=[
+            'admin_id'=>auth()->user()->id,
+            'action_type' =>'delete',
+            'description'=>auth()->user()->firstname . " " . auth()->user()->lastname ." a supprimé le compte de l'admin " . $deletedAdmin->firstname  ." " . $deletedAdmin->lastname,
+            'target_table' =>'users',
+            'target_id' => $deletedAdmin->id,
+        ];
+        
+        
+        admin_action::create($actionDetails);
+
+       $deletedAdmin->delete();
         return redirect()->back();
     }
 }

@@ -261,7 +261,7 @@ background-color: white;
 }
     
 
-.dropdown-menu {
+.notification-menu  {
     max-width: 350px;
     width: 350px;
     box-shadow: 1px 1px 10px 2px #3333332d;
@@ -271,13 +271,13 @@ background-color: white;
     overflow-wrap: break-word;
 }
 
-.dropdown-menu li {
+.notification-menu li {
     word-break: break-word;
     white-space: normal;
 }
 
 /* Optional: add spacing if needed */
-.dropdown-menu a.dropdown-item {
+.notification-menu a.dropdown-item {
     font-size: 14px;
     padding: 10px 15px;
     white-space: normal;  /* Allow line breaks in the <a> */
@@ -350,7 +350,7 @@ background-color: white;
                         </button>
                     </div>
 
-                    <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="notificationDropdown">
+                    <ul class="dropdown-menu notification-menu dropdown-menu-end mt-2" aria-labelledby="notificationDropdown">
                         <li style="background-color: #4723D9;"><h6 class="dropdown-header" style="color: white;">Notifications</h6></li>
                         @if (!$notifications)
 

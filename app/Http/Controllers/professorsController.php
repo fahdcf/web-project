@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\user_detail;
+use App\Models\admin_action;
+
 
 use Illuminate\Support\Facades\Auth;
 
@@ -27,8 +29,7 @@ class professorsController extends Controller
         
         $departments=Departement::all();
 
-        $professors = User::where('role_column', 'professor')
-        ->orWhereHas('role', function ($query) {
+        $professors = User::WhereHas('role', function ($query) {
             $query->where('isprof', true);
         })
         ->simplePaginate(5);
@@ -41,7 +42,9 @@ class professorsController extends Controller
     public function filter(){
         $departments=Departement::all();
 
-        $query = User::where('role_column', 'professor');
+        $query = User::WhereHas('role', function ($query) {
+            $query->where('isprof', true);
+        });
 
         if (request('search')) {
             $search = request('search');
@@ -87,7 +90,7 @@ class professorsController extends Controller
         request()->validate([
             'firstname'=>'required|string|max:255|min:2',
             'lastname'=>'required|string|max:255|min:2',
-            'email'=>'required|email',
+            'email' => 'required|email|max:255|unique:users,email',
             'password'=>'required',
             'status'=>'required',
             'departement' => 'nullable|string|max:255',
@@ -108,7 +111,6 @@ class professorsController extends Controller
             'lastname'=>request('lastname'),
             'email'=>request('email'),
             'password'=>password_hash(request('password'), PASSWORD_BCRYPT),
-            'role_column'=>'professor',
             'departement'=>request('departement'),
             
     ];
@@ -118,7 +120,7 @@ class professorsController extends Controller
     Role::create(['user_id' => $newprof->id,'isprof'=>1]);
 
 
-    
+   
     
     $userdetails=[
         'user_id'=>$newprof->id,
@@ -143,7 +145,17 @@ class professorsController extends Controller
         user_detail::create($userdetails);
 
 
-
+        $actionDetails=[
+            'admin_id'=>auth()->user()->id,
+            'action_type' =>'create',
+            'description'=>auth()->user()->firstname . " " . auth()->user()->lastname ." a ajeuté le professeur " . $newprof->firstname ." " . $newprof->lastname,
+            'target_table' =>'users',
+            'target_id' => $newprof->id,
+        ];
+        
+        
+        admin_action::create($actionDetails);
+    
 
 return redirect('professeurs'); 
     }
@@ -163,7 +175,7 @@ return view('admin.modify_professeurs',['professeur'=>$professeur]);
     request()->validate([
         'firstname'=>'required|string|max:255|min:2',
         'lastname'=>'required|string|max:255|min:2',
-        'email' => 'required|email|max:255',
+        'email' => 'required|email|max:255|unique:users,email',
         'status'=>'required',
 
 
@@ -238,6 +250,18 @@ else{
 
     
 $prof->save();
+
+$actionDetails=[
+    'admin_id'=>auth()->user()->id,
+    'action_type' =>'upadate',
+    'description'=>auth()->user()->firstname . " " . auth()->user()->lastname ." a modifié les informations du professeur " . $prof->firstname ." " . $prof->lastname ,
+    'target_table' =>'users',
+    'target_id' => $prof->id,
+];
+
+
+admin_action::create($actionDetails);
+
     
         return redirect('professeurs');
 
@@ -247,20 +271,39 @@ $prof->save();
         $departement=Departement::where('user_id',$id)->first();
         $filiere=filiere::where('coordonnateur_id',$id)->first();
     
-        User::find($id)->delete();
+        $deletedProf=User::find($id);
         if($departement){
     
-            $admins = User::where('role_column', 'admin')->get();
+            $admins = User::WhereHas('role', function ($query) {
+            $query->where('isadmin', true);
+              })->get();
     
             Notification::send($admins, new ProfUnassignedNotification($departement->name,1,0));
        
         }
         elseif ($filiere) {
-            $admins = User::where('role_column', 'admin')->get();
-    
+
+          $admins = User::WhereHas('role', function ($query) {
+            $query->where('isadmin', true);
+              })->get(); 
+                 
             Notification::send($admins, new ProfUnassignedNotification($filiere->name,0,1));
           
         }
+
+        $actionDetails=[
+            'admin_id'=>auth()->user()->id,
+            'action_type' =>'delete',
+            'description'=>auth()->user()->firstname . " " . auth()->user()->lastname ." a supprimé le compte du professeur " . $deletedProf->firstname . " " . $deletedProf->lastname ,
+            'target_table' =>'users',
+            'target_id' => $deletedProf->id,
+        ];
+
+
+        
+        
+        admin_action::create($actionDetails);
+    $deletedProf->delete();
       
     
         return redirect()->back();

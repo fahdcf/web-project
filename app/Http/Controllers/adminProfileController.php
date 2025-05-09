@@ -1,9 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\filiere;
+use App\Models\student;
 use App\Models\user;
 use App\Models\user_detail;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Profiler\FileProfilerStorage;
 
 
 class adminProfileController extends Controller
@@ -51,7 +54,14 @@ class adminProfileController extends Controller
         }
         
         if ($user->email !== $request->input('email')) {
-            $user->email = $request->input('email');
+            $exists = User::where('email', $request->input('email'))->exists();
+            if (!$exists){
+
+                $user->email = $request->input('email');
+            }
+            else{
+                return redirect()->back()->withErrors(['email' => 'Email already exists.']);
+            }
         }
         
         if ($request->input('departement') && $user->departement !== $request->input('departement')) {
@@ -117,6 +127,106 @@ if(!$userDetails){
         // Save the changes if any field has been updated
         $user->save();
         $userDetails->save();
+
+        // Redirect with success message
+        return redirect()->back();
+    }
+
+    public function studentprofile($id){
+        $student=student::findOrFail($id);
+        $filiere_id=$student->filiere_id;
+        $filiere=filiere::find($filiere_id);
+        $filire_name=$filiere->name;
+        $filieres=filiere::all();
+
+
+        return view('admin.admin-student-profile',['student'=>$student,'filiere_name'=>$filire_name, 'filieres'=>$filieres]);
+    }
+
+     public function editEtudiant(Request $request, $id)
+    {
+     
+
+        $student = student::findOrFail($id);
+        
+        // Validate incoming request data (adjust validation as necessary)
+        $validated = $request->validate([
+            'lastname' => 'required|string|max:255',
+            'firstname' => 'required|max:255',
+            'email' => 'required|email|max:255',
+            'filiere_id' => 'nullable|max:255',
+            'status' => 'nullable|string|max:255',
+            'date' => 'nullable|date',
+            'adresse' => 'nullable|string|max:255',
+            'tele' => 'nullable|numeric',
+            'cin' => 'nullable|max:20',
+            'sexe' => 'nullable|in:male,female',
+            
+        ]);
+        
+        
+      
+        // Check and update the student's information only if it has changed
+        if ($student->lastname !== $request->input('lastname')) {
+            $student->lastname = $request->input('lastname');
+        }
+        
+        if ($student->firstname !== $request->input('firstname')) {
+            $student->firstname = $request->input('firstname');
+        }
+        
+        if ($student->email !== $request->input('email')) {
+            $exists = student::where('email', $request->input('email'))->exists();
+            if (!$exists){
+
+                $student->email = $request->input('email');
+            }
+            else{
+                return redirect()->back()->withErrors(['email' => 'Email already exists.']);
+            }
+        }
+        
+        if ($request->input('filiere_id') && $student->filiere_id !== $request->input('filiere_id')) {
+            $student->filiere_id = $request->input('filiere_id');
+        }
+        
+
+
+
+        if ($request->input('status') && $student->status !== $request->input('status')) {
+            $student->status = $request->input('status');
+        }
+
+      
+        
+        if ($student->date_of_birth !== $request->input('date')) {
+            $student->date_of_birth = $request->input('date');
+        }
+        
+        if ($student->number !== $request->input('tele')) {
+            $student->number = $request->input('tele');
+        }
+
+        if ($student->adresse !== $request->input('adresse')) {
+            $student->adresse = $request->input('adresse');
+        }
+
+
+        if ($student->CNE !== $request->input('cin')) {
+            $student->CNE = $request->input('cin');
+        }
+
+        if ($student->sexe !== $request->input('sexe')) {
+            $student->sexe = $request->input('sexe');
+        }
+        
+
+
+
+     
+
+        // Save the changes if any field has been updated
+        $student->save();
 
         // Redirect with success message
         return redirect()->back();

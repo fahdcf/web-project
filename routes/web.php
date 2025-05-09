@@ -48,7 +48,7 @@ Route::delete('/login', [loginController::class,'exit']);
 
 Route::get('/pending_user', [PendingUserController::class, 'show'])->name('pendinguser');
 
-Route::get("/reset_password",[resetPasswordController::class,'idnex'])->name('reset');
+Route::get("/reset_password",[resetPasswordController::class,'index'])->name('reset');
 
 
 Route::post("/reset_password", [resetPasswordController::class,'reset']);
@@ -153,6 +153,7 @@ Route::post('/etudiants/modifier/{id}',[etudiantController::class,'modify']);
 Route::delete('etudiants/{id}',[etudiantController::class,'delete']);
 
 Route::post('profile/edit/{id}', [adminProfileController::class, 'edit'])->name('profile.edit');
+Route::post('student-profile/edit/{id}', [adminProfileController::class, 'editEtudiant'])->name('student-profile.edit');
 
 Route::get('profile',[profileController::class,'index']);
 
@@ -222,7 +223,11 @@ Route::get('test',function(){
 
 });
 
-
-    
-    
-    
+Route::post('mark-task-asdone/{id}',[tasksController::class,'markAsDone']);
+Route::post('delete-task/{id}',[tasksController::class,'delete']);
+Route::post('mark-task-aspending/{id}',[tasksController::class,'markAsPending']);
+//for others
+ Route::get('etudiant_profile/{id}',[etudiantController::class,'profile'])  ; 
+ 
+ //for admin
+ Route::get( 'etudiant-profile/{id}',[adminProfileController::class,'studentprofile']); 

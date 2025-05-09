@@ -132,11 +132,11 @@
                                  
         
                                     <div class="col-md-6 col-lg-3 mb-3">
-                                        <label for="departementFilter" class="form-label">Department</label>
-                                        <select class="form-select" id="Depatement" name="departement">
+                                        <label for="filiereFilter" class="form-label">filiere</label>
+                                        <select class="form-select" id="filiere" name="filiere">
                                             <option value="">All</option>
-                                            @foreach ($Departements as $Departement)
-                                                <option value="{{ $Departement->name }}">{{ $Departement->name }}</option>
+                                            @foreach ($filieres as $filiere)
+                                                <option value="{{ $filiere->name }}">{{ $filiere->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -202,7 +202,7 @@
                                 <td>{{ $etudiant['id'] }}</td>
                                 
                                 <td>
-                                    <a href="{{url('profile/'. $etudiant->id)}}">
+                                    <a href="{{url('etudiant-profile/'. $etudiant->id)}}">
                                     @if ($etudiant->user_details)
                                     @if ($etudiant->user_details->profile_img!=null)
                                     

@@ -2,30 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 
-use Illuminate\Support\Facades\Route;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Redirect;
 
 use App\Models\Departement;
-use App\Models\filiere;
-use App\Models\Role;
+use App\Models\admin_action;
 
-use Illuminate\Support\Facades\Notification;
-use App\Notifications\ProfUnassignedNotification;
+
 
 class departementController extends Controller
 {
     public function index(){
         $departments=Departement::all();
 
-        $professors = User::where('role_column', 'professor')
-        ->orWhereHas('role', function ($query) {
+        $professors = User::WhereHas('role', function ($query) {
             $query->where('isprof', true);
         })->get();
     
@@ -35,8 +26,7 @@ class departementController extends Controller
 
     public function showadd(){
         
-        $professors = User::where('role_column', 'professor')
-        ->orWhereHas('role', function ($query) {
+        $professors = User::WhereHas('role', function ($query) {
             $query->where('isprof', true);
         })->get();
         
@@ -52,7 +42,20 @@ request()->validate([
 ]);
 $newDepartement=['name'=>request('name'), 'user_id'=>request(('user_id'))];
 
-Departement::create($newDepartement);
+$createdDepartement=Departement::create($newDepartement);
+
+
+$actionDetails=[
+    'admin_id'=>auth()->user()->id,
+    'action_type' =>'create',
+    'description'=>auth()->user()->firstname . " " . auth()->user()->lastname ." a créé la departement " . $createdDepartement->name ,
+    'target_table' =>'departements',
+    'target_id' => $createdDepartement->id,
+];
+
+
+admin_action::create($actionDetails);
+
 return redirect('/departements');
 
     }
@@ -62,7 +65,7 @@ return redirect('/departements');
             'name'=>'required',
         ]);
     
-        if(auth()->user()->role_column=="admin"){
+        if(auth()->user()->role->isadmin){
         
              $dep=Departement::find($id);
              $dep->name=request('name');
@@ -78,13 +81,35 @@ return redirect('/departements');
     
     
         }
+        $actionDetails=[
+            'admin_id'=>auth()->user()->id,
+            'action_type' =>'update',
+            'description'=>auth()->user()->firstname . " " . auth()->user()->lastname ." a modifié la departement " . $dep->name ,
+            'target_table' =>'departements',
+            'target_id' => $dep->id,
+        ];
+        
+        
+        admin_action::create($actionDetails);
     
         return redirect()->back();
     
     }
 
     public function delete($id){
-        Departement::find($id)->delete();
+        $deletedDepartement=Departement::find($id);
+
+        $actionDetails=[
+            'admin_id'=>auth()->user()->id,
+            'action_type' =>'delete',
+            'description'=>auth()->user()->firstname . " " . auth()->user()->lastname ." a supprimé la departement " . $deletedDepartement->name ,
+            'target_table' =>'departements',
+            'target_id' => $deletedDepartement->id,
+        ];
+        
+        $deletedDepartement->delete();
+        
+        admin_action::create($actionDetails);
 
         return redirect()->back();
         

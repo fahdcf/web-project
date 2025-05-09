@@ -9,44 +9,47 @@
                             <!-- etudiant firstName -->
                             <div class="row mt-3">
 
-                              <div class="col-md-6  mb-4">
+                              <div class="col-md-6  mt-4">
                                 <label style="color:#515151; font-weight: 700;" for="firstname" class="form-label fw-bold">Prenom</label>
                                 <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Prenom..">
                             </div>
+                            @if ($errors->has('firstname'))
+                            <small class="text-danger pt-1">{{ $errors->first('firstname') }}</small>
+                          @endif
 
                               <!-- etudiant lastName -->
-                              <div class="col-md-6  mb-4">
+                              <div class="col-md-6  mt-4">
                                 <label style="color:#515151; font-weight: 700;" for="lastname" class="form-label fw-bold">Nom</label>
                                 <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Nom..">
                             </div>
+                            @if ($errors->has('lastname'))
+                            <small class="text-danger pt-1">{{ $errors->first('lastname') }}</small>
+                          @endif
 
-                            <div class="col-md-6  mb-4">
+                            <div class="col-md-6  mt-4">
                               <label style="color:#515151; font-weight: 700;" for="email" class="form-label fw-bold">Email</label>
                               <input type="text" class="form-control" id="eamil" name="email" placeholder="Email..">
                           </div>
+                          @if ($errors->has('email'))
+                          <small class="text-danger pt-1">{{ $errors->first('email') }}</small>
+                        @endif
 
-                            <!-- etudiant modepass -->
-                            <div class="col-md-6  mb-4">
-                              <label style="color:#515151; font-weight: 700;" for="password" class="form-label fw-bold">Mot de passe</label>
-                               <input type="text" class="form-control" id="password" name="password" placeholder="Mot de passe">
-                          </div>
-
-
-                           <!-- etudiant departement -->
+                
+                           <!-- etudiant filiere -->
                         
-                        <div class="col-md-6  mb-4">
-                          <label style="color:#515151; font-weight: 700;" for="status" class="form-label fw-bold">Status</label>
-                          <select class="form-select" id="Depatement" name="departement">
-                            <option value="">Sélectionner une Departement</option>
-                            @foreach ($Departements as $Departement)
-                                <option value="{{ $Departement->name }}">{{ $Departement->name }}</option>
+                        <div class="col-md-6  mt-4">
+                          <label style="color:#515151; font-weight: 700;" for="status" class="form-label fw-bold">Filiere</label>
+                          <select class="form-select" id="filiere" name="filiere">
+                            <option value="">Sélectionner une Filiere</option>
+                            @foreach ($filieres as $filiere)
+                                <option value="{{ $filiere->name }}">{{ $filiere->name }}</option>
                             @endforeach
                         </select>
                         </div>
 
                         <!-- etudiant status -->
                         
-                        <div class="col-md-6  mb-4">
+                        <div class="col-md-6  mt-4">
                           <label style="color:#515151; font-weight: 700;" for="status" class="form-label fw-bold">Status</label>
                           <select type="text" class="form-select" id="status" name="status" >
                             <option value="active">Active</option>
@@ -55,6 +58,25 @@
                           </select>
                         </div>
 
+                        <div class="col-md-6  mt-4">
+                                                                                   
+                                                                                    <span  style="color:#515151; font-weight: 700;">Sexe:</span>
+                                                                                    <div class="sex-group d-flex gap-4 mt-4">
+                                        
+                                                                                        <label class="sex-label">
+                                                                                          <input type="radio" name="sexe" value="male" class="sex-input"  />
+                                                                                          <span class="sex-circle"></span>
+                                                                                          Homme
+                                                                                        </label>
+                                                                                      
+                                                                                        <label class="sex-label">
+                                                                                          <input type="radio" name="sexe" value="female" class="sex-input"/>
+                                                                                          <span class="sex-circle"></span>
+                                                                                          Femme
+                                                                                        </label>
+                                                                                      </div>
+                                                                                    </div>
+
 
                         
                          
@@ -62,7 +84,7 @@
 
                    
 
-                          <div class="py-2 pb-4">
+                          <div class="py-2 pb-4 mt-4">
                             <div class="accordion rounded" id="accordionFilters">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
@@ -101,30 +123,13 @@
                                                                                     <input type="text" id="cin" name="cin" class="form-control"  placeholder="numero de carte nationale..">
                                                                                 </div>
                                                                                 
-                                                                                                                                                                         <!-- etudiant profile -->
-                                                                                                                                                            <div class="col-md-6 col-lg-4 mb-4">
-                                                                                                                                                              <label style="color:#515151; font-weight: 700;" for="profile_img" class="form-label fw-bold">Photo de profile</label>
-                                                                                                                                                              <input type="file" class="form-control " id="profile_img" name="profile_img">
-                                                                                                                                                            </div>
+                                                                       <!-- etudiant profile -->
+                                                                       <div class="col-md-6 col-lg-4 mt-4">
+                                                                        <label style="color:#515151; font-weight: 700;" for="profile_img" class="form-label fw-bold">Photo de profile</label>
+                                                                        <input type="file" class="form-control " id="profile_img" name="profile_img">
+                                                                      </div>
                                                                 
-                                                                                <div class="col-md-6 col-lg-4 mb-3">
-                                                                                   
-                                                                                    <span  style="color:#515151; font-weight: 700;">Sexe:</span>
-                                                                                    <div class="sex-group d-flex gap-4 mt-4">
-                                        
-                                                                                        <label class="sex-label">
-                                                                                          <input type="radio" name="sexe" value="male" class="sex-input"  />
-                                                                                          <span class="sex-circle"></span>
-                                                                                          Homme
-                                                                                        </label>
-                                                                                      
-                                                                                        <label class="sex-label">
-                                                                                          <input type="radio" name="sexe" value="female" class="sex-input"/>
-                                                                                          <span class="sex-circle"></span>
-                                                                                          Femme
-                                                                                        </label>
-                                                                                      </div>
-                                                                                    </div>
+                                                                    
 
                                                                      
                                                     
