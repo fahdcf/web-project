@@ -1,3 +1,31 @@
 {
-    "liveServer.settings.port": 5501
+    "liveServer.settings.port": 5501,
+
+    // Prettier Configuration
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "[php]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.tabSize": 4
+    },
+    "prettier.configPath": ".prettierrc.json",
+    "prettier.documentSelectors": ["**/*.php", "**/*.blade.php"],
+    "prettier.requireConfig": true,
+
+    // Intelephense Configuration
+    "intelephense.environment.includePaths": [
+        "vendor/laravel/framework/src/Illuminate",
+        "vendor/laravel/framework/src/Illuminate/Auth",
+        "vendor/laravel/framework/src/Illuminate/Support"
+    ],
+    "intelephense.files.associations": ["*.php", "*.blade.php"],
+    "intelephense.environment.phpVersion": "8.2",
+    "intelephense.stubs": ["Core", "standard", "pdo", "session", "json", "mbstring", "bcmath", "PDO", "mysqli"],
+    "intelephense.diagnostics.undefinedMethods": false,
+    "intelephense.diagnostics.undefinedFunctions": false,
+    "intelephense.diagnostics.undefinedConstants": false,
+    "intelephense.diagnostics.undefinedTypes": false,
+    "intelephense.diagnostics.undefinedProperties": false,
+    "intelephense.diagnostics.undefinedVariables": false,
+    "intelephense.advanced.phpstan.enabled": true
 }

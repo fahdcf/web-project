@@ -6,8 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Notification extends Model
 {
-
- public function getNotifications(){
-    
- }
+    public function getNotifications() {}
 }

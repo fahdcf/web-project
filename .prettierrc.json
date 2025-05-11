@@ -1,0 +1,29 @@
+{
+    "printWidth": 120,
+    "tabWidth": 4,
+    "useTabs": false,
+    "singleQuote": true,
+    "bracketSameLine": true,
+    "phpVersion": "8.2",
+    "braceStyle": "psr-2",
+    "singleAttributePerLine": false,
+    "trailingCommaPHP": false,
+    "plugins": ["@prettier/plugin-php"],
+    "overrides": [
+      {
+        "files": "*.php",
+        "options": {
+          "parser": "php",
+          "phpLineBreakPreserve": false,
+          "phpBraceStyle": "psr-2"
+        }
+      },
+      {
+        "files": "*.blade.php",
+        "options": {
+          "parser": "html",
+          "htmlWhitespaceSensitivity": "ignore"
+        }
+      }
+    ]
+  }

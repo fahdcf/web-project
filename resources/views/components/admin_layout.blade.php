@@ -300,7 +300,7 @@ background-color: white;
 
      
         @php
-            $notifications = Auth::user()->notifications()->latest()->take(5)->get();
+            $notifications = optional(Auth::user()->notifications()->latest()->take(5)->get());
             $unreadCount = auth()->user()->unreadNotifications->count();
 
         @endphp

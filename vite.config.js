@@ -19,6 +19,15 @@ export default defineConfig({
                 'resources/js/demo/chart-pie-demo.js',
             ],
             refresh: true,
+
+            //for me using docker sail
+            server: {//allow container-based access, like this:
+                host: '0.0.0.0',
+                port: 5173,
+                hmr: {
+                    host: 'localhost',
+                },
+            },
         }),
     ],
 });

@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->integer('id', true);
             $table->text('description');
+            $table->boolean('isdone')->default(0);
+
             $table->dateTime('created_at')->nullable()->useCurrent();
             $table->integer('user_id')->nullable()->index('user_id');
             $table->dateTime('updated_at')->useCurrentOnUpdate()->nullable()->useCurrent();

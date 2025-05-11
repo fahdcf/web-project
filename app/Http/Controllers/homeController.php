@@ -2,44 +2,46 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Assignment;
 use App\Models\task;
-use App\Models\pending_user;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
-use App\Mail\newuserEmail;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\WelcomeEmail;
-use App\Http\Controllers\newuserController;
-
-use App\Http\Controllers\pendinguserController;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Http\Request;
-use PDO;
-use PDOException;
 class homeController extends Controller
 {
-    public function index(){
-        if(Auth::check()) {
-            if(Auth()->user()->role_column == 'admin') {
-    
-    
-                $studentCount=User::where('role_column','student')->count();
-                $professorCount=User::where('role_column','professor')->count();
-    
-                $tasks=task::where('user_id',auth()->user()->id)->latest()->take(5)->get();
-                return view('admin.admin_dashboard',['tasks'=>$tasks,'studentCount'=>$studentCount,'professorCount'=>$professorCount]);
+    public function index()
+    {
+        if (Auth::check()) {
+            /** @var \Illuminate\Contracts\Auth\Factory $auth */
+            if (auth()->user()->role_column == 'admin') {
+                $studentCount = User::where('role_column', 'student')->count();
+                $professorCounts = User::where('role_column', 'professor')->count();
+
+                $tasks = task::where('user_id', auth()->user()->id)
+                    ->latest()
+                    ->take(5)
+                    ->get();
+
+                return view('admin.admin_dashboard', [
+                    'tasks' => $tasks,
+                    'studentCount' => $studentCount,
+                    'professorCount' => $professorCounts
+                ]);
             }
-    
-            else{
+            // if coordinator
+            if (auth()->user()->isCoordonnateur()) {
+                return redirect()->route('coordonnateur.dashboard');
+            } 
+
+
+             // if professor
+             if (auth()->user()->isProfessor()) {
+                return redirect()->route('professor.dashboard');
+            } 
+            else {
                 return view('dashboard');
             }
-            
-        }
-        else{
+        } else {
             return redirect('login');
         }
     }

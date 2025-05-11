@@ -15,10 +15,10 @@ return new class extends Migration
             $table->integer('id', true);
             $table->string('name');
             $table->text('description')->nullable();
-            $table->integer('department_id')->index('department_id');
+            $table->integer('department_id')->index('department_id')->nullable();
             $table->timestamp('created_at')->nullable()->useCurrent();
             $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable()->useCurrent();
-            $table->integer('coordonnateur_id')->index('coordonnateur_id');
+            $table->integer('coordonnateur_id')->index('coordonnateur_id')->nullable();
         });
     }
 

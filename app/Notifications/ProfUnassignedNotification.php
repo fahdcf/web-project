@@ -10,16 +10,15 @@ class ProfUnassignedNotification extends Notification
     use Queueable;
 
     protected $departmentName;
-    protected $filiereName;
 
+    protected $filiereName;
 
     public function __construct($Name, $isdepartment, $isfiliere)
     {
-        if($isdepartment){
+        if ($isdepartment) {
 
             $this->departmentName = $Name;
-        }
-        else if($isfiliere){
+        } elseif ($isfiliere) {
 
             $this->filiereName = $Name;
 
@@ -33,21 +32,20 @@ class ProfUnassignedNotification extends Notification
 
     public function toDatabase($notifiable)
     {
-        if($this->departmentName){
+        if ($this->departmentName) {
 
             return [
                 'message' => "La departement '{$this->departmentName}' n'est attribué à aucun professeur.",
-                
+
                 'url' => route('departements.list'), // Replace with your desired route
-                
+
             ];
-        }
-        else if($this->filiereName){
+        } elseif ($this->filiereName) {
             return [
                 'message' => "Le filières '{$this->filiereName}' n'est attribué à aucun professeur.",
-                
+
                 'url' => route('filieres.list'), // Replace with your desired route
-                
+
             ];
 
         }

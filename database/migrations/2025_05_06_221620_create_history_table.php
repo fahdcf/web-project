@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('action');
             $table->string('target_table');
             $table->integer('target_id');
+
             $table->timestamp('created_at')->nullable()->useCurrent();
         });
     }

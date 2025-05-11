@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('email')->unique('email');
             $table->string('departement')->nullable();
             $table->string('password');
-            $table->enum('role_column', ['admin', 'professor', 'student', 'vacataire']);
+            // $table->enum('role_column', ['admin', 'professor', 'student','coordinator', 'vacataire']);
             $table->string('firstname');
             $table->string('lastname');
             $table->timestamp('created_at')->nullable()->useCurrent();
