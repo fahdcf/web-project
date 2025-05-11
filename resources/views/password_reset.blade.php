@@ -9,6 +9,7 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 
@@ -19,9 +20,9 @@
 
 
     </head>
- <body>
+    <body style="background-color:#4723d9;">
 
-  <div class="page-wrapper">
+      <div class="container-fluid my-4">
 
   
 
@@ -36,13 +37,21 @@
 
     @endphp
 
-    <div class="wrapper">
-        <div class="reset-container">
-            <div class="logo mb-5">AssignPro</div>
-            <h4>Consultez votre boîte de réception !</h4>
-            <p class="text-muted mb-4">
+<div class="row bg-white" style="max-width: 550px; margin: 0 auto; border-radius:35px;     box-shadow: 0px 3px 15px 4px #03022945;" >
+      
+  <div class="p-3 col-12 d-flex flex-column justify-content-center px-5">
+      <h4 class="mt-3">Consultez votre boîte de réception !</h4>
+
+            <p class="text-muted">
                 Nous avons envoyé un lien de réinitialisation du mot de passe à <strong>{{ $reset_email }}</strong>
             </p>
+      </div>
+
+      <div class=" col-12 d-flex flex-column justify-content-center p-0">
+        <img src="{{ asset('storage/images/receivecode.png') }}" class="img-fluid" style=" margin:0 auto" alt="Progress 1">
+      </div>
+
+      <div class="p-3 col-12 d-flex flex-column justify-content-center px-5">
 
             <form action="{{ url('/reset_password') }}" class="reset" method="POST">
                 @csrf
@@ -51,17 +60,17 @@
                 <div class="label">
                     <label for="entered_code" class="label">Code de verification</label>
                 </div>
-                <input type="number" class="form-control" placeholder="code de verification" required name="entered_code">
+                <input type="number" class="form-control mt-2" placeholder="code de verification" required name="entered_code" style="background-color:#edf0f5; border:none; padding: 11px; border-radius: 8px;">
                
                 @error('entered_code')
-                <p class="alert alert-danger p-1">{{ $message }}</p>
+                <p class="alert alert-danger mt-2 py-2">{{ $message }} </p>
             @enderror
 
-                <button type="submit" class="btn btn-primary w-100">Verifier</button>
+                <button type="submit" class="btn btn-primary w-100 mt-4" style="background-color: #4723d9; color: white; border-radius: 8px; padding: 11px;">Verifier</button>
             </form>
-            <div style="margin-top: 20px;">
-              Vous n'avez pas de compte ?
-              <a class="link" href="{{url('/signup')}}">S'inscrire</a>
+            <div style="margin-top: 20px;" class="w-100 text-center">
+              Tu nes pas recevoire un code ?
+              <a class="text-decoration-none" style="color: #4723d9; font-weight: 600;" href="{{url('/signup')}}">Renvoyer</a>
           </div> 
         </div>
     </div>
@@ -111,15 +120,23 @@
 
 
       
-    <div class="wrapper">
+<div class="row bg-white" style="max-width: 550px; margin: 0 auto; border-radius:35px;     box-shadow: 0px 3px 15px 4px #03022945;" >
       
-      <div class="reset-container">
-        <div class="logo mb-5">AssignPro</div>
-        <h4>Incapable de se connecter ?</h4>
-        <p class="text-muted mb-4">Saisissez votre adresse e-mail et nous vous envoyons un e-mail de réinitialisation de mot de passe.</p>
+  <div class="p-3 col-12 d-flex flex-column justify-content-center px-5">
+    
+        <h4 class="pt-2">Incapable de se connecter ?</h4>
+        <p class="text-muted ">Saisissez votre adresse e-mail et nous vous envoyons un e-mail de réinitialisation de mot de passe.</p>
       
           
-            <form action="{{url('/reset_password')}}" class="reset" method="POST">
+    </div>
+
+    <div class=" col-12 d-flex flex-column justify-content-center p-0">
+      <img src="{{ asset('storage/images/sendemail.png') }}" class="img-fluid" style=" margin:0 auto" alt="Progress 1">
+    </div>
+
+
+    <div class="p-3 col-12 d-flex flex-column justify-content-center px-5">
+      <form action="{{url('/reset_password')}}" class="reset" method="POST">
               @csrf
 
 
@@ -127,21 +144,21 @@
               <div class="label">
                 <label for="reset_email" class="label">Adresse e-mail</label>
                  </div>
-                            <input  type="email" class="form-control" placeholder="Votre adresse e-mail" required name="reset_email" value="{{old('reset_email')}}">
+                            <input  type="email" class="form-control mt-2" placeholder="Votre adresse e-mail" required name="reset_email" value="{{old('reset_email')}}" style="background-color:#edf0f5; border:none; padding: 11px; border-radius: 8px;">
                       
                             
                             @error('reset_email')
-                            <p class="alert alert-danger p-1">{{ $message }}</p>
-                        @enderror
+                            <p class="alert alert-danger mt-2 py-2">{{ $message }} </p>
+                            @enderror
  
-                            <button type="submit" class="btn btn-primary w-100">Continuer</button>
+                            <button type="submit" class="btn btn-primary w-100 mt-4" style="background-color: #4723d9; color: white; border-radius: 8px; padding: 11px;">Continuer</button>
 
                             
                           </form>
 
-                          <div style="margin-top: 20px;">
-                            Vous n'avez pas de compte ?
-                            <a class="link" href="{{url('/signup')}}">S'inscrire</a>
+                          <div style="margin-top: 20px;" class="w-100 text-center">
+                            Vous voulez ressayer ?
+                            <a class="text-decoration-none" style="color: #4723d9; font-weight: 600;" href="{{url('/login')}}">Se connecter</a>
                         </div> 
 
             
@@ -149,16 +166,7 @@
         </div>
         @endif
         
-        <footer class="container footer-bottom d-flex justify-content-between align-items-center">
-          <div>
-            © 2025 AssignPro, Inc. All Rights Reserved.
-          </div>
-         <div class="locale-options">
-           <span>🌍 Maroc</span>
-           <span id="lang-switch" style="cursor: pointer;">🌐 Français</span>
-          </div>
-        </div>
-      </footer>
+       
     </div>
       
 
@@ -166,66 +174,10 @@
   
   
   <style>
-      body {
-        font-family: 'Segoe UI', sans-serif;
-        background-color: #fff;
-      }
-  
-      .reset-container {
-          width: 100%;
-        max-width: 500px;
-        margin: 60px auto;
-        text-align: center;
-      
-      }
-  
-      .logo {
-        font-size: 28px;
-        font-weight: bold;
-        color: #0547a9;
-      }
-  
-  
-  
-      .form-control {
-        margin-bottom: 15px;
-      }
-  
-      .label{
-          text-align: start;
-          padding: 5px;
-          padding-left: 2px;
-          font-weight: 500;
-          color: #4e4e4e
-  
-      }
-      .btn-primary {
-        background-color: #0547a9;
-        border: none;
-      }
-  
-      .btn-primary:hover {
-          background-color: #053379;
-      }
-  
-      .footer-text {
-        margin-top: 20px;
-        font-size: 14px;
-      }
-  
-       .link {
-        color: #062c7d;
-        text-decoration: none;
-        margin: 0 5px;
-        font-weight: 500;
-      }
-      
-      .page-wrapper {
-        display: grid;
-        grid-template-rows: 1fr auto;
-        min-height: 100vh;
-        width: 100%;
-      }
+      body{
+    font-family: 'Montserrat', 'sans-serif';
+  }
+ 
       footer {
         text-align: center;
         margin-top: 60px;

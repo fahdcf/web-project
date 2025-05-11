@@ -1,6 +1,19 @@
-<x-layout>
+@php
+    $layout = 'layout'; // default layout
 
+    if (auth()->user()->role->isadmin) {
+        $layout = 'components.admin_layout';
+    } elseif (auth()->user()->role->ischef) {
+        $layout = 'components.chef_layout';
+    }
+    else{
+                $layout = 'components.layout';
 
+    }
+
+@endphp
+
+@component($layout)
     
     <style>
     
@@ -269,8 +282,14 @@
     
     
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="rowsPerPage" class="form-label">charge horaire</label>
-                        <p class="form-control">{{$user->user_details->hours}}</p>
+                        <label for="rowsPerPage" class="form-label">charge horaire minimale</label>
+                        <p class="form-control">{{$user->user_details->min_hours}}</p>
+                        
+                    </div>
+
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="rowsPerPage" class="form-label">charge horaire maximale</label>
+                        <p class="form-control">{{$user->user_details->max_hours}}</p>
                         
                     </div>
             </div>
@@ -427,4 +446,4 @@
     
     
     
-</x-layout>
+@endcomponent

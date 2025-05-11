@@ -47,7 +47,7 @@ class User extends Authenticatable
 
     public function role()
     {
-        return $this->hasOne(Role::class, foreignKey: 'user_id');
+        return $this->hasOne(Role::class, 'user_id');
     }
 
     public function user_details()

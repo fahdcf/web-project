@@ -302,8 +302,13 @@
             
     
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="rowsPerPage" class="form-label">charge horaire</label>
-                        <input type="number" id="rowsPerPage" name="hours" class="form-control" value="{{optional($user->user_details)->hours}}">
+                        <label for="rowsPerPage" class="form-label">charge horaire minimale</label>
+                        <input type="number" id="rowsPerPage" name="min_hours" class="form-control" value="{{optional($user->user_details)->min_hours}}">
+                        
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="rowsPerPage" class="form-label">charge horaire maximale</label>
+                        <input type="number" id="rowsPerPage" name="max_hours" class="form-control" value="{{optional($user->user_details)->max_hours}}">
                         
                     </div>
             </div>

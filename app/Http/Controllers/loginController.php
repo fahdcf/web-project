@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\user_log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -17,85 +18,76 @@ class loginController extends Controller
         return view('login');
     }
 
-    public function login()
-    {
+    
+    public function login(){
         // Validate input
-        $validator = Validator::make(request()->all(), [
-            'login_email' => 'required|email',
-            'login_pwd' => 'required',
-        ]);
+   $validator = Validator::make(request()->all(), [
+       'login_email' => 'required|email',
+       'login_pwd' => 'required',
+  ]);
 
-        // If validation fails, redirect back with errors and input
-        if ($validator->fails()) {
-            return Redirect::back()
-                ->withErrors($validator) // Send validation errors to session
-                ->withInput();
-        }
 
-        // Get validated data
-        $validated = $validator->validated();
 
-        try {
-            $pdo = DB::connection()->getPdo();
+   // If validation fails, redirect back with errors and input
+   if ($validator->fails()) {
+       return Redirect::back()
+           ->withErrors($validator) // Send validation errors to session
+           ->withInput(); 
+   }
 
-            $query = 'SELECT * FROM pending_users WHERE email=:email;';
-            $stmt = $pdo->prepare($query);
-            $stmt->bindParam(':email', $validated['login_email']);
-            $stmt->execute();
-            $pendinguser = $stmt->fetch(PDO::FETCH_ASSOC);
+   // Get validated data
+   $validated = $validator->validated();
+   
+  
+   $pdo = DB::connection()->getPdo();
 
-            if ($pendinguser) {
-                if (password_verify($validated['login_pwd'], $pendinguser['pwd'])) {
+       
+       
+           // If the user doesn't exist in the pending_users table, check the users table
+           $query = 'SELECT * FROM users WHERE email=:email;';
+           $stmt = $pdo->prepare($query);
+           $stmt->bindParam(':email', $validated['login_email']);
+           $stmt->execute();
+           $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                    return redirect()->route('pendinguser', ['user' => $pendinguser]);
+           // Check if the user exists in the users table
+           if ($user) {
+               // Verify the password for the user
+               if (password_verify($validated['login_pwd'], $user['password'])) {
+                   
+                   auth::loginUsingId($user['id']);
+                   $ip = request()->ip() === '::1' ? '127.0.0.1' : request()->ip();
 
-                    // return view('pendinguser',['user'=>$pendinguser]) ;
-                } else {
-                    return Redirect::to('/login?failed')
-                        ->withErrors(['login_pwd' => 'Incorrect password.'])
-                        ->withInput(); // Return error for incorrect password
-                }
-            } else {
-                // If the user doesn't exist in the pending_users table, check the users table
-                $query = 'SELECT * FROM users WHERE email=:email;';
-                $stmt = $pdo->prepare($query);
-                $stmt->bindParam(':email', $validated['login_email']);
-                $stmt->execute();
-                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                   user_log::create(
+                       [
+                           'user_id'=> $user['id'],
+                           'action'=> "s'est connecté",
+                           'ip_addres'=> $ip, 
+                           'user_agent' => request()->userAgent(),
+        
+                       ]
+                       );
+                   
+         
+                       return Redirect::to('/')
+                       ->with('success', 'Login successful!');
+                  
+               } else {
+                   return Redirect::to('/login?failed')
+                       ->withErrors(['login_pwd' => 'Incorrect password.'])
+                       ->withInput(); // Return error for incorrect password
+               }
+           } else {
+               return Redirect::to('/login?failed')
+                   ->withErrors(['login_email' => 'Account not found.'])
+                   ->withInput(); // Return error for non-existent email
+           }
+       }
 
-                // Check if the user exists in the users table
-                if ($user) {
-                    // Verify the password for the user
-                    if (password_verify($validated['login_pwd'], $user['password'])) {
-
-                        auth::loginUsingId($user['id']);
-
-                        return Redirect::to('/')
-                            ->with('success', 'Login successful!');
-
-                    } else {
-                        return Redirect::to('/login?failed')
-                            ->withErrors(['login_pwd' => 'Incorrect password.'])
-                            ->withInput(); // Return error for incorrect password
-                    }
-                } else {
-                    return Redirect::to('/login?failed')
-                        ->withErrors(['login_email' => 'Account not found.'])
-                        ->withInput(); // Return error for non-existent email
-                }
-            }
-
-        } catch (PDOException $e) {
-            // For database errors, redirect back with a generic error message
-            return Redirect::to('/login?failedbadly')
-                ->withErrors(['error' => 'Login failed. Please try again.'])
-                ->withInput();
-        }
-    }
 
     public function exit()
     {
-        auth()->logout();
+        auth()->user()->logout();
 
         return view('login');
     }

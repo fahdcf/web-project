@@ -1,30 +1,56 @@
 <?php
+use App\Http\Controllers\adminsControllers\adminProfileController;
+use App\Http\Controllers\adminsControllers\adminsController;
+use App\Http\Controllers\adminsControllers\departementController;
+use App\Http\Controllers\adminsControllers\etudiantController;
+use App\Http\Controllers\adminsControllers\filiereController;
+use App\Http\Controllers\adminsControllers\pendinguserController;
+use App\Http\Controllers\adminsControllers\professorsController;
 
-use App\Http\Controllers\adminProfileController;
-use App\Http\Controllers\adminsController;
+use App\Http\Controllers\adminsControllers\profileController;
+
+use App\Http\Controllers\adminsControllers\resetPasswordController;
+use App\Http\Controllers\adminsControllers\signupController;
+use App\Http\Controllers\adminsControllers\tasksController;
+use App\Http\Controllers\chef_departementControllers\cheffiliereController;
+use App\Http\Controllers\chef_departementControllers\ChefProfessorController;
+use App\Http\Controllers\chef_departementControllers\requestsController;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\CoordonnateurController;
-use App\Http\Controllers\departementController;
-use App\Http\Controllers\etudiantController;
-use App\Http\Controllers\filiereController;
 use App\Http\Controllers\homeController;
 use App\Http\Controllers\loginController;
 use App\Http\Controllers\ModuleController;
-use App\Http\Controllers\pendinguserController;
-use App\Http\Controllers\professorsController;
-use App\Http\Controllers\profileController;
-use App\Http\Controllers\resetPasswordController;
-use App\Http\Controllers\signupController;
-use App\Http\Controllers\tasksController;
+use App\Http\Controllers\newuserController;
+use App\Http\Controllers\ProfessorController;
+use App\Mail\newuserEmail;
+use App\Mail\resetPasswordEmail;
+use App\Mail\WelcomeEmail;
+
 use App\Models\Departement;
-use App\Models\filiere;
 use App\Models\Filiere as ModelsFiliere;
+use App\Models\filiere;
 use App\Models\pending_user;
 use App\Models\User;
+use App\Models\user_detail;
+use App\Notifications\ProfUnassignedNotification;
+use function PHPUnit\Framework\returnArgument;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+//FOR CHEF DEPARTEMENT
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Validator;
 
-///////////////////////////////////////////////
-use App\Http\Controllers\ProfessorController;
+
+
+
+
+Route::get('/', [homeController::class,'index']);
 
 //////coordonnateur////////////////////////////////////////
 Route::prefix('coordonnateur')->group(function () {
@@ -106,9 +132,9 @@ Route::post('/login', [loginController::class, 'login']);
 
 Route::delete('/login', [loginController::class, 'exit']);
 
-Route::get('/pending_user', [PendingUserController::class, 'show'])->name('pendinguser');
+// Route::get('/pending_user', [PendingUserController::class, 'show'])->name('pendinguser');
 
-Route::get('/reset_password', [resetPasswordController::class, 'idnex'])->name('reset');
+Route::get("/reset_password",[resetPasswordController::class,'index'])->name('reset');
 
 Route::post('/reset_password', [resetPasswordController::class, 'reset']);
 
@@ -183,6 +209,7 @@ Route::post('/etudiants/modifier/{id}', [etudiantController::class, 'modify']);
 Route::delete('etudiants/{id}', [etudiantController::class, 'delete']);
 
 Route::post('profile/edit/{id}', [adminProfileController::class, 'edit'])->name('profile.edit');
+Route::post('student-profile/edit/{id}', [adminProfileController::class, 'editEtudiant'])->name('student-profile.edit');
 
 Route::get('profile', [profileController::class, 'index']);
 
@@ -241,3 +268,19 @@ Route::get('test', function () {
         'departements' => $departements
     ]);
 });
+
+Route::post('mark-task-asdone/{id}',[tasksController::class,'markAsDone']);
+Route::post('delete-task/{id}',[tasksController::class,'delete']);
+Route::post('mark-task-aspending/{id}',[tasksController::class,'markAsPending']);
+//for others
+ Route::get('etudiant_profile/{id}',[etudiantController::class,'profile'])  ; 
+ 
+ //for admin
+ Route::get( 'etudiant-profile/{id}',[adminProfileController::class,'studentprofile']); 
+
+ //for chef departments
+ Route::get('chef/demandes',[requestsController::class,'index']); Route::get('chef/demandes',[requestsController::class,'index']);
+ 
+ Route::get('chef/professeurs',[chefProfessorController::class,'index']);
+  Route::get('chef/filieres',[cheffiliereController::class,'index']);
+Route::PATCH('chef/filieres/modifier/{id}',[cheffiliereController::class,'modify']);

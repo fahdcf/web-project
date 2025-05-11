@@ -286,12 +286,21 @@
                     <div class="col-md-6 col-lg-4 mb-3">
                         <label for="email" class="form-label">Email</label>
                                 <input type="text" id="email" name="email" class="form-control" value="{{auth()->user()->email}}">
+                                @if ($errors->has('email'))
+                                <small class="text-danger pt-1">{{ $errors->first('email') }}</small>
+                              @endif
                             </div>
+
             
     
+                             <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="rowsPerPage" class="form-label">charge horaire minimale</label>
+                        <input type="number" id="rowsPerPage" name="min_hours" class="form-control" value="{{optional(auth()->user()->user_details)->min_hours}}">
+                        
+                    </div>
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="rowsPerPage" class="form-label">charge horaire</label>
-                        <input type="number" id="rowsPerPage" name="hours" class="form-control" value="{{auth()->user()->user_details->hours}}">
+                        <label for="rowsPerPage" class="form-label">charge horaire maximale</label>
+                        <input type="number" id="rowsPerPage" name="max_hours" class="form-control" value="{{optional(auth()->user()->user_details)->max_hours}}">
                         
                     </div>
             </div>

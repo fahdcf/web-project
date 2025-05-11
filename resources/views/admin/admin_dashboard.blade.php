@@ -132,6 +132,8 @@ width: 100%;
 
   .numbers-card{
     border-radius:15px;
+    box-shadow: 0px 3px 15px 1px #3838381d;
+
   }
   .numbers-card img{
     height: 80px;
@@ -222,11 +224,104 @@ width: 100%;
     }
       
     }
+
+    .shart-container{
+      box-shadow: 0px 3px 15px 1px #3838381d;
+      border-radius: 15px;
+
+    }
+
+    .history{
+  padding: 7px;
+   border-radius: 5px;
+   font-size: 15px;
+   height: auto;
+   border-top-left-radius: 15px;
+   border-top-right-radius: 15px;
+   box-shadow: none;
+}
+
+    .history-header{
+  padding: 10px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+
+}
+
+
+
+.history-item{
+  border-bottom:1px solid #e8e8e8d3;
+  color:#252525;
+}
+.history-item button{
+  border: none;
+  background: none;
+
+}
+
+
+.history .history-desc{
+  text-wrap: wrap;
+
+}
+.history .history-time{
+  font-size: 12px;
+  color:#8a8a8a; 
+
+}
+
+
+
+
+.logs{
+  padding: 7px;
+   border-radius: 5px;
+   font-size: 15px;
+   height: auto;
+   border-top-left-radius: 15px;
+   border-top-right-radius: 15px;
+   box-shadow: none;
+}
+
+.logs-header{
+  padding: 10px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+
+}
+
+
+
+.logs-item{
+  border-bottom:1px solid #e8e8e8d3;
+  color:#252525;
+}
+.logs-item button{
+  border: none;
+  background: none;
+
+}
+
+
+.logs .logs-desc{
+  text-wrap: wrap;
+
+}
+.logs .logs-time{
+  font-size: 12px;
+  color:#8a8a8a; 
+
+}
+
+
   </style>
 
 
 
-    <div class="container-fluid p-0 pt-5 d-flex " >
+    <div class="container-fluid p-0 pt-5 d-flex flex-column " >
+
+   
 
       <div class="page-wrapper w-100 row m-0" >
 
@@ -255,7 +350,7 @@ width: 100%;
 
           <div class="d-flex flex-column justify-content-start align-items-start">
             <p class="title">Etudiants</p>
-            <p class="num">Total: <strong>312</strong></p>
+            <p class="num">Total: <strong>{{$studentCount}}</strong></p>
             <button class="seemore">> Voir Plus</button>
 
           </div>
@@ -321,32 +416,181 @@ width: 100%;
        </div>
 
        <div class="row m-0 mt-3">
-
-        <!-- Connexions Chart -->
-        <div class="col-12 col-md-6 mb-4  p-2">
-          <div class="p-3 bg-white " style="height: 350px;">
-
-            <h5 class="text-center">Nombre de connexions par jour (semaine)</h5>
-            <canvas id="loginChart" style="width: 100%; height: auto;"></canvas>
+            <!-- Doughnut Chart -->
+            <div class="col-12 col-lg-6 mb-4 p-2">
+              <div class=" shart-container p-3 bg-white d-flex flex-column justify-content-start align-items-center" style="height: 350px;">
+                
+                <h6 class="pt-1 pb-4 m-0 text-center" style="color: #252525">Répartition des Etudiants</h6>
+                <canvas id="genderChart" style="width: 90%; max-height: 250px;"></canvas>
+              </div>
+            </div>
+      
+   
+        <!-- Bar Chart -->
+        <div class="col-12 col-lg-6 mb-4 p-2">
+          <div class="shart-container p-3 bg-white d-flex flex-column justify-content-start align-items-center" style="height: 350px;">
+            <h6 class="pt-1 pb-4  text-center" style="color: #252525">Nombre de connexions par jour</h6>
+            <canvas id="loginChart" style="width: 100%; height: 100%;"></canvas>
           </div>
         </div>
-    
-        <!-- Répartition Filles / Garçons -->
-        <div class="col-12 col-md-6 mb-4  p-2">
-          <div class="p-3 bg-white " style="height: 350px;">
+      </div>
+      <div class="">
+        <div class="history p-0 " style="background-color:white ">
 
-          <h5 class="text-center">Répartition des élèves : Filles vs Garçons</h5>
-          <canvas id="genderChart" style="width: 100%; height: auto;"></canvas>
-        </div>
-        </div>
+          <div style=" border:none; background-color:#4723d9; " class="history-header d-flex justify-content-between align-items-center ">
+              <p style="color: #f1eded; font-size: 15px; font-weight: 600; margin:0">History des actions:</p>
+
+          </div>
+
+          <div class="history-content px-3 px-md-4 pt-0 ">
+
+
     
+
+            @foreach ($adminsHistory as $History)
+            <div class="history-item mt-3 d-flex justify-content-between align-items-center pb-3">
+            <div class="d-flex gap-3 align-items-center">
+
+              @switch($History['action_type'])
+
+                @case('create')
+                
+                <i style="color: #21b524" class="bi bi-plus-circle-fill"></i>
+                  @break
+              
+                  @case('delete')
+                
+                  <i style="color: #ee5951" class="bi bi-trash3-fill"></i>
+                    @break
+
+                    @case('update')
+                
+                    <i style="color:#5e3de3" class="bi bi-pencil-square"></i>
+                      @break
+
+                @default
+                <i style="color:#ff914d" class="bi bi-check-circle-fill"> </i>
+                  
+              @endswitch
+              
+              
+              
+
+              <div>
+
+                <p class="history-desc m-0"> {{ $History['description']}}</p>
+                <p class="history-time m-0"> {{$History->created_at->diffForHumans()}}</p>
+                
+              </div>
+
+              </div>
+
+              <div class="dropdown">
+
+                <button data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="Dropdown" data-bs-display="static" style="width: 250px">
+                
+                 <li >
+                    <p class="m-0 py-1 pl-3"> Date : <strong>{{$History->created_at}}</strong></p>                   
+                  </li>
+                  <li><hr class="dropdown-divider"></li>
+                  
+                   <li>
+                    <p class="m-0 py-1 pl-3"> Admin : <strong>{{$History->user->firstname}} {{$History->user->lastname}}</strong></p>                   
+                  </li>
+                  <li><hr class="dropdown-divider"></li>
+
+                    <li>
+                    <p class="m-0 py-1 pl-3"> Table : <strong>{{$History->target_table}}</strong></p>                   
+                  </li>
+                  
+                 
+              </ul>
+
+
+
+            </div>
+
+            </div>
+            @endforeach
+
+            <a href="#" class="text-center"><p class="pt-2 m-0">Voir tous</p></a>
+            
+          </div>
+        </div>
+
       </div>
 
       </section>
 
       <section class="side-section col-12 col-md-4 col-lg-3  p-0 pt-4 p-md-0">
    
-     <div class="tasks p-0 " style="background-color:white ">
+        
+        <div class="">
+          <div class="logs p-0 " style="background-color:white ">
+  
+            <div style=" border:none; background-color:#4723d9; " class="logs-header d-flex justify-content-between align-items-center ">
+                <p style="color: #f1eded; font-size: 15px; font-weight: 600; margin:0">History des Connexions:</p>
+  
+            </div>
+  
+            <div class="logs-content p-3 p-md-4 pt-0">
+  
+  
+      
+  
+              @foreach ($users_logs as $user_log)
+              <div class="logs-item mt-3 d-flex align-items-center pb-3">
+              <div class="d-flex gap-3 align-items-center">
+                 <a href="{{url('profile/' .$user_log->user->id)}}">      
+                @if ($user_log->user->user_details)
+                @if ($user_log->user->user_details->profile_img!=null)
+                
+                
+                <img style="height: 40px;width: 40px;object-fit:cover;border-radius:50%; background-color: #c7c1e1;" src="{{asset('storage/' . $user_log->user->user_details->profile_img)}}">
+                @else
+                <img style="height: 40px;width: 40px;object-fit:cover;border-radius:50%;" src="{{asset('storage/images/default_profile_img.png')}}">
+                
+                @endif
+                
+                
+                @else
+                <img style="width: 35px; border-radius:50%;" src="{{asset('storage/images/default_profile_img.png')}}">
+                
+                @endif
+                </a> 
+  
+                <div>
+  
+                    <a href="{{url('profile/' .$user_log->user->id)}}" class="text-decoration-none">      
+                  <p class="logs-desc m-0"> <strong style="color: #252525">{{$user_log->user->firstname}} {{$user_log->user->lastname}}</strong> </a> {{ $user_log['action']}}</p>
+                 
+                  <p class="logs-time m-0"> {{$user_log->created_at->diffForHumans()}}</p>
+                  
+                </div>
+  
+                </div>
+  
+                
+  
+              </div>
+              @endforeach
+  
+              <a href="#" class="text-center"><p class="pt-2 m-0">Voir tous</p></a>
+              
+            </div>
+          </div>
+  
+        </div>
+
+
+
+
+
+
+     <div class="tasks p-0 mt-4" style="background-color:white ">
 
                 <div style=" border:none; background-color:#4723d9; " class="tasks-header d-flex justify-content-between align-items-center ">
                     <p style="color: #f1eded; font-size: 15px; font-weight: 600; margin:0">Your tasks:</p>
@@ -384,9 +628,55 @@ width: 100%;
 
                     </div>
 
-                    <div>
-                      <button><i class="bi bi-three-dots-vertical"></i>
-                    </button>
+                    <div class="dropdown">
+
+                      <button data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i>
+                      </button>
+
+                      <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="Dropdown" data-bs-display="static">
+                      
+                       
+                        @if ($task->isdone)
+                        <li>
+
+                          <form action="{{url("mark-task-aspending/". $task->id)}}" method="post">
+                            @csrf
+
+                            <button type="submit" class="dropdown-item">Marquer en attente</button>
+                          </form>
+
+                        </li>
+                          
+                        @else
+                        <li>
+
+                          <form action="{{url("mark-task-asdone/". $task->id)}}" method="post">
+                            @csrf
+
+                            <button type="submit" class="dropdown-item">Marquer comme fait</button>
+                          </form>
+
+                        </li>
+                        @endif
+                 
+                        <li><hr class="dropdown-divider"></li>
+                       
+
+                        <li>
+
+                          <form action="{{url("delete-task/". $task->id)}}" method="post">
+                            @csrf
+
+                            <button type="submit" class="dropdown-item">Supprimer</button>
+                          </form>
+
+                        </li>
+                        
+                       
+                    </ul>
+
+
+
                   </div>
 
                   </div>
@@ -397,82 +687,119 @@ width: 100%;
                 </div>
               </div>
 
+
+
       </section>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
-  
-    const ctx = document.getElementById('genderChart').getContext('2d');
-    const genderChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Filles', 'Garçons'],
-        datasets: [{
-          data: [55, 45], // ← change these numbers to match your data
-          backgroundColor: [
-            '#8b76e2', // rose pour filles
-            '#4723d9'  // bleu pour garçons
-          ],
-          borderColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)'
-          ],
-          borderWidth: 0
-        }]
-      },
-      options: {
-        plugins: {
-          tooltip: {
-            callbacks: {
-              label: function(context) {
-                const label = context.label || '';
-                const value = context.parsed;
-                const total = context.chart._metasets[0].total;
-                const percentage = ((value / total) * 100).toFixed(1);
-                return `${label}: ${value} (${percentage}%)`;
-              }
+
+function getShadedColors(data) {
+  const max = Math.max(...data);
+  const min = Math.min(...data);
+  return data.map(value => {
+    // Scale darkness from 20% (dark) to 70% (light)
+    const lightness = 70 - ((value - min) / (max - min)) * 50;
+    return `hsl(255, 100%, ${lightness}%)`; // Purple hue
+  });
+}
+
+  // Doughnut Chart
+  const genderCtx = document.getElementById('genderChart').getContext('2d');
+  new Chart(genderCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Filles', 'Garçons'],
+      datasets: [{
+        data: [55, 45],
+        backgroundColor: ['#a48de8', '#4723d9'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      cutout: '60%',
+      plugins: {
+        legend: {
+          position: 'bottom',
+      labels: {
+        usePointStyle: true,
+        pointStyle: 'circle',
+        boxWidth: 10,   // smaller size
+        padding: 15,
+      }
+    },
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              const label = context.label || '';
+              const value = context.parsed;
+              const total = context.dataset.data.reduce((a, b) => a + b, 0);
+              const percentage = ((value / total) * 100).toFixed(1);
+              return `${label}: ${value} (${percentage}%)`;
             }
           }
         }
       }
-    });
-  const ctx2 = document.getElementById('loginChart').getContext('2d');
-  const loginChart = new Chart(ctx2, {
-    type: 'bar',
+    }
+  });
+
+    const values = @json($loginCounts);
+    console.log(values);
+
+  const loginCtx = document.getElementById('loginChart').getContext('2d');
+  new Chart(loginCtx, {
+    type: 'line',
     data: {
       labels: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
       datasets: [{
         label: 'Nombre de connexions',
-        data: [120, 150, 90, 180, 200, 130, 80], // Replace with your real data
-        backgroundColor: 'rgba(54, 162, 235, 0.7)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1
+        data: values,
+        fill: true,
+        backgroundColor: 'rgba(71,35,217, 0.1)',
+        borderColor: '#4723d9',
+        pointBackgroundColor: 'rgba(71,35,170, 1)',
+        pointBorderColor: '#fff',
+        tension: 0.4, // smooth curve
       }]
     },
     options: {
+      responsive: true,
       scales: {
         y: {
           beginAtZero: true,
+          ticks: {
+            stepSize: 5
+          },
           title: {
             display: true,
             text: 'Connexions'
+          },
+          grid: {
+            display: true,
+            drawBorder: false,
+            color: 'rgba(0,0,0,0.06)'
           }
         },
         x: {
           title: {
             display: true,
             text: 'Jours de la semaine'
+          },
+          grid: {
+            display: false
           }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
         }
       }
     }
   });
-</script>
 
-    <script>
 
       function addtask(){
         const taskaddButton=document.getElementById('task-add-button');

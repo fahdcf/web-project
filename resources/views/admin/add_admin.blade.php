@@ -114,32 +114,47 @@
                             <!-- professeur firstName -->
                             <div class="row mt-3">
 
-                              <div class="col-md-6  mb-4">
+                              <div class="col-md-6  mt-4">
                                 <label style="color:#515151; font-weight: 700;" for="firstname" class="form-label fw-bold">Prenom</label>
                                 <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Prenom..">
                             </div>
 
+                            @if ($errors->has('firstname'))
+                            <small class="text-danger pt-1">{{ $errors->first('firstname') }}</small>
+                          @endif
+
                               <!-- professeur lastName -->
-                              <div class="col-md-6  mb-4">
+                              <div class="col-md-6  mt-4">
                                 <label style="color:#515151; font-weight: 700;" for="lastname" class="form-label fw-bold">Nom</label>
                                 <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Nom..">
                             </div>
 
-                            <div class="col-md-6  mb-4">
+                            @if ($errors->has('lastname'))
+                            <small class="text-danger pt-1">{{ $errors->first('lastname') }}</small>
+                          @endif
+
+                            <div class="col-md-6  mt-4">
                               <label style="color:#515151; font-weight: 700;" for="email" class="form-label fw-bold">Email</label>
                               <input type="text" class="form-control" id="eamil" name="email" placeholder="Email..">
                           </div>
 
+                          @if ($errors->has('email'))
+                          <small class="text-danger pt-1">{{ $errors->first('email') }}</small>
+                        @endif
+
                             <!-- admin modepass -->
-                            <div class="col-md-6  mb-4">
+                            <div class="col-md-6  mt-4">
                               <label style="color:#515151; font-weight: 700;" for="password" class="form-label fw-bold">Mot de passe</label>
                                <input type="text" class="form-control" id="password" name="password" placeholder="Mot de passe">
                           </div>
 
+                          @if ($errors->has('password'))
+                          <small class="text-danger pt-1">{{ $errors->first('password') }}</small>
+                        @endif
 
                            <!-- admin departement -->
                         
-                        <div class="col-md-6  mb-4">
+                        <div class="col-md-6  mt-4">
                           <label style="color:#515151; font-weight: 700;" for="Departement" class="form-label fw-bold">Status</label>
                           <select class="form-select" id="Depatement" name="departement">
                             <option value="">Sélectionner une Departement</option>
@@ -149,19 +164,34 @@
                         </select>
                         </div>
 
-  
+                        @if ($errors->has('departement'))
+                        <small class="text-danger pt-1">{{ $errors->first('departement') }}</small>
+                      @endif
 
-                           <!-- admin hours -->
-                           <div class="col-md-6  mb-4">
-                            <label style="color:#515151; font-weight: 700;" for="hours" class="form-label fw-bold">Charge horaire</label>
-                             <input type="number" class="form-control" id="hours" name="hours" placeholder="charge horaire">
+                               <!-- professeur min_hours -->
+                           <div class="col-md-6  mt-4">
+                            <label style="color:#515151; font-weight: 700;" for="min_hours" class="form-label fw-bold">Charge horaire minimale</label>
+                             <input type="number" class="form-control" id="min_hours" name="min_hours" placeholder="charge horaire minimale">
                         </div>
 
+                        @if ($errors->has('min_hours'))
+                        <small class="text-danger pt-1">{{ $errors->first('min_hours') }}</small>
+                      @endif
+
+                                       <!-- professeur max_hours -->
+                           <div class="col-md-6  mt-4">
+                            <label style="color:#515151; font-weight: 700;" for="max_hours" class="form-label fw-bold">Charge horaire maximale</label>
+                             <input type="number" class="form-control" id="max_hours" name="max_hours" placeholder="charge horaire maximale">
+                        </div>
+
+                        @if ($errors->has('max_hours'))
+                        <small class="text-danger pt-1">{{ $errors->first('max_hours') }}</small>
+                      @endif
                           
                         
                         <!-- admin status -->
                         
-                        <div class="col-md-6  mb-4">
+                        <div class="col-md-6  mt-4">
                           <label style="color:#515151; font-weight: 700;" for="status" class="form-label fw-bold">Status</label>
                           <select type="text" class="form-select" id="status" name="status" >
                             <option value="active">Active</option>
@@ -173,7 +203,7 @@
 
                         
                         <!-- admin profile -->
-                       <div class="col-md-6  mb-4">
+                       <div class="col-md-6  mt-4">
                            <label style="color:#515151; font-weight: 700;" for="profile_img" class="form-label fw-bold">Photo de profile</label>
                            <input type="file" class="form-control " id="profile_img" name="profile_img">
                          </div>
@@ -183,7 +213,7 @@
 
                    
 
-                          <div class="py-2 pb-4">
+                          <div class="py-2 pb-4 mt-4">
                             <div class="accordion rounded" id="accordionFilters">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
