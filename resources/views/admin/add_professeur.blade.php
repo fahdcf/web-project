@@ -65,14 +65,24 @@
 
   
 
-                           <!-- professeur hours -->
+                           <!-- professeur min_hours -->
                            <div class="col-md-6  mt-4">
-                            <label style="color:#515151; font-weight: 700;" for="hours" class="form-label fw-bold">Charge horaire</label>
-                             <input type="number" class="form-control" id="hours" name="hours" placeholder="charge horaire">
+                            <label style="color:#515151; font-weight: 700;" for="min_hours" class="form-label fw-bold">Charge horaire minimale</label>
+                             <input type="number" class="form-control" id="min_hours" name="min_hours" placeholder="charge horaire minimale">
                         </div>
 
-                        @if ($errors->has('hours'))
-                        <small class="text-danger pt-1">{{ $errors->first('hours') }}</small>
+                        @if ($errors->has('min_hours'))
+                        <small class="text-danger pt-1">{{ $errors->first('min_hours') }}</small>
+                      @endif
+
+                                       <!-- professeur max_hours -->
+                           <div class="col-md-6  mt-4">
+                            <label style="color:#515151; font-weight: 700;" for="max_hours" class="form-label fw-bold">Charge horaire maximale</label>
+                             <input type="number" class="form-control" id="max_hours" name="max_hours" placeholder="charge horaire maximale">
+                        </div>
+
+                        @if ($errors->has('max_hours'))
+                        <small class="text-danger pt-1">{{ $errors->first('max_hours') }}</small>
                       @endif
                         
                         <!-- professeur status -->

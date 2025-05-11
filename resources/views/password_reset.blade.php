@@ -22,7 +22,7 @@
     </head>
     <body style="background-color:#4723d9;">
 
-      <div class="container-fluid" style="margin-top:100px" >
+      <div class="container-fluid my-4">
 
   
 
@@ -47,8 +47,8 @@
             </p>
       </div>
 
-      <div class=" col-12 d-flex flex-column justify-content-center px-5">
-        <img src="{{ asset('storage/images/dashboarlogin.gif') }}" class="img-fluid" style="max-width: 60%; margin:0 auto" alt="Progress 1">
+      <div class=" col-12 d-flex flex-column justify-content-center p-0">
+        <img src="{{ asset('storage/images/receivecode.png') }}" class="img-fluid" style=" margin:0 auto" alt="Progress 1">
       </div>
 
       <div class="p-3 col-12 d-flex flex-column justify-content-center px-5">
@@ -124,14 +124,14 @@
       
   <div class="p-3 col-12 d-flex flex-column justify-content-center px-5">
     
-        <h4>Incapable de se connecter ?</h4>
+        <h4 class="pt-2">Incapable de se connecter ?</h4>
         <p class="text-muted ">Saisissez votre adresse e-mail et nous vous envoyons un e-mail de réinitialisation de mot de passe.</p>
       
           
     </div>
 
-    <div class=" col-12 d-flex flex-column justify-content-center px-5">
-      <img src="{{ asset('storage/images/dashboarlogin.gif') }}" class="img-fluid" style="max-width: 60%; margin:0 auto" alt="Progress 1">
+    <div class=" col-12 d-flex flex-column justify-content-center p-0">
+      <img src="{{ asset('storage/images/sendemail.png') }}" class="img-fluid" style=" margin:0 auto" alt="Progress 1">
     </div>
 
 
@@ -157,8 +157,8 @@
                           </form>
 
                           <div style="margin-top: 20px;" class="w-100 text-center">
-                            Vous n'avez pas de compte ?
-                            <a class="text-decoration-none" style="color: #4723d9; font-weight: 600;" href="{{url('/signup')}}">S'inscrire</a>
+                            Vous voulez ressayer ?
+                            <a class="text-decoration-none" style="color: #4723d9; font-weight: 600;" href="{{url('/login')}}">Se connecter</a>
                         </div> 
 
             
@@ -166,16 +166,7 @@
         </div>
         @endif
         
-        <footer class="container footer-bottom d-flex justify-content-between align-items-center text-light">
-          <div>
-            © 2025 AssignPro, Inc. All Rights Reserved.
-          </div>
-         <div class="locale-options">
-           <span>🌍 Maroc</span>
-           <span id="lang-switch" style="cursor: pointer;">🌐 Français</span>
-          </div>
        
-      </footer>
     </div>
       
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\admin_action;
+use App\Models\prof_request;
 use App\Models\student;
 use App\Models\User;
 use App\Models\task;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request;
+use Illuminate\View\ViewServiceProvider;
 use PDO;
 use PDOException;
 use Carbon\Carbon;
@@ -61,6 +63,13 @@ foreach ($days as $day) {
                
                
                 return view('admin.admin_dashboard',['tasks'=>$tasks,'studentCount'=>$studentCount,'professorCount'=>$professorCount,'adminsHistory'=>$adminsHistory,'users_logs' =>$users_logs, 'loginCounts' => $loginCounts]);
+            }
+
+            else if(Auth()->user()->role->ischef){
+              
+                return View('chef_departement.chef_dashboard');
+
+
             }
     
             else{

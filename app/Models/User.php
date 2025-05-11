@@ -55,6 +55,22 @@ class User extends Authenticatable
 {
     return $this->hasOne(Role::class, 'user_id');
 }
+
+  public function getmanageAttribute()
+    {
+        if($this->role->ischef) {
+
+            return Departement::where('user_id', $this->id)->first();
+        }
+            
+        else if($this->role->iscoordonnateur){
+         return filiere::where('coordonnateur_id', $this->id)->first();
+
+
+        }   
+        else return null;
+           
+    }
     
 
 }

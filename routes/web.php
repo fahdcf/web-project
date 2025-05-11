@@ -1,14 +1,16 @@
 <?php
-use App\Http\Controllers\adminsController;
-use App\Http\Controllers\departementController;
-use App\Http\Controllers\etudiantController;
-use App\Http\Controllers\filiereController;
+use App\Http\Controllers\adminsControllers\adminsController;
+use App\Http\Controllers\adminsControllers\departementController;
+use App\Http\Controllers\adminsControllers\etudiantController;
+use App\Http\Controllers\adminsControllers\filiereController;
 use App\Http\Controllers\homeController;
-use App\Http\Controllers\professorsController;
-use App\Http\Controllers\profileController;
+use App\Http\Controllers\adminsControllers\professorsController;
+use App\Http\Controllers\adminsControllers\profileController;
 
-use App\Http\Controllers\resetPasswordController;
-use App\Http\Controllers\tasksController;
+use App\Http\Controllers\Controller;
+
+use App\Http\Controllers\adminsControllers\resetPasswordController;
+use App\Http\Controllers\adminsControllers\tasksController;
 use App\Models\Departement;
 use App\Models\filiere;
 use App\Models\Role;
@@ -17,7 +19,7 @@ use App\Models\task;
 use App\Models\pending_user;
 use App\Models\user_detail;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\signupController;
+use App\Http\Controllers\adminsControllers\signupController;
 use App\Http\Controllers\loginController;
 use App\Mail\resetPasswordEmail;
 use App\Mail\newuserEmail;
@@ -26,15 +28,22 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\WelcomeEmail;
 use App\Http\Controllers\newuserController;
 
-use App\Http\Controllers\pendinguserController;
+use App\Http\Controllers\adminsControllers\pendinguserController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request;
 use function PHPUnit\Framework\returnArgument;
-use App\Http\Controllers\adminProfileController;
+use App\Http\Controllers\adminsControllers\adminProfileController;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\ProfUnassignedNotification;
+
+//FOR CHEF DEPARTEMENT
+
+use App\Http\Controllers\chef_departementControllers\requestsController;
+use App\Http\Controllers\chef_departementControllers\ChefProfessorController;
+use App\Http\Controllers\chef_departementControllers\cheffiliereController;
+
 
 Route::get('/', [homeController::class,'index']);
 
@@ -231,3 +240,10 @@ Route::post('mark-task-aspending/{id}',[tasksController::class,'markAsPending'])
  
  //for admin
  Route::get( 'etudiant-profile/{id}',[adminProfileController::class,'studentprofile']); 
+
+ //for chef departments
+ Route::get('chef/demandes',[requestsController::class,'index']); Route::get('chef/demandes',[requestsController::class,'index']);
+ 
+ Route::get('chef/professeurs',[chefProfessorController::class,'index']);
+  Route::get('chef/filieres',[cheffiliereController::class,'index']);
+Route::PATCH('chef/filieres/modifier/{id}',[cheffiliereController::class,'modify']);
