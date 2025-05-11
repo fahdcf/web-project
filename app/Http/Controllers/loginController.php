@@ -87,7 +87,7 @@ class loginController extends Controller
 
     public function exit()
     {
-        auth()->user()->logout();
+        auth()->logout();
 
         return view('login');
     }

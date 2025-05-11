@@ -10,7 +10,7 @@ class CreateUserLogsTable extends Migration
     {
         Schema::create('user_logs', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->integer('user_id');
             $table->string('action');                      // Action description
             $table->string('ip_address')->nullable();      // Optional: log IP
             $table->text('user_agent')->nullable();        // Optional: browser info
