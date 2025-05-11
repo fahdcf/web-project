@@ -211,25 +211,25 @@ select.form-select:focus {
                    $min = $professor->user_details->min_hours;
                    $max = $professor->user_details->max_hours;
                   $current = $professor->user_details->actuelle_hours;
-                  
-              $current_percent = $max > 0 ? round(($current / $max) * 100) : 0;
 
-    $min_percent = $max > 0 ? round(($min / $max) * 100) : 0;
+              $current_percent = $max > 0 ? round(($current / $max) * 100) : 0;
+              $min_percent = $max > 0 ? round(($min / $max) * 100) : 0;
+
 
                 $color = ($current <= $min || $current >= $max) ? 'bg-danger' : 'bg-success';
                    @endphp
 
-                    <div class="position-relative" style="height: 25px; background: #e9ecef; border-radius: 4px; overflow: hidden;">
+        <p>Actuelle: {{ $current }}h</p>
+
+   <div class="position-relative" style="height: 8px; background: #e9ecef; border-radius: 4px; overflow: hidden;">
+  
     <!-- Filled bar -->
     <div class="position-absolute {{ $color }}" style="width: {{ $current_percent }}%; height: 100%; top: 0; left: 0;"></div>
 
     <!-- Divider at min_hours -->
-    <div class="position-absolute" style="left: {{ $min_percent }}%; height: 100%; width: 2px; background: black; top: 0;"></div>
+    <div class="position-absolute" style="left: {{ $min_percent }}%; height: 100%; width: 3px; background: #e9ecef86; top: 0;"></div>
 
-    <!-- Optional Text Overlay -->
-    <div class="position-absolute w-100 text-center" style="line-height: 25px; color: #fff;">
-        {{ $current }}h / {{ $max }}h
-    </div>
+    
 </div>
                             </td>
                             
