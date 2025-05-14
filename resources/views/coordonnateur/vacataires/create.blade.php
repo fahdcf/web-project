@@ -1,3 +1,4 @@
+{{-- hhhh --}}
 <x-coordonnateur_layout>
     <div class="container-fluid p-0 pt-5">
         <div class="bg-white rounded p-4" style="box-shadow: 1px 1px 10px 2px #33333314;">
@@ -94,24 +95,24 @@
                         @enderror
                     </div>
 
-                                                            <div class="col-md-6 col-lg-4 mt-3">
-    <span style="color:#515151; font-weight: 700;">Sexe <span class="text-danger">*</span>:</span>
-    <div class="d-flex gap-4 mt-2">
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="sexe" id="sexe_male" 
-                   value="male" {{ old('sexe') == 'male' ? 'checked' : '' }} required>
-            <label class="form-check-label" for="sexe_male">Homme</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="sexe" id="sexe_female" 
-                   value="female" {{ old('sexe') == 'female' ? 'checked' : '' }} required>
-            <label class="form-check-label" for="sexe_female">Femme</label>
-        </div>
-    </div>
-    @error('sexe')
-        <div class="text-danger small mt-1">Veuillez sélectionner un sexe</div>
-    @enderror
-</div>
+                    <div class="col-md-6 col-lg-4 mt-3">
+                        <span style="color:#515151; font-weight: 700;">Sexe <span class="text-danger">*</span>:</span>
+                        <div class="d-flex gap-4 mt-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="sexe" id="sexe_male"
+                                    value="male" {{ old('sexe') == 'male' ? 'checked' : '' }} required>
+                                <label class="form-check-label" for="sexe_male">Homme</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="sexe" id="sexe_female"
+                                    value="female" {{ old('sexe') == 'female' ? 'checked' : '' }} required>
+                                <label class="form-check-label" for="sexe_female">Femme</label>
+                            </div>
+                        </div>
+                        @error('sexe')
+                            <div class="text-danger small mt-1">Veuillez sélectionner un sexe</div>
+                        @enderror
+                    </div>
 
                 </div>
 
@@ -164,7 +165,7 @@
                                         </div>
 
 
-                                        
+
 
                                         <div class="col-md-6 col-lg-4 mt-3">
                                             <label style="color:#515151; font-weight: 700;" for="cin"
