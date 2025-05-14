@@ -125,7 +125,7 @@ select.form-select:focus {
                              
     
                             
-                                <div class="col-md-6 col-lg-2 mb-3">
+                                <div class="col-md-6 col-lg-3 mb-3">
                                     <label for="statusFilter" class="form-label">Status</label>
                                     <select class="form-select" id="statusFilter" name="status">
                                         <option value="">All</option>
@@ -136,7 +136,7 @@ select.form-select:focus {
     
                         
     
-                                <div class="col-md-6 col-lg-2 mb-3">
+                                <div class="col-md-6 col-lg-3 mb-3">
                                     <label for="rowsPerPage" class="form-label">Rows per page</label>
                                     <select id="rowsPerPage" name="rows" class="form-select">
                                         <option value="5">5</option>
@@ -148,7 +148,7 @@ select.form-select:focus {
                                     </select>
                                 </div>
     
-                                <div class="col-md-12 col-lg-2 d-flex justify-content-center ">
+                                <div class="col-md-12 col-lg-3 d-flex justify-content-center ">
                                     <button type="submit" class="btn btn-secondary w-100">Apply</button>
                                 </div>
                             </div>
@@ -217,6 +217,8 @@ select.form-select:focus {
 
 
                 $color = ($current <= $min || $current >= $max) ? 'bg-danger' : 'bg-success';
+                $deviderColor = ($current <= $min) ? 'red' : '#e9ecef86';
+
                    @endphp
 
         <p>Actuelle: {{ $current }}h</p>
@@ -227,7 +229,7 @@ select.form-select:focus {
     <div class="position-absolute {{ $color }}" style="width: {{ $current_percent }}%; height: 100%; top: 0; left: 0;"></div>
 
     <!-- Divider at min_hours -->
-    <div class="position-absolute" style="left: {{ $min_percent }}%; height: 100%; width: 3px; background: #e9ecef86; top: 0;"></div>
+    <div class="position-absolute" style="left: {{ $min_percent }}%; height: 100%; width: 3px; background: {{ $deviderColor }}; top: 0;"></div>
 
     
 </div>
@@ -259,36 +261,10 @@ select.form-select:focus {
                                         <a href="{{url('profile/'. $professor->id)}}" class="btn  btn-sm" style="background-color:#4723d9;color: #ffffff;"><i class="bi bi-eye"></i></a>
                                     
                                     
-                                    <button class="btn ml-1 btn-danger btn-sm" data-toggle="modal" data-target="#Modalforid{{$professor['id']}}"><i class="bi bi-trash3"></i>
-                                    </button>
+                            
                                     
                                     
-                                    <!-- Modal -->
-                                    <div class="modal fade" id="Modalforid{{$professor['id']}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <p>TVous voulez supprimer la professor <strong>{{$professor['lastname']}}</strong> definitivement?</p>         
-                                                    
-                                                    <form action="{{ url('/professors/' . $professor['id']) }}" method="POST">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn ml-1 btn-secondary btn-sm" data-dismiss="modal">Close</button>
-                                                            <button type="submit" class="btn ml-1 btn-danger btn-sm">Delete</button>
-                                                        </div>
-                                                    </form>      
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                              
                                     
                                 </div>
                             </td>

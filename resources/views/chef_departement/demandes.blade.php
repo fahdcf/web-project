@@ -42,7 +42,18 @@
 
             
 
-  
+  <div >
+        <div class="accordion rounded" id="accordionFilters">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapspending" aria-expanded="false" aria-controls="collapsefilters">
+                        pending
+                    </button>
+                </h2>
+    
+                <div id="collapspending" class="accordion-collapse collapse" data-bs-parent="#collapspending">
+                    <div class="accordion-body">
+    
       <div class="table-responsive mt-4 ">
         <table class="table table-borderless">
           <thead >
@@ -57,6 +68,9 @@
           </thead>
           <tbody>
             @foreach ($filiere_requests as $filiere_request)
+            @if ($filiere_request->status=="pending")
+              
+           
               <tr class="filiere_request-row">
                 <td colspan="6" style="padding: 0; background:#ffffff;">
                   <div class="custom-row-wrapper" style="width: 100%">
@@ -70,7 +84,13 @@
 
                       @if ($filiere_request->status=='pending')
                       <p><span style="background-color: #eaa454; color: white;padding:5px 6px;border-radius:15px;" >pending</span></p>
-                          
+                          @elseif ($filiere_request->status=='rejected')
+                
+                          <p><span style="background-color: #ea5e54; color: white;padding:5px 6px;border-radius:15px;" >refusee</span></p>
+                  
+                          @elseif ($filiere_request->status=='approved')
+                    <p><span style="background-color: #13ab50; color: white;padding:5px 6px;border-radius:15px;" >approved</span></p>
+
                       @endif
 
 
@@ -80,8 +100,8 @@
                       <p>{{ $filiere_request->created_at->format('Y-m-d') }}</p>
                       <div class="pAlso d-flex align-items-center gap-2">
                         <input type="number" hidden id="pending_user_id_{{ $filiere_request['id'] }}" value="{{ $filiere_request['id'] }}">
-                        <button style="background-color: #4723d9;color:white;" class="btn btn-sm" onclick="showPopup({{ $filiere_request['id'] }}, '{{ $filiere_request['name'] }}')" data-toggle="modal" data-target="#Modalformodifying"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn ml-1 btn-danger btn-sm" data-toggle="modal" data-target="#Modalforid{{ $filiere_request['id'] }}"><i class="bi bi-trash3"></i></button>
+                        <button style="background-color: #4723d9;color:white;" class="btn btn-sm" onclick="showPopup({{ $filiere_request['id'] }}, '{{ $filiere_request['name'] }}')" data-toggle="modal" data-target="#acceptModalforid{{ $filiere_request['id'] }}"><i class="bi bi-check-square"></i></button>
+                        <button class="btn ml-1 btn-danger btn-sm" data-toggle="modal" data-target="#rejectModalforid{{ $filiere_request['id'] }}"><i class="bi bi-x-square"></i></button>
       
                       
                       </div>
@@ -90,40 +110,265 @@
                   </div>
                 </td>            
               </tr>
+
   
-    <!-- Modal -->
-    <div class="modal fade" id="Modalforid{{ $filiere_request['id'] }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!--reject Modal -->
+    <div class="modal fade" id="rejectModalforid{{ $filiere_request['id'] }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Refuser</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <p>Vous voulez supprimer la filiere_request <strong>{{ $filiere_request['name'] }}</strong> définitivement?</p>
-            <form action="{{ url('/filiere_requests/' . $filiere_request['id']) }}" method="POST">
+            <p>Vous voulez refuser la demande de <strong>{{ $filiere_request->prof->firstname }} {{ $filiere_request->prof->lastname }}</strong> ?</p>
+            <form action="{{ url('/chef/demandes/' . $filiere_request['id']) }}" method="POST">
               @csrf
               @method('DELETE')
+
+              <textarea 
+                name="rejection_reason" 
+                id="rejection_reason" 
+                style="resize:none; width: 100%; max-height: 100px;padding:7px;"
+                placeholder="Enter rejection reason here..."
+                value=""></textarea>
+
               <div class="modal-footer">
                 <button type="button" class="btn ml-1 btn-secondary btn-sm" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn ml-1 btn-danger btn-sm">Rejecter</button>
+                <button type="submit" class="btn ml-1 btn-danger btn-sm">Refuser</button>
               </div>
             </form>
           </div>
         </div>
       </div>
     </div>
+
+    
+    <!-- accept Modal -->
+    <div class="modal fade" id="acceptModalforid{{ $filiere_request['id'] }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Accepter</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Vous voulez accepter la demande de <strong>{{ $filiere_request->prof->firstname }} {{ $filiere_request->prof->lastname }}</strong> ?</p>
+            <form action="{{ url('/chef/demandes/' . $filiere_request['id']) }}" method="POST">
+              @csrf
+              @method('PATCH')
+              <div class="modal-footer">
+                <button type="button" class="btn ml-1 btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn ml-1 btn-sm text-white" style="background-color:#4723d9">Accepter</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+     @endif
+              @endforeach
+          </tbody>
+        </table>
+                     </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+          
+
+ <div class="pt-5">
+        <div class="accordion rounded" id="accordionFilters">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseapproved" aria-expanded="false" aria-controls="collapsefilters">
+                        Acceptee
+                    </button>
+                </h2>
+    
+                <div id="collapseapproved" class="accordion-collapse collapse" data-bs-parent="#collapseapproved">
+                    <div class="accordion-body">
+    
+
+                        
+      <div class="table-responsive mt-4 ">
+        <table class="table table-borderless">
+          <thead >
+            <tr style="color: #535050; font-weight: 600;font-size:15px;">
+                <th>Professeur</th>
+                <th>filiere</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>date</th>
+              <th class="pAlso">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach ($filiere_requests as $filiere_request)
+            @if ($filiere_request->status=="approved")
+              
+           
+              <tr class="filiere_request-row">
+                <td colspan="6" style="padding: 0; background:#ffffff;">
+                  <div class="custom-row-wrapper" style="width: 100%">
+                    <div class="custom-row d-flex" style="width: 100%">
+                        
+                        <p>{{ $filiere_request->prof->firstname}} {{ $filiere_request->prof->lastname}}</p>
+                        <p>{{$filiere_request->target->name}}</p>
+
+                      
+                      <p>{{ $filiere_request->type}}</p>
+
+                      @if ($filiere_request->status=='pending')
+                      <p><span style="background-color: #eaa454; color: white;padding:5px 6px;border-radius:15px;" >pending</span></p>
+                          @elseif ($filiere_request->status=='rejected')
+                
+                          <p><span style="background-color: #ea5e54; color: white;padding:5px 6px;border-radius:15px;" >refusee</span></p>
+                  
+                          @elseif ($filiere_request->status=='approved')
+                    <p><span style="background-color: #13ab50; color: white;padding:5px 6px;border-radius:15px;" >approved</span></p>
+
+                      @endif
+
+
+                      
+                      
+
+                      <p>{{ $filiere_request->created_at->format('Y-m-d') }}</p>
+                      <div class="pAlso d-flex align-items-center justify-content-center gap-2">
+                        <input type="number" hidden id="pending_user_id_{{ $filiere_request['id'] }}" value="{{ $filiere_request['id'] }}">
+                        <button style="background-color: #4723d9;color:white;" class="btn btn-sm" onclick="showPopup({{ $filiere_request['id'] }}, '{{ $filiere_request['name'] }}')" ><i class="bi bi-info-square"></i></button>
+                     
+                      
+                      </div>
+  
+                    </div>
+                  </div>
+                </td>            
+              </tr>
+
+  
+  
+
+    
+    
+     @endif
               @endforeach
           </tbody>
         </table>
 </div>
 
-           
+                   
     
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+
+
+ <div class="pt-5 pb-3">
+        <div class="accordion rounded" id="accordionFilters">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapserejected" aria-expanded="false" aria-controls="collapsefilters">
+                        rejectee
+                    </button>
+                </h2>
+    
+                <div id="collapserejected" class="accordion-collapse collapse" data-bs-parent="#collapserejected">
+                    <div class="accordion-body">
+    
+
+                        
+      <div class="table-responsive mt-4 ">
+        <table class="table table-borderless">
+          <thead >
+            <tr style="color: #535050; font-weight: 600;font-size:15px;">
+                <th>Professeur</th>
+                <th>filiere</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>date</th>
+              <th class="pAlso">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach ($filiere_requests as $filiere_request)
+            @if ($filiere_request->status=="rejected")
+              
            
-    </section>
+              <tr class="filiere_request-row">
+                <td colspan="6" style="padding: 0; background:#ffffff;">
+                  <div class="custom-row-wrapper" style="width: 100%">
+                    <div class="custom-row d-flex" style="width: 100%">
+                        
+                        <p>{{ $filiere_request->prof->firstname}} {{ $filiere_request->prof->lastname}}</p>
+                        <p>{{$filiere_request->target->name}}</p>
+
+                      
+                      <p>{{ $filiere_request->type}}</p>
+
+                      @if ($filiere_request->status=='pending')
+                      <p><span style="background-color: #eaa454; color: white;padding:5px 6px;border-radius:15px;" >pending</span></p>
+                          @elseif ($filiere_request->status=='rejected')
+                
+                          <p><span style="background-color: #ea5e54; color: white;padding:5px 6px;border-radius:15px;" >refusee</span></p>
+                  
+                          @elseif ($filiere_request->status=='approved')
+                    <p><span style="background-color: #13ab50; color: white;padding:5px 6px;border-radius:15px;" >approved</span></p>
+
+                      @endif
+
+
+                      
+                      
+
+                      <p>{{ $filiere_request->created_at->format('Y-m-d') }}</p>
+                      <div class="pAlso d-flex align-items-center justify-content-center gap-2">
+                        <input type="number" hidden id="pending_user_id_{{ $filiere_request['id'] }}" value="{{ $filiere_request['id'] }}">
+                        <button style="background-color: #4723d9;color:white;" class="btn btn-sm" onclick="showPopup({{ $filiere_request['id'] }}, '{{ $filiere_request['name'] }}')" ><i class="bi bi-info-square"></i></button>
+                     
+                      
+                      </div>
+  
+                    </div>
+                  </div>
+                </td>            
+              </tr>
+
+  
+  
+
+    
+    
+     @endif
+              @endforeach
+          </tbody>
+        </table>
+</div>
+
+                   
+    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+  </section>
+  <!-- #module requests-->   
     
     <section id="module" class="hidden mt-5">
       
