@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('modules', function (Blueprint $table) {
             $table->integer('id', true);
-            $table->string('code')->unique();
+            $table->string('code')->nullable()->unique();
 
             $table->string('name');
             $table->text('description')->nullable();
@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->integer('cm_hours')->nullable();
             $table->integer('tp_hours')->nullable();
             $table->integer('td_hours')->nullable();
+            $table->integer('autre_hours')->nullable();
 
             // Relations avec foreignIdFor()
 
@@ -31,6 +32,9 @@ return new class extends Migration {
             
             $table->integer('professor_id')->nullable();
             $table->foreign('professor_id')->references('id')->on('users')->cascadeOnDelete()->nullable();
+
+              $table->integer('parent_id')->nullable();
+            $table->foreign('parent_id')->references('id')->on('modules')->cascadeOnDelete()->nullable();
             // /
 
             $table->integer('nb_groupes_td')->nullable();
@@ -39,7 +43,13 @@ return new class extends Migration {
             // $table->integer('status')->nullable()->default(null)->comment('0=Inactif, 1=Actif, null=draft');
             $table->enum('status', ['active', 'inactive', 'draft'])->default('draft');
 
-            $table->integer('credits')->default(1);
+            //sous_module ou module complet
+            $table->enum('type', ['element', 'complet'])->default('complet');
+
+
+
+            $table->integer('credits')->nullable();
+            $table->integer('evaluation')->nullable();
 
             // Index pour les performances
             $table->index('filiere_id');

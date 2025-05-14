@@ -29,7 +29,7 @@ class ModuleController extends Controller
             $semestersData["S$i"] = Module::with(['professor', 'filiere'])
                 ->where('filiere_id', $user->manage->id)
                 ->where('semester', $i)
-                ->where('status', 1)
+                // ->where('status', 1)
                 ->orderBy('name')
                 ->get();
         }
@@ -78,9 +78,9 @@ class ModuleController extends Controller
         $semestersData = [];
         for ($i = 1; $i <= 6; $i++) {
             $semestersData["S$i"] = Module::with(['professor', 'filiere'])
-                ->where('filiere_id', $filiereId)
+                ->where('filiere_id', $user->manage->id)
                 ->where('semester', $i)
-                ->whereIn('status', [0, 1])
+                // ->where('status', 1)
                 ->orderBy('name')
                 ->get();
         }
@@ -108,9 +108,73 @@ class ModuleController extends Controller
                 $query->where('filieres.id', auth()->user()->filiere_id);
             })
             ->get();
+        $parentModules=Module::where('type','complet')->get();
 
-        return view('modules.create', compact('professeurs'));
+        return view('modules.create', compact('professeurs','parentModules'));
     }
+
+    public function store(Request $request)
+{
+    // Validation rules
+    $rules = [
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'cm_hours' => 'required|integer|min:10',
+        'td_hours' => 'required|integer|min:10',
+        'tp_hours' => 'required|integer|min:10',
+        'semester' => 'required|integer|min:1',
+        'specialty' => 'nullable|string|max:255',
+        'credit' => 'required|integer|min:1',
+        'responsable_id' => 'nullable|exists:users,id',
+        'type' => 'required|in:complet,element',
+    ];
+
+    // Conditionally add 'parent_id' validation if type is 'element'
+    if ($request->input('type') === 'element') {
+        $rules['parent_id'] = 'required|exists:modules,id';
+    }
+
+    $validated = $request->validate($rules);
+
+    // Logic for handling 'element' type
+    if ($validated['type'] === 'element') {
+        // Find the parent module
+        $parent = Module::find($validated['parent_id']);
+
+        // Check if parent module exists
+        if (!$parent) {
+            return back()->withErrors(['parent_id' => 'Parent module not found.'])->withInput();
+        }
+
+        // Generate the code for the element
+        $code = $parent->code . '-' . (Module::where('parent_id', $validated['parent_id'])->count() + 1);
+
+        $attributes = array_merge($validated, [
+            'filiere_id' => auth()->user()->manage->id,
+            'code' => $code,
+            'parent_id' => $validated['parent_id'],
+        ]);
+    Module::create($attributes);
+
+    } else { // Logic for 'complet' type
+        // Generate the code for the complete module
+        $code = "M" . $validated['semester'] . "-" . uniqid(); // Using uniqid() for unique ID
+
+        $attributes = array_merge($validated, [
+            'filiere_id' => auth()->user()->manage->id,
+            'parent_id' => null,
+        ]);
+    $module=Module::create($attributes);
+    $module->code=
+        "M".$module->semester."-".$module->id;
+$module->save();
+
+    }
+
+
+    return redirect()->route('coordonnateur.modules.index')->with('success', 'UE créée avec succès!');
+}
+
 
     public function show($id)
     {
@@ -153,36 +217,7 @@ class ModuleController extends Controller
         return redirect()->route('coordonnateur.modules.index')->with('success', 'Module mis à jour avec succès.');
     }
 
-    public function store(Request $request)
-    {
-        // dd($request);
-
-        // dd($request->all());
-        $validated = $request->validate([
-            'code' => 'required|string|max:20|unique:modules,code',
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'cm_hours' => 'required|integer|min:10',
-            'td_hours' => 'required|integer|min:10',
-            'tp_hours' => 'required|integer|min:10',
-            'semester' => 'required|integer|min:1',
-
-            'specialty' => 'nullable|string|max:255',
-            'credit' => 'required|integer|min:1',
-            'responsable_id' => 'nullable|exists:users,id'
-        ]);
-        // dd($validated);
-
-        // Ajoute automatiquement la filière du coordonnateur
-        $attributes = array_merge($validated, [
-            'filiere_id' => auth()->user()->manage->id
-        ]);
-
-        Module::create($attributes);
-
-        return redirect()->route('coordonnateur.modules.index')->with('success', 'UE créée avec succès !');
-    }
-
+    
     public function destroy(Module $module)
     {
         // Supprimer le module

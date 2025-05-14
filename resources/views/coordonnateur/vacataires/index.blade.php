@@ -244,4 +244,6 @@
         }
     </script>
 
+    
+
 </x-coordonnateur_layout>

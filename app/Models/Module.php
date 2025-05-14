@@ -16,6 +16,7 @@ class Module extends Model
         'code',
         'name',
         'credits',
+        'evaluation',
         'specialite',
         'semester',
         'description',
@@ -23,6 +24,8 @@ class Module extends Model
         'cm_hours',
         'td_hours',
         'tp_hours',
+        'autre_hours',
+
 
         'filiere_id',
         'professor_id',
