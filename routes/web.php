@@ -1,50 +1,161 @@
 <?php
+use App\Http\Controllers\adminsControllers\adminProfileController;
 use App\Http\Controllers\adminsControllers\adminsController;
 use App\Http\Controllers\adminsControllers\departementController;
 use App\Http\Controllers\adminsControllers\etudiantController;
 use App\Http\Controllers\adminsControllers\filiereController;
-use App\Http\Controllers\homeController;
+use App\Http\Controllers\adminsControllers\pendinguserController;
 use App\Http\Controllers\adminsControllers\professorsController;
+
 use App\Http\Controllers\adminsControllers\profileController;
 
+use App\Http\Controllers\adminsControllers\resetPasswordController;
+use App\Http\Controllers\adminsControllers\signupController;
+use App\Http\Controllers\adminsControllers\tasksController;
+use App\Http\Controllers\chef_departementControllers\cheffiliereController;
+use App\Http\Controllers\chef_departementControllers\ChefProfessorController;
+use App\Http\Controllers\chef_departementControllers\requestsController;
 use App\Http\Controllers\Controller;
 
-use App\Http\Controllers\adminsControllers\resetPasswordController;
-use App\Http\Controllers\adminsControllers\tasksController;
-use App\Models\Departement;
-use App\Models\filiere;
-use App\Models\Role;
-use App\Models\User;
-use App\Models\task;
-use App\Models\pending_user;
-use App\Models\user_detail;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\adminsControllers\signupController;
+use App\Http\Controllers\homeController;
 use App\Http\Controllers\loginController;
-use App\Mail\resetPasswordEmail;
-use App\Mail\newuserEmail;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\WelcomeEmail;
 use App\Http\Controllers\newuserController;
+use App\Mail\newuserEmail;
+use App\Mail\resetPasswordEmail;
+use App\Mail\WelcomeEmail;
+use App\Models\Departement;
 
-use App\Http\Controllers\adminsControllers\pendinguserController;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Http\Request;
-use function PHPUnit\Framework\returnArgument;
-use App\Http\Controllers\adminsControllers\adminProfileController;
-use Illuminate\Support\Facades\Notification;
+use App\Models\filiere;
+use App\Models\pending_user;
+use App\Models\Role;
+use App\Models\task;
+use App\Models\User;
+use App\Models\user_detail;
 use App\Notifications\ProfUnassignedNotification;
+use function PHPUnit\Framework\returnArgument;
+use Illuminate\Http\Request;
 
 //FOR CHEF DEPARTEMENT
 
-use App\Http\Controllers\chef_departementControllers\requestsController;
-use App\Http\Controllers\chef_departementControllers\ChefProfessorController;
-use App\Http\Controllers\chef_departementControllers\cheffiliereController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 
+
+///////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Validator;
+
+
+
+/////////////////////////////////////////////////////////////////
+use App\Http\Controllers\coordonnateur\vacataireController;
+use App\Http\Controllers\coordonnateur\CoordonnateurController;
+use App\Http\Controllers\coordonnateur\ModuleController;
+
+//////coordonnateur routes: ////////////////////////////////////////
+Route::prefix('coordonnateur')->group(function () {
+    Route::get('/dashboard', [CoordonnateurController::class, 'dashboard'])->name('coordonnateur.dashboard');
+});
+
+//////gestion des modules pour le coordonateur/////////////
+Route::middleware(['auth'])
+    ->prefix('coordonnateur/modules')
+    ->group(function () {
+        Route::get('/', [ModuleController::class, 'index'])->name('coordonnateur.modules.index');
+        
+        Route::get('/create', [ModuleController::class, 'create'])->name('coordonnateur.modules.create');
+        Route::post('/', [ModuleController::class, 'store'])->name('coordonnateur.modules.store');
+
+        Route::get('/{module}/edit', [ModuleController::class, 'edit'])->name('coordonnateur.modules.edit');
+        Route::put('/{module}', [ModuleController::class, 'update'])->name('coordonnateur.modules.update');
+
+        Route::get('/{module}', [ModuleController::class, 'show'])->name('coordonnateur.modules.show');
+        Route::delete('/{module}', [ModuleController::class, 'destroy'])->name('coordonnateur.modules.destroy');
+
+        Route::post('/search', [ModuleController::class, 'search'])->name('coordonnateur.modules.search');
+        Route::post('/filter', [ModuleController::class, 'filter'])->name('coordonnateur.modules.filter');
+
+        Route::get('/assign-vacataire', [ModuleController::class, 'create'])->name('coordonnateur.modules.assign-vacataire');
+
+
+        Route::get('confirm-delete/{module}', [ModuleController::class, 'showConfirmDelete'])->name(
+            'coordonnateur.modules.confirm-delete'
+        );
+
+    });
+
+
+
+//////gestion des vacataire pour le coordonateur/////////////
+Route::middleware(['auth'])
+    ->prefix('coordonnateur/vacataires')
+    ->group(function () {
+        Route::get('/', [vacataireController::class, 'index'])->name('coordonnateur.vacataires.index');
+        
+        Route::get('/create', [vacataireController::class, 'create'])->name('coordonnateur.vacataires.create');
+        Route::post('/', [vacataireController::class, 'store'])->name('coordonnateur.vacataires.store');
+
+        Route::get('/{vacataire}/edit', [vacataireController::class, 'edit'])->name('coordonnateur.vacataires.edit');
+        Route::put('/{vacataire}', [vacataireController::class, 'update'])->name('coordonnateur.vacataires.update');
+
+        Route::get('/{vacataire}', [vacataireController::class, 'show'])->name('coordonnateur.vacataires.show');
+        Route::delete('/{vacataire}', [vacataireController::class, 'destroy'])->name('coordonnateur.vacataires.destroy');
+
+        Route::get('confirm-delete/{vacataire}', [vacataireController::class, 'showConfirmDelete'])->name(
+            'coordonnateur.vacataires.delete.confirm'
+        );
+//////gestion des modules pour le coordonateur/////////////
+Route::middleware(['auth'])
+    ->prefix('coordonnateur/modules')
+    ->group(function () {
+        Route::get('/', [ModuleController::class, 'index'])->name('coordonnateur.modules.index');
+        
+        Route::get('/create', [ModuleController::class, 'create'])->name('coordonnateur.modules.create');
+        Route::post('/', [ModuleController::class, 'store'])->name('coordonnateur.modules.store');
+
+        Route::get('/{module}/edit', [ModuleController::class, 'edit'])->name('coordonnateur.modules.edit');
+        Route::put('/{module}', [ModuleController::class, 'update'])->name('coordonnateur.modules.update');
+
+        Route::get('/{module}', [ModuleController::class, 'show'])->name('coordonnateur.modules.show');
+        Route::delete('/{module}', [ModuleController::class, 'destroy'])->name('coordonnateur.modules.destroy');
+
+        Route::post('/search', [ModuleController::class, 'search'])->name('coordonnateur.modules.search');
+        Route::post('/filter', [ModuleController::class, 'filter'])->name('coordonnateur.modules.filter');
+
+        Route::get('/assign-vacataire', [ModuleController::class, 'create'])->name('coordonnateur.modules.assign-vacataire');
+
+
+        Route::get('confirm-delete/{module}', [ModuleController::class, 'showConfirmDelete'])->name(
+            'coordonnateur.modules.confirm-delete'
+        );
+
+    });
+    });
+// //////////////////////////////////////////
+
+//////professor//////////////////////////////////////////
+use App\Http\Controllers\coordonnateur\ProfessorController;
+
+Route::prefix('professor')->group(function () {
+    Route::get('/dashboard', [ProfessorController::class, 'index'])->name('professor.dashboard');
+});
+
+////////vacataire actions///////////////////////////////////
+
+Route::prefix('vacataire')->group(function () {
+    Route::get('/dashboard', [vacataireController::class, 'dashboard'])->name('vacataire.dashboard');
+
+    Route::get('/upload-grades', [vacataireController::class, 'upload-grades'])->name('vacataire.upload-grades');
+    Route::post('/upload-grades', [vacataireController::class, 'upload-grades'])->name('vacataire.upload-grades');
+
+});
+//////////////////////////////////////////////////////////////////////////////////////////
 Route::get('/', [homeController::class,'index']);
 
 Route::get('/signup',[signupController::class,'index']);

@@ -9,8 +9,8 @@ return new class extends Migration {
     {
         Schema::create('requests', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('prof_id');
-            $table->unsignedBigInteger('target_id');
+            $table->integer('prof_id');
+            $table->integer('target_id');
             $table->enum('type', ['module', 'filiere', 'departement']);
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->text('rejection_reason')->nullable();

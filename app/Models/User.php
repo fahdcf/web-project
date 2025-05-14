@@ -21,7 +21,7 @@ class User extends Authenticatable
         'lastname',    // Add this field
         'email',
         'password',
-        'role_column', 'departement',       // Add 'role' if you're using it as a fillable field
+        'departement'    // Add 'role' if you're using it as a fillable field
     ];
 
     /**
@@ -47,30 +47,51 @@ class User extends Authenticatable
         ];
     }
 
-    public function user_details(){
+    public function user_details()
+    {
         return $this->hasOne(user_detail::class);
-
     }
     public function role()
-{
-    return $this->hasOne(Role::class, 'user_id');
-}
-
-  public function getmanageAttribute()
     {
-        if($this->role->ischef) {
+        return $this->hasOne(Role::class, 'user_id');
+    }
+
+    public function getmanageAttribute()
+    {
+        if ($this->role->ischef) {
 
             return Departement::where('user_id', $this->id)->first();
-        }
-            
-        else if($this->role->iscoordonnateur){
-         return filiere::where('coordonnateur_id', $this->id)->first();
-
-
-        }   
-        else return null;
-           
+        } else if ($this->role->iscoordonnateur) {
+            return Filiere::where('coordonnateur_id', $this->id)->first();
+        } else return null;
     }
-    
 
+
+    // //////////////////////////////////////////////////////////////////////////
+
+    public function modules()
+    {
+        // Un module peut être enseigné par plusieurs utilisateurs (professeurs et vacataires), et un utilisateur peut enseigner dans plusieurs modules
+        return $this->belongsToMany(Module::class, 'module_user');
+    }
+
+    public function filieres()
+    {
+        return $this->belongsToMany(Filiere::class);
+    }
+
+    public function isCoordonnateur(): bool
+    {
+        return (bool) optional($this->role)->iscoordonnateur;
+    }
+
+    public function isProfessor(): bool
+    {
+        return (bool) optional($this->role)->isprof;
+    }
+
+    public function isAdmin(): bool
+    {
+        return (bool) optional($this->role)->isadmin;
+    }
 }

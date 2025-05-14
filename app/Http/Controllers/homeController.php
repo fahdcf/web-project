@@ -29,57 +29,63 @@ use Carbon\Carbon;
 
 class homeController extends Controller
 {
-    public function index(){
-        if(Auth::check()) {
-            if(Auth()->user()->role->isadmin) {
-    
-    
-                $studentCount=student::get()->count();
-                $professorCount=User::get()->count();
-                $adminsHistory=admin_action::latest()->take(4)->get();
-                $tasks=task::where('user_id',auth()->user()->id)->latest()->take(5)->get();
-                $users_logs=user_log::latest()->take(6)->get();
-               
-               
- // Get user logs this week
-$logs = user_log::whereBetween('created_at', [
-    Carbon::now()->startOfWeek(), // Monday
-    Carbon::now()->endOfWeek(),   // Sunday
-])->get();
+    public function index()
+    {
+        if (Auth::check()) {
+            if (Auth()->user()->role->isadmin) {
 
 
-$logsByDay = $logs->groupBy(function($log) {
-    return ucfirst(Carbon::parse($log->created_at)->locale('fr')->isoFormat('dddd'));
-});
+                $studentCount = student::get()->count();
+                $professorCount = User::get()->count();
+                $adminsHistory = admin_action::latest()->take(4)->get();
+                $tasks = task::where('user_id', auth()->user()->id)->latest()->take(5)->get();
+                $users_logs = user_log::latest()->take(6)->get();
 
-// Prepare counts for each day
-$days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
 
-// Build login counts
-$loginCounts = [];
-foreach ($days as $day) {
-    $loginCounts[] = isset($logsByDay[$day]) ? $logsByDay[$day]->count() : 0;
-}
-               
-               
-                return view('admin.admin_dashboard',['tasks'=>$tasks,'studentCount'=>$studentCount,'professorCount'=>$professorCount,'adminsHistory'=>$adminsHistory,'users_logs' =>$users_logs, 'loginCounts' => $loginCounts]);
-            }
+                // Get user logs this week
+                $logs = user_log::whereBetween('created_at', [
+                    Carbon::now()->startOfWeek(), // Monday
+                    Carbon::now()->endOfWeek(),   // Sunday
+                ])->get();
 
-            else if(Auth()->user()->role->ischef){
-              
+
+                $logsByDay = $logs->groupBy(function ($log) {
+                    return ucfirst(Carbon::parse($log->created_at)->locale('fr')->isoFormat('dddd'));
+                });
+
+                // Prepare counts for each day
+                $days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+
+                // Build login counts
+                $loginCounts = [];
+                foreach ($days as $day) {
+                    $loginCounts[] = isset($logsByDay[$day]) ? $logsByDay[$day]->count() : 0;
+                }
+
+
+                return view('admin.admin_dashboard', ['tasks' => $tasks, 'studentCount' => $studentCount, 'professorCount' => $professorCount, 'adminsHistory' => $adminsHistory, 'users_logs' => $users_logs, 'loginCounts' => $loginCounts]);
+            } else if (Auth()->user()->role->ischef) {
+
                 return View('chef_departement.chef_dashboard');
-
-
             }
-    
-            else{
+            // if coordinator
+            if (auth()->user()->role->iscoordonnateur) {
+                return redirect()->route('coordonnateur.dashboard');
+            }
+
+            // if vocataire
+            if (auth()->user()->role->isvocataire) {
+                return redirect()->route('vacataire.dashboard');
+            }
+
+            // if professor
+            if (auth()->user()->role->isprof) {
+                return redirect()->route('professor.dashboard');
+            } else {
                 return view('dashboard');
             }
-            
-        }
-        else{
+        } else {
             return redirect('login');
         }
     }
-
 }

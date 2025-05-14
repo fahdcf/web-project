@@ -4,15 +4,16 @@ namespace App\Http\Controllers\adminsControllers;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Departement;
-use App\Models\filiere;
 
  use App\Models\admin_action;
+use App\Models\Filiere;
+
 class filiereController extends Controller
 {
    public function index(){
     
     $departements=Departement::all();
-    $filieres= filiere::all();
+    $filieres= Filiere::all();
 
     $professors = User::WhereHas('role', function ($query) {
         $query->where('isprof', true);

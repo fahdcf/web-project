@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 
 use App\Models\filiere;
 use App\Models\student;
-use App\Models\user;
+use App\Models\User;
 use App\Models\user_detail;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Profiler\FileProfilerStorage;
