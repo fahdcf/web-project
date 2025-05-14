@@ -14,6 +14,8 @@ use App\Http\Controllers\adminsControllers\signupController;
 use App\Http\Controllers\adminsControllers\tasksController;
 use App\Http\Controllers\chef_departementControllers\cheffiliereController;
 use App\Http\Controllers\chef_departementControllers\ChefProfessorController;
+use App\Http\Controllers\chef_departementControllers\chefModulesController;
+
 use App\Http\Controllers\chef_departementControllers\requestsController;
 use App\Http\Controllers\Controller;
 
@@ -357,6 +359,7 @@ Route::post('mark-task-aspending/{id}',[tasksController::class,'markAsPending'])
   Route::delete('chef/demandes/{id}',[requestsController::class,'decline']); 
   Route::patch('chef/demandes/{id}',[requestsController::class,'accept']); 
 
- Route::get('chef/professeurs',[chefProfessorController::class,'index']);
+ Route::get('chef/professeurs',[ChefProfessorController::class,'index']);
   Route::get('chef/filieres',[cheffiliereController::class,'index']);
-Route::PATCH('chef/filieres/modifier/{id}',[cheffiliereController::class,'modify']);
+Route::PATCH('chef/filieres/modifier/{id}',[cheffiliereController::class,'modify']); 
+Route::get('chef/modules',[chefModulesController::class,'index']); 

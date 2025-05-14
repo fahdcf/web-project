@@ -453,6 +453,13 @@ background-color: white;
                         </a>
 
                         @if(auth()->user()->role->ischef)
+
+                               <a href="{{url('/chef/modules')}}" class="nav_link {{request()->is('chef/modules') ? 'active' : '' }}"> 
+                              <i class="bi bi-journal-text"></i>
+
+                            <span class="nav_name">Demandes</span> 
+                        </a>
+
                           <a href="{{url('/chef/demandes')}}" class="nav_link {{request()->is('chef/demandes') ? 'active' : '' }}"> 
                            <i class="bi bi-card-checklist"></i>
 

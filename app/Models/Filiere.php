@@ -20,7 +20,7 @@ class Filiere extends Model
     // ///////////////////////////////
     public function coordonnateur()
     {
-        return $this->hasOne(User::class, 'coordonnateur_id');
+        return $this->belongsTo(User::class, 'coordonnateur_id');
     }
 
     public function modules()
