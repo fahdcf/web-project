@@ -360,3 +360,4 @@ Route::post('mark-task-aspending/{id}',[tasksController::class,'markAsPending'])
  Route::get('chef/professeurs',[chefProfessorController::class,'index']);
   Route::get('chef/filieres',[cheffiliereController::class,'index']);
 Route::PATCH('chef/filieres/modifier/{id}',[cheffiliereController::class,'modify']);
+//3aa
