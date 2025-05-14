@@ -26,9 +26,10 @@ return new class extends Migration {
 
             $table->foreign('filiere_id')->references('id')->on('filieres')->cascadeOnDelete();
 
-            $table->integer('professor_id')->nullable();
+            
             $table->integer('responsable_id')->nullable();
-
+            
+            $table->integer('professor_id')->nullable();
             $table->foreign('professor_id')->references('id')->on('users')->cascadeOnDelete()->nullable();
             // /
 

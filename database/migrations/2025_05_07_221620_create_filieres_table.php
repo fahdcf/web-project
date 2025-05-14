@@ -18,7 +18,9 @@ return new class extends Migration
             $table->integer('department_id')->index('department_id')->nullable();
             $table->timestamp('created_at')->nullable()->useCurrent();
             $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable()->useCurrent();
-            $table->integer('coordonnateur_id')->index('coordonnateur_id')->nullable();
+
+            $table->integer('coordonnateur_id');
+            $table->foreign('coordonnateur_id')->references('id')->on('users')->cascadeOnDelete()->nullable();
         });
     }
 

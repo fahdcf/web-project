@@ -17,53 +17,58 @@ use App\Http\Controllers\chef_departementControllers\ChefProfessorController;
 use App\Http\Controllers\chef_departementControllers\requestsController;
 use App\Http\Controllers\Controller;
 
+
 use App\Http\Controllers\homeController;
 use App\Http\Controllers\loginController;
 use App\Http\Controllers\newuserController;
+
 use App\Mail\newuserEmail;
 use App\Mail\resetPasswordEmail;
 use App\Mail\WelcomeEmail;
 use App\Models\Departement;
-
 use App\Models\filiere;
 use App\Models\pending_user;
 use App\Models\Role;
 use App\Models\task;
 use App\Models\User;
-use App\Models\user_detail;
-use App\Notifications\ProfUnassignedNotification;
-use function PHPUnit\Framework\returnArgument;
-use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\Route;
+
 
 //FOR CHEF DEPARTEMENT
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
+use App\Models\user_detail;
+use App\Notifications\ProfUnassignedNotification;
+use function PHPUnit\Framework\returnArgument;
 
 
 
 ///////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Validator;
-
 
 
 /////////////////////////////////////////////////////////////////
-use App\Http\Controllers\coordonnateur\vacataireController;
-use App\Http\Controllers\coordonnateur\CoordonnateurController;
-use App\Http\Controllers\coordonnateur\ModuleController;
 
 //////coordonnateur routes: ////////////////////////////////////////
+use App\Http\Controllers\coordonnateur\CoordonnateurController;
+
+
+
 Route::prefix('coordonnateur')->group(function () {
     Route::get('/dashboard', [CoordonnateurController::class, 'dashboard'])->name('coordonnateur.dashboard');
 });
 
 //////gestion des modules pour le coordonateur/////////////
+use App\Http\Controllers\coordonnateur\ModuleController;
+
 Route::middleware(['auth'])
     ->prefix('coordonnateur/modules')
     ->group(function () {
@@ -93,6 +98,8 @@ Route::middleware(['auth'])
 
 
 //////gestion des vacataire pour le coordonateur/////////////
+use App\Http\Controllers\coordonnateur\vacataireController;
+
 Route::middleware(['auth'])
     ->prefix('coordonnateur/vacataires')
     ->group(function () {
@@ -141,6 +148,7 @@ Route::middleware(['auth'])
 
 //////professor//////////////////////////////////////////
 use App\Http\Controllers\coordonnateur\ProfessorController;
+
 
 Route::prefix('professor')->group(function () {
     Route::get('/dashboard', [ProfessorController::class, 'index'])->name('professor.dashboard');
