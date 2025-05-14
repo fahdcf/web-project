@@ -16,9 +16,34 @@ class adminProfileController extends Controller
     public function edit(Request $request, $id)
     {
      
-
-        $user = User::findOrFail($id);
         
+      $user = User::findOrFail($id);
+
+
+                    if(auth()->user()->role->ischef){
+                            request()->validate([
+                                'min_hours' => 'nullable|numeric',
+                                'max_hours'=>'nullable|numeric',
+
+                            ]);
+
+                    $userDetails = $user->user_details;  
+
+                if(!$userDetails){
+                    $userDetails= user_detail::create(['user_id'=>$user->id]);
+                }
+
+                if (request('min_hours') && $userDetails->min_hours !== $request->input('min_hours')) {
+                            $userDetails->min_hours = $request->input('min_hours');
+                        }
+                        if (request('max_hours') && $userDetails->max_hours !== $request->input('max_hours')) {
+                            $userDetails->max_hours = $request->input('max_hours');
+                        }
+                $userDetails->save();
+                
+                return redirect()->back();
+                        }
+                    
         // Validate incoming request data (adjust validation as necessary)
         $validated = $request->validate([
             'lastname' => 'required|string|max:255',
@@ -37,6 +62,11 @@ class adminProfileController extends Controller
             'old_password' => 'nullable',
             'password' => 'nullable|confirmed',
         ]);
+
+         
+
+        
+
         
         
         if ($request->input('old_password') && $request->input('password') &&$request->input('password_confirmation') && password_verify(request('old_password'),$user->password)) {
@@ -77,26 +107,26 @@ if(!$userDetails){
     $userDetails= user_detail::create(['user_id'=>$user->id]);
 }
 
-        if ($request->input('status') && $userDetails->status !== $request->input('status')) {
+        if (request('status') && $userDetails->status !== $request->input('status')) {
             $userDetails->status = $request->input('status');
         }
 
-        if ($userDetails->min_hours !== $request->input('min_hours')) {
+        if (request('min_hours') && $userDetails->min_hours !== $request->input('min_hours')) {
             $userDetails->min_hours = $request->input('min_hours');
         }
-          if ($userDetails->max_hours !== $request->input('max_hours')) {
+          if (request('max_hours') && $userDetails->max_hours !== $request->input('max_hours')) {
             $userDetails->max_hours = $request->input('max_hours');
         }
         
-        if ($userDetails->date_of_birth !== $request->input('date')) {
+        if (request('date') && $userDetails->date_of_birth !== $request->input('date')) {
             $userDetails->date_of_birth = $request->input('date');
         }
         
-        if ($userDetails->number !== $request->input('tele')) {
+        if ( request('tele') &&$userDetails->number !== $request->input('tele')) {
             $userDetails->number = $request->input('tele');
         }
 
-        if ($userDetails->adresse !== $request->input('adresse')) {
+        if  (request('adresse') && $userDetails->adresse !== $request->input('adresse')) {
             $userDetails->adresse = $request->input('adresse');
         }
 
@@ -111,25 +141,27 @@ if(!$userDetails){
         
 
 
+if(request('isadmin')){
 
-        $role = $user->role; // Make sure this is the Role model object
-
-        $rolesData = [
-            'isadmin' => $request->boolean('isadmin'),
-            'iscoordonnateur' => $request->boolean('iscoordonnateur'),
-            'ischef' => $request->boolean('ischef'),
-            'isprof' => $request->boolean('isprof'),
-            'isvocataire' => $request->boolean('isvocataire'),
-            'isstudent' => $request->boolean('isstudent'),
-        ];
-        
-        if ($role) {
-            $role->fill($rolesData)->save(); // clean update
-        } else {
-            $user->role()->create($rolesData);
-        }
-        
-
+    $role = $user->role; // Make sure this is the Role model object
+    
+    $rolesData = [
+        'isadmin' => $request->boolean('isadmin'),
+        'iscoordonnateur' => $request->boolean('iscoordonnateur'),
+        'ischef' => $request->boolean('ischef'),
+        'isprof' => $request->boolean('isprof'),
+        'isvocataire' => $request->boolean('isvocataire'),
+        'isstudent' => $request->boolean('isstudent'),
+    ];
+    
+    if ($role) {
+        $role->fill($rolesData)->save(); // clean update
+    } else {
+        $user->role()->create($rolesData);
+    }
+    
+}
+    
         // Save the changes if any field has been updated
         $user->save();
         $userDetails->save();
