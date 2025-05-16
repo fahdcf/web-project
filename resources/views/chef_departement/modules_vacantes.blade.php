@@ -13,11 +13,9 @@
   
 @foreach ($filieres as $filiere)
   
-<div class="d-flex flex-column flex-md-row align-items-center justify-content-between mt-5">
 
   <h4 class=" m-0" >Les modules du filière {{$filiere->name}}:</h4>
-  <button class="btn text-white m-0 mt-4 mt-md-0" style="background-color:#4723d9 ;">Ajouter un module pour ce filière</button>
-</div>
+ 
 
 <div class="row p-4">
   
@@ -29,9 +27,42 @@
 @if ($module->filiere_id==$filiere->id)
   
 
-  <!-- popup -->
+ <!-- affecter popup -->
+<div id="affecterpopupfor{{$module->id}}" class="overlay">
+  <div class="popup bg-white rounded p-4 shadow" style="max-width: 500px; width: 90%; margin: auto; position: relative;">
+<form action="{{url('chef/modules_vacantes/affecter/'. $module->id)}}" method="post">
+  @csrf
+    <h5 class="text-primary fw-bold mb-3">Affecter le module <span id="affectermoduleName{{$module->id}}">{{ $module->name }}</span> a un professeur</h5>
+    
+
+   <!-- Select Professor -->
+                            <div class="mb-4 mt-5 d-flex flex-column align-items-center">
+                                <label style="color:#515151; font-weight: 700; width:100%;" for="professor" class="form-label fw-bold text-start pb-1">Professeurs</label>
+                                <select class="form-select py-2 rounded" id="professor" name="prof_id" >
+                                    <option value="">-- Sélectionner un professeur --</option>
+                                    @foreach ($professors as $professor)
+                                        <option value="{{ $professor->id }}">{{ $professor->lastname }} {{ $professor->firstname }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+
+    <!-- Footer -->
+    <div class="text-end mt-4">
+      
+      <button type="button" class="btn btn-secondary btn-sm" onclick="closePopupaffecter({{$module->id}})">Annuler</button>
+      <button type="submit" class="btn btn-primary btn-sm" >Affecter</button>
+    </div>
+    </form>
+  </div>
+</div>
+
+
+
+
+  <!--details popup -->
 <div id="popupfor{{$module->id}}" class="overlay">
-  <div class="popup bg-white rounded p-4 shadow" style="max-width: 600px; width: 90%; margin: auto; position: relative; top: 10%;">
+  <div class="popup bg-white rounded p-4 shadow" style="max-width: 600px; width: 90%; margin: auto; position: relative;">
 
     <!-- Title -->
     <h5 class="text-primary fw-bold mb-3">Détails du module</h5>
@@ -142,7 +173,7 @@
     </div>
 
 
-    <div class="buttons-container mt-4 d-flex gap-2"><button class="btn" style="border: 1px solid #4723d9; color: #4723d9;">Modifier</button><button class="btn btn-success bg-white" style=" color:#18a16f; border: 1px solid #18a16f;" onclick="showPopup({{$module->id}}, '{{$module->name}}')">Voire plus</button></div>
+    <div class="buttons-container mt-4 d-flex gap-2"><button class="btn" style="border: 1px solid #4723d9; color: #4723d9;" onclick="showPopupaffecter({{$module->id}}, '{{$module->name}}')">Affecter</button><button class="btn btn-success bg-white" style=" color:#18a16f; border: 1px solid #18a16f;" onclick="showPopup({{$module->id}}, '{{$module->name}}')">Voire plus</button></div>
   </div>
 </div>
 @php
@@ -152,7 +183,7 @@
 @endif
 @endforeach
 @if ($modulesCount==0)
-<h5>Il n'ya pas des modules pour ce filière</h5>
+<h5 class="text-center">Il n'ya pas des modules pour ce filière</h5>
   
 @endif
 
@@ -164,7 +195,9 @@
       </div>
    
     
+
       <style>
+
 
 .module-container{
   transition: all 0.3s;
@@ -207,6 +240,15 @@
     
         function closePopup(moduleId) {
           document.getElementById("popupfor" + moduleId).style.display = "none";
+        }
+
+         function showPopupaffecter(moduleId, moduleName) {
+          document.getElementById('affectermoduleName' + moduleId).innerText = moduleName;
+          document.getElementById("affecterpopupfor" + moduleId).style.display = "flex";
+        }
+    
+        function closePopupaffecter(moduleId) {
+          document.getElementById("affecterpopupfor" + moduleId).style.display = "none";
         }
       </script>
     </x-chef_layout>

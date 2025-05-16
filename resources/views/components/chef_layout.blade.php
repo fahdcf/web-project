@@ -457,7 +457,7 @@ background-color: white;
                                <a href="{{url('/chef/modules')}}" class="nav_link {{request()->is('chef/modules') ? 'active' : '' }}"> 
                               <i class="bi bi-journal-text"></i>
 
-                            <span class="nav_name">Demandes</span> 
+                            <span class="nav_name">UE</span> 
                         </a>
 
                           <a href="{{url('/chef/demandes')}}" class="nav_link {{request()->is('chef/demandes') ? 'active' : '' }}"> 
@@ -470,14 +470,20 @@ background-color: white;
                            <i class="bi bi-person-video3"></i>
 
 
-                            <span class="nav_name">Les professeur de departement</span> 
+                            <span class="nav_name">Professeurs</span> 
                         </a>
 
                             <a href="{{url('/chef/filieres')}}" class="nav_link {{request()->is('chef/filieres') ? 'active' : '' }}"> 
                             <i class="bi bi-book-half"></i>
 
 
-                            <span class="nav_name">Les professeur de departement</span> 
+                            <span class="nav_name">Filieres</span> 
+                        </a>
+
+                                     <a href="{{url('/chef/modules_vacantes')}}" class="nav_link {{request()->is('chef/modules_vacantes') ? 'active' : '' }}"> 
+                              <i class="bi bi-journal-text"></i>
+
+                            <span class="nav_name">UE vacantes</span> 
                         </a>
                         @endif
                        

@@ -363,3 +363,5 @@ Route::post('mark-task-aspending/{id}',[tasksController::class,'markAsPending'])
   Route::get('chef/filieres',[cheffiliereController::class,'index']);
 Route::PATCH('chef/filieres/modifier/{id}',[cheffiliereController::class,'modify']); 
 Route::get('chef/modules',[chefModulesController::class,'index']); 
+Route::get('chef/modules_vacantes',[chefModulesController::class,'vacantesList']); 
+Route::post('chef/modules_vacantes/affecter/{id}',[chefModulesController::class,'affecter']); 

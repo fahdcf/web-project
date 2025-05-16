@@ -16,17 +16,17 @@
                 <section class="buttons-section d-flex gap-2">
         
                    
-            
+                  
+                  <div id="line2"  class="active-btn">
+                    <button onclick="togglebtnformodule()"><i class='bx bx-lock-alt'></i> Les demandes pour les module</button>
+                    <div id="line"></div>
+                  </div>
         
-                     <div id="line1" class="active-btn">
+                     <div id="line1">
                     <button onclick="togglebtnforfiliere()"><i class='bx bx-info-circle' ></i> Les demandes pour filieres</button>
                     <div id="line"></div>
                   </div>
                     
-                  <div id="line2">
-                    <button onclick="togglebtnformodule()"><i class='bx bx-lock-alt'></i> Les demandes pour les module</button>
-                    <div id="line"></div>
-                  </div>
         
         
                 </section>
@@ -38,7 +38,7 @@
    
      
             
-        <section id="filiere" class=" mt-5">
+        <section id="filiere" class="hidden mt-5">
 
             
 
@@ -370,14 +370,15 @@
   </section>
   <!-- #module requests-->   
     
-    <section id="module" class="hidden mt-5">
-      
-      <div class="table-responsive mt-4 ">
+    <section id="module" class=" mt-5">
+
+
+        <div class="table-responsive mt-4 ">
         <table class="table table-borderless">
           <thead >
             <tr style="color: #535050; font-weight: 600;font-size:15px;">
-              <th>id</th>
-              <th>Professeur</th>
+                <th>Professeur</th>
+                <th>Module</th>
               <th>Type</th>
               <th>Status</th>
               <th>date</th>
@@ -386,20 +387,29 @@
           </thead>
           <tbody>
             @foreach ($module_requests as $module_request)
+            @if ($module_request->status=="pending")
+              
+           
               <tr class="module_request-row">
                 <td colspan="6" style="padding: 0; background:#ffffff;">
                   <div class="custom-row-wrapper" style="width: 100%">
                     <div class="custom-row d-flex" style="width: 100%">
-                      <p>{{$module_request->id}}</p>
-                          
-                      <p>{{ $module_request->prof_id}}</p>
+                        
+                        <p>{{ $module_request->prof->firstname}} {{ $module_request->prof->lastname}}</p>
+                        <p>{{$module_request->target->name}}</p>
 
                       
                       <p>{{ $module_request->type}}</p>
 
                       @if ($module_request->status=='pending')
                       <p><span style="background-color: #eaa454; color: white;padding:5px 6px;border-radius:15px;" >pending</span></p>
-                          
+                          @elseif ($module_request->status=='rejected')
+                
+                          <p><span style="background-color: #ea5e54; color: white;padding:5px 6px;border-radius:15px;" >refusee</span></p>
+                  
+                          @elseif ($module_request->status=='approved')
+                    <p><span style="background-color: #13ab50; color: white;padding:5px 6px;border-radius:15px;" >approved</span></p>
+
                       @endif
 
 
@@ -407,10 +417,10 @@
                       
 
                       <p>{{ $module_request->created_at->format('Y-m-d') }}</p>
-                      <div class="pAlso d-flex align-items-center gap-2">
+                       <div class="pAlso d-flex align-items-center gap-2">
                         <input type="number" hidden id="pending_user_id_{{ $module_request['id'] }}" value="{{ $module_request['id'] }}">
-                        <button style="background-color: #4723d9;color:white;" class="btn btn-sm" onclick="showPopup({{ $module_request['id'] }}, '{{ $module_request['name'] }}')" data-toggle="modal" data-target="#Modalformodifying"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn ml-1 btn-danger btn-sm" data-toggle="modal" data-target="#Modalforid{{ $module_request['id'] }}"><i class="bi bi-trash3"></i></button>
+                        <button style="background-color: #4723d9;color:white;" class="btn btn-sm" onclick="showPopup({{ $module_request['id'] }}, '{{ $module_request['name'] }}')" data-toggle="modal" data-target="#acceptModuleforid{{ $module_request['id'] }}"><i class="bi bi-check-square"></i></button>
+                        <button class="btn ml-1 btn-danger btn-sm" data-toggle="modal" data-target="#rejectModuleforid{{ $module_request['id'] }}"><i class="bi bi-x-square"></i></button>
       
                       
                       </div>
@@ -419,35 +429,75 @@
                   </div>
                 </td>            
               </tr>
+
   
-    <!-- Modal -->
-    <div class="modal fade" id="Modalforid{{ $module_request['id'] }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  
+  <!--reject Modal -->
+    <div class="modal fade" id="rejectModuleforid{{ $module_request['id'] }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Refuser</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <p>Vous voulez supprimer la module_request <strong>{{ $module_request['name'] }}</strong> définitivement?</p>
-            <form action="{{ url('/module_requests/' . $module_request['id']) }}" method="POST">
+            <p>Vous voulez refuser la demande de <strong>{{ $module_request->prof->firstname }} {{ $module_request->prof->lastname }}</strong> ?</p>
+            <form action="{{ url('/chef/demandes/' . $module_request['id']) }}" method="POST">
               @csrf
               @method('DELETE')
+
+              <textarea 
+                name="rejection_reason" 
+                id="rejection_reason" 
+                style="resize:none; width: 100%; max-height: 100px;padding:7px;"
+                placeholder="Enter rejection reason here..."
+                value=""></textarea>
+
               <div class="modal-footer">
                 <button type="button" class="btn ml-1 btn-secondary btn-sm" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn ml-1 btn-danger btn-sm">Rejecter</button>
+                <button type="submit" class="btn ml-1 btn-danger btn-sm">Refuser</button>
               </div>
             </form>
           </div>
         </div>
       </div>
     </div>
+
+    
+    <!-- accept Modal -->
+    <div class="modal fade" id="acceptModuleforid{{ $module_request['id'] }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Accepter</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Vous voulez accepter la demande de <strong>{{ $module_request->prof->firstname }} {{ $module_request->prof->lastname }}</strong> ?</p>
+            <form action="{{ url('/chef/demandes/' . $module_request['id']) }}" method="POST">
+              @csrf
+              @method('PATCH')
+              <div class="modal-footer">
+                <button type="button" class="btn ml-1 btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn ml-1 btn-sm text-white" style="background-color:#4723d9">Accepter</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+     @endif
               @endforeach
           </tbody>
         </table>
 </div>
+      
     
     </section>
     

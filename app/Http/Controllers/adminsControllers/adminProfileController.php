@@ -141,21 +141,25 @@ if(!$userDetails){
         
 
 
-if(request('isadmin')){
+if($request->input('email')){
 
     $role = $user->role; // Make sure this is the Role model object
     
     $rolesData = [
+
         'isadmin' => $request->boolean('isadmin'),
         'iscoordonnateur' => $request->boolean('iscoordonnateur'),
         'ischef' => $request->boolean('ischef'),
         'isprof' => $request->boolean('isprof'),
         'isvocataire' => $request->boolean('isvocataire'),
         'isstudent' => $request->boolean('isstudent'),
+
     ];
     
     if ($role) {
+
         $role->fill($rolesData)->save(); // clean update
+        
     } else {
         $user->role()->create($rolesData);
     }
