@@ -16,63 +16,7 @@ use Illuminate\Support\Facades\DB;
 
 class GroupeController extends Controller
 {
-
-
-    // public function manageGroupes(Module $module)
-    // {
-    //     $groupes = $module->groupes()->orderBy('type')->get(); // Récupère les groupes liés au module
-    //     return view('groupes.index', compact('module', 'groupes'));
-    // }
-
-
-    // public function createGroupe(Module $module)
-    // {
-    //     return view('groupes.create', compact('module'));
-    // }
-
-
-    // public function storeGroupe(Request $request, Module $module)
-    // {
-    //     $validated = $request->validate([
-    //         'type' => 'required|in:TP,TD',
-    //         'name' => 'nullable|string|max:255',
-    //         'max_students' => 'nullable|integer|min:0',
-    //         'annee' => 'required|integer',
-    //     ]);
-
-    //     $module->groupes()->create(array_merge($validated, ['annee' => $validated['annee'] ?? now()->year]));
-
-    //     return redirect()->route('groupes.index', $module)->with('success', 'Groupe créé avec succès!');
-    // }
-
-
-    // public function editGroupe(Module $module, Groupe $groupe)
-    // {
-    //     return view('groupes.edit', compact('module', 'groupe'));
-    // }
-
-    // public function updateGroupe(Request $request, Module $module, Groupe $groupe)
-    // {
-    //     $validated = $request->validate([
-    //         'type' => 'required|in:TP,TD',
-    //         'name' => 'nullable|string|max:255',
-    //         'max_students' => 'nullable|integer|min:0',
-    //         'annee' => 'required|integer',
-    //     ]);
-
-    //     $groupe->update($validated);
-
-    //     return redirect()->route('groupes.index', $module)->with('success', 'Groupe mis à jour avec succès!');
-    // }
-
-    // public function destroyGroupe(Module $module, Groupe $groupe)
-    // {
-    //     $groupe->delete();
-    //     return redirect()->route('groupes.index', $module)->with('success', 'Groupe supprimé avec succès!');
-    // }
-
-    /////////////////////////////////////////////////////////
-    // Helper method to determine current semester
+    // Helper method to determine current/next semester (autom , printemps)
     public static function getCurrentSemester(): array
     {
         $month = now()->month;
@@ -131,7 +75,7 @@ class GroupeController extends Controller
 
 
 
-    //////confiquer tous les module de semester//////////
+    //////confiquer le nbr td tp tous les module de semester
     public function index()
     {
         // Récupération des données du semestre courant
@@ -217,7 +161,7 @@ class GroupeController extends Controller
         return back()->with('success', 'Configuration enregistrée avec succès!');
     }
 
-    ////modifier un module/////////////////////
+    ////confique /modifier just pour un module
     public function updateModuleConfig(Request $request)
     {
 
@@ -279,6 +223,7 @@ class GroupeController extends Controller
             }
         }
     }
+
     ///////////////////////////////////////////
 
 
@@ -370,109 +315,4 @@ class GroupeController extends Controller
         }
     }
 
-
-
-    // private function getNextSemesterData()
-    // {
-    //     $current = app('current-semester'); // Assuming you have a helper/service
-
-    //     return [
-    //         'type' => $current['type'] === 'AUTOMNE' ? 'PRINTEMPS' : 'AUTOMNE',
-    //         'number' => $current['number'] + 1,
-    //         'year' => $current['type'] === 'AUTOMNE'
-    //             ? $current['year']
-    //             : $current['year'] + 1
-    //     ];
-    // }
-
-
-
-    private function getAvailableProfessors()
-    {
-        return User::active()
-            ->orderBy('lastname')
-            ->get(['id', 'firstname', 'lastname']);
-    }
-
-    // private function updateGroups(array $groups, string $model)
-    // {
-    //     foreach ($groups as $id => $data) {
-    //         $model::find($id)->update([
-    //             'professor_id' => $data['professor_id'] ?? null,
-    //             'max_students' => $data['max_students']
-    //         ]);
-    //     }
-    // }
-    /////////////////////////////////
-    public function configure(Request $request)
-    {
-        $data = $request->validate([
-            'filiere_id' => 'required|exists:filieres,id',
-            'semester' => 'required|integer|between:1,6',
-            'annee' => 'required|integer',
-            'default_td' => 'required|integer|min:1',
-            'default_tp' => 'required|integer|min:0',
-            'max_td' => 'required|integer|min:10',
-            'max_tp' => 'required|integer|min:5'
-        ]);
-
-        // Enregistrer la configuration (à implémenter selon votre logique)
-
-        return back()->with('success', 'Configuration enregistrée avec succès');
-    }
-
-    public function manage(Module $module)
-    {
-        $tdGroups = $module->tdGroups()->get();
-        $tpGroups = $module->tpGroups()->get();
-
-        return view('coordonnateur.manage', compact('module', 'tdGroups', 'tpGroups'));
-    }
-
-    public function addTdGroup(Request $request, Module $module)
-    {
-        $max = $request->input('max_students', 30);
-
-        $group = $module->groups()->create([
-            'type' => 'TD',
-            'max_students' => $max,
-            'nbr_student' => 0,
-            'annee' => date('Y')
-        ]);
-
-        return back()->with('success', 'Groupe TD créé avec succès');
-    }
-
-    public function addTpGroup(Request $request, Module $module)
-    {
-        $max = $request->input('max_students', 20);
-
-        $group = $module->groups()->create([
-            'type' => 'TP',
-            'max_students' => $max,
-            'nbr_student' => 0,
-            'annee' => date('Y')
-        ]);
-
-        return back()->with('success', 'Groupe TP créé avec succès');
-    }
-
-    public function update(Request $request, Groupe $group)
-    {
-        $data = $request->validate([
-            'max_students' => 'required|integer|min:1',
-            'nbr_student' => 'required|integer|min:0'
-        ]);
-
-        $group->update($data);
-
-        return back()->with('success', 'Groupe mis à jour avec succès');
-    }
-
-    public function delete(Groupe $group)
-    {
-        $group->delete();
-
-        return back()->with('success', 'Groupe supprimé avec succès');
-    }
 }

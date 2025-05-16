@@ -204,32 +204,9 @@ Route::post('/module_config/update', [GroupeController::class, 'updateModuleConf
 Route::prefix('coordonnateur/groupes')->middleware(['auth'])->group(function () {
     Route::get('/', [GroupeController::class, 'index'])->name('coordonnateur.groupes.index'); //overview of he current semester
 
-
-
-
-    Route::post('/configure', [GroupeController::class, 'configure'])->name('coordonnateur.groupes.configure');
-
-    Route::prefix('{module}')->group(function () {
-        Route::get('/', [GroupeController::class, 'manage'])->name('coordonnateur.groupes.manage');
-        Route::post('/td', [GroupeController::class, 'addTdGroup'])->name('coordonnateur.groupes.add.td');
-        Route::post('/tp', [GroupeController::class, 'addTpGroup'])->name('coordonnateur.groupes.add.tp');
-    });
-
-    Route::delete('/{group}', [GroupeController::class, 'delete'])->name('coordonnateur.groupes.delete');
-    Route::put('/{group}', [GroupeController::class, 'update'])->name('coordonnateur.groupes.update');
 });
 
 Route::get('/mohssine', [CoordonnateurController::class, 'index']);
-
-// Route::get('/groupes', [GroupeController::class, 'index'])->name('coordonnateur.groupes.index');
-
-///////////////////////
-
-
-
-
-
-
 
 
 
