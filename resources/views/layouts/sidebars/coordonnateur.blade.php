@@ -50,10 +50,14 @@
 
 
 <!-- Modules Vacants -->
-<a href="#" class="nav_link {{ request()->is('coordonnateur/lkadflkadlfaj') ? 'active' : '' }} ">
+<a href="{{ url('/chef/modules_vacantes') }}"
+    class="nav_link {{ request()->is('coordonnateur/modules_vacantes') ? 'active' : '' }} ">
     <i class="bx bx-error nav_icon"></i>
     <span class="nav_name">Modules Vacants</span>
 </a>
+
+
+
 
 <!-- Historique -->
 <a href="#" class="nav_link {{ request()->is('coordonnateur/lkadflkadlfaj') ? 'active' : '' }} ">

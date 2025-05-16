@@ -14,8 +14,8 @@ use App\Http\Controllers\adminsControllers\resetPasswordController;
 use App\Http\Controllers\adminsControllers\signupController;
 use App\Http\Controllers\adminsControllers\tasksController;
 use App\Http\Controllers\chef_departementControllers\cheffiliereController;
-use App\Http\Controllers\chef_departementControllers\ChefProfessorController;
 use App\Http\Controllers\chef_departementControllers\chefModulesController;
+use App\Http\Controllers\chef_departementControllers\ChefProfessorController;
 
 use App\Http\Controllers\chef_departementControllers\requestsController;
 
@@ -43,6 +43,7 @@ use App\Models\filiere;
 use App\Models\pending_user;
 use App\Models\Role;
 
+use Illuminate\Support\Facades\Route;
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -214,7 +215,7 @@ Route::get('/mohssine', [CoordonnateurController::class, 'index']);
 
 //////professor//////////////////////////////////////////
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Route;
+
 
 
 
@@ -428,6 +429,7 @@ Route::get('etudiant-profile/{id}', [adminProfileController::class, 'studentprof
  Route::get('chef/professeurs',[ChefProfessorController::class,'index']);
   Route::get('chef/filieres',[cheffiliereController::class,'index']);
 Route::PATCH('chef/filieres/modifier/{id}',[cheffiliereController::class,'modify']); 
-Route::get('chef/modules',[chefModulesController::class,'index']); 
+Route::get('chef/modules',[chefModulesController::class,'index']);
+
 Route::get('chef/modules_vacantes',[chefModulesController::class,'vacantesList']); 
 Route::post('chef/modules_vacantes/affecter/{id}',[chefModulesController::class,'affecter']); 
