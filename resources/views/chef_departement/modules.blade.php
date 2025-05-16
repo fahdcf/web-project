@@ -13,11 +13,9 @@
   
 @foreach ($filieres as $filiere)
   
-<div class="d-flex flex-column flex-md-row align-items-center justify-content-between mt-5">
 
   <h4 class=" m-0" >Les modules du filière {{$filiere->name}}:</h4>
-  <button class="btn text-white m-0 mt-4 mt-md-0" style="background-color:#4723d9 ;">Ajouter un module pour ce filière</button>
-</div>
+
 
 <div class="row p-4">
   
@@ -142,7 +140,7 @@
     </div>
 
 
-    <div class="buttons-container mt-4 d-flex gap-2"><button class="btn" style="border: 1px solid #4723d9; color: #4723d9;">Modifier</button><button class="btn btn-success bg-white" style=" color:#18a16f; border: 1px solid #18a16f;" onclick="showPopup({{$module->id}}, '{{$module->name}}')">Voire plus</button></div>
+    <div class="buttons-container mt-4 d-flex"><button class="btn btn-success bg-white" style=" color:#18a16f; border: 1px solid #18a16f;" onclick="showPopup({{$module->id}}, '{{$module->name}}')">Voire plus</button></div>
   </div>
 </div>
 @php

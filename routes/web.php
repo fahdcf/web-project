@@ -424,6 +424,12 @@ Route::get('etudiant_profile/{id}', [etudiantController::class, 'profile']);
 //for admin
 Route::get('etudiant-profile/{id}', [adminProfileController::class, 'studentprofile']);
 
+
+//chef department
+Route::get('chef/demandes',[requestsController::class,'index']); 
+Route::patch('chef/demandes/{id}',[requestsController::class,'accept']); 
+Route::delete('chef/demandes/{id}',[requestsController::class,'decline']); 
+
  Route::get('chef/professeurs',[ChefProfessorController::class,'index']);
   Route::get('chef/filieres',[cheffiliereController::class,'index']);
 Route::PATCH('chef/filieres/modifier/{id}',[cheffiliereController::class,'modify']); 
