@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
 
 use App\Models\Departement;
-use App\Models\filiere;
+use App\Models\Filiere;
 use App\Models\Role;
 
 use Illuminate\Support\Facades\Notification;
@@ -271,7 +271,7 @@ admin_action::create($actionDetails);
 
     public function delete($id) {
         $departement=Departement::where('user_id',$id)->first();
-        $filiere=filiere::where('coordonnateur_id',$id)->first();
+        $filiere=Filiere::where('coordonnateur_id',$id)->first();
     
         $deletedProf=User::find($id);
         if($departement){

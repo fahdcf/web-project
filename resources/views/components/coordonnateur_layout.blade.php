@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Assign Pro: coordinator</title>
+    <title>Document</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
@@ -360,112 +360,43 @@
         .hidden {
             display: none !important;
         }
-
-
-        .dropdown-menu {
-            max-width: 350px;
-            width: 350px;
-            box-shadow: 1px 1px 10px 2px #3333332d;
-            overflow-x: hidden;
-            white-space: normal;
-            /* Allows content to wrap */
-            word-wrap: break-word;
-            /* Support older browsers */
-            overflow-wrap: break-word;
-        }
-
-        .dropdown-menu li {
-            word-break: break-word;
-            white-space: normal;
-        }
-
-        /* Optional: add spacing if needed */
-        .dropdown-menu a.dropdown-item {
-            font-size: 14px;
-            padding: 10px 15px;
-            white-space: normal;
-            /* Allow line breaks in the <a> */
-        }
-
-
-        .accordion {
-            background-color: white;
-            box-shadow: 1px 1px 10px 2px #33333314;
-        }
-
-        .table-container {
-            background-color: white;
-            width: 100%;
-            overflow-x: auto;
-            box-shadow: 1px 1px 10px 2px #33333314;
-        }
-
-        .badge-status-active {
-            background-color: #28a745;
-        }
-
-        .badge-status-inactive {
-            background-color: #dc3545;
-        }
     </style>
 
 
-    <style>
-        /* Additional sidebar styling */
-        .nav_bottom {
-            margin-top: auto;
-            padding-bottom: 1rem;
-        }
-
-        .nav_link .badge {
-            font-size: 0.6rem;
-            padding: 0.25rem 0.4rem;
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .nav_logo-icon {
-            font-size: 1.5rem;
-        }
-
-        .nav_logo-name {
-            font-size: 0.9rem;
-            white-space: nowrap;
-        }
-
-        .l-navbar.show .nav_logo-name {
-            display: inline;
-        }
-    </style>
 
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
 </head>
 
 <body id="body-pd">
-    @php
-        $notifications = optional(Auth::user()->notifications()->latest()->take(5)->get());
-        $unreadCount = auth()->user()->unreadNotifications->count();
-    @endphp
 
     <header class="header mt-3" id="header">
 
         <div id="searshBarContainer" class="hidden">
+
             <div id="searchBar">
                 <button><i class='bx bx-search' id="search-icon"></i></button>
                 <input type="text" name="search" id="search-input" placeholder="search..">
                 <button onclick="closeSearchBar()"><i style="font-size: 27px;" class="bi bi-x"></i></button>
+
             </div>
+
         </div>
 
 
         <div id="header-content" class="header-content ">
+
             <div class="header_toggle">
                 <i class='bx bx-menu' id="header-toggle"></i>
             </div>
+
+
+
+
 
             <div class="d-flex align-items-center">
 
@@ -474,27 +405,12 @@
                 </div>
 
 
-                <!-- Notification Dropdown -->
-                <div class="dropdown ms-2">
-                    <div class="notifications-container ml-2" id="notifications-container" data-bs-toggle="dropdown">
-                        <button id="notification">
-                            <i class='bx bx-bell'></i>
-                            <span class="position-absolute translate-middle badge rounded-pill bg-danger">3</span>
-                        </button>
-                    </div>
-
-                    <ul class="dropdown-menu dropdown-menu-end mt-2">
-                        <li style="background-color: #4723D9;">
-                            <h6 class="dropdown-header" style="color: white;">Notifications</h6>
-                        </li>
-                        <li><a class="dropdown-item" href="#">Nouvelle UE à valider</a></li>
-                        <li><a class="dropdown-item" href="#">Vacataire à affecter</a></li>
-                        <li><a class="dropdown-item" href="#">EDT en attente</a></li>
-                        <li class="text-center pt-1"><a href="#">Voir toutes</a></li>
-                    </ul>
+                <div class="notifications-container ml-2" id="notifications-container">
+                    <button id="searchBtn"><i class='bx bx-bell' id="search-icon"></i></button>
                 </div>
 
                 <div class="d-flex flex-column  ml-3">
+
                     <p style="color: #504f4f; font-weight: 600; font-size: 15px;" class="p-0 m-0">
                         {{ Auth()->user()->firstname }} {{ Auth()->user()->lastname }}</p>
 
@@ -502,7 +418,8 @@
                         <p style=" {{ Auth()->user()->user_details->status === 'active' ? 'color: #10a386;' : 'color: #cd4c35;' }} font-weight: 500; font-size: 12px;"
                             class="p-0 m-0 text-end">{{ Auth()->user()->user_details->status }}</p>
                     @else
-                        <p style="color: #cd4c35; font-weight: 500; font-size: 12px;" class="p-0 m-0 text-end">inactive
+                        <p style="color: #cd4c35; font-weight: 500; font-size: 12px;" class="p-0 m-0 text-end">
+                            inactive
                         </p>
                     @endif
 
@@ -517,10 +434,12 @@
                                 <img style=" border-radius:50%;"
                                     src="{{ asset('storage/' . Auth()->user()->user_details->profile_img) }}">
                             @else
-                                <img style=" border-radius:50%;" src="#">
+                                <img style=" border-radius:50%;"
+                                    src="{{ asset('storage/images/default_profile_img.png') }}">
                             @endif
                         @else
-                            <img style="width: 35px; border-radius:50%;" src="#">
+                            <img style="width: 35px; border-radius:50%;"
+                                src="{{ asset('storage/images/default_profile_img.png') }}">
 
                         @endif
                     </a>
@@ -542,27 +461,101 @@
                         </li>
                     </ul>
                 </div>
-
-
             </div>
+
+
+
         </div>
 
     </header>
 
-    @auth
-        {{-- @if (auth()->user()->isAdmin())
-        @include('layouts.sidebars.coordonnateur') --}}
-        @if (auth()->user()->isCoordonnateur())
-            @include('layouts.sidebars.coordonnateur')
-        @elseif(auth()->user()->role->isprof)
-            @include('layouts.sidebars.professor')
-        @elseif(auth()->user()->role->isvocataire)
-            @include('layouts.sidebars.vacataire')
-        @endif
-    @endauth
+    <!-- sidebar-->
+
+    <div class="l-navbar" id="nav-bar">
+        <nav class="nav">
+            <div>
+                <a href="#" class="nav_logo"> <i class='bx bx-layer nav_logo-icon'></i> <span
+                        class="nav_logo-name">AssignPro</span></a>
+                <div class="nav_list">
+                    <!-- sidebar items-->
+
+
+
+                    <a href="{{ url('/') }}" class="nav_link {{ request()->is('/') ? 'active' : '' }}">
+                        <i class='bx bx-grid-alt nav_icon'></i>
+                        <span class="nav_name">Dashboard</span>
+                    </a>
+
+
+                    @if (optional(auth()->user()->role)->isadmin)
+                        <a href="{{ url('/pending_users') }}"
+                            class="nav_link {{ request()->is('pending_users') ? 'active' : '' }}">
+                            <i class="bi bi-person-exclamation" style="padding-left: 2px; font-size: 18px;"></i>
+                            <span class="nav_name">Pending users</span>
+                        </a>
+
+                        <a href="{{ url('/departements') }}"
+                            class="nav_link {{ request()->is('departements') ? 'active' : '' }}">
+                            <i class='bx bx-buildings nav_icon'></i>
+                            <span class="nav_name">Departements</span>
+                        </a>
+
+                        <a href="{{ url('/filieres') }}"
+                            class="nav_link {{ request()->is('filieres') ? 'active' : '' }}">
+                            <i class='bx bx-book-open nav_icon'></i>
+                            <span class="nav_name">Filieres</span>
+                        </a>
+
+                        <a href="{{ url('/professeurs') }}"
+                            class="nav_link {{ request()->is('professeurs') ? 'active' : '' }}">
+                            <i class="bi bi-person-video3" style="padding-left: 2px; font-size: 17px;"></i>
+                            <span class="nav_name">Professeurs</span>
+                        </a>
+
+                        <a href="{{ url('/etudiants') }}"
+                            class="nav_link {{ request()->is('etudiants') ? 'active' : '' }}">
+                            <i class="bi bi-people-fill" style="padding-left: 2px; font-size: 16px;"></i>
+                            <span class="nav_name">Etudiants</span>
+                        </a>
+
+                        <a href="{{ url('/admins') }}"
+                            class="nav_link {{ request()->is('admins') ? 'active' : '' }}">
+                            <i class="bi bi-person-gear" style="padding-left: 2px; font-size: 18px;"></i>
+                            <span class="nav_name">Admins</span>
+                        </a>
+                    @endif
+
+
+                    @auth
+                        @if (auth()->user()->isCoordonnateur())
+                            @include('layouts.sidebars.coordonnateur')
+                        @elseif(auth()->user()->role->isprof)
+                            @include('layouts.sidebars.professor')
+                        @elseif(auth()->user()->role->isvocataire)
+                            @include('layouts.sidebars.vacataire')
+                        @endif
+                    @endauth
+
+
+                    <a href="{{ url('/profile') }}" class="nav_link {{ request()->is('profile') ? 'active' : '' }}">
+                        <i class='bx bx-id-card nav_icon'></i>
+                        <span class="nav_name">Profile</span>
+                    </a>
+
+                </div>
+            </div>
+            <a href="{{ url('/login') }}" class="nav_link"> <i class='bx bx-log-out nav_icon'></i> <span
+                    class="nav_name">Deconnexion
+
+                </span> </a>
+        </nav>
+    </div>
+    <!--Container Main start-->
 
 
     {{ $slot }}
+
+    <!--Container Main end-->
 
     <script>
         function showSearchBar() {
@@ -618,47 +611,6 @@
             // Your code to run since DOM is loaded and ready
         });
     </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Gestion des liens #
-            document.querySelectorAll('a[href="#"]').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    // Exemple de notification
-                    Toastify({
-                        text: "Fonctionnalité en cours de développement",
-                        duration: 3000,
-                        close: true,
-                        gravity: "top",
-                        position: "right",
-                        backgroundColor: "#4723D9",
-                    }).showToast();
-                });
-            });
-
-            // Gestion spécifique pour la déconnexion
-            document.getElementById('logout-btn').addEventListener('click', function(e) {
-                e.preventDefault();
-                // Ici vous pouvez ajouter un modal de confirmation
-                console.log("Déconnexion cliquée - À implémenter");
-            });
-
-            // Gestion des ancres
-            const anchorLinks = document.querySelectorAll('a[href^="#"]:not([href="#"])');
-            anchorLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    document.querySelector(targetId)?.scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                });
-            });
-        });
-    </script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    @stack('scripts')
 </body>
 
 

@@ -16,48 +16,47 @@ use App\Http\Controllers\adminsControllers\tasksController;
 use App\Http\Controllers\chef_departementControllers\cheffiliereController;
 use App\Http\Controllers\chef_departementControllers\ChefProfessorController;
 use App\Http\Controllers\chef_departementControllers\requestsController;
+
+
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\coordonnateur\CoordonnateurController;
+use App\Http\Controllers\coordonnateur\GroupeController;
 
-
+use App\Http\Controllers\coordonnateur\ModuleController;
+use App\Http\Controllers\coordonnateur\ProfessorController;
+use App\Http\Controllers\coordonnateur\vacataireController;
 use App\Http\Controllers\homeController;
 use App\Http\Controllers\loginController;
 use App\Http\Controllers\newuserController;
-
 use App\Mail\newuserEmail;
 use App\Mail\resetPasswordEmail;
 use App\Mail\WelcomeEmail;
-use App\Models\Departement;
-use App\Models\filiere;
-use App\Models\pending_user;
-use App\Models\Role;
-use App\Models\task;
-use App\Models\User;
 
-use Illuminate\Support\Facades\Route;
+use App\Models\Departement;
 
 
 //FOR CHEF DEPARTEMENT
 
-use App\Models\user_detail;
-use App\Notifications\ProfUnassignedNotification;
-use function PHPUnit\Framework\returnArgument;
+use App\Models\filiere;
+use App\Models\pending_user;
+use App\Models\Role;
 
 
 
 ///////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
+use App\Models\task;
+use App\Models\User;
+use App\Models\user_detail;
+use App\Notifications\ProfUnassignedNotification;
 
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Redirect;
+use function PHPUnit\Framework\returnArgument;
+use Illuminate\Http\Request;
 
 
 /////////Coordonnateur//////////////////////////////////////////////////////
-use App\Http\Controllers\coordonnateur\CoordonnateurController;
+use Illuminate\Support\Facades\Auth;
 
 
 
@@ -66,7 +65,7 @@ Route::prefix('coordonnateur')->group(function () {
 });
 
 //////coordonateur: gestion des modules/////////////
-use App\Http\Controllers\coordonnateur\ModuleController;
+use Illuminate\Support\Facades\DB;
 
 Route::middleware(['auth'])
     ->prefix('coordonnateur/modules')
@@ -115,7 +114,7 @@ Route::middleware(['auth'])
 
 
 //////coordonateur: gestion des vacataire  /////////////
-use App\Http\Controllers\coordonnateur\vacataireController;
+use Illuminate\Support\Facades\Mail;
 
 Route::middleware(['auth'])
     ->prefix('coordonnateur/vacataires')
@@ -155,7 +154,7 @@ Route::middleware(['auth'])
 
 
 // ////// gestion des goupes/////////////////////////////////
-use App\Http\Controllers\coordonnateur\GroupeController;
+use Illuminate\Support\Facades\Notification;
 
 // // Route pour la page générale de gestion des groupes (si vous la conservez)
 // Route::middleware(['auth'])
@@ -212,7 +211,9 @@ Route::get('/mohssine', [CoordonnateurController::class, 'index']);
 
 
 //////professor//////////////////////////////////////////
-use App\Http\Controllers\coordonnateur\ProfessorController;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Route;
+
 
 
 Route::prefix('professor')->group(function () {
