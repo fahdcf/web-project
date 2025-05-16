@@ -13,13 +13,19 @@ return new class extends Migration {
         Schema::create('module_user', function (Blueprint $table) {
             $table->integer('id', true);
 
-            $table->string('role')->nullable();
+
+
 
             $table->integer('user_id');
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
 
             $table->integer('module_id');
             $table->foreign('module_id')->references('id')->on('modules')->cascadeOnDelete();
+
+
+            $table->string('role')->default("CM");
+            $table->integer('hours')->default(0);
+
 
             $table->timestamps();
         });

@@ -1,430 +1,411 @@
 <x-coordonnateur_layout>
     <div class="container-fluid px-4 py-4">
 
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
 
-        <div class="border d-flex justify-content-between align-items-center mb-4 py-3 border-bottom">
+        <!-- Header Section -->
+        <div
+            class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4 p-3 bg-white rounded shadow-sm">
             <div>
-                <div>
-
-                    <h1 class="h3 text-gray-800 border"><i class="fas fa-book-open me-2 text-primary"></i> des Unités
-                        d'Enseignement</h1>
-                    <p class="mb-0 text-muted small border">
-                        Filière:
-                        <strong>{{ $filiere->name }}</strong>
-                        | Coordonnateur:
-                        <strong>{{ auth()->user()->lastname }} {{ auth()->user()->firstname }}</strong>
-                        .
-                    </p>
+                <div class="d-flex align-items-center mb-2">
+                    <i class="fas fa-book-open fa-xl text-primary me-3"></i>
+                    <h1 class="h3 mb-0 text-gray-800">Gestion des Unités d'Enseignement</h1>
                 </div>
 
+                <div class="d-flex flex-wrap gap-3">
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-light text-dark border">
+                            <i class="fas fa-graduation-cap me-1 text-primary"></i>
+                            Filière: <strong>{{ $filiere->name }}</strong>
+                        </span>
+                    </div>
+
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-light text-dark border">
+                            <i class="fas fa-user-tie me-1 text-primary"></i>
+                            Coordonnateur:
+                            <strong>{{ auth()->user()->lastname }} {{ auth()->user()->firstname }}</strong>
+                        </span>
+                    </div>
+                </div>
             </div>
 
-            <a class="btn btn-primary border" href="{{ route('coordonnateur.modules.create') }}">
-                <i class="fas fa-plus-circle me-1"></i>
-                Créer une nouvelle UE
+            <a href="{{ route('coordonnateur.modules.create') }}" class="btn btn-primary d-flex align-items-center">
+                <i class="fas fa-plus-circle me-2"></i>
+                <span>Nouvelle UE</span>
             </a>
-
         </div>
 
-        <div class="card shadow-sm mb-4">
-            <div class="card-body py-3">
+        <!-- Search and Filter Card -->
+        <div class="card shadow-sm mb-4 border-0">
+            <div class="card-body p-3">
                 <form action="{{ route('coordonnateur.modules.search') }}" method="POST">
                     @csrf
-                    <div class="row g-3 align-items-center">
-                        <div class="col-md-4">
-                            <label class="form-label small fw-bold">Semestre</label>
-                            <select class="form-select form-select-sm" name="filterSemester" id="filterSemester">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-4 col-lg-3">
+                            <label class="form-label small fw-bold text-muted">Semestre</label>
+                            <select class="form-select" name="filterSemester" id="filterSemester">
                                 <option value="all">Tous les semestres</option>
                                 @for ($i = 1; $i <= 6; $i++)
                                     <option value="{{ $i }}"
-                                        {{ request('filterSemester') == $i ? 'selected' : '' }}>Semestre
-                                        {{ $i }}</option>
+                                        {{ request('filterSemester') == $i ? 'selected' : '' }}>
+                                        Semestre {{ $i }}
+                                    </option>
                                 @endfor
                             </select>
                         </div>
 
-                        <div class="col-md-4">
-                            <label class="form-label small fw-bold">Statut</label>
-                            <select class="form-select form-select-sm" name="filterStatus" id="filterStatus">
-                                <option value="all">Tous les statuts</option>
+                        <div class="col-md-4 col-lg-3">
+                            <label class="form-label small fw-bold text-muted">Statut</label>
+                            <select class="form-select" name="filterStatus" id="filterStatus">
+                                <option value="all">Tous statuts</option>
                                 <option value="active" {{ request('filterStatus') == 'active' ? 'selected' : '' }}>Actif
                                 </option>
                                 <option value="inactive" {{ request('filterStatus') == 'inactive' ? 'selected' : '' }}>
                                     Inactif</option>
+
                             </select>
                         </div>
 
-                        <div class="col-md-4">
-                            <label class="form-label small fw-bold">Recherche</label>
-                            <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" placeholder="Code ou intitulé..."
-                                    name="searchInput" id="searchInput" value="{{ request('searchInput') }}" />
-                                <button class="btn btn-outline-secondary" type="submit">
+                        <div class="col-md-4 col-lg-4">
+                            <label class="form-label small fw-bold text-muted">Recherche</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control border-end-0"
+                                    placeholder="Code, intitulé ou responsable..." name="searchInput" id="searchInput"
+                                    value="{{ request('searchInput') }}">
+                                <button class="btn btn-outline-secondary border-start-0" type="submit">
                                     <i class="fas fa-search"></i>
                                 </button>
                             </div>
                         </div>
-                        <div class="col-12 mt-2">
-                            @if (isset($searchResults))
-                                <button class="btn btn-sm btn-link" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#searchResultsCollapse"
-                                    aria-expanded="{{ isset($searchResults) ? 'true' : 'false' }}"
-                                    aria-controls="searchResultsCollapse">
-                                    <i class="fas fa-chevron-down me-1"></i>
-                                    {{ isset($searchResults) && $searchResults->isNotEmpty() ? 'Masquer les résultats' : 'Afficher les résultats' }}
-                                </button>
-                            @endif
+
+                        <div class="col-md-12 col-lg-2">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-filter me-1"></i> Appliquer
+                            </button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
+
+        <!-- Search Results Section -->
+        @if (isset($searchResults))
+            <div class="collapse {{ $searchResults->isNotEmpty() ? 'show' : '' }}" id="searchResultsCollapse">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 fw-semibold">
+                            <i class="fas fa-search me-2"></i>
+                            Résultats ({{ $searchResults->count() }})
+                        </h6>
+                        <button class="btn btn-sm btn-link text-decoration-none" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#searchResultsCollapse">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    @if ($searchResults->isNotEmpty())
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                @foreach ($searchResults as $module)
+                                    <div class="list-group-item">
+                                        <div
+                                            class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                                            <div class="mb-2 mb-md-0">
+                                                <h6 class="mb-1 fw-semibold">{{ $module->code }} - {{ $module->name }}
+                                                </h6>
+                                                <div class="d-flex flex-wrap gap-3">
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-calendar me-1"></i> S{{ $module->semester }}
+                                                    </small>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-clock me-1"></i>
+                                                        {{ $module->cm_hours + $module->td_hours + $module->tp_hours }}h
+                                                    </small>
+                                                    <span
+                                                        class="badge bg-{{ $module->status === 'active' ? 'success' : 'danger' }}">
+                                                        {{ $module->status === 'active' ? 'Actif' : 'Inactif' }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex gap-2">
+                                                <a href="{{ route('coordonnateur.modules.show', $module->id) }}"
+                                                    class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye me-1"></i> Détails
+                                                </a>
+                                                <a href="{{ route('coordonnateur.modules.edit', $module->id) }}"
+                                                    class="btn btn-sm btn-outline-secondary">
+                                                    <i class="fas fa-edit me-1"></i> Modifier
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @else
+                        <div class="card-body">
+                            <div class="alert alert-info mb-0">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Aucun résultat ne correspond à votre recherche
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        @endif
     </div>
 
 
     <div class="container-fluid px-4 py-4">
 
-        <div class="collapse {{ isset($searchResults) ? 'show' : '' }}" id="searchResultsCollapse">
-            @if (isset($searchResults) && $searchResults->isNotEmpty())
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-light">
-                        <h6 class="mb-0">Résultats de la recherche ({{ $searchResults->count() }})</h6>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-group list-group-flush">
-                            @foreach ($searchResults as $module)
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-1">{{ $module->name }}</h6>
-                                        <small class="text-muted">
-                                            Code: {{ $module->code }} | Semestre: S{{ $module->semester }} | Statut:
-                                            {{ $module->status ? 'active' : 'inactive' }}
-                                        </small>
-                                    </div>
-                                    <a href="{{ route('coordonnateur.modules.show', $module->id) }}"
-                                        class="btn btn-sm btn-outline-primary">
-                                        Voir détails
-                                    </a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-            @elseif (isset($searchResults) && $searchResults->isEmpty())
-                <div class="alert alert-info shadow-sm mb-4">Aucun résultat trouvé pour votre recherche.</div>
-            @endif
-        </div>
 
         @foreach ($semesters as $semesterName => $modules)
-            <div class=" card shadow-lg mb-4">
-                <div class="card-header bg-light d-flex justify-content-between align-items-center flex-wrap">
-                    <h5 class="mb-0 py-2">
-                        <i class="fas fa-calendar-alt me-2"></i>
-                        Semestre: {{ $semesterName }}
-                    </h5>
-                    <div class="d-flex gap-2 flex-wrap">
-                        <span class="text-muted me-2">
+            <div class="card shadow-sm mb-4 border-0 p-3">
+
+                {{-- 
+    <div class="card shadow-sm mb-4 border-0">
+        <div class="card-body p-3"> --}}
+
+
+                <!-- En-tête amélioré -->
+                <div class="card-header bg-light d-flex justify-content-between align-items-center flex-wrap py-2">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-calendar-alt text-primary me-2 fs-5"></i>
+                        <h5 class="mb-0 fw-semibold">Semestre {{ $semesterName }}</h5>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-3 align-items-center">
+                        <div class="d-flex align-items-center text-muted">
                             <i class="fas fa-book me-1"></i>
-                            {{ $modules->count() }} Modules
-                        </span>
-                        <span class="text-muted me-2">
+                            <span>{{ $modules->count() }} Modules</span>
+                        </div>
+
+                        <div class="d-flex align-items-center text-muted">
                             <i class="fas fa-hourglass-half me-1"></i>
-                            Total: {{ $modules->sum('credits') }} ECTS
-                        </span>
+                            <span>{{ $modules->sum('credits') }} ECTS</span>
+                        </div>
+
                         @if ($modules->where('status', 'inactive')->count() > 0)
-                            <span class="badge bg-warning rounded-pill me-2">
+                            <span class="badge bg-warning rounded-pill py-2">
                                 <i class="fas fa-exclamation-triangle me-1"></i>
-                                {{ $modules->where('status', 'inactive')->count() }} Non Assignées
+                                {{ $modules->where('status', 'inactive')->count() }} Non assignés
                             </span>
                         @else
-                            <span class="badge bg-success rounded-pill me-2">
+                            <span class="badge bg-success rounded-pill py-2">
                                 <i class="fas fa-check-circle me-1"></i>
                                 Planification OK
                             </span>
                         @endif
                     </div>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
+
+                <!-- Tableau optimisé -->
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th width="100" class="ps-3">Code</th>
+                                <th>Intitulé</th>
+                                <th width="90">Crédits</th>
+                                <th width="160">Volume Horaire</th>
+                                <th width="120">Statut</th>
+                                <th width="180" class="pe-3 text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($modules as $module)
                                 <tr>
-                                    <th width="100">Code UE</th>
-                                    <th>Intitulé</th>
-                                    <th width="100">Crédits</th>
-                                    <th width="150">Volume Horaire</th>
-                                    {{-- <th width="200">Assigné à</th> --}}
-                                    <th width="100">Statut</th>
-                                    <th width="200" class="text-end">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($modules as $module)
-                                    <tr>
-                                        <td class="fw-bold text-primary">{{ $module->code }}</td>
-                                        <td>
-                                            <div class="d-flex align-items-center fw-bold text-dark">
-                                                {{ $module->name }}</div>
-                                            <small class="d-flex align-items-center">
-                                                <u>respo.:</u>
+                                    <!-- Colonne Code -->
+                                    <td class="ps-3 fw-bold text-primary">
+                                        {{ $module->code }}
+                                    </td>
+
+                                    <!-- Colonne Intitulé améliorée -->
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            <span class="fw-semibold">{{ $module->name }}</span>
+                                            <small class="text-muted">
+                                                Resp:
                                                 @if ($module->responsable)
-                                                    <strong>
-                                                        {{ $module->responsable->lastname }}
-                                                        {{ $module->responsable->firstname }}
-                                                    </strong>
+                                                    <span
+                                                        class="fw-medium">{{ $module->responsable->lastname }}</span>
+                                                @else
+                                                    <span class="text-danger">Non assigné</span>
                                                 @endif
                                             </small>
-                                        </td>
-                                        <td>{{ $module->credits }} ECTS</td>
-                                        <td>
-                                            <div class="d-flex flex-wrap gap-1">
-                                                <span class="badge bg-primary-subtle text-primary">
-                                                    CM {{ $module->cm_hours }}h
-                                                </span>
-                                                <span class="badge bg-info-subtle text-info">TD
-                                                    {{ $module->td_hours }}h</span>
-                                                <span class="badge bg-success-subtle text-success">
-                                                    TP {{ $module->tp_hours }}h
-                                                </span>
-                                            </div>
-                                        </td>
-                                        {{-- 
-                                <td class="align-middle">
-                                    <div class="d-flex align-items-center flex-wrap gap-2">
-                                        @foreach ($module->users ?? [] as $user)
-                                        <div class="position-relative">
-                                            <img
-                                                src="{{ $user->photo_url ?? 'https://ui-avatars.com/api/?name='.urlencode($user->firstname.'+'.$user->lastname).'&background=random' }}"
-                                                class="rounded-circle border border-2 @if ($user->pivot->is_responsible ?? false) border-primary @else border-light @endif"
-                                                width="28"
-                                                height="28"
-                                                alt="{{ $user->firstname }} {{ $user->lastname }}"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-html="true"
-                                                title="<b>{{ $user->firstname }} {{ $user->lastname }}</b><br>
-                                                <small>Role: {{ $user->pivot->role ?? 'N/A' }}</small><br>
-                                                <small>Charge: {{ $user->pivot->hours ?? 0 }}h</small>">
-                                            @if ($user->pivot->is_responsible ?? false)
-                                            <span
-                                                class="position-absolute bottom-0 end-0 badge bg-primary rounded-circle p-1"
-                                                style="width: 12px; height: 12px"></span>
-                                            @endif
                                         </div>
-                                        @endforeach
+                                    </td>
 
-                                        <button
-                                            class="btn btn-sm btn-action btn-outline-secondary"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#assignVacataireModal"
-                                            data-module-id="{{ $module->id }}"
-                                            data-module-name="{{ $module->name }}"
-                                            data-module-code="{{ $module->code }}"
-                                            aria-label="Assigner un enseignant">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </td> --}}
+                                    <!-- Colonne Crédits -->
+                                    <td>
+                                        <span class="badge bg-secondary bg-opacity-10 text-white">
+                                            {{ $module->credits }} ECTS
+                                        </span>
+                                    </td>
 
-                                       <td>
-    <span
-        class="badge rounded-pill 
-            @if ($module->status === 'active') bg-success 
-            @elseif ($module->status === 'inactive') bg-danger 
-            @else bg-secondary @endif">
-        <i class="fas 
-            @if ($module->status === 'active') fa-check-circle 
-            @elseif ($module->status === 'inactive') fa-times-circle 
-            @else fa-question-circle @endif me-1">
-        </i>
-        {{ $module->status }}
-    </span>
-</td>
+                                    <!-- Colonne Volume Horaire optimisée -->
+                                    <td>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <span class="badge bg-primary bg-opacity-10 text-white ">
+                                                CM: {{ $module->cm_hours }}h
+                                            </span>
+                                            <span class="badge bg-primary bg-opacity-10 text-white ">
+                                                TP: {{ $module->tp_hours }}h
+                                            </span>
+                                            <span class="badge bg-primary bg-opacity-10 text-white ">
+                                                TD: {{ $module->td_hours }}h
+                                            </span>
+                                            <span class="badge bg-primary bg-opacity-10 text-white ">
+                                                Autre: {{ $module->autre_hours }}h
+                                            </span>
 
-                                        <td class="text-end">
-                                            <div class="btn-group btn-group-sm">
-                                                <a href="{{ route('coordonnateur.modules.edit', $module->id) }}"
-                                                    class="btn btn-outline-primary" title="Modifier"
-                                                    aria-label="Modifier">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a href="{{ route('coordonnateur.modules.confirm-delete', $module->id) }}"
-                                                    class="btn btn-outline-danger delete-ue"
-                                                    data-ue-id="{{ $module->id }}"
-                                                    data-ue-name="{{ $module->name }}" title="Supprimer"
-                                                    aria-label="Supprimer">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </a>
-                                                <a href="{{ route('coordonnateur.modules.show', $module->id) }}"
-                                                    class="btn btn-outline-info" title="Détails"
-                                                    aria-label="Détails">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+
+                                        </div>
+                                    </td>
+
+                                    <!-- Colonne Statut améliorée -->
+                                    <td>
+                                        <span
+                                            class="badge rounded-pill py-2 {{ $module->status === 'active' ? 'bg-success' : 'bg-danger' }}">
+                                            <i
+                                                class="fas {{ $module->status === 'active' ? 'fa-check-circle' : 'fa-times-circle' }} me-1"></i>
+                                            {{ $module->status === 'active' ? 'Actif' : 'Inactif' }}
+                                        </span>
+                                    </td>
+
+                                    <!-- Colonne Actions optimisée -->
+                                    <td class="pe-3 text-end">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <!-- Bouton Éditer -->
+                                            <a href="{{ route('coordonnateur.modules.edit', $module->id) }}"
+                                                class="btn btn-outline-primary px-3" title="Modifier"
+                                                data-bs-toggle="tooltip">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+
+                                            <!-- Bouton Assigner -->
+                                            <a href="{{ route('coordonnateur.modules.assigner', $module->id) }}"
+                                                class="btn btn-outline-success px-3" title="Assigner vacataires"
+                                                data-bs-toggle="tooltip">
+                                                <i class="fas fa-user-plus"></i>
+                                            </a>
+
+                                            <!-- Bouton Voir -->
+                                            <a href="{{ route('coordonnateur.modules.show', $module->id) }}"
+                                                class="btn btn-outline-info px-3" title="Détails"
+                                                data-bs-toggle="tooltip">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+
+                                            <!-- Bouton Supprimer -->
+                                            <button class="btn btn-outline-danger px-3 delete-module"
+                                                data-id="{{ $module->id }}" data-name="{{ $module->name }}"
+                                                title="Supprimer" data-bs-toggle="tooltip">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         @endforeach
 
-
-    </div>
-   {{--  --}}
-
-
-
-    <!-- Assign Vacataire Modal -->
-    <div class="modal fade" id="assignVacataireModal" tabindex="-1" aria-labelledby="assignVacataireModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form id="assignVacataireForm" method="POST">
-                    @csrf
-                    <input type="hidden" name="module_id" id="module_id">
-                    <div class="modal-header bg-light">
-                        <h5 class="modal-title" id="assignVacataireModalLabel">
-                            <i class="fas fa-user-plus me-2"></i>
-                            Assigner un enseignant
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+        <!-- Modal de confirmation de suppression -->
+        <div class="modal fade" id="deleteModuleModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title">Confirmer la suppression</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                             aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">Module</label>
-                            <input type="text" class="form-control" id="module_name_display" readonly />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Sélectionner un enseignant</label>
-                            <select class="form-select" name="vacataire_id" id="vacataire_id" required>
-                                <option value="" selected disabled>Choisir...</option>
-                                @foreach ($vacataires as $vacataire)
-                                    <option value="{{ $vacataire->id }}">
-                                        {{ $vacataire->lastname }} {{ $vacataire->firstname }}
-                                        ({{ $vacataire->specialty }})
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Rôle</label>
-                            <select class="form-select" name="role" required>
-                                <option value="enseignant">Enseignant</option>
-                                <option value="responsable">Responsable</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Heures attribuées</label>
-                            <input type="number" class="form-control" name="hours" min="1" required>
-                        </div>
+                        <p>Voulez-vous vraiment supprimer le module <strong id="moduleNameToDelete"></strong> ?</p>
+                        <p class="text-danger">Cette action est irréversible !</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <button type="submit" class="btn btn-primary" id="confirmAssignVacataire">
-                            <span class="submit-text">Confirmer</span>
-                            <span class="spinner-border spinner-border-sm d-none" role="status"
-                                aria-hidden="true"></span>
-                        </button>
+                        <form id="deleteModuleForm" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Supprimer</button>
+                        </form>
                     </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmation de suppression</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Êtes-vous sûr de vouloir supprimer l'UE "<span id="ue-name-to-delete"></span>" ?
-                    Cette action est irréversible.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <form id="deleteUeForm" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger" id="confirmDeleteBtn">
-                            <span class="submit-text">Supprimer</span>
-                            <span class="spinner-border spinner-border-sm d-none" role="status"
-                                aria-hidden="true"></span>
-                        </button>
-                    </form>
                 </div>
             </div>
         </div>
+
+        @push('styles')
+            <style>
+                /* Styles optimisés */
+                .table th {
+                    font-size: 0.85rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+
+                .badge {
+                    font-weight: 500;
+                }
+
+                .btn-group-sm .btn {
+                    padding: 0.35rem 0.5rem;
+                }
+
+                @media (max-width: 768px) {
+                    .card-header {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 0.5rem;
+                    }
+
+                    .table-responsive {
+                        font-size: 0.9rem;
+                    }
+                }
+            </style>
+        @endpush
+
+        @push('scripts')
+            <script>
+                // Activation des tooltips
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Tooltips
+                    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                    tooltipTriggerList.map(function(tooltipTriggerEl) {
+                        return new bootstrap.Tooltip(tooltipTriggerEl);
+                    });
+
+                    // Gestion de la suppression
+                    document.querySelectorAll('.delete-module').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const moduleId = this.dataset.id;
+                            const moduleName = this.dataset.name;
+
+                            document.getElementById('moduleNameToDelete').textContent = moduleName;
+                            document.getElementById('deleteModuleForm').action =
+                                `/coordonnateur/modules/${moduleId}`;
+
+                            new bootstrap.Modal(document.getElementById('deleteModuleModal')).show();
+                        });
+                    });
+                });
+            </script>
+        @endpush
+
+
     </div>
 
 
-    <style>
-        .table th {
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #6c757d;
-            border-top: none;
-        }
-
-        .table td {
-            vertical-align: middle;
-        }
-
-        .badge {
-            font-weight: 500;
-            padding: 0.35em 0.65em;
-        }
-
-        .bg-primary-subtle {
-            background-color: rgba(13, 110, 253, 0.1);
-        }
-
-        .bg-info-subtle {
-            background-color: rgba(23, 162, 184, 0.1);
-        }
-
-        .bg-success-subtle {
-            background-color: rgba(40, 167, 69, 0.1);
-        }
-
-        .card {
-            border: none;
-            border-radius: 0.5rem;
-        }
-
-        .btn-action {
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        @media (max-width: 768px) {
-            .table-responsive {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .card-header h5 {
-                font-size: 1.1rem;
-            }
-
-            .btn-group {
-                flex-wrap: wrap;
-                gap: 0.25rem;
-            }
-        }
-    </style>
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
@@ -459,140 +440,6 @@
                 $('#filterSemester, #filterStatus').on('change', applyFilters);
                 $('#searchInput').on('keyup', applyFilters);
 
-                // Delete UE confirmation
-                $('.delete-ue').click(function(e) {
-                    e.preventDefault();
-                    const ueId = $(this).data('ue-id');
-                    const ueName = $(this).data('ue-name');
-
-                    $('#ue-name-to-delete').text(ueName);
-                    $('#deleteUeForm').attr('action', $(this).attr('href'));
-
-                    $('#confirmDeleteModal').modal('show');
-                });
-
-                // Assign Vacataire Modal
-                $('#assignVacataireModal').on('show.bs.modal', function(event) {
-                    const button = $(event.relatedTarget);
-                    const moduleId = button.data('module-id');
-                    const moduleName = button.data('module-name');
-                    const moduleCode = button.data('module-code');
-
-                    const modal = $(this);
-                    modal.find('#module_id').val(moduleId);
-                    modal.find('#module_name_display').val(moduleCode + ' - ' + moduleName);
-                });
-
-                // Handle form submission for assigning teacher
-                $('#assignVacataireForm').submit(function(e) {
-                    e.preventDefault();
-
-                    const submitBtn = $('#confirmAssignVacataire');
-                    const submitText = submitBtn.find('.submit-text');
-                    const spinner = submitBtn.find('.spinner-border');
-
-                    submitText.addClass('d-none');
-                    spinner.removeClass('d-none');
-                    submitBtn.prop('disabled', true);
-
-                    $.ajax({
-                        url: "{{ route('coordonnateur.modules.assign-vacataire') }}",
-                        method: 'POST',
-                        data: $(this).serialize(),
-                        success: function(response) {
-                            if (response.success) {
-                                Swal.fire({
-                                    title: 'Succès!',
-                                    text: response.message,
-                                    icon: 'success',
-                                    confirmButtonText: 'OK'
-                                }).then(() => {
-                                    location.reload();
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: 'Erreur!',
-                                    text: response.message,
-                                    icon: 'error',
-                                    confirmButtonText: 'OK'
-                                });
-                            }
-                        },
-                        error: function(xhr) {
-                            let errorMessage = 'Une erreur est survenue';
-                            if (xhr.responseJSON && xhr.responseJSON.message) {
-                                errorMessage = xhr.responseJSON.message;
-                            }
-                            Swal.fire({
-                                title: 'Erreur!',
-                                text: errorMessage,
-                                icon: 'error',
-                                confirmButtonText: 'OK'
-                            });
-                        },
-                        complete: function() {
-                            submitText.removeClass('d-none');
-                            spinner.addClass('d-none');
-                            submitBtn.prop('disabled', false);
-                        }
-                    });
-                });
-
-                // Handle delete form submission
-                $('#deleteUeForm').submit(function(e) {
-                    e.preventDefault();
-
-                    const submitBtn = $('#confirmDeleteBtn');
-                    const submitText = submitBtn.find('.submit-text');
-                    const spinner = submitBtn.find('.spinner-border');
-
-                    submitText.addClass('d-none');
-                    spinner.removeClass('d-none');
-                    submitBtn.prop('disabled', true);
-
-                    $.ajax({
-                        url: $(this).attr('action'),
-                        method: 'POST',
-                        data: $(this).serialize(),
-                        success: function(response) {
-                            if (response.success) {
-                                Swal.fire({
-                                    title: 'Supprimé!',
-                                    text: response.message,
-                                    icon: 'success',
-                                    confirmButtonText: 'OK'
-                                }).then(() => {
-                                    location.reload();
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: 'Erreur!',
-                                    text: response.message,
-                                    icon: 'error',
-                                    confirmButtonText: 'OK'
-                                });
-                            }
-                        },
-                        error: function(xhr) {
-                            let errorMessage = 'La suppression a échoué';
-                            if (xhr.responseJSON && xhr.responseJSON.message) {
-                                errorMessage = xhr.responseJSON.message;
-                            }
-                            Swal.fire({
-                                title: 'Erreur!',
-                                text: errorMessage,
-                                icon: 'error',
-                                confirmButtonText: 'OK'
-                            });
-                        },
-                        complete: function() {
-                            $('#confirmDeleteModal').modal('hide');
-                            submitText.removeClass('d-none');
-                            spinner.addClass('d-none');
-                            submitBtn.prop('disabled', false);
-                        }
-                    });
-                });
             });
         </script>
     @endpush

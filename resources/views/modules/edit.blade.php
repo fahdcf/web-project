@@ -1,99 +1,547 @@
 <x-coordonnateur_layout>
-    <div class="container-fluid mt-5 py-4 shadow-sm">
 
-        <form action="{{ route('coordonnateur.modules.update', $module->id) }}" method="POST" class="border p-4 rounded mt-5">
-            @method('PUT')
+    <div class="container-fluid py-4">
+        <form action="{{ route('coordonnateur.modules.update', $module->id) }}" method="POST"
+            class="module-form border p-4 rounded mt-5 bg-white shadow-sm">
             @csrf
+            @method('PUT')
 
-        <div class="row g-3">
-            <div class="col-md-6">
-                <label for="code_edit" class="form-label small fw-bold text-muted">Code UE*</label>
-                <input type="text" class="form-control form-control-sm" id="code_edit" name="code" value="{{ $module->code }}" required />
-            </div>
-            <div class="col-md-6">
-                <label for="name_edit" class="form-label small fw-bold text-muted">Intitulé*</label>
-                <input type="text" class="form-control form-control-sm" id="name_edit" name="name" value="{{ $module->name }}" required />
+            <div class="form-header mb-4 bg-primary text-white p-3 rounded">
+                <h4 class="mb-0"><i class="fas fa-edit me-2"></i>Modifier l'UE: {{ $module->name }}</h4>
+                <small class="text-white-50">Filière: {{ $filiere->name ?? 'Non définie' }} - Année universitaire:
+                    {{ $anneeUniversitaire ?? now()->year }}</small>
             </div>
 
-            <div class="col-md-4">
-                <label for="cm_hours_edit" class="form-label small fw-bold text-muted">CM (heures)*</label>
-                <input type="number" class="form-control form-control-sm" id="cm_hours_edit" name="cm_hours" min="0" value="{{ $module->cm_hours }}" required />
-            </div>
-            <div class="col-md-4">
-                <label for="td_hours_edit" class="form-label small fw-bold text-muted">TD (heures)*</label>
-                <input type="number" class="form-control form-control-sm" id="td_hours_edit" name="td_hours" min="0" value="{{ $module->td_hours }}" required />
-            </div>
-            <div class="col-md-4">
-                <label for="tp_hours_edit" class="form-label small fw-bold text-muted">TP (heures)*</label>
-                <input type="number" class="form-control form-control-sm" id="tp_hours_edit" name="tp_hours" min="0" value="{{ $module->tp_hours }}" required />
-            </div>
+            @if ($errors->any())
+                <div class="alert alert-danger error-message">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-            <div class="col-md-12">
-                <label for="specialty_edit" class="form-label small fw-bold text-muted">Spécialité du module</label>
-                <input type="text" class="form-control form-control-sm" id="specialty_edit" name="specialty" value="{{ $module->specialty }}">
-            </div>
+            <div class="form-section mb-4">
+                <h3 class="section-title h5 mb-3 fw-bold border-bottom pb-2 text-primary">
+                    <i class="fas fa-info-circle me-2"></i>Informations essentielles
+                </h3>
 
-            <div class="col-md-4">
-                <label for="annee_edit" class="form-label small fw-bold text-muted">Année*</label>
-                <select class="form-select form-select-sm" id="annee_edit" name="annee" required>
-                    <option value="1" {{ $module->annee == 1 ? 'selected' : '' }}>1ère Année</option>
-                    <option value="2" {{ $module->annee == 2 ? 'selected' : '' }}>2ème Année</option>
-                    <option value="3" {{ $module->annee == 3 ? 'selected' : '' }}>3ème Année</option>
-                </select>
-            </div>
-            <div class="col-md-4">
-                <label for="semestre_edit" class="form-label small fw-bold text-muted">Semestre*</label>
-                <select class="form-select form-select-sm" id="semestre_edit" name="semestre" required>
-                    <option value="1" {{ $module->semestre == 1 ? 'selected' : '' }}>Semestre 1</option>
-                    <option value="2" {{ $module->semestre == 2 ? 'selected' : '' }}>Semestre 2</option>
-                </select>
-            </div>
-            <div class="col-md-4">
-                <label for="credits_edit" class="form-label small fw-bold text-muted">Crédits ECTS*</label>
-                <input type="number" class="form-control form-control-sm" id="credits_edit" name="credits" min="1" value="{{ $module->credit }}" required />
-            </div>
-
-            <div class="col-12">
-                <h6 class="mt-3 mb-2 small fw-bold text-muted">Nombre de groupes</h6>
-                <div class="row g-2">
-                    <div class="col-md-6">
-                        <label for="td_groups_edit" class="form-label small fw-bold text-muted">Groupes TD*</label>
-                        <input type="number" class="form-control form-control-sm" id="td_groups_edit" name="nb_groupes_td" min="1" value="{{ $module->nb_groupes_td }}" required />
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="type" class="form-label">Type UE*</label>
+                        <select name="type" id="type" class="form-select @error('type') is-invalid @enderror"
+                            required>
+                            <option value="">Sélectionner le type</option>
+                            <option value="complet" {{ old('type', $module->type) == 'complet' ? 'selected' : '' }}>
+                                Complet</option>
+                            <option value="element" {{ old('type', $module->type) == 'element' ? 'selected' : '' }}>
+                                Élément</option>
+                        </select>
+                        @error('type')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
-                    <div class="col-md-6">
-                        <label for="tp_groups_edit" class="form-label small fw-bold text-muted">Groupes TP*</label>
-                        <input type="number" class="form-control form-control-sm" id="tp_groups_edit" name="nb_groupes_tp" min="1" value="{{ $module->nb_groupes_tp }}" required />
+
+                    <div class="col-md-8">
+                        <label for="name" class="form-label">Nom complet*</label>
+                        <input type="text" name="name" id="name"
+                            class="form-control @error('name') is-invalid @enderror" required
+                            placeholder="Ex: Programmation Web Avancée" value="{{ old('name', $module->name) }}">
+                        @error('name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="specialty" class="form-label">Spécialité*</label>
+                        <select name="specialty" id="specialty"
+                            class="form-select @error('specialty') is-invalid @enderror" required>
+                            <option value="">Sélectionner...</option>
+                            @foreach (['Informatique Fondamentale', 'Génie Logiciel', 'Systèmes d\'Information', 'Intelligence Artificielle'] as $spec)
+                                <option value="{{ $spec }}"
+                                    {{ old('specialty', $module->specialty) == $spec ? 'selected' : '' }}>
+                                    {{ $spec }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('specialty')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="semester" class="form-label">Semestre*</label>
+                        <select name="semester" id="semester"
+                            class="form-select @error('semester') is-invalid @enderror" required>
+                            @for ($i = 1; $i <= 6; $i++)
+                                <option value="{{ $i }}"
+                                    {{ old('semester', $module->semester) == $i ? 'selected' : '' }}>
+                                    S{{ $i }}</option>
+                            @endfor
+                        </select>
+                        @error('semester')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="credits" class="form-label">Crédits ECTS*</label>
+                        <input type="number" name="credits" id="credits"
+                            class="form-control @error('credits') is-invalid @enderror"
+                            value="{{ old('credits', $module->credits) }}" min="1" max="6" required>
+                        @error('credits')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="evaluation" class="form-label">Évaluation*</label>
+                        <input type="number" name="evaluation" id="evaluation"
+                            class="form-control @error('evaluation') is-invalid @enderror"
+                            value="{{ old('evaluation', $module->evaluation) }}" min="1" max="10"
+                            required>
+                        @error('evaluation')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <small class="text-muted">Coefficient d'évaluation (1-10)</small>
+                    </div>
+
+                    <div class="col-12">
+                        <label for="description" class="form-label">Description pédagogique</label>
+                        <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror"
+                            rows="3" placeholder="Objectifs d'apprentissage...">{{ old('description', $module->description) }}</textarea>
+                        @error('description')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-12">
-                <label for="professor_id_edit" class="form-label small fw-bold text-muted">Responsable</label>
-                <select class="form-select form-select-sm" id="professor_id_edit" name="responsable_id">
-                    <option value="">Sélectionner un enseignant</option>
-                    @foreach($professors as $professor)
-                    <option value="{{ $professor->id }}" {{ $module->professor_id == $professor->id ? 'selected' : '' }}>
-                        {{ $professor->firstname }} {{ $professor->lastname }}
-                    </option>
-                    @endforeach
-                </select>
+            <div id="parent_module_field" class="form-section mb-4"
+                style="{{ old('type', $module->type) == 'element' ? 'display:block;' : 'display:none;' }}">
+                <h3 class="section-title h5 mb-3 fw-bold border-bottom pb-2 text-primary">
+                    <i class="fas fa-sitemap me-2"></i>Module Parent
+                </h3>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="parent_id" class="form-label">Sélectionner un module parent*</label>
+                        <select name="parent_id" id="parent_id"
+                            class="form-select @error('parent_id') is-invalid @enderror">
+                            <option value="">Sélectionner un module parent</option>
+                            @foreach ($parentModules as $parentModule)
+                                <option value="{{ $parentModule->id }}"
+                                    {{ old('parent_id', $module->parent_id) == $parentModule->id ? 'selected' : '' }}>
+                                    {{ $parentModule->code }} - {{ $parentModule->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('parent_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-6 d-flex align-items-end">
+                        <div class="alert alert-info p-2 mb-0 w-100">
+                            <small>
+                                <i class="fas fa-info-circle me-1"></i>
+                                Si vous souhaitez changer le module parent, sélectionnez-en un nouveau.
+                            </small>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="col-md-6">
-                <label for="statut_edit" class="form-label small fw-bold text-muted">Statut*</label>
-                <select class="form-select form-select-sm" id="statut_edit" name="statut" required>
-                    <option value="actif" {{ $module->statut == 'actif' ? 'selected' : '' }}>Actif</option>
-                    <option value="inactif" {{ $module->statut == 'inactif' ? 'selected' : '' }}>Inactif</option>
-                </select>
+            <div class="form-section mb-4">
+                <h3 class="section-title h5 mb-3 fw-bold border-bottom pb-2 text-primary">
+                    <i class="fas fa-clock me-2"></i>Volume horaire
+                </h3>
+
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="cm_hours" class="form-label">CM (heures)*</label>
+                        <input type="number" name="cm_hours" id="cm_hours"
+                            class="form-control @error('cm_hours') is-invalid @enderror"
+                            value="{{ old('cm_hours', $module->cm_hours) }}" min="0" required>
+                        @error('cm_hours')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="td_hours" class="form-label">TD (heures)*</label>
+                        <input type="number" name="td_hours" id="td_hours"
+                            class="form-control @error('td_hours') is-invalid @enderror"
+                            value="{{ old('td_hours', $module->td_hours) }}" min="0" required>
+                        @error('td_hours')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="tp_hours" class="form-label">TP (heures)*</label>
+                        <input type="number" name="tp_hours" id="tp_hours"
+                            class="form-control @error('tp_hours') is-invalid @enderror"
+                            value="{{ old('tp_hours', $module->tp_hours) }}" min="0" required>
+                        @error('tp_hours')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="autre_hours" class="form-label">Autre (heures)*</label>
+                        <input type="number" name="autre_hours" id="autre_hours"
+                            class="form-control @error('autre_hours') is-invalid @enderror"
+                            value="{{ old('autre_hours', $module->autre_hours) }}" min="0" required>
+                        @error('autre_hours')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-12">
+                        <div class="alert alert-info py-2 d-flex justify-content-between align-items-center">
+                            <small class="fw-bold"><i class="fas fa-calculator me-1"></i>Total heures:</small>
+                            <span id="total_hours"
+                                class="badge bg-primary rounded-pill">{{ $module->cm_hours + $module->td_hours + $module->tp_hours + $module->autre_hours }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary px-4">
-                <i class="fas fa-save me-2"></i> Mettre à jour
-            </button>
-        </div>
+            <div class="form-section mb-4">
+                <h3 class="section-title h5 mb-3 fw-bold border-bottom pb-2 text-primary">
+                    <i class="fas fa-user-tie me-2"></i>Responsable du module et Status*
+                </h3>
 
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="responsable_id" class="form-label">Sélectionner un responsable</label>
+                        <select name="responsable_id" id="responsable_id"
+                            class="form-select @error('responsable_id') is-invalid @enderror">
+                            <option value="">Sélectionner un professeur responsable</option>
+                            @foreach ($professeurs as $prof)
+                                <option value="{{ $prof->id }}"
+                                    {{ old('responsable_id', $module->responsable_id) == $prof->id ? 'selected' : '' }}>
+                                    {{ $prof->fullname }}
+                                </option>
+                            @endforeach
+                            <option value="vacataire"
+                                {{ old('responsable_id', $module->responsable_id) == 'vacataire' ? 'selected' : '' }}>
+                                Assigner un vacataire comme responsable
+                            </option>
+                        </select>
+                        @error('responsable_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="status" class="form-label">Status*</label>
+                        <select name="status" id="status"
+                            class="form-select @error('status') is-invalid @enderror" required>
+                            <option value="">Sélectionner le status</option>
+                            <option value="active" {{ old('status', $module->status) == 'active' ? 'selected' : '' }}>
+                                Active</option>
+                            <option value="inactive" {{ old('status', $module->status) == 'inactive' ? 'selected' : '' }}>
+                                Inactive</option>
+                        </select>
+                        @error('status')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                </div>
+
+                <div id="vacataire_fields" class="vacataire-fields mt-3"
+                    style="{{ old('responsable_id', $module->responsable_id) == 'vacataire' ? 'display:block;' : 'display:none;' }}">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="vacataire_nom" class="form-label">Nom complet du vacataire*</label>
+                            <input type="text" name="vacataire_nom" id="vacataire_nom"
+                                class="form-control @error('vacataire_nom') is-invalid @enderror"
+                                value="{{ old('vacataire_nom', $module->vacataire_nom) }}">
+                            @error('vacataire_nom')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="vacataire_email" class="form-label">Email du vacataire*</label>
+                            <input type="email" name="vacataire_email" id="vacataire_email"
+                                class="form-control @error('vacataire_email') is-invalid @enderror"
+                                value="{{ old('vacataire_email', $module->vacataire_email) }}">
+                            @error('vacataire_email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="vacataire_telephone" class="form-label">Téléphone</label>
+                            <input type="tel" name="vacataire_telephone" id="vacataire_telephone"
+                                class="form-control @error('vacataire_telephone') is-invalid @enderror"
+                                value="{{ old('vacataire_telephone', $module->vacataire_telephone) }}">
+                            @error('vacataire_telephone')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="vacataire_specialite" class="form-label">Spécialité</label>
+                            <input type="text" name="vacataire_specialite" id="vacataire_specialite"
+                                class="form-control @error('vacataire_specialite') is-invalid @enderror"
+                                value="{{ old('vacataire_specialite', $module->vacataire_specialite) }}">
+                            @error('vacataire_specialite')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions d-flex justify-content-between mt-4 pt-3 border-top">
+                <a href="{{ route('coordonnateur.modules.index') }}" class="btn btn-outline-secondary px-4">
+                    <i class="fas fa-times-circle me-2"></i>Annuler
+                </a>
+
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="fas fa-save me-2"></i>Modifier l'UE
+                </button>
+            </div>
         </form>
     </div>
+
+    <script>
+        const typeSelect = document.getElementById('type');
+        const parentModuleField = document.getElementById('parent_module_field');
+        const responsableSelect = document.getElementById('responsable_id');
+        const vacataireFields = document.getElementById('vacataire_fields');
+        const cmHoursInput = document.getElementById('cm_hours');
+        const tdHoursInput = document.getElementById('td_hours');
+        const tpHoursInput = document.getElementById('tp_hours');
+        const autreHoursInput = document.getElementById('autre_hours');
+        const totalHoursSpan = document.getElementById('total_hours');
+
+        // Toggle parent module field based on UE type
+        function toggleTypeSpecificFields() {
+            if (typeSelect.value === 'element') {
+                parentModuleField.style.display = 'block';
+                document.getElementById('parent_id').required = true;
+                vacataireFields.style.display = 'none';
+                responsableSelect.value = '';
+            } else if (typeSelect.value === 'complet') {
+                parentModuleField.style.display = 'none';
+                document.getElementById('parent_id').required = false;
+            } else {
+                parentModuleField.style.display = 'none';
+                document.getElementById('parent_id').required = false;
+            }
+            toggleVacataireFields();
+        }
+
+        if (typeSelect) {
+            typeSelect.addEventListener('change', toggleTypeSpecificFields);
+            toggleTypeSpecificFields();
+        }
+
+        // Toggle vacataire fields
+        function toggleVacataireFields() {
+            if (responsableSelect.value === 'vacataire') {
+                vacataireFields.style.display = 'block';
+                document.getElementById('vacataire_nom').required = true;
+                document.getElementById('vacataire_email').required = true;
+            } else {
+                vacataireFields.style.display = 'none';
+                document.getElementById('vacataire_nom').required = false;
+                document.getElementById('vacataire_email').required = false;
+            }
+        }
+
+        if (responsableSelect) {
+            responsableSelect.addEventListener('change', toggleVacataireFields);
+            toggleVacataireFields();
+        }
+
+        // Calculate total hours
+        function updateTotalHours() {
+            const cm = parseInt(cmHoursInput?.value) || 0;
+            const td = parseInt(tdHoursInput?.value) || 0;
+            const tp = parseInt(tpHoursInput?.value) || 0;
+            const autre = parseInt(autreHoursInput?.value) || 0;
+
+            const total = cm + td + tp + autre;
+            if (totalHoursSpan) {
+                totalHoursSpan.textContent = total;
+            }
+        }
+
+        if (cmHoursInput && tdHoursInput && tpHoursInput && autreHoursInput) {
+            cmHoursInput.addEventListener('input', updateTotalHours);
+            tdHoursInput.addEventListener('input', updateTotalHours);
+            tpHoursInput.addEventListener('input', updateTotalHours);
+            autreHoursInput.addEventListener('input', updateTotalHours);
+        }
+
+        // Initialize total hours calculation on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTotalHours();
+        });
+    </script>
+
+    <style>
+        .module-form {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-header {
+            background-color: #4e73df;
+            background-image: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+            border: none;
+            color: white;
+            padding: 1.25rem;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .form-header h4 {
+            font-weight: 600;
+        }
+
+        .form-header small {
+            opacity: 0.9;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            color: #4e73df;
+            letter-spacing: 0.5px;
+        }
+
+        .form-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+            background-color: #fff;
+            border-radius: 6px;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            color: #5a5c69;
+            font-weight: 500;
+            margin-bottom: 0.35rem;
+        }
+
+        .form-control,
+        .form-select {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #6e707e;
+            background-color: #fff;
+            border: 1px solid #d1d3e2;
+            border-radius: 0.35rem;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            color: #6e707e;
+            background-color: #fff;
+            border-color: #bac8f3;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+
+        .error-message {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0.35rem;
+            font-size: 0.85rem;
+        }
+
+        .vacataire-fields {
+            background-color: #f8f9fc;
+            padding: 1.25rem;
+            border-radius: 6px;
+            border: 1px solid #e3e6f0;
+        }
+
+        .form-actions {
+            padding: 1.25rem 1.5rem;
+            background-color: #f8f9fc;
+            border-radius: 0 0 8px 8px;
+            border-top: 1px solid #e3e6f0;
+        }
+
+        .btn {
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.35rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: #4e73df;
+            border-color: #4e73df;
+        }
+
+        .btn-primary:hover {
+            background-color: #3a5bc7;
+            border-color: #3758bd;
+        }
+
+        .btn-outline-secondary {
+            color: #858796;
+            border-color: #d1d3e2;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #f8f9fc;
+            border-color: #bac8f3;
+            color: #4e73df;
+        }
+
+        .alert-info {
+            background-color: #f0f7fd;
+            border-color: #d0e3f0;
+            color: #3a87ad;
+            font-size: 0.85rem;
+        }
+
+        .badge {
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+        }
+
+        .input-group-text {
+            background-color: #f8f9fc;
+            color: #6e707e;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-section {
+                padding: 1rem;
+            }
+
+            .form-header {
+                padding: 1rem;
+            }
+        }
+    </style>
+
 </x-coordonnateur_layout>

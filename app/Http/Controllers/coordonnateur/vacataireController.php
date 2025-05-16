@@ -16,13 +16,34 @@ use Illuminate\Support\Facades\Validator;
 
 class vacataireController extends Controller
 {
-    public function index()
-    {
-        $vacataires = User::whereHas('role', function ($query) {
-            $query->where('isvocataire', true);
-        })->with('user_details')->simplePaginate(10);
 
-        return view('coordonnateur.vacataires.index', ['vacataires' => $vacataires]);
+    public function index(Request $request)
+    {
+        $query = User::where('role', 'vacataire')->with('userDetails');
+
+        // Filtre de recherche
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('lastname', 'LIKE', "%$search%")
+                    ->orWhere('firstname', 'LIKE', "%$search%")
+                    ->orWhere('email', 'LIKE', "%$search%")
+                    ->orWhere('id', 'LIKE', "%$search%");
+            });
+        }
+
+        // Filtre par statut
+        if ($request->has('status') && in_array($request->status, ['active', 'inactive'])) {
+            $query->whereHas('userDetails', function ($q) use ($request) {
+                $q->where('status', $request->status);
+            });
+        }
+
+        // Nombre d'éléments par page
+        $perPage = $request->input('rows', 15);
+        $vacataires = $query->paginate($perPage);
+
+        return view('coordonnateur.vacataires.index', compact('vacataires'));
     }
 
     public function create()
@@ -149,7 +170,36 @@ class vacataireController extends Controller
         return view('coordonnateur.vacataires.edit', compact('vacataire'));
     }
 
+    public function filter()
+    {
+        $query = User::WhereHas('role', function ($query) {
+            $query->where('isvocataire', true);
+        });
 
+        if (request('search')) {
+            $search = request('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('firstname', 'like', "%$search%")
+                    ->orWhere('lastname', 'like', "%$search%")
+                    ->orWhere('email', 'like', "%$search%");;
+            });
+        }
+
+
+        if (request('status')) {
+            $status = request('status');
+            $query->whereHas('user_details', function ($q) use ($status) {
+                $q->where('status', $status);
+            });
+        }
+
+
+        $rows = request('rows', 10); // default to 5 if not provided
+
+        $vacataire = $query->with('user_details')->simplePaginate($rows);
+
+        return view('coordonnateur.vacataires.index', compact('$vacataire'));
+    }
 
     public function destroy(User $vacataire)
     {
@@ -224,5 +274,27 @@ class vacataireController extends Controller
             Storage::delete($path); // Delete the file on error
             return redirect()->back()->withErrors(['error' => 'Error processing grade file: ' . $e->getMessage()])->withInput();
         }
+    }
+
+
+    ///////////////////////////
+    public function showAssignForm(User $vacataire)
+    {
+        $modules = Module::orderBy('code')->get();
+        return view('coordonnateur.assign-ue', compact('vacataire', 'modules'));
+    }
+
+    public function storeAssign(Request $request, User $vacataire)
+    {
+        $request->validate([
+            'ues' => 'nullable|array',
+            'ues.*' => 'exists:modules,id'
+        ]);
+
+        $vacataire->modules()->sync($request->ues ?? []);
+
+        return redirect()
+            ->route('assign', $vacataire->id)
+            ->with('success', 'Assignation mise à jour avec succès');
     }
 }

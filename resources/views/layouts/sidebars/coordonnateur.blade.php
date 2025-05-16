@@ -28,7 +28,7 @@
                 </a>
 
                 <!-- Groupes TD / TP -->
-                <a href="#" class="nav_link">
+                <a href="{{ route('coordonnateur.groupes.index') }}" class="nav_link">
                     <i class="bx bx-group nav_icon"></i>
                     <span class="nav_name">Groupes TD / TP</span>
                 </a>
@@ -44,6 +44,9 @@
                     <i class="bx bx-check-circle nav_icon"></i>
                     <span class="nav_name">Affectations Validées</span>
                 </a>
+
+              
+    
 
                 {{-- --}}
 

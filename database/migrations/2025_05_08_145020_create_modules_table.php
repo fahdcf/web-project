@@ -14,10 +14,15 @@ return new class extends Migration {
             $table->string('name');
             $table->text('description')->nullable();
 
-            $table->integer('cm_hours')->nullable();
-            $table->integer('tp_hours')->nullable();
-            $table->integer('td_hours')->nullable();
-            $table->integer('autre_hours')->nullable();
+            $table->string('specialty')->nullable();
+
+
+            
+
+            $table->integer('cm_hours')->default(0);
+            $table->integer('tp_hours')->default(0);
+            $table->integer('td_hours')->default(0);
+            $table->integer('autre_hours')->default(0);
 
             // Relations avec foreignIdFor()
 
@@ -27,25 +32,19 @@ return new class extends Migration {
 
             $table->foreign('filiere_id')->references('id')->on('filieres')->cascadeOnDelete();
 
-            
+
             $table->integer('responsable_id')->nullable();
-            
+
             $table->integer('professor_id')->nullable();
             $table->foreign('professor_id')->references('id')->on('users')->cascadeOnDelete()->nullable();
 
-              $table->integer('parent_id')->nullable();
-            $table->foreign('parent_id')->references('id')->on('modules')->cascadeOnDelete()->nullable();
-            // /
-
-            $table->integer('nb_groupes_td')->nullable();
-            $table->integer('nb_groupes_tp')->nullable();
-
             // $table->integer('status')->nullable()->default(null)->comment('0=Inactif, 1=Actif, null=draft');
-            $table->enum('status', ['active', 'inactive', 'draft'])->default('draft');
+            $table->enum('status', ['active', 'inactive'])->default('active');
 
             //sous_module ou module complet
             $table->enum('type', ['element', 'complet'])->default('complet');
-
+            $table->integer('parent_id')->nullable();
+            $table->foreign('parent_id')->references('id')->on('modules')->cascadeOnDelete()->nullable();
 
 
             $table->integer('credits')->nullable();

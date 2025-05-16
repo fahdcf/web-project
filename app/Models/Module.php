@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\Groupe;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Module extends Model
 {
@@ -12,40 +14,35 @@ class Module extends Model
 
     // Liste des statuts possibles
 
-    protected $fillable = [
-        'code',
-        'name',
-        'credits',
-        'evaluation',
-        'specialite',
-        'semester',
-        'description',
+    // protected $fillable = [
+    //     'code',
+    //     'name',
+    //     'credits',
+    //     'evaluation',
+    //     'specialite',
+    //     'semester',
+    //     'description',
 
-        'cm_hours',
-        'td_hours',
-        'tp_hours',
-        'autre_hours',
+    //     'cm_hours',
+    //     'td_hours',
+    //     'tp_hours',
+    //     'autre_hours',
 
+    //     'status',
+    //     'type',
+    //     'parent_id',
 
-        'filiere_id',
-        'professor_id',
-        'responsable_id',
+    //     'filiere_id',
+    //     'professor_id',
+    //     'responsable_id',
 
-        'nb_groupes_td',
-        'nb_groupes_tp',
+    //     // 'nb_groupes_td',
+    //     // 'nb_groupes_tp',
 
-    ];
+    // ];
 
+    protected $guarded = [];
 
-    // public function getStatusAttribute($value)
-    // {
-    //     return match ($value) {
-    //         1 => 'Actif',
-    //         0 => 'Inactif',
-    //         null => 'Non assigné',
-    //         default => $value // Pour les cas où c'est déjà en texte
-    //     };
-    // }
 
     // Relation avec le professeur responsable
     public function professor()
@@ -60,7 +57,7 @@ class Module extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'module_user');
+        return $this->belongsToMany(User::class, 'module_user')->withPivot('role', 'hours');
     }
 
     // Relation avec la filière
@@ -75,14 +72,21 @@ class Module extends Model
         return $this->cm_hours + $this->td_hours + $this->tp_hours;
     }
 
-    // // app/Models/Module.php
-    // public function assignments()
-    // {P
-    //     return $this->hasMany(Assignment::class);
-    // }
-    // // Vérifie si le module est validé
-    // public function isValidated()
-    // {
-    //     return $this->status === self::STATUS_VALIDATED;
-    // }
+
+    /////////////////////////////////////////////////
+    public function groupes()
+    {
+        return $this->hasMany(Groupe::class,); // A module has many groupes 
+    }
+
+    public function tdGroups(): HasMany
+    {
+        return $this->groupes()->where('type', 'TD');
+    }
+
+    public function tpGroups(): HasMany
+    {
+        return $this->groupes()->where('type', 'TP');
+    }
 }
+////////////////////

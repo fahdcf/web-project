@@ -16,7 +16,7 @@ class ModuleFactory extends Factory
         return [
             'name' => 'Module ' . $this->faker->unique()->word(),
 
-            'code' => 'M' . $this->faker->unique()->randomNumber(nbDigits:2,strict:true),
+            'code' => 'M' . $this->faker->unique()->randomNumber(nbDigits:3,strict:true),
             'type' => 'premier',
 
             'description' => $this->faker->paragraph(),
@@ -28,7 +28,7 @@ class ModuleFactory extends Factory
             'cm_hours'=> $this->faker->numberBetween(10, 100),
 
 
-            'status' => $this->faker->randomElement(['active', 'inactive','draft']),
+            'status' => $this->faker->randomElement(['active', 'inactive']),
 
             // Relations
             'filiere_id' => Filiere::factory(), // Crée/associe une filière automatiquement si aucune n'existe
@@ -37,8 +37,8 @@ class ModuleFactory extends Factory
 
 
             // Groupes TD/TP
-            'nb_groupes_td' => $this->faker->numberBetween(1, 3),
-            'nb_groupes_tp' => $this->faker->numberBetween(1, 3),
+            // 'nb_groupes_td' => $this->faker->numberBetween(1, 3),
+            // 'nb_groupes_tp' => $this->faker->numberBetween(1, 3),
 
             // Crédits
             'credits' => $this->faker->numberBetween(1, 5),

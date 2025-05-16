@@ -4,12 +4,28 @@ namespace App\Http\Controllers\coordonnateur;
 
 use App\Http\Controllers\Controller;
 use App\Models\Filiere;
+use App\Models\Groupe;
 use App\Models\Module;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class CoordonnateurController extends Controller
 {
+
+    //  public function index(Request $request)
+    // {
+    //     // $filiere = Filiere::findOrFail($request->input('filiere_id', auth()->user()->filiere_id));
+    //     // $semester = $request->input('semester', 1);
+    //     // $annee = $request->input('annee', date('Y'));
+
+    //     // $modules = Module::where('filiere_id', $filiere->id)
+    //     //     ->where('semester', $semester)
+    //     //     ->withCount(['tdGroups', 'tpGroups'])
+    //     //     ->get();
+
+    //     return view('coordonnateur.groupes');
+    // }
+
     public function dashboard()
     {
         // Données fictives pour la filière
@@ -125,7 +141,7 @@ class CoordonnateurController extends Controller
             '2022/2023',
             '2021/2022'
         ];
-        $annee_universitaire=2024;
+        $annee_universitaire = 2024;
 
         return view('coordonnateur.dashboard', compact(
             'filiere',
@@ -142,10 +158,27 @@ class CoordonnateurController extends Controller
     }
 
 
-    public function createVacataire(){
-        return view ('vacataire.create');
+    public function vacataires()
+    {
+        $user = auth()->user();
+
+        $vacataires = User::whereHas('role', function ($query) {
+            $query->where('isvocataire', true);
+        })->with('user_details')->simplePaginate(10);
+
+        $modules = Module::where('filiere_id', $user->manage->id)
+            ->orderBy('name')
+            ->get();
+
+        return view('coordonnateur.vacataires.index', compact('vacataires', 'modules'));
     }
-    public function storeVacataire(Request $request){
+
+    public function createVacataire()
+    {
+        return view('vacataire.create');
+    }
+    public function storeVacataire(Request $request)
+    {
 
 
         // dd($request->all());
@@ -172,7 +205,7 @@ class CoordonnateurController extends Controller
         Module::create($attributes);
 
         return redirect()->route('coordonnateur.modules.index')->with('success', 'UE créée avec succès !');
-       }
+    }
 
     public function manageGroups(Request $request)
     {
@@ -191,4 +224,58 @@ class CoordonnateurController extends Controller
         // Simulation d'affectation EDT
         return back()->with('success', 'Affectation enregistrée!');
     }
+
+    ////////////////page des gestion des groupes////////
+    //     public function groupes()
+    // {
+    //     // Récupérer le module
+    //     // $module = Module::find(2);
+    //     $modules = Module::get();
+
+
+    //     // Récupérer tous les groupes liés à ce module
+    //     $groupes = Groupe::get();
+
+    //     // Calcul des totaux
+    //     $totalGroupes = $groupes->count();
+    //     $totalTD = $groupes->where('type', 'TD')->count();
+    //     $totalTP = $groupes->where('type', 'TP')->count();
+    //     $totalCapacity = $groupes->sum('max_students');
+    //     $totalStudents = $groupes->sum('nbr_student');
+
+    //     // Nombre total de modules actifs (optionnel selon ta logique)
+    //     $totalModules = Module::count();
+
+    //     // Grouper les groupes par module (ici c'est 1 seul module, mais la vue semble attendre une collection groupée)
+    //     $groupesParModule = collect([$modules->name => $groupes]);
+
+    //     // Extraire les années uniques
+    //     $anneesUniques = $groupes->pluck('annee')->unique()->sort()->values();
+
+    //     return view('coordonnateur.groupes', [
+    //         'totalGroupes'     => $totalGroupes,
+    //         'totalTD'          => $totalTD,
+    //         'totalTP'          => $totalTP,
+    //         'totalCapacity'    => $totalCapacity,
+    //         'totalStudents'    => $totalStudents,
+    //         'totalModules'     => $totalModules,
+    //         'groupesParModule' => $groupesParModule,
+    //         'anneesUniques'    => $anneesUniques,
+    //     ]);
+    // }
+
+    // public function groupes()
+    //     {
+
+    //         $filiere=auth()->user()->manage;
+    //         $groupes = Groupe::with('module')->orderBy('annee')->orderBy('module_id')->orderBy('type')->get();
+    //         $groupesParAnnee = $groupes->groupBy('annee')->sortKeysDesc();
+    //         $anneesUniques = $groupes->pluck('annee')->unique()->sortDesc()->values()->toArray();
+    //         $modules = Module::orderBy('name')->paginate(3);
+
+    //         return view('coordonnateur.groupes', compact('groupesParAnnee', 'filiere','anneesUniques', 'modules'));
+    //     }
+
+
+    
 }

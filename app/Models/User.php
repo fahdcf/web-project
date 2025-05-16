@@ -69,10 +69,15 @@ class User extends Authenticatable
 
     // //////////////////////////////////////////////////////////////////////////
 
+    public function getFullnameAttribute()
+    {
+        return $this->firstname . ' ' . $this->lastname;
+    }
+
     public function modules()
     {
         // Un module peut être enseigné par plusieurs utilisateurs (professeurs et vacataires), et un utilisateur peut enseigner dans plusieurs modules
-        return $this->belongsToMany(Module::class, 'module_user');
+        return $this->belongsToMany(Module::class, 'module_user')->withPivot('hours', 'role');
     }
 
     public function filieres()
@@ -88,6 +93,10 @@ class User extends Authenticatable
     public function isProfessor(): bool
     {
         return (bool) optional($this->role)->isprof;
+    }
+    public function isvacataire(): bool //used
+    {
+        return (bool) optional($this->role)->isvocataire;
     }
 
     public function isAdmin(): bool

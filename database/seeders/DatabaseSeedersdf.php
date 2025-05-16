@@ -4,11 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Departement;
 use App\Models\Filiere;
-use App\Models\Groupe;
 use App\Models\Module;
 use App\Models\Role;
-use App\Models\Task;
-use App\Models\task as ModelsTask;
 use App\Models\User;
 use App\Models\user_detail;
 use App\Models\UserDetail;
@@ -34,20 +31,15 @@ class DatabaseSeeder extends Seeder
         $giProfessors = $this->createGiProfessors($giDepartment);
 
         // 5. Create 30 modules for GI filière distributed by semester
-        $modules = $this->createGiModules($giFiliere, $giProfessors);
+        $this->createGiModules($giFiliere, $giProfessors);
 
-        // 6. Create groups for modules
-        $this->createGroupsForModules($modules);
-
-        // 7. Create tasks
-        $this->createTasks();
-
-        // 8. Create other departments and filières (optional)
+        // 6. Create other departments and filières (optional)
         $this->createOtherDepartments();
 
-        $this->command->info('✅ Database seeded successfully with all tables!');
+        $this->command->info('✅ Database seeded successfully with GI department setup!');
     }
 
+   
 
     private function createManualUsers(): array
     {
@@ -169,7 +161,7 @@ class DatabaseSeeder extends Seeder
         return $professors;
     }
 
-    private function createGiModules(Filiere $filiere, array $professors): array
+    private function createGiModules(Filiere $filiere, array $professors): void
     {
         $modules = [
             // Semester 1
@@ -201,96 +193,40 @@ class DatabaseSeeder extends Seeder
             // Continue with more modules up to 30...
         ];
 
-        // $rondomModules=Module::factory(100)->create();
-
-        // $$modules=array_merge($modules,$rondomModules) ;
-
         // If we need more modules than predefined, generate random ones
-        while (count($modules) < 100) {
-            $semester = fake()->numberBetween(3, 6);
+        while (count($modules) < 30) {
+            $semester = fake()->numberBetween(1, 6);
             $modules[] = [
                 'name' => fake()->randomElement(['Advanced ', 'Fundamentals of ']) . fake()->words(2, true),
                 'code' => 'GI' . $semester . 'M' . (count($modules) + 1),
                 'semester' => $semester,
-                'status' => fake()->randomElement(['active', 'inactive', 'inactive']),
+                'status' => fake()->randomElement(['active','inactive','inactive']),
 
-                'credits' => fake()->randomElement([2, 3, 4, 5, 6]),
-                'evaluation' => fake()->randomElement([1, 2, 3, 4, 5, 6]),
-
-                'tp_hours' => fake()->randomElement([10, 100,89,23,8,12,44,32]),
-                'td_hours' => fake()->randomElement([10, 100,89,23,8,12,44,32]),
-                'cm_hours' => fake()->randomElement([10, 100,89,23,8,12,44,32]),
+                'credits' => fake()->randomElement([2,3, 4, 5, 6])
             ];
         }
-        $createdModules = [];
 
-        foreach ($modules as $moduleData) {
+        foreach ($modules as $module) {
             $module = Module::create([
-                'name' => $moduleData['name'],
-                'status' => $moduleData['status'],
-                'code' => $moduleData['code'],
-                'credits' => $moduleData['credits'],
-                'semester' => $moduleData['semester'],
+                'name' => $module['name'],
+                'status' => $module['status'],
+                'code' => $module['code'],
+                'credits' => $module['credits'],
+                'semester' => $module['semester'],
                 'filiere_id' => $filiere->id,
                 'responsable_id' => $professors[array_rand($professors)]->id,
                 'description' => fake()->paragraph(3),
             ]);
-
+    
             // Assign a random number of professors (1 to 3) to each module
             $numProfessorsToAssign = fake()->numberBetween(1, 3);
             $randomProfessors = fake()->randomElements($professors, $numProfessorsToAssign);
-
+    
             foreach ($randomProfessors as $professor) {
-                $module->users()->attach($professor->id);
-            }
-
-            $createdModules[] = $module;
-        }
-
-        return $createdModules;
-    }
-
-
-    private function createGroupsForModules(array $modules): void
-    {
-        foreach ($modules as $module) {
-            // Create 2-4 groups per module (TP and TD)
-            $numGroups = fake()->numberBetween(2, 4);
-
-            for ($i = 1; $i <= $numGroups; $i++) {
-                $type = fake()->randomElement(['TP', 'TD']);
-                $maxStudents = $type === 'TP' ? 30 : 40; // TP groups are typically smaller
-
-                Groupe::create([
-                    'module_id' => $module->id,
-                    'type' => $type,
-                    'max_students' => $maxStudents,
-                    'nbr_student' => fake()->numberBetween(5, $maxStudents - 5),
-                    'academicYear' => (now()->year).(now()->year+1),
-                ]);
+                $module->users()->attach($professor->id); // No role needed in the pivot table
             }
         }
     }
-
-    private function createTasks(): void
-    {
-        $users = User::all();
-
-        foreach ($users as $user) {
-            // Create 3-10 tasks per user
-            $numTasks = fake()->numberBetween(3, 10);
-
-            for ($i = 0; $i < $numTasks; $i++) {
-                ModelsTask::create([
-                    'description' => fake()->sentence(),
-                    'isdone' => fake()->boolean(70), // 70% chance of being done
-                    'user_id' => $user->id,
-                ]);
-            }
-        }
-    }
-
-
 
     private function createOtherDepartments(): void
     {
