@@ -5,6 +5,8 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Role;
  use App\Models\User;
+  use App\Models\Module;
+
 use App\Models\prof_request;
 use App\Models\Departement;
 use App\Models\filiere;
@@ -105,6 +107,27 @@ class requestsController extends Controller
 
 
         }
+
+            elseif($request->type=="module"){
+        $targetModuleId=$request->target_id;
+
+        $profID=$request->prof_id;
+        $targetModule=Module::findOrFail($targetModuleId);
+
+       
+        $targetModule->professor_id=$profID;
+        $targetModule->save();
+        
+           $request->status="approved";
+           $request->save();
+           
+           return redirect()->back();
+
+    
+
+    }
+        
+
         
 
         return redirect()->back(); 
@@ -112,4 +135,8 @@ class requestsController extends Controller
 
 
  }
+
+
+
+
 }

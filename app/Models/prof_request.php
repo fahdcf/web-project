@@ -12,6 +12,8 @@ class prof_request extends Model
      public function getTargetAttribute()
     {
         switch ($this->type) {
+            case 'module':
+                return Module::find($this->target_id);
             case 'filiere':
                 return Filiere::find($this->target_id);
             case 'departement':
