@@ -10,6 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
+        ///pour l'historique
         Schema::create('module_user', function (Blueprint $table) {
             $table->integer('id', true);
 
@@ -25,6 +26,8 @@ return new class extends Migration {
 
             $table->string('role')->default("CM");
             $table->integer('hours')->default(0);
+
+            $table->string('academic_year', 9)->nullable(); // Année académique (format: 2023-2024)
 
 
             $table->timestamps();

@@ -88,5 +88,26 @@ class Module extends Model
     {
         return $this->groupes()->where('type', 'TP');
     }
+
+    ///////////////////////////////
+    public function requests()
+    {
+        return $this->hasMany(prof_request::class, 'target_id')->where('type', 'module');;
+    }
+    ////////
+
+
+    public function notes()
+    {
+        return $this->hasMany(Note::class);
+    }
+
+
+
+    public function students()
+    {
+        return $this->belongsToMany(Student::class, 'notes')
+            ->withPivot('note', 'session_type', 'semester');
+    }
 }
 ////////////////////

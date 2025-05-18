@@ -187,17 +187,11 @@
                                                 <div class="card-footer bg-white border-top-0 py-2 text-center">
                                                     <div class="d-flex justify-content-center gap-2">
                                                         <a href="#"
-                                                            class="btn btn-sm btn-outline-primary rounded-pill px-3 border-1 fs-11 fw-medium">
+                                                            class="btn btn-sm btn-outline-primary rounded-pill p-2 border-1 fs-11 fw-medium">
                                                             <i class="fas fa-edit me-1"></i> Modifier
                                                         </a>
-                                                        <a href="#"
-                                                            class="btn btn-sm btn-outline-secondary rounded-pill px-3 border-1 fs-11 fw-medium">
-                                                            <i class="fas fa-chart-pie me-1"></i> Stats
-                                                        </a>
-                                                        <a href="#"
-                                                            class="btn btn-sm btn-outline-success rounded-pill px-3 border-1 fs-11 fw-medium">
-                                                            <i class="fas fa-users me-1"></i> Groupes
-                                                        </a>
+                                                        
+                                                        
                                                     </div>
                                                 </div>
                                             </div>

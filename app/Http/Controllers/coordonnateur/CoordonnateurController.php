@@ -26,7 +26,7 @@ class CoordonnateurController extends Controller
     //     return view('coordonnateur.groupes');
     // }
 
-    public function dashboard()
+    public function index()
     {
         // Données fictives pour la filière
         $filiere = (object)[

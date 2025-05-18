@@ -25,50 +25,51 @@ use App\Http\Controllers\coordonnateur\CoordonnateurController;
 use App\Http\Controllers\coordonnateur\GroupeController;
 
 use App\Http\Controllers\coordonnateur\ModuleController;
+use App\Http\Controllers\coordonnateur\NoteController;
 use App\Http\Controllers\coordonnateur\ProfessorController;
 use App\Http\Controllers\coordonnateur\vacataireController;
+use App\Http\Controllers\GradeController;
 use App\Http\Controllers\homeController;
 use App\Http\Controllers\loginController;
 use App\Http\Controllers\newuserController;
+
 use App\Mail\newuserEmail;
-use App\Mail\resetPasswordEmail;
-use App\Mail\WelcomeEmail;
-
-use App\Models\Departement;
-
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Route;
 
 //FOR CHEF DEPARTEMENT
 
-use App\Models\filiere;
-use App\Models\pending_user;
-use App\Models\Role;
+use App\Mail\resetPasswordEmail;
+use App\Mail\WelcomeEmail;
+use App\Models\Departement;
 
-use Illuminate\Support\Facades\Route;
+use App\Models\filiere;
+
+use App\Models\pending_user;
+
+use App\Models\Role;
+use App\Models\task;
 
 
 ///////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////
-use App\Models\task;
 use App\Models\User;
 use App\Models\user_detail;
 use App\Notifications\ProfUnassignedNotification;
-
 use function PHPUnit\Framework\returnArgument;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 
 /////////Coordonnateur//////////////////////////////////////////////////////
-use Illuminate\Support\Facades\Auth;
-
-
-
 Route::prefix('coordonnateur')->group(function () {
-    Route::get('/dashboard', [CoordonnateurController::class, 'dashboard'])->name('coordonnateur.dashboard');
+    Route::get('/', [CoordonnateurController::class, 'index'])->name('coordonnateur.dashboard');
 });
 
 //////coordonateur: gestion des modules/////////////
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 Route::middleware(['auth'])
     ->prefix('coordonnateur/modules')
@@ -87,7 +88,7 @@ Route::middleware(['auth'])
         Route::post('/search', [ModuleController::class, 'search'])->name('coordonnateur.modules.search');
         Route::post('/filter', [ModuleController::class, 'filter'])->name('coordonnateur.modules.filter');
 
-        ///////Assignation //////////////////// 
+        //Assignation: 
         Route::get('/assign-vacataire', [ModuleController::class, 'create'])->name('coordonnateur.modules.assign-vacataire');
 
         Route::get('coordonnateur/modules/{module}/assigner', [ModuleController::class, 'showAssignationPage'])
@@ -117,7 +118,7 @@ Route::middleware(['auth'])
 
 
 //////coordonateur: gestion des vacataire  /////////////
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 
 Route::middleware(['auth'])
     ->prefix('coordonnateur/vacataires')
@@ -157,7 +158,8 @@ Route::middleware(['auth'])
 
 
 // ////// gestion des goupes/////////////////////////////////
-use Illuminate\Support\Facades\Notification;
+
+
 
 // // Route pour la page générale de gestion des groupes (si vous la conservez)
 // Route::middleware(['auth'])
@@ -201,27 +203,62 @@ Route::post('/config-semestre-suivant', [GroupeController::class, 'saveNextSemes
 Route::post('/module_config/update', [GroupeController::class, 'updateModuleConfig'])
     ->name('module_config_update');
 
-    
+
 # Groupes - Coordinateur
 Route::prefix('coordonnateur/groupes')->middleware(['auth'])->group(function () {
     Route::get('/', [GroupeController::class, 'index'])->name('coordonnateur.groupes.index'); //overview of he current semester
 
 });
 
-Route::get('/mohssine', [CoordonnateurController::class, 'index']);
+Route::get('/mohssine', function () {
+
+    return view('professor.dashboard');
+});
 
 
 
 
 //////professor//////////////////////////////////////////
-use Illuminate\Support\Facades\Redirect;
 
 
 
 
 Route::prefix('professor')->group(function () {
     Route::get('/dashboard', [ProfessorController::class, 'index'])->name('professor.dashboard');
+    Route::get('/availableModules', [ProfessorController::class, 'availableModules'])->name('professor.availableModules');
+
+    Route::get('/mesModules', [ProfessorController::class, 'mesModules'])->name('professor.mesModules');
+
+
+    //exprimmer les shouaite
+    Route::post('/wish', [ProfessorController::class, 'storeSouhaite'])->name('professor.souhaiteModule');
+
+    //voir list des requsest 
+    Route::get('/requests', [ProfessorController::class, 'myRequests'])->name('professor.requests');
+    //cancel request
+
+    Route::delete('/requests/{prof_request}/cancel', [ProfessorController::class, 'cancelRequest'])
+        ->name('professor.request.cancel');
+
+    //////notes::
+    Route::get('/upload-notes', [NoteController::class, 'showUploadForm'])->name('professor.notes_upload');
+    // Route::post('/upload-notes', [NoteController::class, 'processUpload'])->name('professor.notes.process');
+    // Route::get('/download-template', [NoteController::class, 'downloadTemplate'])->name('professor.notes.template');
+
+    Route::post('/upload-notes', [NoteController::class, 'upload'])
+        ->name('notes.upload');
+        // ->middleware('auth:coordinator');
+
+
+    //test
+    // Route::get('upload-notes', function () {
+    //     return view('professor.upload_notes');
+    // });
+
+    // Route::get('professor/upload-notes', [GradeController::class, 'showUploadForm'])->name('professor.upload_notes');
+    // Route::post('professor/upload-notes', [GradeController::class, 'upload'])->name('professor.upload_notes.upload');
 });
+
 
 ////////vacataire ///////////////////////////////////
 
@@ -426,10 +463,10 @@ Route::get('etudiant_profile/{id}', [etudiantController::class, 'profile']);
 //for admin
 Route::get('etudiant-profile/{id}', [adminProfileController::class, 'studentprofile']);
 
- Route::get('chef/professeurs',[ChefProfessorController::class,'index']);
-  Route::get('chef/filieres',[cheffiliereController::class,'index']);
-Route::PATCH('chef/filieres/modifier/{id}',[cheffiliereController::class,'modify']); 
-Route::get('chef/modules',[chefModulesController::class,'index']);
+Route::get('chef/professeurs', [ChefProfessorController::class, 'index']);
+Route::get('chef/filieres', [cheffiliereController::class, 'index']);
+Route::PATCH('chef/filieres/modifier/{id}', [cheffiliereController::class, 'modify']);
+Route::get('chef/modules', [chefModulesController::class, 'index']);
 
-Route::get('chef/modules_vacantes',[chefModulesController::class,'vacantesList']); 
-Route::post('chef/modules_vacantes/affecter/{id}',[chefModulesController::class,'affecter']); 
+Route::get('chef/modules_vacantes', [chefModulesController::class, 'vacantesList']);
+Route::post('chef/modules_vacantes/affecter/{id}', [chefModulesController::class, 'affecter']);

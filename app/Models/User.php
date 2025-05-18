@@ -77,9 +77,8 @@ class User extends Authenticatable
     public function modules()
     {
         // Un module peut être enseigné par plusieurs utilisateurs (professeurs et vacataires), et un utilisateur peut enseigner dans plusieurs modules
-        return $this->belongsToMany(Module::class, 'module_user')->withPivot('hours', 'role');
+        return $this->hasMany(Module::class,'professor_id');
     }
-
     public function filieres()
     {
         return $this->belongsToMany(Filiere::class);

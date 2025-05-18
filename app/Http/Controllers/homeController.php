@@ -29,8 +29,11 @@ use Carbon\Carbon;
 
 class homeController extends Controller
 {
+    
     public function index()
     {
+                // dd(auth()->user()->role);
+
         if (Auth::check()) {
             if (Auth()->user()->role->isadmin) {
 
@@ -83,6 +86,7 @@ class homeController extends Controller
                 return redirect()->route('professor.dashboard');
             } else {
                 return view('dashboard');
+
             }
         } else {
             return redirect('login');

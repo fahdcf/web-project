@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('specialty')->nullable();
 
 
-            
+
 
             $table->integer('cm_hours')->default(0);
             $table->integer('tp_hours')->default(0);
@@ -56,6 +56,7 @@ return new class extends Migration {
             $table->index('responsable_id');
 
 
+            // $table->string('academic_year', 9)->nullable(); // Année académique (format: 2023-2024)
             $table->timestamps();
         });
     }
