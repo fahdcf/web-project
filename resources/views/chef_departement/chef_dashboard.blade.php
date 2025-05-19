@@ -475,6 +475,234 @@ width: 100%;
 }
 
 
+
+
+/* Module Requests Container */
+.module-requests-container {
+    background: #ffffff !important;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+     border-radius: 15px !important;
+
+}
+
+/* Header Section */
+.requests-header {
+      border-top-left-radius: 15px !important;
+    border-top-right-radius: 15px !important;
+
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background-color:#4723D9 !important;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.requests-header h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.requests-count {
+    font-size: 13px;
+    color: #edeff0;
+    font-weight: 500;
+}
+
+
+/* Empty State */
+.empty-state {
+    padding: 24px 16px;
+    text-align: center;
+    color: #adb5bd;
+}
+
+.empty-state svg {
+    margin-bottom: 12px;
+}
+
+.empty-state p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* Request Cards */
+.requests-list {
+    padding: 8px;
+}
+
+.request-card {
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 8px;
+    transition: all 0.2s ease;
+}
+
+
+.pen-dropdown{
+  font-size: 15px;
+  color: #4723d9;
+  padding: 5px;
+  border-radius: 10px;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.pen-dropdown:hover{
+  font-size: 15px;
+  background-color: #4723d9;
+  color: white;
+}
+.request-card:hover {
+    border-color: #dee2e6;
+    background-color: #f8f9fa;
+}
+
+/* Request Main Content */
+.request-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.professor-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #f1f3f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-placeholder {
+    font-size: 13px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.professor-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.professor-details h4 {
+    margin: 0;
+    font-size: 14px;
+    color: #2d3748;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.request-meta {
+    display: flex;
+    gap: 8px;
+    margin-top: 2px;
+}
+
+.module-name {
+    font-size: 12px;
+    color: #495057;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+
+.request-date {
+    font-size: 11px;
+    color: #868e96;
+}
+
+/* Request Status */
+.request-status {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 12px;
+    margin-left: 8px;
+}
+
+.request-status.pending {
+    background: #fff3bf;
+    color: #e67700;
+}
+
+.request-status.approved {
+    background: #d3f9d8;
+    color: #2b8a3e;
+}
+
+.request-status.rejected {
+    background: #ffd8d8;
+    color: #c92a2a;
+}
+
+/* Request Description */
+.request-description {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #e9ecef;
+}
+
+.request-description p {
+    margin: 0;
+    font-size: 13px;
+    color: #495057;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Request ID */
+.request-id {
+    margin-top: 8px;
+    font-size: 11px;
+    color: #868e96;
+    text-align: right;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .request-meta {
+        flex-direction: column;
+        gap: 2px;
+    }
+    
+    .module-name {
+        max-width: 140px;
+    }
+}
+
   </style>
 
 
@@ -740,6 +968,119 @@ width: 100%;
         @endforeach
     </div>
 </div>
+
+
+
+<div class="module-requests-container mt-4">
+    <div class="requests-header">
+        <h3>Module Requests</h3>
+        <div class="requests-count">{{ count($module_requests) }} requests</div>
+    </div>
+
+    @if($module_requests->isEmpty())
+        <div class="empty-state">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            <p>No module requests found</p>
+        </div>
+    @else
+
+
+        <div class="requests-list">
+
+            @foreach($module_requests as $module_request)
+              
+            
+                <div class="request-card">
+                    <div class="request-main">
+                        <div class="professor-info">
+                           
+                            <div class="professor-details">
+                                <h4>{{ $module_request->prof->firstname ?? 'Unknown' }} {{ $module_request->prof->lastname ?? 'Professor' }}</h4>
+                                <div class="request-meta">
+                                    <span class="module-name">{{ $module_request->target->name ?? 'Not specified' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="request-status {{ $module_request->status ?? 'pending' }}">
+                            @if($module_request->status == 'pending')
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                                Pending
+                            @elseif($module_request->status == 'rejected')
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                                </svg>
+                                Rejected
+                            @else
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                                Approved
+                            @endif
+                        </div>
+                    </div>
+                    
+                    @if($module_request->description)
+                    <div class="request-description">
+                        <p>{{ $module_request->description }}</p>
+
+                    </div>
+                    @endif
+                    
+                    <div class="request-id d-flex justify-content-between">  
+                      
+                      <span class="request-date">{{ $module_request->created_at->diffForHumans() ?? 'N/A' }}</span>
+              
+                      <div class="dropdown">
+                        <span class="pen-dropdown dropdown-toggle" id="penDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-pen"></i>
+                        </span>
+                        <ul class="dropdown-menu" aria-labelledby="penDropdown">
+                            <li>
+
+                              <form action="{{ url('/chef/demandes/' . $module_request['id']) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+
+                                <button class="dropdown-item text-danger" href="#"><i class="bi bi-x-circle-fill me-2"></i>Refuser</button>
+                              </form>
+                            
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+
+
+                            <li>
+                              <form action="{{ url('/chef/demandes/' . $module_request['id']) }}" method="POST">
+                                  @csrf
+                                  @method('PATCH')
+                              <button class="dropdown-item text-success"><i class="bi bi-check-circle-fill me-2"></i>Accepter</button></li>
+                              </form>
+                            </ul>
+                    </div>
+                    
+                </div>                  
+  
+  
+  </div>
+  @endforeach
+  <div class="text-center"><a href="{{url('chef/demandes')}}" >Voir tous</a></div>
+      </div>
+      @endif
+    </div>
+
+  
 
 
 

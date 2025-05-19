@@ -76,10 +76,11 @@ class homeController extends Controller
                 $tasks = task::where('user_id', auth()->user()->id)->latest()->take(5)->get();
                   
                 $departmentName =  auth()->user()->manage->name;
-                  $professorsMin =user::where('departement',$departmentName)->paginate(15);
+                $professorsMin =user::where('departement',$departmentName)->paginate(15);
 
 
-               $professorsMin = User::where('departement',$departmentName)->latest()->take(5)->get();
+               $professorsMin = User::where('departement',$departmentName)->latest()->take(3)->get();
+               $module_requests = prof_request::where('type','module')->where('status','pending')->latest()->take(3)->get();
 
                 // Get user logs this week
                 $logs = user_log::whereBetween('created_at', [
@@ -103,14 +104,8 @@ class homeController extends Controller
 
 
 
-                return View('chef_departement.chef_dashboard',['tasks' => $tasks, 'studentCount' => $studentCount, 'professorCount' => $professorCount, 'chefHistory' => $chefHistory, 'professorsMin' => $professorsMin, 'loginCounts' => $loginCounts]);
+                return View('chef_departement.chef_dashboard',['tasks' => $tasks, 'studentCount' => $studentCount, 'professorCount' => $professorCount, 'chefHistory' => $chefHistory, 'professorsMin' => $professorsMin, 'loginCounts' => $loginCounts , 'module_requests' => $module_requests]);
             }
-
-
-
-
-
-
 
 
 

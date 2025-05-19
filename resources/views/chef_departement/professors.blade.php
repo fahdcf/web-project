@@ -324,6 +324,10 @@
 <div class="professor-container">
     <div class="page-header">
         <h1 class="page-title">Professors Directory</h1>
+        <!-- export button -->
+ <button onclick="exportStyledExcel()" class="btn btn-outline-success " >
+    <i class="bi bi-file-excel"></i> Export
+</button>
     </div>
     
     <!-- Filter Section -->
@@ -380,11 +384,12 @@
             </div>
         </div>
     </div>
+
     
     <!-- Table Section -->
     <div class="table-section">
         <div class="table-responsive">
-            <table class="table">
+            <table class="table" id="exportTable">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -500,6 +505,78 @@
         </div>
     </div>
 </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+<script>
+function exportStyledExcel() {
+    const table = document.getElementById("exportTable");
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Professors");
+
+    // Extract headers
+    const headers = [];
+    const headerRow = table.rows[0];
+    for (let i = 0; i < headerRow.cells.length; i++) {
+        if (i !== 1 && i !== headerRow.cells.length - 1) { // skip Photo and Actions
+            headers.push(headerRow.cells[i].innerText);
+        }
+    }
+    worksheet.addRow(headers);
+
+    // Style header
+    worksheet.getRow(1).eachCell(cell => {
+        cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: '4F81BD' } // Blue
+        };
+        cell.alignment = { horizontal: 'center' };
+    });
+
+    // Data rows
+    for (let i = 1; i < table.rows.length; i++) {
+        const row = table.rows[i];
+        const rowData = [];
+        for (let j = 0; j < row.cells.length; j++) {
+            if (j !== 1 && j !== row.cells.length - 1) { // skip Photo and Actions
+                rowData.push(row.cells[j].innerText);
+            }
+        }
+        const newRow = worksheet.addRow(rowData);
+
+        // Apply conditional color to "Status" column (assuming it's 4th after removing Photo)
+        const status = newRow.getCell(4);
+        if (status.value === "Active") {
+            status.font = { color: { argb: 'FF00AA00' } }; // Green
+        } else if (status.value === "Inactive") {
+            status.font = { color: { argb: 'FFAA0000' } }; // Red
+        }
+        status.alignment = { horizontal: 'center' };
+    }
+
+    // Set column widths
+    worksheet.columns = [
+        { width: 10 }, // ID
+        { width: 25 }, // Workload
+        { width: 20 }, // Professor
+        { width: 15 }, // Status
+        { width: 30 }, // Email
+        { width: 15 }  // Created
+    ];
+
+    // Export the file
+    workbook.xlsx.writeBuffer().then((buffer) => {
+        const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        saveAs(blob, "Professors_Styled.xlsx");
+    });
+}
+
+
+</script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

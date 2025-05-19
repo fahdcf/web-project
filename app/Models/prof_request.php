@@ -9,6 +9,8 @@ class prof_request extends Model
      public function prof(){
         return $this->belongsTo(User::class, 'prof_id');
     }
+
+    
      public function getTargetAttribute()
     {
         switch ($this->type) {
