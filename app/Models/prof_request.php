@@ -21,7 +21,7 @@ class prof_request extends Model
     }
 
     
-    public function getTargetAttribute()
+     public function getTargetAttribute()
     {
         switch ($this->type) {
             case 'module':

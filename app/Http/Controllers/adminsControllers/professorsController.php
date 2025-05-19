@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\adminsControllers;
 use App\Http\Controllers\Controller;
+use App\Models\Module;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\user_detail;
@@ -22,6 +23,7 @@ use App\Models\Role;
 
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\ProfUnassignedNotification;
+use function PHPUnit\Framework\returnArgument;
 
 class professorsController extends Controller
 {
@@ -305,12 +307,14 @@ admin_action::create($actionDetails);
         
         
         admin_action::create($actionDetails);
-    $deletedProf->delete();
+   
+        $deletedProf->delete();
       
     
         return redirect()->back();
         
     }
+
 
     
 }

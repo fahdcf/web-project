@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\admin_action;
+use App\Models\chef_action;
 use App\Models\prof_request;
 use App\Models\Student;
 
@@ -68,10 +69,55 @@ class homeController extends Controller
 
 
                 return view('admin.admin_dashboard', ['tasks' => $tasks, 'studentCount' => $studentCount, 'professorCount' => $professorCount, 'adminsHistory' => $adminsHistory, 'users_logs' => $users_logs, 'loginCounts' => $loginCounts]);
-            } else if (Auth()->user()->role->ischef) {
+            } 
+            //if chef departement
+            
+            if (Auth()->user()->role->ischef) {
 
-                return View('chef_departement.chef_dashboard');
+                  $studentCount = student::get()->count();
+                $professorCount = User::get()->count();
+                $chefHistory = chef_action::latest()->take(4)->get();
+                $tasks = task::where('user_id', auth()->user()->id)->latest()->take(5)->get();
+                  
+                $departmentName =  auth()->user()->manage->name;
+                $professorsMin =user::where('departement',$departmentName)->paginate(15);
+
+
+               $professorsMin = User::where('departement',$departmentName)->latest()->take(3)->get();
+               $module_requests = prof_request::where('type','module')->where('status','pending')->latest()->take(3)->get();
+
+                // Get user logs this week
+                $logs = user_log::whereBetween('created_at', [
+                    Carbon::now()->startOfWeek(), // Monday
+                    Carbon::now()->endOfWeek(),   // Sunday
+                ])->get();
+
+
+                $logsByDay = $logs->groupBy(function ($log) {
+                    return ucfirst(Carbon::parse($log->created_at)->locale('fr')->isoFormat('dddd'));
+                });
+
+                // Prepare counts for each day
+                $days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+
+                // Build login counts
+                $loginCounts = [];
+                foreach ($days as $day) {
+                    $loginCounts[] = isset($logsByDay[$day]) ? $logsByDay[$day]->count() : 0;
+                }
+
+
+
+                return View('chef_departement.chef_dashboard',['tasks' => $tasks, 'studentCount' => $studentCount, 'professorCount' => $professorCount, 'chefHistory' => $chefHistory, 'professorsMin' => $professorsMin, 'loginCounts' => $loginCounts , 'module_requests' => $module_requests]);
             }
+
+
+
+            ////////////////////////////
+
+
+
+
             // if coordinator
             if (auth()->user()->role->iscoordonnateur) {
                 return redirect()->route('coordonnateur.dashboard');

@@ -1,60 +1,152 @@
 <x-chef_layout>
 
+<style>
+    /* Main Container */
+    .requests-container {
+        padding: 2rem;
+        min-height: 100vh;
+    }
     
-
-    <div class="container-fluid p-0 pt-5">
+    /* Header */
+    .page-header {
+        margin-bottom: 2rem;
+    }
+    
+    .page-title {
+        color: #4723d9;
+        font-weight: 600;
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Tabs Navigation */
+    .requests-tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        background: white;
+        padding: 1rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    .tab-btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        background: none;
+        border: none;
+        font-weight: 600;
+        color: #666;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .tab-btn.active {
+        background-color: #4723d9;
+        color: white;
+        box-shadow: 0 4px 8px rgba(71, 35, 217, 0.2);
+    }
+    
+    .tab-btn i {
+        font-size: 1.1rem;
+    }
+    
+    /* Request Sections */
+    .request-section {
+        background: rgb(255, 255, 255);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+    
+    .section-header {
+        padding: 1rem 1.5rem;
+        background: #f8f9fa;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .section-header h3 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 500;
+        color: #333;
+    }
+    
+    .section-header .badge {
+        background-color: #4723d9;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    
   
-     
-
-        <h1 class="pb-5" style="color: #330bcf; font-weight: 500; ">The list of requests</h1>
+  td{
+    padding: 10px !important;
+  }
     
-     
-
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: #666;
+    }
     
-        
-            <div class="sections-container">
-                <section class="buttons-section d-flex gap-2">
-        
-                   
-                  
-                  <div id="line2"  class="active-btn">
-                    <button onclick="togglebtnformodule()"><i class='bx bx-lock-alt'></i> Les demandes pour les module</button>
-                    <div id="line"></div>
-                  </div>
-        
-                     <div id="line1">
-                    <button onclick="togglebtnforfiliere()"><i class='bx bx-info-circle' ></i> Les demandes pour filieres</button>
-                    <div id="line"></div>
-                  </div>
-                    
-        
-        
-                </section>
-        
-        
-                
-              
-        
    
-     
-            
-        <section id="filiere" class="hidden mt-5">
-
-            
-
-  <div >
-        <div class="accordion rounded" id="accordionFilters">
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapspending" aria-expanded="false" aria-controls="collapsefilters">
-                        pending
-                    </button>
-                </h2>
     
-                <div id="collapspending" class="accordion-collapse collapse" data-bs-parent="#collapspending">
-                    <div class="accordion-body">
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .request-item {
+            flex-wrap: wrap;
+        }
+        
+        .request-item > div {
+            flex: 0 0 50%;
+            margin-bottom: 0.5rem;
+        }
+        
+        .action-buttons {
+            flex: 0 0 100%;
+            justify-content: center;
+            margin-top: 0.5rem;
+        }
+    }
+</style>
+
+<div class="requests-container">
+    <div class="page-header">
+        <h1 class=" display-6 fw-bold  mb-5" style="color: #4723d9">Requests Management</h1>
+        
+        <div class="requests-tabs">
+          <button class="tab-btn active" onclick="toggleSection('module')">
+              <i class="bi bi-journal-text"></i> Module demandes
+          </button>
+
+            <button class="tab-btn " onclick="toggleSection('filiere')">
+                <i class="bi bi-book"></i> Filieres demandes
+            </button>
+        </div>
+    </div>
     
-      <div class="table-responsive mt-4 ">
+    <!-- Program Requests Section -->
+    <section id="filiere" class="request-section hidden">
+        <!-- Pending Requests -->
+        <div class="section-header" data-bs-toggle="collapse" data-bs-target="#fpendingRequests" aria-expanded="true">
+            <h3>Pending Requests <span class="badge">{{ $filiere_requests->where('status', 'pending')->count() }}</span></h3>
+            <i class='bx bx-chevron-down'></i>
+        </div>
+        
+        <div id="fpendingRequests" class="section-body collapse show">
+        <div class="table-responsive mt-4 ">
         <table class="table table-borderless">
           <thead >
             <tr style="color: #535050; font-weight: 600;font-size:15px;">
@@ -67,8 +159,7 @@
             </tr>
           </thead>
           <tbody>
-            @foreach ($filiere_requests as $filiere_request)
-            @if ($filiere_request->status=="pending")
+            @forelse ($filiere_requests->where('status', 'pending') as $filiere_request)
               
            
               <tr class="filiere_request-row">
@@ -170,36 +261,27 @@
         </div>
       </div>
     </div>
-     @endif
-              @endforeach
+
+  @empty
+     <tr>
+                            <td colspan="6">
+                                <div class="empty-state">No pending module requests found</div>
+                            </td>
+                        </tr>
+  @endforelse
           </tbody>
         </table>
                      </div>
-
-                    </div>
-                </div>
-            </div>
         </div>
-    </div>
-    
-
-          
-
- <div class="pt-5">
-        <div class="accordion rounded" id="accordionFilters">
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseapproved" aria-expanded="false" aria-controls="collapsefilters">
-                        Acceptee
-                    </button>
-                </h2>
-    
-                <div id="collapseapproved" class="accordion-collapse collapse" data-bs-parent="#collapseapproved">
-                    <div class="accordion-body">
-    
-
-                        
-      <div class="table-responsive mt-4 ">
+        
+        <!-- Approved Requests -->
+        <div class="section-header collapsed" data-bs-toggle="collapse" data-bs-target="#fapprovedRequests" aria-expanded="false">
+            <h3>Approved Requests <span class="badge">{{ $filiere_requests->where('status', 'approved')->count() }}</span></h3>
+            <i class='bx bx-chevron-up'></i>
+        </div>
+        
+        <div id="fapprovedRequests" class="section-body collapse">
+            <div class="table-responsive mt-4 ">
         <table class="table table-borderless">
           <thead >
             <tr style="color: #535050; font-weight: 600;font-size:15px;">
@@ -212,8 +294,8 @@
             </tr>
           </thead>
           <tbody>
-            @foreach ($filiere_requests as $filiere_request)
-            @if ($filiere_request->status=="approved")
+
+            @forelse ($filiere_requests->where('status', 'approved') as $filiere_request)
               
            
               <tr class="filiere_request-row">
@@ -260,38 +342,27 @@
 
     
     
-     @endif
-              @endforeach
+ @empty
+     <tr>
+                          <td colspan="6">
+                                <div class="empty-state">No approved module requests found</div>
+                            </td>
+                        </tr>
+  @endforelse
+  
           </tbody>
         </table>
 </div>
-
-                   
-    
-                    </div>
-                </div>
-            </div>
         </div>
-    </div>
-    
-
-
-
- <div class="pt-5 pb-3">
-        <div class="accordion rounded" id="accordionFilters">
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapserejected" aria-expanded="false" aria-controls="collapsefilters">
-                        rejectee
-                    </button>
-                </h2>
-    
-                <div id="collapserejected" class="accordion-collapse collapse" data-bs-parent="#collapserejected">
-                    <div class="accordion-body">
-    
-
-                        
-      <div class="table-responsive mt-4 ">
+        
+        <!-- Rejected Requests -->
+        <div class="section-header collapsed" data-bs-toggle="collapse" data-bs-target="#frejectedRequests" aria-expanded="false">
+            <h3>Rejected Requests <span class="badge">{{ $filiere_requests->where('status', 'rejected')->count() }}</span></h3>
+            <i class='bx bx-chevron-up'></i>
+        </div>
+        
+        <div id="frejectedRequests" class="section-body collapse">
+             <div class="table-responsive mt-4 ">
         <table class="table table-borderless">
           <thead >
             <tr style="color: #535050; font-weight: 600;font-size:15px;">
@@ -304,8 +375,8 @@
             </tr>
           </thead>
           <tbody>
-            @foreach ($filiere_requests as $filiere_request)
-            @if ($filiere_request->status=="rejected")
+
+            @forelse ($filiere_requests->where('status', 'rejected') as $filiere_request)
               
            
               <tr class="filiere_request-row">
@@ -347,38 +418,39 @@
                 </td>            
               </tr>
 
-  
-  
+               @empty
+                         <tr>
+                            <td colspan="6">
+                                <div class="empty-state">No rejected module requests found</div>
+                            </td>
+                        </tr>
+  @endforelse
 
-    
-    
-     @endif
-              @endforeach
+  
           </tbody>
         </table>
 </div>
-
-                   
-    
-                    </div>
-                </div>
-            </div>
         </div>
-    </div>
+    </section>
+
+
     
-
-  </section>
-  <!-- #module requests-->   
     
-    <section id="module" class=" mt-5">
-
-
+    <!-- Module Requests Section (hidden by default) -->
+    <section id="module" class="request-section">
+       <!-- Pending Requests -->
+        <div class="section-header" data-bs-toggle="collapse" data-bs-target="#mpendingRequests" aria-expanded="true">
+            <h3>Pending Requests <span class="badge">{{ $module_requests->where('status', 'pending')->count() }}</span></h3>
+            <i class='bx bx-chevron-down'></i>
+        </div>
+        
+        <div id="mpendingRequests" class="section-body collapse show">
         <div class="table-responsive mt-4 ">
         <table class="table table-borderless">
           <thead >
             <tr style="color: #535050; font-weight: 600;font-size:15px;">
                 <th>Professeur</th>
-                <th>Module</th>
+                <th>module</th>
               <th>Type</th>
               <th>Status</th>
               <th>date</th>
@@ -386,8 +458,7 @@
             </tr>
           </thead>
           <tbody>
-            @foreach ($module_requests as $module_request)
-            @if ($module_request->status=="pending")
+            @forelse ($module_requests->where('status', 'pending') as $module_request)
               
            
               <tr class="module_request-row">
@@ -417,10 +488,10 @@
                       
 
                       <p>{{ $module_request->created_at->format('Y-m-d') }}</p>
-                       <div class="pAlso d-flex align-items-center gap-2">
+                      <div class="pAlso d-flex align-items-center gap-2">
                         <input type="number" hidden id="pending_user_id_{{ $module_request['id'] }}" value="{{ $module_request['id'] }}">
-                        <button style="background-color: #4723d9;color:white;" class="btn btn-sm" onclick="showPopup({{ $module_request['id'] }}, '{{ $module_request['name'] }}')" data-toggle="modal" data-target="#acceptModuleforid{{ $module_request['id'] }}"><i class="bi bi-check-square"></i></button>
-                        <button class="btn ml-1 btn-danger btn-sm" data-toggle="modal" data-target="#rejectModuleforid{{ $module_request['id'] }}"><i class="bi bi-x-square"></i></button>
+                        <button style="background-color: #4723d9;color:white;" class="btn btn-sm" onclick="showPopup({{ $module_request['id'] }}, '{{ $module_request['name'] }}')" data-toggle="modal" data-target="#acceptModalforid{{ $module_request['id'] }}"><i class="bi bi-check-square"></i></button>
+                        <button class="btn ml-1 btn-danger btn-sm" data-toggle="modal" data-target="#rejectModalforid{{ $module_request['id'] }}"><i class="bi bi-x-square"></i></button>
       
                       
                       </div>
@@ -431,9 +502,8 @@
               </tr>
 
   
-  
-  <!--reject Modal -->
-    <div class="modal fade" id="rejectModuleforid{{ $module_request['id'] }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!--reject Modal -->
+    <div class="modal fade" id="rejectModalforid{{ $module_request['id'] }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -467,7 +537,7 @@
 
     
     <!-- accept Modal -->
-    <div class="modal fade" id="acceptModuleforid{{ $module_request['id'] }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="acceptModalforid{{ $module_request['id'] }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -490,43 +560,211 @@
         </div>
       </div>
     </div>
+
+  @empty
+     <tr>
+                            <td colspan="6">
+                                <div class="empty-state">No pending module requests found</div>
+                            </td>
+                        </tr>
+  @endforelse
+          </tbody>
+        </table>
+                     </div>
+        </div>
+        
+        <!-- Approved Requests -->
+        <div class="section-header collapsed" data-bs-toggle="collapse" data-bs-target="#mapprovedRequests" aria-expanded="false">
+            <h3>Approved Requests <span class="badge">{{ $module_requests->where('status', 'approved')->count() }}</span></h3>
+            <i class='bx bx-chevron-up'></i>
+        </div>
+        
+        <div id="mapprovedRequests" class="section-body collapse">
+            <div class="table-responsive mt-4 ">
+        <table class="table table-borderless">
+          <thead >
+            <tr style="color: #535050; font-weight: 600;font-size:15px;">
+                <th>Professeur</th>
+                <th>module</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>date</th>
+              <th class="pAlso">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            @forelse ($module_requests->where('status', 'approved') as $module_request)
+              
+           
+              <tr class="module_request-row">
+                <td colspan="6" style="padding: 0; background:#ffffff;">
+                  <div class="custom-row-wrapper" style="width: 100%">
+                    <div class="custom-row d-flex" style="width: 100%">
+                        
+                        <p>{{ $module_request->prof->firstname}} {{ $module_request->prof->lastname}}</p>
+                        <p>{{$module_request->target->name}}</p>
+
+                      
+                      <p>{{ $module_request->type}}</p>
+
+                      @if ($module_request->status=='pending')
+                      <p><span style="background-color: #eaa454; color: white;padding:5px 6px;border-radius:15px;" >pending</span></p>
+                          @elseif ($module_request->status=='rejected')
+                
+                          <p><span style="background-color: #ea5e54; color: white;padding:5px 6px;border-radius:15px;" >refusee</span></p>
+                  
+                          @elseif ($module_request->status=='approved')
+                    <p><span style="background-color: #13ab50; color: white;padding:5px 6px;border-radius:15px;" >approved</span></p>
+
+                      @endif
+
+
+                      
+                      
+
+                      <p>{{ $module_request->created_at->format('Y-m-d') }}</p>
+                      <div class="pAlso d-flex align-items-center justify-content-center gap-2">
+                        <input type="number" hidden id="pending_user_id_{{ $module_request['id'] }}" value="{{ $module_request['id'] }}">
+                        <button style="background-color: #4723d9;color:white;" class="btn btn-sm" onclick="showPopup({{ $module_request['id'] }}, '{{ $module_request['name'] }}')" ><i class="bi bi-info-square"></i></button>
+                     
+                      
+                      </div>
+  
+                    </div>
+                  </div>
+                </td>            
+              </tr>
+
+  
+  
+
     
     
-     @endif
-              @endforeach
+ @empty
+     <tr>
+                          <td colspan="6">
+                                <div class="empty-state">No approved module requests found</div>
+                            </td>
+                        </tr>
+  @endforelse
+  
           </tbody>
         </table>
 </div>
-      
-    
-    </section>
-    
-        
-           
-           
-            </div>  
         </div>
         
-      
-          
+        <!-- Rejected Requests -->
+        <div class="section-header collapsed" data-bs-toggle="collapse" data-bs-target="#mrejectedRequests" aria-expanded="false">
+            <h3>Rejected Requests <span class="badge">{{ $module_requests->where('status', 'rejected')->count() }}</span></h3>
+            <i class='bx bx-chevron-up'></i>
+        </div>
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+        <div id="mrejectedRequests" class="section-body collapse">
+             <div class="table-responsive mt-4 ">
+        <table class="table table-borderless">
+          <thead >
+            <tr style="color: #535050; font-weight: 600;font-size:15px;">
+                <th>Professeur</th>
+                <th>module</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>date</th>
+              <th class="pAlso">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            @forelse ($module_requests->where('status', 'rejected') as $module_request)
+              
+           
+              <tr class="module_request-row">
+                <td colspan="6" style="padding: 0; background:#ffffff;">
+                  <div class="custom-row-wrapper" style="width: 100%">
+                    <div class="custom-row d-flex" style="width: 100%">
+                        
+                        <p>{{ $module_request->prof->firstname}} {{ $module_request->prof->lastname}}</p>
+                        <p>{{$module_request->target->name}}</p>
+
+                      
+                      <p>{{ $module_request->type}}</p>
+
+                      @if ($module_request->status=='pending')
+                      <p><span style="background-color: #eaa454; color: white;padding:5px 6px;border-radius:15px;" >pending</span></p>
+                          @elseif ($module_request->status=='rejected')
+                
+                          <p><span style="background-color: #ea5e54; color: white;padding:5px 6px;border-radius:15px;" >refusee</span></p>
+                  
+                          @elseif ($module_request->status=='approved')
+                    <p><span style="background-color: #13ab50; color: white;padding:5px 6px;border-radius:15px;" >approved</span></p>
+
+                      @endif
 
 
-      </div>
-   
+                      
+                      
+
+                      <p>{{ $module_request->created_at->format('Y-m-d') }}</p>
+                      <div class="pAlso d-flex align-items-center justify-content-center gap-2">
+                        <input type="number" hidden id="pending_user_id_{{ $module_request['id'] }}" value="{{ $module_request['id'] }}">
+                        <button style="background-color: #4723d9;color:white;" class="btn btn-sm" onclick="showPopup({{ $module_request['id'] }}, '{{ $module_request['name'] }}')" ><i class="bi bi-info-square"></i></button>
+                     
+                      
+                      </div>
+  
+                    </div>
+                  </div>
+                </td>            
+              </tr>
+
+               @empty
+                         <tr>
+                            <td colspan="6">
+                                <div class="empty-state">No rejected module requests found</div>
+                            </td>
+                        </tr>
+  @endforelse
+
+  
+          </tbody>
+        </table>
+</div>
+        </div>
+    </section>
+</div>
+
+<script>
+    // Toggle between program and module requests
+    function toggleSection(sectionId) {
+        // Update tab buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.currentTarget.classList.add('active');
+        
+        // Show/hide sections
+        document.getElementById('filiere').classList.toggle('hidden', sectionId !== 'filiere');
+        document.getElementById('module').classList.toggle('hidden', sectionId !== 'module');
+    }
     
+    // Initialize Bootstrap collapse components
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add event listeners to section headers
+        document.querySelectorAll('.section-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                if (this.classList.contains('collapsed')) {
+                    icon.classList.remove('bx-chevron-down');
+                    icon.classList.add('bx-chevron-up');
+                } else {
+                    icon.classList.remove('bx-chevron-up');
+                    icon.classList.add('bx-chevron-down');
+                }
+            });
+        });
+    });
+</script>
+
       <style>
          button:disabled{
             background-color: white;
@@ -725,31 +963,4 @@
           width: 400px;
         }
       </style>
-    
-     
-         <script>
-            function togglebtnformodule(){
-                document.getElementById('line1').classList.remove('active-btn');
-                document.getElementById('line2').classList.add('active-btn');
-            
-                document.getElementById('filiere').classList.add('hidden');
-                document.getElementById('module').classList.remove('hidden');
-        
-            
-            }
-            function togglebtnforfiliere(){
-                document.getElementById('line1').classList.add('active-btn');
-                document.getElementById('line2').classList.remove('active-btn');
-            
-                document.getElementById('filiere').classList.remove('hidden');
-                document.getElementById('module').classList.add('hidden');
-        
-            
-            
-            }
-            
-            
-                </script>   
-    
-    
 </x-chef_layout>

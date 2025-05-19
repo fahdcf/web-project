@@ -18,33 +18,9 @@ class adminProfileController extends Controller
     {
 
 
-        $user = User::findOrFail($id);
+                      $user = User::findOrFail($id);
 
-
-        if (auth()->user()->role->ischef) {
-            request()->validate([
-                'min_hours' => 'nullable|numeric',
-                'max_hours' => 'nullable|numeric',
-
-            ]);
-
-            $userDetails = $user->user_details;
-
-            if (!$userDetails) {
-                $userDetails = user_detail::create(['user_id' => $user->id]);
-            }
-
-            if (request('min_hours') && $userDetails->min_hours !== $request->input('min_hours')) {
-                $userDetails->min_hours = $request->input('min_hours');
-            }
-            if (request('max_hours') && $userDetails->max_hours !== $request->input('max_hours')) {
-                $userDetails->max_hours = $request->input('max_hours');
-            }
-            $userDetails->save();
-
-            return redirect()->back();
-        }
-
+                    
         // Validate incoming request data (adjust validation as necessary)
         $validated = $request->validate([
             'lastname' => 'required|string|max:255',
