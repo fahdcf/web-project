@@ -17,22 +17,27 @@ class NoteController extends Controller
 
     public function showUploadForm()
     {
-
-        $modules = Module::where('professor_id', auth()->user()->id)->get();
-
+        $user = auth()->user();
+        if ($user->role->isprof) {
+            $modules = Module::where('professor_id',)->get();
+        } elseif ($user->role->isvocataire) {
+            $modules = $user->modulesVacataire();
+        } else {
+            abort(403, 'the user is not a professor or a vacataire , please login first...');
+        }
         $uploads = Note::where('prof_id', auth()->id())
             ->with(['module'])
             ->latest()
             ->paginate(10);
 
 
-        return view('professor.upload_notes', compact('modules'));
+        return view('modules.upload_notes', compact('modules', 'uploads'));
     }
 
 
     public function upload(Request $request)
     {
-        // dd($request);
+        // // dd($request);
         $request->validate([
             'module_id' => 'required|exists:modules,id',
             'session_type' => 'required|in:normale,rattrapage',
@@ -54,8 +59,12 @@ class NoteController extends Controller
             'prof_id' => auth()->user()->id,
             'session_type' => $request->session_type,
             'storage_path' => $filePath,
-
+            'original_name' => $file->getClientOriginalName(),
             'semester' => $module->semester,
+
+
+
+
 
         ]);
 
@@ -64,5 +73,17 @@ class NoteController extends Controller
 
 
         return back()->with('success', $message);
+    }
+
+
+    public function cancel($id)
+    {
+        $note = Note::where('prof_id', auth()->id())->findOrFail($id);
+        $note->update([
+            'status' => 'canceled',
+            'canceled_at' => now()
+        ]);
+
+        return back()->with('success', 'Upload annulé avec succès');
     }
 }

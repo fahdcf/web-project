@@ -162,21 +162,25 @@ class CoordonnateurController extends Controller
     {
         $user = auth()->user();
 
+        //list des vacatairee
         $vacataires = User::whereHas('role', function ($query) {
             $query->where('isvocataire', true);
         })->with('user_details')->simplePaginate(10);
 
-        $modules = Module::where('filiere_id', $user->manage->id)
-            ->orderBy('name')
-            ->get();
 
-        return view('coordonnateur.vacataires.index', compact('vacataires', 'modules'));
+        // $modules = Module::where('filiere_id', $user->manage->id)
+        //     ->whereNull('professor_id')
+        //     ->orderBy('name')
+        //     ->get();
+
+        return view('coordonnateur.vacataires.index', compact('vacataires'));
     }
 
     public function createVacataire()
     {
         return view('vacataire.create');
     }
+
     public function storeVacataire(Request $request)
     {
 
@@ -211,18 +215,6 @@ class CoordonnateurController extends Controller
     {
         // Simulation de mise à jour des groupes
         return back()->with('success', 'Configuration des groupes enregistrée!');
-    }
-
-    public function addVacataire(Request $request)
-    {
-        // Simulation d'ajout de vacataire
-        return back()->with('success', 'Vacataire ajouté avec succès!');
-    }
-
-    public function affecterEDT(Request $request)
-    {
-        // Simulation d'affectation EDT
-        return back()->with('success', 'Affectation enregistrée!');
     }
 
     ////////////////page des gestion des groupes////////
@@ -277,5 +269,5 @@ class CoordonnateurController extends Controller
     //     }
 
 
-    
+
 }

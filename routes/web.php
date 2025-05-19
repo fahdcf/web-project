@@ -224,7 +224,7 @@ Route::get('/mohssine', function () {
 
 
 Route::prefix('professor')->group(function () {
-    Route::get('/dashboard', [ProfessorController::class, 'index'])->name('professor.dashboard');
+    Route::get('/dashboard', [ProfessorController::class, 'dashboard'])->name('professor.dashboard');
     Route::get('/availableModules', [ProfessorController::class, 'availableModules'])->name('professor.availableModules');
 
     Route::get('/mesModules', [ProfessorController::class, 'mesModules'])->name('professor.mesModules');
@@ -247,6 +247,10 @@ Route::prefix('professor')->group(function () {
 
     Route::post('/upload-notes', [NoteController::class, 'upload'])
         ->name('notes.upload');
+
+        Route::patch('/upload-notes/{Note}/cancel', [NoteController::class, 'cancel'])
+        ->name('notes.cancel');
+
         // ->middleware('auth:coordinator');
 
 
@@ -264,7 +268,10 @@ Route::prefix('professor')->group(function () {
 
 Route::prefix('vacataire')->group(function () {
     Route::get('/dashboard', [vacataireController::class, 'dashboard'])->name('vacataire.dashboard');
+    Route::get('/mesModules', [vacataireController::class, 'mesModules'])->name('vacataire.modules');
 
+
+    
     Route::get('/upload-grades', [vacataireController::class, 'upload-grades'])->name('vacataire.upload-grades');
     Route::post('/upload-grades', [vacataireController::class, 'upload-grades'])->name('vacataire.upload-grades');
 });
@@ -272,6 +279,7 @@ Route::prefix('vacataire')->group(function () {
 Route::get('/', [homeController::class, 'index']);
 
 Route::get('/signup', [signupController::class, 'index']);
+
 Route::post('/signup', [signupController::class, 'store']);
 
 Route::get('/login', [loginController::class, 'index']);

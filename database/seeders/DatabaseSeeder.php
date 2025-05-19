@@ -58,8 +58,17 @@ class DatabaseSeeder extends Seeder
                 'email' => 'mohssine@gmail.com',
                 'departement' => 'GI',
                 'password' => Hash::make('mohssine'),
-                'role' => ['isadmin' => true, 'iscoordonnateur' => false, 'isprof' => true]
+                'role' => ['isadmin' => false, 'iscoordonnateur' => false, 'isprof' => true]
             ],
+             [
+                'firstname' => 'Ayoub',
+                'lastname' => 'Nassih',
+                'email' => 'ayoub@gmail.com',
+                'departement' => 'GI',
+                'password' => Hash::make('ayoub'),
+                'role' => ['isadmin' => false, 'iscoordonnateur' => false, 'isprof' => false,'isvocataire' => true]
+            ],
+
             [
                 'firstname' => 'Fahd',
                 'lastname' => 'Chafai',
@@ -281,11 +290,11 @@ class DatabaseSeeder extends Seeder
             $numTasks = fake()->numberBetween(3, 10);
 
             for ($i = 0; $i < $numTasks; $i++) {
-                ModelsTask::create([
-                    'description' => fake()->sentence(),
-                    'isdone' => fake()->boolean(70), // 70% chance of being done
-                    'user_id' => $user->id,
-                ]);
+                // ModelsTask::create([
+                //     'description' => fake()->sentence(),
+                //     'isdone' => fake()->boolean(70), // 70% chance of being done
+                //     'user_id' => $user->id,
+                // ]);
             }
         }
     }

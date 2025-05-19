@@ -77,8 +77,24 @@ class User extends Authenticatable
     public function modules()
     {
         // Un module peut être enseigné par plusieurs utilisateurs (professeurs et vacataires), et un utilisateur peut enseigner dans plusieurs modules
-        return $this->hasMany(Module::class,'professor_id');
+        return $this->hasMany(Module::class, 'professor_id');
     }
+
+
+    // public function getCoordonatedFiliere()
+    // {
+    //     if($this->role->iscoordonnateur) {
+    //         return Filiere::where('coordonnateur_id', $this->id)->first();
+    //     } else abort(403,"you are not a coordinator for this action . log in first..");
+    // }
+
+
+
+    public function modulesVacataire()
+    {
+        return $this->belongsToMany(Module::class, 'module_user')->withPivot('role', 'hours');
+    }
+
     public function filieres()
     {
         return $this->belongsToMany(Filiere::class);

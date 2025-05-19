@@ -1,15 +1,9 @@
 <x-coordonnateur_layout>
     <x-global_alert />
 
-    @if ($errors->any())
-        <div class="alert alert-danger error-message">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+
+
+
 
     <style>
         :root {
@@ -67,7 +61,7 @@
         .file-info-display {
             display: none;
             margin-top: 1rem;
-            padding: 0.75rem;
+            padding: 1rem;
             background-color: #f8f9fa;
             border-radius: 8px;
             border-left: 3px solid var(--primary-color);
@@ -80,14 +74,42 @@
             padding-bottom: 0.75rem;
             display: inline-block;
         }
+
+        .file-details {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+
+        .file-detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-detail-label {
+            font-weight: 500;
+        }
     </style>
 
     <div class="container py-5 upload-container">
+        @if ($errors->any())
+            <div class="alert alert-danger error-message">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-semibold mb-0" style="color: var(--primary-color);">Gestion des Notes</h2>
-            <a href="#" class="btn btn-primary" id="downloadTemplate">
+
+            <a href="{{ asset('templates/modele_notes.xlsx') }}" class="btn btn-primary" download="Modele_Notes.xlsx">
                 <i class="fas fa-download me-2"></i>Télécharger le Modèle
             </a>
+
         </div>
 
         <div class="upload-card">
@@ -116,7 +138,7 @@
                             <option value="" disabled selected>Sélectionner un module</option>
                             @foreach ($modules as $module)
                                 <option value="{{ $module->id }}" data-semester="{{ $module->semester }}">
-                                    S{{ $module->semester }}: {{ $module->name }} 
+                                    S{{ $module->semester }}: {{ $module->name }}
                                 </option>
                             @endforeach
                         </select>
@@ -139,11 +161,14 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <i class="fas fa-file-excel text-success me-2"></i>
-                                    <span id="selectedFileName"></span>
+                                    <span id="selectedFileName" class="fw-semibold"></span>
                                 </div>
                                 <button type="button" class="btn btn-sm btn-outline-danger" onclick="resetFileInput()">
                                     <i class="fas fa-times"></i>
                                 </button>
+                            </div>
+                            <div class="file-details" id="fileDetails">
+                                <!-- File details will be inserted here by JavaScript -->
                             </div>
                         </div>
                         <div id="file_error" class="invalid-feedback"></div>
@@ -172,8 +197,7 @@
             <div class="card-header bg-light">
                 <h5 class="mb-0"><i class="fas fa-history me-2"></i>Historique des Uploads</h5>
             </div>
-            {{-- <div class="card-body">
-                @php $uploads=[1,2,3,4];@endphp
+            <div class="card-body">
                 @if ($uploads->count() > 0)
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -183,27 +207,49 @@
                                     <th>Module</th>
                                     <th>Session</th>
                                     <th>Fichier</th>
+                                    <th>Statut</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($uploads as $upload)
-                                <tr>
-                                    <td>{{ $upload->created_at->format('d/m/Y H:i') }}</td>
-                                    <td>{{ $upload->module->name }}</td>
-                                    <td>
-                                        <span class="badge bg-{{ $upload->session_type === 'normale' ? 'primary' : 'warning' }}">
-                                            {{ ucfirst($upload->session_type) }}
-                                        </span>
-                                    </td>
-                                    <td>{{ $upload->original_filename }}</td>
-                                    <td>
-                                        <a href="{{ route('notes.details', $upload->id) }}" 
-                                           class="btn btn-sm btn-outline-info">
-                                            <i class="fas fa-eye"></i> Détails
-                                        </a>
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td>{{ $upload->created_at->format('d/m/Y H:i') }}</td>
+                                        <td>{{ $upload->module->name }}</td>
+                                        <td>
+                                            <span
+                                                class="badge bg-{{ $upload->session_type === 'normale' ? 'primary' : 'warning' }}">
+                                                {{ ucfirst($upload->session_type) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {{ $upload->original_name ?? 'Nom inconnu' }}
+                                            <a href="{{ Storage::url($upload->storage_path) }}" target="_blank"
+                                                class="ms-2">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            @if ($upload->status == 'active')
+                                                <span class="badge bg-success">Actif</span>
+                                            @else
+                                                <span class="badge bg-danger">Annulé</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($upload->status == 'active')
+                                                <form method="POST"
+                                                    action="{{ route('notes.cancel', $upload->id) }}">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button class="btn btn-sm btn-danger"
+                                                        onclick="return confirm('Voulez-vous vraiment annuler cet upload ?')">
+                                                        <i class="fas fa-times"></i> Annuler
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                         </table>
@@ -214,7 +260,7 @@
                         Aucun upload enregistré pour le moment.
                     </div>
                 @endif
-            </div> --}}
+            </div>
         </div>
     </div>
 
@@ -241,6 +287,10 @@
             // Gestion du drag and drop
             const fileUploadArea = document.getElementById('fileUploadArea');
             const fileInput = document.getElementById('notes_file');
+
+            fileUploadArea.addEventListener('click', () => {
+                fileInput.click();
+            });
 
             fileUploadArea.addEventListener('dragover', (e) => {
                 e.preventDefault();
@@ -291,10 +341,37 @@
                     return;
                 }
 
+                // Display file name
                 document.getElementById('selectedFileName').textContent = file.name;
+
+                // Display file details
+                const fileDetails = document.getElementById('fileDetails');
+                fileDetails.innerHTML = `
+                    <div class="file-detail-item">
+                        <span class="file-detail-label">Taille:</span>
+                        <span>${formatFileSize(file.size)}</span>
+                    </div>
+                    <div class="file-detail-item">
+                        <span class="file-detail-label">Type:</span>
+                        <span>${file.type || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}</span>
+                    </div>
+                    <div class="file-detail-item">
+                        <span class="file-detail-label">Dernière modification:</span>
+                        <span>${new Date(file.lastModified).toLocaleString()}</span>
+                    </div>
+                `;
+
                 document.getElementById('fileUploadArea').style.display = 'none';
                 document.getElementById('fileInfoDisplay').style.display = 'block';
             }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
 
         function resetFileInput() {
@@ -360,5 +437,8 @@
         @if (session('error'))
             showModal('error', 'Erreur', '{{ session('error') }}');
         @endif
+
+
+       
     </script>
 </x-coordonnateur_layout>

@@ -12,35 +12,6 @@ class Module extends Model
     protected $table = 'modules'; // Vérifiez cette ligne
     use HasFactory;
 
-    // Liste des statuts possibles
-
-    // protected $fillable = [
-    //     'code',
-    //     'name',
-    //     'credits',
-    //     'evaluation',
-    //     'specialite',
-    //     'semester',
-    //     'description',
-
-    //     'cm_hours',
-    //     'td_hours',
-    //     'tp_hours',
-    //     'autre_hours',
-
-    //     'status',
-    //     'type',
-    //     'parent_id',
-
-    //     'filiere_id',
-    //     'professor_id',
-    //     'responsable_id',
-
-    //     // 'nb_groupes_td',
-    //     // 'nb_groupes_tp',
-
-    // ];
-
     protected $guarded = [];
 
 
@@ -50,15 +21,17 @@ class Module extends Model
         return $this->belongsTo(User::class, 'professor_id'); // A module belongs to a professor
     }
 
+
     public function responsable()
     {
         return $this->belongsTo(User::class, 'responsable_id'); // A module belongs to a professor
     }
+    
 
-    public function users()
-    {
-        return $this->belongsToMany(User::class, 'module_user')->withPivot('role', 'hours');
-    }
+    // public function vacataire()
+    // {
+    //     return $this->belongsToMany(User::class, 'module_user')->withPivot('role', 'hours');
+    // }
 
     // Relation avec la filière
     public function filiere()
