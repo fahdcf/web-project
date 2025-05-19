@@ -31,6 +31,7 @@ class adminsController extends Controller
         $admins = User::WhereHas('role', function ($query) {
             $query->where('isadmin', true);
         })->paginate(10); 
+        
         return view('admin.admins', ['admins' => $admins, 'Departements' => $departments]);
     
     }

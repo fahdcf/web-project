@@ -429,10 +429,12 @@ Route::get('etudiant-profile/{id}', [adminProfileController::class, 'studentprof
 Route::get('chef/demandes',[requestsController::class,'index']); 
 Route::patch('chef/demandes/{id}',[requestsController::class,'accept']); 
 Route::delete('chef/demandes/{id}',[requestsController::class,'decline']); 
-
  Route::get('chef/professeurs',[ChefProfessorController::class,'index']);
+ Route::delete('chef/professeurs/remove/{id}',[ChefProfessorController::class,'removeModule']);
   Route::get('chef/filieres',[cheffiliereController::class,'index']);
 Route::PATCH('chef/filieres/modifier/{id}',[cheffiliereController::class,'modify']); 
 Route::get('chef/modules',[chefModulesController::class,'index']); 
 Route::get('chef/modules_vacantes',[chefModulesController::class,'vacantesList']); 
 Route::post('chef/modules_vacantes/affecter/{id}',[chefModulesController::class,'affecter']); 
+Route::get('chef/professeur_profile/{id}',[ChefProfessorController::class,'professeur_profile']);
+Route::post('chef/professeur_profile/{id}',[ChefProfessorController::class,'edit']);

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\chef_departementControllers;
 use App\Http\Controllers\Controller;
 
-use App\Models\Module;
+use App\Models\chef_action;
+ use App\Models\Module;
  use App\Models\User;
 use App\Models\prof_request;
 
@@ -58,11 +59,26 @@ request()->validate([
 if(request('prof_id')){
     $prof=user::findOrFail(request('prof_id'));
     $module->professor_id=request('prof_id');
+    $module->status="active";
     $module->save();
 
-    $profdetails=$prof->user_details;
-    $profdetails->actuelle_hours+=$module->cm_hours+ $module->tp_hours + $module->td_hours;
-    $profdetails->save();
+
+
+       $chefActionDetails=[
+            'chef_id'=>auth()->user()->id,
+            'action_type' =>'affecter',
+            'description'=>auth()->user()->firstname . " " . auth()->user()->lastname ." a affecteé le module " . $module->name . " a le professeur " . $prof->firstname . " " . $prof->lastname ,
+            'target_table' =>'modules',
+            'target_id' => $module->id,
+        ];
+
+
+        
+        
+        chef_action::create($chefActionDetails);
+   
+
+  
     return redirect()->back();
 }
 

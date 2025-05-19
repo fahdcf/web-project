@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\adminsControllers;
 use App\Http\Controllers\Controller;
 
+use App\Models\Module;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\user_detail;
@@ -44,6 +45,8 @@ public function otherprofile($id){
         return view('admin.admin_user_profile',['user'=>$user,'Departements'=>$departments]);
     }
     else{
+    $user=User::findOrFail($id);
+
         return view('other_profile',['user'=>$user]);
 
     }

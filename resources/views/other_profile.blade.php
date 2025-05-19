@@ -275,31 +275,6 @@
     
                   
             
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="statusFilter" class="form-label">Status</label>
-                        <p class="form-control">{{$user->user_details->status}}</p>
-                    </div>
-    
-    @if (auth()->user()->role->ischef)
-
-        <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="rowsPerPage" class="form-label">charge horaire minimale</label>
-                        <input class="form-control" name="min_hours" value="{{$user->user_details->min_hours}}">
-                        
-                    </div>
-
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="rowsPerPage" class="form-label">charge horaire maximale</label>
-                        <input class="form-control" name="max_hours" value="{{$user->user_details->max_hours}}">
-
-                    </div>
-
-                    <div class="col-md-6 col-lg-4 mb-3" >
-                    <button type="submit" class="form-control text-white" style="background-color: #4723d9; margin-top:33px">Changer la charge horaire</button>
-
-                    </div>
-
-                     @else
 
     
                     <div class="col-md-6 col-lg-4 mb-3">
@@ -313,7 +288,7 @@
                         <p class="form-control">{{$user->user_details->max_hours}}</p>
                         
                     </div>
-                    @endif
+                   
             </div>
         </div>
     
