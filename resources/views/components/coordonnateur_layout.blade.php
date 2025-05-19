@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+ 
+
+
 
     @vite(['resources/css/admin-dashboard.css', 'resources/css/sb-admin-2.css', 'resources/vendor/fontawesome-free/css/all.min.css', 'resources/js/app.js', 'resources/vendor/jquery/jquery.min.js', 'resources/vendor/bootstrap/js/bootstrap.bundle.min.js', 'resources/vendor/jquery-easing/jquery.easing.min.js', 'resources/js/sb-admin-2.min.js', 'resources/vendor/chart.js/Chart.min.js', 'resources/js/demo/chart-area-demo.js', 'resources/js/demo/chart-pie-demo.js'])
 
@@ -370,7 +373,15 @@
 
 
 
+
+
+
 </head>
+
+ 
+   
+   
+    
 
 <body id="body-pd">
 

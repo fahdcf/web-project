@@ -9,52 +9,21 @@ class Note extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'student_id',
-        'module_id',
-        'semester',
-        'session_type',
-        'note',
-        'remarks'
-    ];
-
-
-    public function student()
-    {
-        return $this->belongsTo(Student::class, 'student_id');
-    }
-
+    protected $guarded = [];
 
     public function module()
     {
         return $this->belongsTo(Module::class);
     }
 
-
-    public function scopeForSemester($query, $semester)
+    public function professor()
     {
-        return $query->where('semester', $semester);
+        return $this->belongsTo(User::class);
     }
 
 
-    public function scopeForSessionType($query, $type)
+      public function filiere()
     {
-        return $query->where('session_type', $type);
-    }
-
-    public function scopeForModule($query, $moduleId)
-    {
-        return $query->where('module_id', $moduleId);
-    }
-
-    
-    public function getFormattedSessionTypeAttribute()
-    {
-        return $this->session_type === 'normale' ? 'Session Normale' : 'Session Rattrapage';
-    }
-
-    public function getFormattedNoteAttribute()
-    {
-        return number_format($this->note, 2);
+        return $this->belongsTo(Filiere::class);
     }
 }

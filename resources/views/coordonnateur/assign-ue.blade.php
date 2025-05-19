@@ -1,14 +1,9 @@
 <x-coordonnateur_layout>
-    
+
     <div class="container-fluid p-0 pt-5">
-        
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle-fill me-2"></i>
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
+
+        <x-global_alert />
+
 
         <!-- En-tête -->
         <div class="d-flex justify-content-between align-items-center mb-4">

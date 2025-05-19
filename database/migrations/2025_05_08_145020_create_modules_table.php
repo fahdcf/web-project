@@ -27,10 +27,10 @@ return new class extends Migration {
             // Relations avec foreignIdFor()
 
             $table->integer('filiere_id')->nullable();
+            $table->foreign('filiere_id')->references('id')->on('filieres')->cascadeOnDelete();
 
             $table->integer('semester')->nullable();
 
-            $table->foreign('filiere_id')->references('id')->on('filieres')->cascadeOnDelete();
 
 
             $table->integer('responsable_id')->nullable();

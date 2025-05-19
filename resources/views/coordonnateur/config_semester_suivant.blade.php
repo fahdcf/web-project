@@ -1,17 +1,14 @@
 <x-coordonnateur_layout>
     <div class="container-fluid py-4">
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
+        <x-global_alert />
+
 
         <div class="row">
             <div class="col-12">
                 <div class="card shadow-sm border-0 overflow-hidden">
                     <!-- Enhanced Header -->
-                    <div class="card-header bg-primary text-white py-3 px-4 d-flex justify-content-between align-items-center">
+                    <div
+                        class="card-header bg-primary text-white py-3 px-4 d-flex justify-content-between align-items-center">
                         <div>
                             <h5 class="mb-1 fw-semibold d-flex align-items-center">
                                 <i class="fas fa-layer-group me-2"></i>
@@ -26,7 +23,7 @@
                                 </span>
                             </div>
                         </div>
-                       
+
                     </div>
 
                     <!-- Main Content -->
@@ -41,14 +38,14 @@
                                         </div>
                                         <div>
                                             <h4 class="m-0 fw-semibold">
-                                                {{ match($semester) {
+                                                {{ match ($semester) {
                                                     1 => 'Première Année - S1',
                                                     2 => 'Première Année - S2',
                                                     3 => 'Deuxième Année - S3',
-                                                    4 => 'Deuxième Année - S4', 
+                                                    4 => 'Deuxième Année - S4',
                                                     5 => 'Troisième Année - S5',
                                                     6 => 'Troisième Année - S6',
-                                                    default => 'Semestre ' . $semester
+                                                    default => 'Semestre ' . $semester,
                                                 } }}
                                             </h4>
                                         </div>
@@ -66,9 +63,11 @@
                                         <div class="col-md-6 col-lg-4">
                                             <div class="card module-card border-0 shadow-sm h-100">
                                                 <!-- Module Header -->
-                                                <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                                                <div
+                                                    class="card-header bg-white d-flex justify-content-between align-items-center py-3">
                                                     <div class="flex-grow-1 pe-2">
-                                                        <h6 class="mb-0 fw-semibold text-truncate">{{ $module->name }}</h6>
+                                                        <h6 class="mb-0 fw-semibold text-truncate">{{ $module->name }}
+                                                        </h6>
                                                         <div class="d-flex align-items-center mt-1">
                                                             <small class="text-muted me-2">
                                                                 <i class="fas fa-hashtag me-1"></i>{{ $module->code }}
@@ -84,7 +83,8 @@
                                                 <div class="card-body">
                                                     <!-- Responsable -->
                                                     <div class="d-flex align-items-center mb-3">
-                                                        <div class="avatar bg-primary-soft text-primary rounded-circle me-3">
+                                                        <div
+                                                            class="avatar bg-primary-soft text-primary rounded-circle me-3">
                                                             <i class="fas fa-user-tie"></i>
                                                         </div>
                                                         <div>
@@ -98,90 +98,105 @@
                                                     <!-- Groups Summary -->
                                                     <div class="groups-summary mb-3">
                                                         <div class="row g-2">
-                                                            @if($module->tdGroups->count() > 0)
-                                                            <div class="col-6">
-                                                                <div class="group-type-card bg-primary-soft p-2 rounded text-center">
-                                                                    <div class="text-primary fw-semibold mb-1">
-                                                                        <i class="fas fa-users me-1"></i> Groupes TD
-                                                                    </div>
-                                                                    <div>
-                                                                        <span class="badge bg-white text-primary rounded-pill px-2">
-                                                                            {{ $module->tdGroups->count() }} groupes
-                                                                        </span>
+                                                            @if ($module->tdGroups->count() > 0)
+                                                                <div class="col-6">
+                                                                    <div
+                                                                        class="group-type-card bg-primary-soft p-2 rounded text-center">
+                                                                        <div class="text-primary fw-semibold mb-1">
+                                                                            <i class="fas fa-users me-1"></i> Groupes TD
+                                                                        </div>
+                                                                        <div>
+                                                                            <span
+                                                                                class="badge bg-white text-primary rounded-pill px-2">
+                                                                                {{ $module->tdGroups->count() }}
+                                                                                groupes
+                                                                            </span>
+                                                                            
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
                                                             @endif
-                                                            
-                                                            @if($module->tpGroups->count() > 0)
-                                                            <div class="col-6">
-                                                                <div class="group-type-card bg-success-soft p-2 rounded text-center">
-                                                                    <div class="text-success fw-semibold mb-1">
-                                                                        <i class="fas fa-flask me-1"></i> Groupes TP
-                                                                    </div>
-                                                                    <div>
-                                                                        <span class="badge bg-white text-success rounded-pill px-2">
-                                                                            {{ $module->tpGroups->count() }} groupes
-                                                                        </span>
+
+                                                            @if ($module->tpGroups->count() > 0)
+                                                                <div class="col-6">
+                                                                    <div
+                                                                        class="group-type-card bg-success-soft p-2 rounded text-center">
+                                                                        <div class="text-success fw-semibold mb-1">
+                                                                            <i class="fas fa-flask me-1"></i> Groupes TP
+                                                                        </div>
+                                                                        <div>
+                                                                            <span
+                                                                                class="badge bg-white text-success rounded-pill px-2">
+                                                                                {{ $module->tpGroups->count() }}
+                                                                                groupes
+                                                                            </span>
+                                                                            
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
                                                             @endif
                                                         </div>
                                                     </div>
 
                                                     <!-- Detailed Groups -->
                                                     <div class="groups-detailed">
-                                                        @if($module->tdGroups->count() > 0)
-                                                        <div class="mb-3">
-                                                            <h6 class="small fw-semibold text-primary mb-2">
-                                                                <i class="fas fa-users me-1"></i> Groupes TD
-                                                            </h6>
-                                                            <ul class="list-group list-group-flush small">
-                                                                @foreach($module->tdGroups as $group)
-                                                                <li class="list-group-item px-0 py-1 border-0 d-flex justify-content-between align-items-center">
-                                                                    <span class="d-flex align-items-center">
-                                                                        <span class="group-badge bg-primary-soft text-primary rounded-circle me-2">
-                                                                            {{ $loop->iteration }}
-                                                                        </span>
-                                                                        <span>TD {{ $loop->iteration }}</span>
-                                                                    </span>
-                                                                    <span class="text-muted small">
-                                                                        <span class="{{ $group->nbr_student >= $group->max_students ? 'text-danger' : 'text-success' }} fw-medium">
-                                                                            {{ $group->nbr_student }}
-                                                                        </span>
-                                                                        <span>/{{ $group->max_students }}</span>
-                                                                    </span>
-                                                                </li>
-                                                                @endforeach
-                                                            </ul>
-                                                        </div>
+                                                        @if ($module->tdGroups->count() > 0)
+                                                            <div class="mb-3">
+                                                                <h6 class="small fw-semibold text-primary mb-2">
+                                                                    <i class="fas fa-users me-1"></i> Groupes TD
+                                                                </h6>
+                                                                <ul class="list-group list-group-flush small">
+                                                                    @foreach ($module->tdGroups as $group)
+                                                                        <li
+                                                                            class="list-group-item px-0 py-1 border-0 d-flex justify-content-between align-items-center">
+                                                                            <span class="d-flex align-items-center">
+                                                                                <span
+                                                                                    class="group-badge bg-primary-soft text-primary rounded-circle me-2">
+                                                                                    {{ $loop->iteration }}
+                                                                                </span>
+                                                                                <span>TD {{ $loop->iteration }}</span>
+                                                                                
+                                                                            </span>
+                                                                            <span class="text-muted small">
+                                                                                <span
+                                                                                    class="{{ $group->nbr_student >= $group->max_students ? 'text-danger' : 'text-success' }} fw-medium">
+                                                                                    {{ $group->nbr_student }}
+                                                                                </span>
+                                                                                <span>/{{ $group->max_students }}</span>
+                                                                            </span>
+                                                                        </li>
+                                                                    @endforeach
+                                                                </ul>
+                                                            </div>
                                                         @endif
 
-                                                        @if($module->tpGroups->count() > 0)
-                                                        <div class="mb-2">
-                                                            <h6 class="small fw-semibold text-success mb-2">
-                                                                <i class="fas fa-flask me-1"></i> Groupes TP
-                                                            </h6>
-                                                            <ul class="list-group list-group-flush small">
-                                                                @foreach($module->tpGroups as $group)
-                                                                <li class="list-group-item px-0 py-1 border-0 d-flex justify-content-between align-items-center">
-                                                                    <span class="d-flex align-items-center">
-                                                                        <span class="group-badge bg-success-soft text-success rounded-circle me-2">
-                                                                            {{ $loop->iteration }}
-                                                                        </span>
-                                                                        <span>TP {{ $loop->iteration }}</span>
-                                                                    </span>
-                                                                    <span class="text-muted small">
-                                                                        <span class="{{ $group->nbr_student >= $group->max_students ? 'text-danger' : 'text-success' }} fw-medium">
-                                                                            {{ $group->nbr_student }}
-                                                                        </span>
-                                                                        <span>/{{ $group->max_students }}</span>
-                                                                    </span>
-                                                                </li>
-                                                                @endforeach
-                                                            </ul>
-                                                        </div>
+                                                        @if ($module->tpGroups->count() > 0)
+                                                            <div class="mb-2">
+                                                                <h6 class="small fw-semibold text-success mb-2">
+                                                                    <i class="fas fa-flask me-1"></i> Groupes TP
+                                                                </h6>
+                                                                <ul class="list-group list-group-flush small">
+                                                                    @foreach ($module->tpGroups as $group)
+                                                                        <li
+                                                                            class="list-group-item px-0 py-1 border-0 d-flex justify-content-between align-items-center">
+                                                                            <span class="d-flex align-items-center">
+                                                                                <span
+                                                                                    class="group-badge bg-success-soft text-success rounded-circle me-2">
+                                                                                    {{ $loop->iteration }}
+                                                                                </span>
+                                                                                <span>TP {{ $loop->iteration }}</span>
+                                                                            </span>
+                                                                            <span class="text-muted small">
+                                                                                <span
+                                                                                    class="{{ $group->nbr_student >= $group->max_students ? 'text-danger' : 'text-success' }} fw-medium">
+                                                                                    {{ $group->nbr_student }}
+                                                                                </span>
+                                                                                <span>/{{ $group->max_students }}</span>
+                                                                            </span>
+                                                                        </li>
+                                                                    @endforeach
+                                                                </ul>
+                                                            </div>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -226,17 +241,17 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .module-card {
             border-radius: 0.5rem;
             transition: all 0.2s ease;
         }
-        
+
         .module-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
-        
+
         .avatar {
             width: 36px;
             height: 36px;
@@ -244,15 +259,15 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .group-type-card {
             transition: all 0.2s ease;
         }
-        
+
         .group-type-card:hover {
             transform: translateY(-2px);
         }
-        
+
         .group-badge {
             width: 24px;
             height: 24px;
@@ -262,43 +277,43 @@
             font-size: 0.7rem;
             font-weight: 600;
         }
-        
+
         .groups-detailed {
             max-height: 200px;
             overflow-y: auto;
             padding-right: 5px;
         }
-        
+
         .groups-detailed::-webkit-scrollbar {
             width: 4px;
         }
-        
+
         .groups-detailed::-webkit-scrollbar-thumb {
-            background-color: rgba(0,0,0,0.1);
+            background-color: rgba(0, 0, 0, 0.1);
             border-radius: 2px;
         }
-        
+
         /* Soft background colors */
         .bg-primary-soft {
-            background-color: rgba(13,110,253,0.08);
+            background-color: rgba(13, 110, 253, 0.08);
         }
-        
+
         .bg-success-soft {
-            background-color: rgba(25,135,84,0.08);
+            background-color: rgba(25, 135, 84, 0.08);
         }
-        
+
         /* Professional buttons */
         .btn-sm {
             padding: 0.35rem 0.75rem;
             font-size: 0.8rem;
         }
-        
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .semester-section {
                 padding: 1.5rem;
             }
-            
+
             .module-card {
                 margin-bottom: 1rem;
             }
@@ -307,7 +322,7 @@
 
     <!-- Configuration Modals (keep your existing modal code) -->
 
-     <div class="modal fade" id="configNbGroupesGeneralModal" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="configNbGroupesGeneralModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg">
                 <div class="modal-header bg-warning text-white rounded-top">
@@ -402,93 +417,94 @@
 
     <!-- Modal pour configuration individuelle -->
     <!-- Simplified Individual Module Config Modal -->
-<div class="modal fade" id="configModuleModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-info text-white rounded-top">
-                <h5 class="modal-title fw-semibold">
-                    <i class="fas fa-cog me-2"></i>
-                    <span id="moduleConfigTitle">Configuration du module</span>
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
-            </div>
+    <div class="modal fade" id="configModuleModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-info text-white rounded-top">
+                    <h5 class="modal-title fw-semibold">
+                        <i class="fas fa-cog me-2"></i>
+                        <span id="moduleConfigTitle">Configuration du module</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
 
-            <!-- Changed to standard form submission -->
-            <form method="POST" action="{{ route('module_config_update') }}">
-                @csrf
-                <input type="hidden" name="module_id" id="configModuleId">
+                <!-- Changed to standard form submission -->
+                <form method="POST" action="{{ route('module_config_update') }}">
+                    @csrf
+                    <input type="hidden" name="module_id" id="configModuleId">
 
-                <div class="modal-body py-4">
-                    <div class="row g-3">
-                        <!-- TD Groups Configuration -->
-                        <div class="col-md-6">
-                            <div class="card border-0 h-100">
-                                <div class="card-header bg-primary-soft border-0">
-                                    <h6 class="mb-0 d-flex align-items-center">
-                                        <i class="fas fa-users text-primary me-2"></i>
-                                        Groupes TD
-                                    </h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <label class="form-label">Nombre de groupes</label>
-                                        <input type="number" class="form-control" name="nb_groupes_td"
-                                            id="tdCountInput" min="1" max="10" required>
+                    <div class="modal-body py-4">
+                        <div class="row g-3">
+                            <!-- TD Groups Configuration -->
+                            <div class="col-md-6">
+                                <div class="card border-0 h-100">
+                                    <div class="card-header bg-primary-soft border-0">
+                                        <h6 class="mb-0 d-flex align-items-center">
+                                            <i class="fas fa-users text-primary me-2"></i>
+                                            Groupes TD
+                                        </h6>
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Étudiants max/groupe</label>
-                                        <input type="number" class="form-control" name="max_td"
-                                            id="tdMaxInput" min="10" max="50" required>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Nombre de groupes</label>
+                                            <input type="number" class="form-control" name="nb_groupes_td"
+                                                id="tdCountInput" min="1" max="10" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Étudiants max/groupe</label>
+                                            <input type="number" class="form-control" name="max_td"
+                                                id="tdMaxInput" min="10" max="50" required>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- TP Groups Configuration -->
-                        <div class="col-md-6">
-                            <div class="card border-0 h-100">
-                                <div class="card-header bg-success-soft border-0">
-                                    <h6 class="mb-0 d-flex align-items-center">
-                                        <i class="fas fa-flask text-success me-2"></i>
-                                        Groupes TP
-                                    </h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <label class="form-label">Nombre de groupes</label>
-                                        <input type="number" class="form-control" name="nb_groupes_tp"
-                                            id="tpCountInput" min="0" max="10" required>
+                            <!-- TP Groups Configuration -->
+                            <div class="col-md-6">
+                                <div class="card border-0 h-100">
+                                    <div class="card-header bg-success-soft border-0">
+                                        <h6 class="mb-0 d-flex align-items-center">
+                                            <i class="fas fa-flask text-success me-2"></i>
+                                            Groupes TP
+                                        </h6>
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Étudiants max/groupe</label>
-                                        <input type="number" class="form-control" name="max_tp"
-                                            id="tpMaxInput" min="5" max="30" required>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Nombre de groupes</label>
+                                            <input type="number" class="form-control" name="nb_groupes_tp"
+                                                id="tpCountInput" min="0" max="10" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Étudiants max/groupe</label>
+                                            <input type="number" class="form-control" name="max_tp"
+                                                id="tpMaxInput" min="5" max="30" required>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
-                        data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-info rounded-pill px-4 fw-medium">
-                        <i class="fas fa-save me-2"></i> Enregistrer
-                    </button>
-                </div>
-            </form>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                            data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-info rounded-pill px-4 fw-medium">
+                            <i class="fas fa-save me-2"></i> Enregistrer
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
 
     <script>
         function prepareModal(button) {
             const semester = button.getAttribute('data-semester');
             document.querySelector('#configNbGroupesGeneralModal input[name="semester"]').value = semester;
-            document.querySelectorAll('#configNbGroupesGeneralModal .semester-display, #configNbGroupesGeneralModal .semester-display-btn')
+            document.querySelectorAll(
+                    '#configNbGroupesGeneralModal .semester-display, #configNbGroupesGeneralModal .semester-display-btn')
                 .forEach(el => el.textContent = semester);
         }
 

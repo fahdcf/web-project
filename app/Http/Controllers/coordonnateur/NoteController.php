@@ -4,19 +4,32 @@ namespace App\Http\Controllers\coordonnateur;
 
 use App\Http\Controllers\Controller;
 use App\Imports\NotesImport;
-use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Module;
+use App\Models\Note;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class NoteController extends Controller
 {
 
 
-    public function showUploadForm(){
+    public function showUploadForm()
+    {
 
-        $modules=Module::where('professor_id',auth()->user()->id)->get();
-        return view('professor.upload_notes',compact('modules'));
+        $modules = Module::where('professor_id', auth()->user()->id)->get();
+
+        $uploads = Note::where('prof_id', auth()->id())
+            ->with(['module'])
+            ->latest()
+            ->paginate(10);
+
+
+        return view('professor.upload_notes', compact('modules'));
     }
+
+
     public function upload(Request $request)
     {
         // dd($request);
@@ -26,41 +39,30 @@ class NoteController extends Controller
             'file' => 'required|file|mimes:xlsx,xls'
         ]);
 
-        try {
-            $import = new NotesImport(
-                $request->module_id,
-                $request->session_type
-            );
 
-            Excel::import($import, $request->file('file'));
+        $module = Module::findOrFail($request->module_id);
+        $semester = $module->semester;
 
-            // Get module info for success message
-            $module = Module::find($request->module_id);
-            $semester = $module->semester;
 
-            $message = "Notes importées avec succès pour le module {$module->name} (Semestre {$semester}, Session {$request->session_type})";
+        $file = $request->file('file');
+        $filePath = $file->store('notes_uploads', 'public');
 
-            if ($import->getErrors()) {
-                $errors = $import->getErrors();
-                $errorCount = count($errors);
-                $successCount = $import->getRowCount() - $errorCount;
-                
-                $message .= "<br>{$successCount} réussites, {$errorCount} erreurs";
-                
-                // Format errors for display
-                $errorDetails = array_map(function($error) {
-                    return "Ligne {$error['row']} (CNE: {$error['cne']}): {$error['message']}";
-                }, $errors);
-                
-                return back()
-                    ->with('success', $message)
-                    ->with('error_details', $errorDetails);
-            }
 
-            return back()->with('success', $message);
+        // Record the upload int notes table
+        Note::create([
+            'module_id' => $request->module_id,
+            'prof_id' => auth()->user()->id,
+            'session_type' => $request->session_type,
+            'storage_path' => $filePath,
 
-        } catch (\Exception $e) {
-            return back()->with('error', "Erreur lors de l'importation: " . $e->getMessage());
-        }
+            'semester' => $module->semester,
+
+        ]);
+
+
+        $message = "Notes importées avec succès pour le module {$module->name} (Semestre {$semester}, Session {$request->session_type})";
+
+
+        return back()->with('success', $message);
     }
 }

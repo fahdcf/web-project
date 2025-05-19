@@ -1,5 +1,7 @@
 <x-coordonnateur_layout>
     <div class="container-fluid py-4">
+        <x-global_alert />
+
         <div class="row">
             <div class="col-12">
                 <div class="card shadow-xs border-0 overflow-hidden">
@@ -30,7 +32,8 @@
 
                         <!-- Right Button -->
                         <div class="position-relative z-1">
-                            <a href="{{ route('config_semester_suivant') }}" class="btn btn-light btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center">
+                            <a href="{{ route('config_semester_suivant') }}"
+                                class="btn btn-light btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center">
                                 <i class="fas fa-cog me-2"></i> Config. Sém. Suivant
                             </a>
                         </div>
@@ -116,9 +119,12 @@
                                                                             <span class="d-flex flex-column">
                                                                                 <span class="fw-medium">TD
                                                                                     {{ $loop->iteration }}</span>
+
+                                                                                
                                                                                 @if ($group->professor)
                                                                                     <small
-                                                                                        class="text-muted fs-11">{{ $group->professor->fullname }}</small>
+                                                                                        class="text-muted fs-11">{{ $group->professor->fullname }}
+                                                                                    </small>
                                                                                 @endif
                                                                             </span>
                                                                         </span>
@@ -190,8 +196,8 @@
                                                             class="btn btn-sm btn-outline-primary rounded-pill p-2 border-1 fs-11 fw-medium">
                                                             <i class="fas fa-edit me-1"></i> Modifier
                                                         </a>
-                                                        
-                                                        
+
+
                                                     </div>
                                                 </div>
                                             </div>

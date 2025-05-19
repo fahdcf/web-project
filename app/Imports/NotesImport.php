@@ -14,12 +14,23 @@ class NotesImport implements ToCollection, WithHeadingRow
 {
     protected $moduleId;
     protected $sessionType;
+
+    protected $filePath;
+
     protected $errors = [];
 
-    public function __construct($moduleId, $sessionType)
+    public function __construct($moduleId, $sessionType, $filePath = null)
     {
         $this->moduleId = $moduleId;
         $this->sessionType = $sessionType;
+        $this->filePath = $filePath;
+    }
+
+
+    // Add this method to get the file path
+    public function getFilePath()
+    {
+        return $this->filePath;
     }
 
     public function collection(Collection $rows)
@@ -33,7 +44,7 @@ class NotesImport implements ToCollection, WithHeadingRow
 
             try {
                 // Validate required fields
-                if (!isset($row['cne']) ){
+                if (!isset($row['cne'])) {
                     throw new \Exception("Colonne CNE manquante");
                 }
 
@@ -49,7 +60,7 @@ class NotesImport implements ToCollection, WithHeadingRow
 
                 // Find student by CNE
                 $student = Student::where('cne', $cne)->first();
-                
+
                 if (!$student) {
                     throw new \Exception("Étudiant non trouvé");
                 }
@@ -70,7 +81,6 @@ class NotesImport implements ToCollection, WithHeadingRow
                         'remarks' => $row['remarques'] ?? $row['remarks'] ?? null
                     ]
                 );
-
             } catch (\Exception $e) {
                 $this->errors[] = [
                     'row' => $rowNumber,
@@ -83,7 +93,7 @@ class NotesImport implements ToCollection, WithHeadingRow
         if (!empty($this->errors)) {
             $errorCount = count($this->errors);
             $successCount = count($rows) - $errorCount;
-            
+
             $message = "{$successCount} notes importées avec succès, {$errorCount} erreurs.";
             throw new \Exception($message);
         }
@@ -96,7 +106,7 @@ class NotesImport implements ToCollection, WithHeadingRow
         }
 
         $noteValue = floatval($note);
-        
+
         if ($noteValue < 0 || $noteValue > 20) {
             throw new \Exception("La note doit être entre 0 et 20");
         }
@@ -109,3 +119,5 @@ class NotesImport implements ToCollection, WithHeadingRow
         return $this->errors;
     }
 }
+
+   
