@@ -323,8 +323,8 @@ Route::middleware(['auth'])->name('coordinator.')->group(function () {
 
 
 // Route::middleware(['auth'])->group(function () {
-    // Route::get('/emploi/create', [EmploiController::class, 'create'])->name('emploi.create');
-    // Route::post('/emploi', [EmploiController::class, 'store'])->name('emploi.store');
+// Route::get('/emploi/create', [EmploiController::class, 'create'])->name('emploi.create');
+// Route::post('/emploi', [EmploiController::class, 'store'])->name('emploi.store');
 
 
 // // Routes pour la gestion des emplois du temps
@@ -334,28 +334,16 @@ Route::middleware(['auth'])->name('coordinator.')->group(function () {
 //     Route::get('/api/modules', [EmploiController::class, 'getModules'])->name('api.modules');
 // });
 
-Route::get('/emplois', [EmploiController::class, 'create'])->name('emploi.create');
+
+Route::get('/emplois', [EmploiController::class, 'index'])->name('emploi.index');
+
+Route::get('/emplois/create', [EmploiController::class, 'create'])->name('emploi.create');
 Route::post('/emplois', [EmploiController::class, 'store'])->name('emploi.store');
-Route::get('/api/modules', [EmploiController::class, 'getModules']);
-Route::get('/emplois/{id}', [EmploiController::class, 'show'])->name('emploi.show');
 
+Route::get('/emplois/{emploi}/edit', [EmploiController::class, 'edit'])->name('emploi.edit');
+Route::put('/emplois/{emploi}', [EmploiController::class, 'update'])->name('emploi.update');
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Route::delete('/emplois/{emploi}', [EmploiController::class, 'destroy'])->name('emploi.destroy');
 
 
 
