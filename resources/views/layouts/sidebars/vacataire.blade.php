@@ -1,4 +1,4 @@
-<a href="{{ route('vacataire.modules') }}"
+<a href="{{ route('mesModules') }}"
 
     class="nav_link {{ request()->is('professor/mesModules') ? 'active' : '' }}">
     <i class="fas fa-book-open"></i>
@@ -6,7 +6,7 @@
 </a>
 
 
-<a href="{{ route('professor.notes_upload') }}"
+<a href="{{ route('notes_upload_page') }}"
     class="nav_link {{ request()->is('professor/upload-notes') ? 'active' : '' }}">
     <i class="fas fa-file-upload"></i>
     <span class="nav_name">Saisir les notes</span>

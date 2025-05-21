@@ -67,23 +67,22 @@ class User extends Authenticatable
     }
 
 
-    public function gethoursAttribute(){
-        
-        $modules=Module::where('professor_id',$this->id)->get();
+    public function gethoursAttribute()
+    {
 
-        $hours=0;
+        $modules = Module::where('professor_id', $this->id)->get();
 
-        if($modules){
+        $hours = 0;
+
+        if ($modules) {
 
             foreach ($modules as $key => $module) {
-                
-                $hours=$hours + $module->cm_hours+$module->tp_hours+$module->td_hours;
-                
+
+                $hours = $hours + $module->cm_hours + $module->tp_hours + $module->td_hours;
             }
         }
 
         return $hours;
-
     }
 
 
@@ -137,5 +136,11 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return (bool) optional($this->role)->isadmin;
+    }
+    //////////////////////////////////////////////////////
+
+    public function assignedModules()
+    {
+        return $this->belongsToMany(Module::class, 'assignments', 'prof_id', 'module_id');
     }
 }

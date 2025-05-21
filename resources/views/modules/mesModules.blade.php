@@ -1,254 +1,481 @@
 <x-coordonnateur_layout>
-    <div class="container-fluid  border py-5 px-4 ">
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @elseif (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-
-
+    <div class="container-fluid px-4 py-5">
         <!-- Header Section -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="text-primary mb-0">
-                <i class="fas fa-book-open me-2"></i> Mes modules :
-            </h4>
+        <div
+            class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+            <div>
+                <h1 class="display-6 fw-bold  mb-2" style="color: #4723d9">Mes Unitee d'Enseignements:</h1>
+            </div>
+
+            
         </div>
 
 
-
-
-        <div class="row m-0 p-0">
+        <div class="row">
             @foreach ($modules as $module)
-                <div class="col-12 col-sm-6 col-lg-4 mb-4">
-                    <div class="card module-card h-100 border-start border-3 border-primary position-relative">
-                        <div class="card-body mb-0 d-flex flex-column justify-content-between ">
-                            <!-- Module Title -->
-                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                <div>
-                                    <h5 class="card-title text-primary mb-1">{{ $module->name }}</h5>
-                                    <div class="d-flex align-items-center">
-                                        <span class="badge bg-info me-2">S{{ $module->semester }}</span>
-                                        <span class="text-muted small">{{ $module->filiere->name ?? 'Non spécifié' }}</span>
-                                    </div>
-                                </div>
-                                <span class="badge bg-light text-dark">
-                                    {{ $module->code }}
-                                </span>
+            <div class="col-12 col-md-6 col-lg-4">
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-title-container">
+                                <h3 class="module-name">{{ $module->name }}</h3>
+                                <div class="module-hours-badge">{{ $module->code }}</div>
                             </div>
-
-                            <!-- Responsable Info -->
-                            <div class="d-flex align-items-center mb-2 border-top ">
-                                <div class="icon-circle bg-light-primary me-3">
-                                    <i class="fas fa-user-tie text-primary"></i>
+                            <div class="module-workload">
+                                <div class="workload-item">
+                                    <span class="workload-label">CM</span>
+                                    <span class="workload-value">{{ $module->cm_hours }}h</span>
                                 </div>
+                                <div class="workload-item">
+                                    <span class="workload-label">TD</span>
+                                    <span class="workload-value">{{ $module->td_hours }}h</span>
+                                </div>
+                                <div class="workload-item">
+                                    <span class="workload-label">TP</span>
+                                    <span class="workload-value">{{ $module->tp_hours }}h</span>
+                                </div>
+                            </div>
+                        </div>
+        
+                        <div class="module-details">
+                            <!-- Professor -->
+                            <div class="detail-item">
+                                <i class="bi bi-person-fill detail-icon"></i>
                                 <div>
-                                    <p class="mb-0 small text-muted">Responsable</p>
-                                    <p class="mb-0 fw-semibold">
-                                        @if ($module->responsable)
-                                            {{ $module->responsable->Fullname }}
+                                    <span class="detail-label">Professeur</span>
+                                    <span class="detail-value">
+                                        @if ($module->professor)
+                                            {{ $module->professor->firstname }} {{ $module->professor->lastname }}
                                         @else
-                                            <span class="text-warning">Non défini</span>
+                                            <span style="color: #e74c3c">Non associé</span>
                                         @endif
-                                    </p>
-                                </div>
-                            </div>
-
-                            <!-- Hours Info -->
-                            <div class="hours-container mb-3">
-                                <!-- Header with total hours -->
-                                <div class="d-flex align-items-center justify-content-between mb-2">
-                                    <span class="small text-muted">Volume Horaire</span>
-                                    <span class="badge bg-light text-dark fw-normal">
-                                        Total: {{ $module->cm_hours + $module->td_hours + $module->tp_hours }}h
                                     </span>
                                 </div>
-
-
-
-                                <!-- Progress Bar -->
-                                <div class="progress mb-2" style="height: 8px;">
-                                    @php
-                                        $totalHours = $module->cm_hours + $module->td_hours + $module->tp_hours;
-                                    @endphp
-                                    <div class="progress-bar bg-cm"
-                                        style="width: {{ $totalHours ? ($module->cm_hours / $totalHours) * 100 : 0 }}%"
-                                        title="CM: {{ $module->cm_hours }}h"></div>
-                                    <div class="progress-bar bg-td"
-                                        style="width: {{ $totalHours ? ($module->td_hours / $totalHours) * 100 : 0 }}%"
-                                        title="TD: {{ $module->td_hours }}h"></div>
-                                    <div class="progress-bar bg-tp"
-                                        style="width: {{ $totalHours ? ($module->tp_hours / $totalHours) * 100 : 0 }}%"
-                                        title="TP: {{ $module->tp_hours }}h"></div>
-                                </div>
-
-
-
-                                <!-- Hour Breakdown -->
-                                <div class="d-flex justify-content-between small text-muted">
-                                    <div class="d-flex align-items-center">
-
-                                        <div class="bg-cm me-1 rounded-circle" style="width:12px; height:12px;">
-                                        </div>
-                                        CM:
-                                        <span>{{ $module->cm_hours }}h</span>
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <div class="bg-td me-1 rounded-circle" style="width:12px; height:12px;">
-                                        </div>
-                                        TD:
-                                        <span>{{ $module->td_hours }}h</span>
-
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <div class="bg-tp me-1 rounded-circle" style="width:12px; height:12px;">
-                                        </div>
-                                        TP:
-                                        <span>{{ $module->tp_hours }}h</span>
-
-                                    </div>
+                            </div>
+        
+                            <!-- Filière -->
+                            <div class="detail-item">
+                                <i class="bi bi-building detail-icon"></i>
+                                <div>
+                                    <span class="detail-label">Filière</span>
+                                    <span class="detail-value">{{ $module->filiere->name ?? 'N/A' }}</span>
                                 </div>
                             </div>
-                           
+        
+                            <!-- Semester & Status -->
+                            <div class="detail-item">
+                                <i class="bi bi-calendar-week detail-icon"></i>
+                                <div>
+                                    <span class="detail-label">Semester</span>
+                                    <span class="detail-value">
+                                        {{ $module->semester == 1 ? '1er Semestre' : '2ème Semestre' }}
+                                        <span
+                                            class="badge {{ $module->status == 'active' ? 'bg-success' : 'bg-warning' }} ms-2">
+                                            {{ $module->status }}
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+        
+                            <!-- Type -->
+                            <div class="detail-item">
+                                <i class="bi bi-tag-fill detail-icon"></i>
+                                <div>
+                                    <span class="detail-label">Type</span>
+                                    <span class="detail-value">{{ $module->type }}</span>
+                                </div>
+                            </div>
+                        </div>
+        
+                        <div class="module-actions">
+                            <button class="view-btn" onclick="showPopup({{ $module->id }}, '{{ $module->name }}')">
+                                <i class="bi bi-eye-fill"></i> Voir plus
+                            </button>
+        
+        
                         </div>
                     </div>
                 </div>
-            @endforeach
+                @endforeach
         </div>
-    </div>
+
+        <!-- Popup Template -->
+        @foreach ($modules as $module)
+            <div id="popupfor{{ $module->id }}" class="overlay">
+                <div class="popup bg-white rounded-3 p-4 shadow-lg" style="max-width: 600px;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="text-primary fw-bold mb-0">Détails du module</h5>
+                        <button type="button" class="btn-close" onclick="closePopup({{ $module->id }})"></button>
+                    </div>
+
+                    <div class="module-details">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="bi bi-book fs-4" style="color: white !important;"></i>
+                            </div>
+                            <h4 class="mb-0 fw-bold " id="moduleName{{ $module->id }}">{{ $module->name }}</h4>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="bg-light p-3 rounded">
+                                    <small class="text-muted d-block">ID du module</small>
+                                    <span class="fw-semibold">{{ $module->id }}</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="bg-light p-3 rounded">
+                                    <small class="text-muted d-block">Type</small>
+                                    <span class="fw-semibold">{{ $module->type }}</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="bg-light p-3 rounded">
+                                    <small class="text-muted d-block">Crédit</small>
+                                    <span class="fw-semibold">{{ $module->credit }}</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="bg-light p-3 rounded">
+                                    <small class="text-muted d-block">Évaluation</small>
+                                    <span class="fw-semibold">{{ $module->evaluation }}</span>
+                                </div>
+                            </div>
+
+                            @if ($module->description)
+                                <div class="col-12">
+                                    <div class="bg-light p-3 rounded">
+                                        <small class="text-muted d-block">Description</small>
+                                        <p class="mb-0">{{ $module->description }}</p>
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if ($module->responsable)
+                                <div class="col-12">
+                                    <div class="bg-light p-3 rounded">
+                                        <small class="text-muted d-block">Responsable</small>
+                                        <span class="fw-semibold">{{ $module->responsable->firstname }}
+                                            {{ $module->responsable->lastname }}</span>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <div class="col-12">
+                                <div class="bg-light p-3 rounded">
+                                    <small class="text-muted d-block">Date de création</small>
+                                    <span class="fw-semibold">{{ $module->created_at->format('d/m/Y') }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-end mt-4">
+                        <button type="button" class="btn btn-primary px-4"
+                            onclick="closePopup({{ $module->id }})">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+
+        <style>
+            :root {
+                --primary: #4723d9;
+                --primary-soft: #e8e5ff;
+                --info-soft: #e6f7ff;
+                --success-soft: #e6f7ed;
+                --warning-soft: #fff8e6;
+            }
 
 
-    <style>
-        .module-card {
-            transition: transform 0.2s, box-shadow 0.2s;
-            border-radius: 8px;
-            overflow: hidden;
-        }
+            .filter-btn {
+                color: #4723d9;
+                outline: 1px solid #4723d9;
 
-        .module-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
+            }
 
-        .icon-circle {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+            .filter-btn:hover {
+                color: #ffffff;
+                background-color: #4723d9;
 
-        /* For perfect circles in the col;or indicatroe*/
-        .rounded-circle {
-            border-radius: 50% !important;
-        }
+            }
 
-        .bg-cm {
-            background-color: #5c7ad4;
-        }
+            .filter-btn:focus {
+                color: #ffffff;
+                background-color: #4723d9;
 
-        .bg-td {
-            background-color: #c8831c;
-        }
-
-        .bg-tp {
-            background-color: #36b9cc;
-        }
-
-        .hours-container {
-            background-color: #f8f9fc;
-            padding: 12px;
-            border-radius: 6px;
-        }
-
-        .progress {
-            background-color: #e3e6f0;
-        }
-    </style>
+            }
 
 
+            body {
+                background-color: #f8f9fa;
+            }
+
+            /* Modules Grid with Scroll */
+
+            .module-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 20px;
+                padding: 10px;
+            }
+
+            .module-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                overflow: hidden;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                border: 1px solid #4723d91e;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .module-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+            }
+
+            .module-header {
+                padding: 16px 20px;
+                background: linear-gradient(135deg, #4723d9 0%, #6047c7 100%);
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .module-title-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+            }
+
+            .module-name {
+                margin: 0;
+                font-size: 1.2rem;
+                font-weight: 600;
+                color: #f0f0f0;
+                flex: 1;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .module-hours-badge {
+                background: #ffffff14;
+                color: white;
+                padding: 4px 10px;
+                border-radius: 20px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                margin-left: 10px;
+            }
+
+            .module-workload {
+                display: flex;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+
+            .workload-item {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                background: white;
+                padding: 4px 10px;
+                border-radius: 6px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            }
+
+            .workload-label {
+                font-weight: 600;
+                font-size: 0.8rem;
+                color: #5d596e8c;
+            }
+
+            .workload-value {
+                font-weight: 600;
+                font-size: 0.85rem;
+                color: #2c3e50;
+            }
+
+            .module-details {
+                padding: 16px 20px;
+                display: grid;
+                gap: 14px;
+                flex: 1;
+            }
+
+            .detail-item {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .detail-icon {
+                color: #4723d9;
+                font-size: 1rem;
+                margin-top: 2px;
+            }
+
+            .detail-label {
+                display: block;
+                font-size: 0.75rem;
+                color: #95a5a6;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .detail-value {
+                display: block;
+                font-size: 0.95rem;
+                font-weight: 500;
+                color: #34495e;
+                margin-top: 2px;
+            }
+
+            .module-actions {
+                padding: 12px 20px;
+                border-top: 1px solid #f0f0f0;
+                background: #f9f9f9;
+                display: flex;
+                justify-content: space-between;
+                gap: 10px;
+            }
+
+            .view-btn {
+                background: none;
+                border: 1px solid #4723d9;
+                color: #4723d9;
+                font-size: 0.9rem;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 6px 12px;
+                border-radius: 6px;
+                transition: all 0.2s ease;
+                flex: 1;
+                justify-content: center;
+            }
+
+            .view-btn:hover {
+                background: rgba(71, 35, 217, 0.1);
+            }
+
+            .remove-btn {
+                background: none;
+                border: 1px solid #e74c3c;
+                color: #e74c3c;
+                font-size: 0.9rem;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 6px 12px;
+                border-radius: 6px;
+                transition: all 0.2s ease;
+                flex: 1;
+                justify-content: center;
+            }
+
+            .remove-btn:hover {
+                background: rgba(231, 76, 60, 0.1);
+            }
+
+            .view-btn i,
+            .remove-btn i {
+                font-size: 0.95rem;
+            }
+
+            .badge {
+                font-size: 0.75rem;
+                font-weight: 500;
+                padding: 0.25em 0.6em;
+            }
+
+            .overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: none;
+                justify-content: center;
+                align-items: center;
+                z-index: 1050;
+                backdrop-filter: blur(4px);
+            }
+
+            .popup {
+                max-width: 90%;
+                animation: fadeIn 0.3s;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .filiere-section:not(:first-child) {
+                padding-top: 2rem;
+                border-top: 1px solid #4723d923;
+            }
+
+            @media (max-width: 768px) {
+                .popup {
+                    max-width: 95%;
+                    margin: 1rem;
+                }
+            }
+        </style>
+
+        <script>
+            // Show/hide filière sections based on filter
+            document.querySelectorAll('[data-filiere]').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    // Update active state
+                    document.querySelectorAll('[data-filiere]').forEach(el => el.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const filiereId = this.getAttribute('data-filiere');
+
+                    if (filiereId === 'all') {
+                        // Show all sections
+                        document.querySelectorAll('.filiere-section').forEach(section => {
+                            section.style.display = 'block';
+                        });
+                    } else {
+                        // Hide all sections except the selected one
+                        document.querySelectorAll('.filiere-section').forEach(section => {
+                            section.style.display = 'none';
+                        });
+                        document.getElementById(filiereId).style.display = 'block';
+                    }
+                });
+            });
+
+            // Existing popup functions
+            function showPopup(moduleId, moduleName) {
+                document.getElementById('moduleName' + moduleId).innerText = moduleName;
+                document.getElementById("popupfor" + moduleId).style.display = "flex";
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closePopup(moduleId) {
+                document.getElementById("popupfor" + moduleId).style.display = "none";
+                document.body.style.overflow = 'auto';
+            }
+        </script>
 </x-coordonnateur_layout>
-
-
-{{--  --}}
-
-<style>
-    :root {
-        --primary-color: #4723D9;
-        --secondary-color: #2c3e50;
-        --success-color: #2ecc71;
-        --warning-color: #f39c12;
-        --danger-color: #e74c3c;
-    }
-
-    body {
-        background-color: #f8f9fa;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    .card {
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        border: none;
-        transition: transform 0.3s ease;
-    }
-
-    .card:hover {
-        transform: translateY(-5px);
-    }
-
-    .card-header {
-        border-radius: 10px 10px 0 0 !important;
-        background: linear-gradient(135deg, var(--primary-color), #2980b9);
-        color: white;
-    }
-
-    .unit-card {
-        border-left: 4px solid var(--primary-color);
-        margin-bottom: 15px;
-        position: relative;
-    }
-
-    .unit-card.selected {
-        border-left: 4px solid var(--success-color);
-        background-color: rgba(46, 204, 113, 0.05);
-    }
-
-    .disponible-badge {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background-color: var(--success-color);
-        color: white;
-        padding: 3px 8px;
-        border-radius: 4px;
-        font-size: 0.75rem;
-        font-weight: 500;
-    }
-
-    .hour-badge {
-        background-color: var(--secondary-color);
-        font-size: 0.9rem;
-    }
-
-    .btn-check-module {
-        background-color: var(--warning-color);
-        color: white;
-        border: none;
-        padding: 5px 12px;
-        border-radius: 4px;
-        font-size: 0.85rem;
-        transition: all 0.2s;
-    }
-
-    .btn-check-module:hover {
-        background-color: #e67e22;
-        transform: translateY(-1px);
-    }
-</style>

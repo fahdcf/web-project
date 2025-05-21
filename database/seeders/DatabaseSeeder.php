@@ -11,7 +11,6 @@ use App\Models\Task;
 use App\Models\task as ModelsTask;
 use App\Models\User;
 use App\Models\user_detail;
-use App\Models\UserDetail;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -36,9 +35,6 @@ class DatabaseSeeder extends Seeder
         // 5. Create 30 modules for GI filière distributed by semester
         $modules = $this->createGiModules($giFiliere, $giProfessors);
 
-        // 6. Create groups for modules
-        $this->createGroupsForModules($modules);
-
         // 7. Create tasks
         $this->createTasks();
 
@@ -60,13 +56,13 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('mohssine'),
                 'role' => ['isadmin' => false, 'iscoordonnateur' => false, 'isprof' => true]
             ],
-             [
+            [
                 'firstname' => 'Ayoub',
                 'lastname' => 'Nassih',
                 'email' => 'ayoub@gmail.com',
                 'departement' => 'GI',
                 'password' => Hash::make('ayoub'),
-                'role' => ['isadmin' => false, 'iscoordonnateur' => false, 'isprof' => false,'isvocataire' => true]
+                'role' => ['isadmin' => false, 'iscoordonnateur' => false, 'isprof' => false, 'isvocataire' => true]
             ],
 
             [
@@ -182,30 +178,34 @@ class DatabaseSeeder extends Seeder
     {
         $modules = [
             // Semester 1
-            ['name' => 'Algorithmique', 'code' => 'GI1-M1', 'semester' => 1, 'credits' => 6, 'status' => 'active'],
-            ['name' => 'Programmation C', 'code' => 'GI1-M2', 'semester' => 1, 'credits' => 5, 'status' => 'active'],
-            ['name' => 'Mathématiques', 'code' => 'GI1-M3', 'semester' => 1, 'credits' => 4, 'status' => 'inactive'],
+            ['nbr_groupes_tp' => 1, 'nbr_groupes_td' => 2, 'name' => 'Algorithmique', 'code' => 'GI1-M1', 'semester' => 1, 'credits' => 6, 'status' => 'active'],
+            ['nbr_groupes_tp' => 1, 'nbr_groupes_td' => 2, 'name' => 'Programmation C', 'code' => 'GI1-M2', 'semester' => 1, 'credits' => 5, 'status' => 'active'],
+            ['nbr_groupes_tp' => 1, 'nbr_groupes_td' => 2, 'name' => 'Mathématiques', 'code' => 'GI1-M3', 'semester' => 1, 'credits' => 4, 'status' => 'inactive'],
             [
+                'nbr_groupes_tp' => 2,
+                'nbr_groupes_td' => 1,
                 'name' => 'Systèmes d\'exploitation',
                 'code' => 'GI1-M4',
                 'semester' => 1,
                 'credits' => 5,
                 'status' => 'inactive'
             ],
-            ['name' => 'Bases de données', 'code' => 'GI1-M5', 'semester' => 1, 'credits' => 5, 'status' => 'active'],
+            ['nbr_groupes_tp' => 2, 'nbr_groupes_td' => 1, 'name' => 'Bases de données', 'code' => 'GI1-M5', 'semester' => 1, 'credits' => 5, 'status' => 'active'],
 
             // Semester 2
-            ['name' => 'Structures de données', 'code' => 'GI2-M1', 'semester' => 2, 'credits' => 6, 'status' => 'active'],
+            ['nbr_groupes_tp' => 2, 'nbr_groupes_td' => 1, 'name' => 'Structures de données', 'code' => 'GI2-M1', 'semester' => 2, 'credits' => 6, 'status' => 'active'],
             [
+                'nbr_groupes_tp' => 2,
+                'nbr_groupes_td' => 1,
                 'name' => 'Programmation Orientée Objet',
                 'code' => 'GI2-M2',
                 'semester' => 2,
                 'credits' => 6,
                 'status' => 'active'
             ],
-            ['name' => 'Réseaux', 'code' => 'GI2-M3', 'semester' => 2, 'credits' => 5, 'status' => 'active'],
-            ['name' => 'Web Development', 'code' => 'GI2-M4', 'semester' => 2, 'credits' => 5, 'status' => 'active'],
-            ['name' => 'Analyse numérique', 'code' => 'GI2-M5', 'semester' => 2, 'credits' => 4, 'status' => 'inactive']
+            ['nbr_groupes_tp' => 2, 'nbr_groupes_td' => 1, 'name' => 'Réseaux', 'code' => 'GI2-M3', 'semester' => 2, 'credits' => 5, 'status' => 'active'],
+            ['nbr_groupes_tp' => 2, 'nbr_groupes_td' => 1, 'name' => 'Web Development', 'code' => 'GI2-M4', 'semester' => 2, 'credits' => 5, 'status' => 'active'],
+            ['nbr_groupes_tp' => 2, 'nbr_groupes_td' => 1, 'name' => 'Analyse numérique', 'code' => 'GI2-M5', 'semester' => 2, 'credits' => 4, 'status' => 'inactive']
 
             // Continue with more modules up to 30...
         ];
@@ -226,15 +226,22 @@ class DatabaseSeeder extends Seeder
                 'credits' => fake()->randomElement([2, 3, 4, 5, 6]),
                 'evaluation' => fake()->randomElement([1, 2, 3, 4, 5, 6]),
 
-                'tp_hours' => fake()->randomElement([10, 100,89,23,8,12,44,32]),
-                'td_hours' => fake()->randomElement([10, 100,89,23,8,12,44,32]),
-                'cm_hours' => fake()->randomElement([10, 100,89,23,8,12,44,32]),
+                'tp_hours' => fake()->randomElement([10, 100, 89, 23, 8, 12, 44, 32]),
+                'td_hours' => fake()->randomElement([10, 100, 89, 23, 8, 12, 44, 32]),
+                'cm_hours' => fake()->randomElement([10, 100, 89, 23, 8, 12, 44, 32]),
+
+                'nbr_groupes_td' => fake()->randomElement([1, 0, 2, 3]),
+                'nbr_groupes_tp' => fake()->randomElement([1, 0, 2, 3])
             ];
         }
         $createdModules = [];
 
         foreach ($modules as $moduleData) {
             $module = Module::create([
+                'nbr_groupes_tp' => $moduleData['nbr_groupes_tp'],
+                'nbr_groupes_td' => $moduleData['nbr_groupes_td'],
+
+
                 'name' => $moduleData['name'],
                 'status' => $moduleData['status'],
                 'code' => $moduleData['code'],
@@ -260,26 +267,7 @@ class DatabaseSeeder extends Seeder
     }
 
 
-    private function createGroupsForModules(array $modules): void
-    {
-        foreach ($modules as $module) {
-            // Create 2-4 groups per module (TP and TD)
-            $numGroups = fake()->numberBetween(2, 4);
 
-            for ($i = 1; $i <= $numGroups; $i++) {
-                $type = fake()->randomElement(['TP', 'TD']);
-                $maxStudents = $type === 'TP' ? 30 : 40; // TP groups are typically smaller
-
-                Groupe::create([
-                    'module_id' => $module->id,
-                    'type' => $type,
-                    'max_students' => $maxStudents,
-                    'nbr_student' => fake()->numberBetween(5, $maxStudents - 5),
-                    'academicYear' => (now()->year).(now()->year+1),
-                ]);
-            }
-        }
-    }
 
     private function createTasks(): void
     {
@@ -290,11 +278,11 @@ class DatabaseSeeder extends Seeder
             $numTasks = fake()->numberBetween(3, 10);
 
             for ($i = 0; $i < $numTasks; $i++) {
-                // ModelsTask::create([
-                //     'description' => fake()->sentence(),
-                //     'isdone' => fake()->boolean(70), // 70% chance of being done
-                //     'user_id' => $user->id,
-                // ]);
+                ModelsTask::create([
+                    'description' => fake()->sentence(),
+                    'isdone' => fake()->boolean(70), // 70% chance of being done
+                    'user_id' => $user->id,
+                ]);
             }
         }
     }

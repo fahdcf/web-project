@@ -15,21 +15,6 @@ class ProfessorController extends Controller
         return view('professor.index');
     }
 
-    public function availableModules()
-    {
-
-        $user = auth()->user();
-
-        $modulesDispo = Module::whereNull('professor_id')->with(['requests' => function ($query) use ($user) {
-
-            $query->where('prof_id', $user->id);
-        }])->get();
-
-        // dd($modulesDispo);
-
-        // $modulesDispo = Module::where('professor_id', null)->get();
-        return view('professor.availableModules', compact('modulesDispo'));
-    }
 
     //     // web.php
 
@@ -65,6 +50,82 @@ class ProfessorController extends Controller
         return back()->with('success', 'Votre souhait a été enregistré !');
     }
 
+    // Route::post('/professor/express-wish', [ProfessorController::class, 'expressWish'])->name('professor.express-wish');
+
+    public function expressWish(Request $request)
+    {
+        $request->validate([
+            'target_id' => 'required|exists:modules,id',
+            'selection_type' => 'required|in:entire_module,specific_groups',
+            'type' => 'required|in:module,filiere,departement',
+        ]);
+
+        $moduleId = $request->target_id;
+        $module = Module::findOrFail($moduleId);
+
+        $newRequest = new \App\Models\prof_request();
+        $newRequest->prof_id = auth()->id();
+        $newRequest->target_id = $moduleId;
+        $newRequest->type = 'module';
+        $newRequest->status = 'pending';
+        $newRequest->comment = $request->comment;
+
+        // Handle different selection types
+        if ($request->selection_type === 'entire_module') {
+            // For entire module, include all available groups
+            $groupTypes = [];
+            $tdGroups = [];
+            $tpGroups = [];
+
+            if ($module->cm_groups_available > 0) {
+                $groupTypes[] = 'cm';
+            }
+
+            if ($module->td_groups_available > 0) {
+                $groupTypes[] = 'td';
+                // Include all TD groups
+                for ($i = 1; $i <= $module->td_groups_available; $i++) {
+                    $tdGroups[] = $i;
+                }
+            }
+
+            if ($module->tp_groups_available > 0) {
+                $groupTypes[] = 'tp';
+                // Include all TP groups
+                for ($i = 1; $i <= $module->tp_groups_available; $i++) {
+                    $tpGroups[] = $i;
+                }
+            }
+        } else {
+            // For specific groups, only include selected ones
+            $groupTypes = [];
+
+            if ($request->has('include_cm')) {
+                $groupTypes[] = 'cm';
+            }
+
+            if ($request->has('include_td')) {
+                $groupTypes[] = 'td';
+            }
+
+            if ($request->has('include_tp')) {
+                $groupTypes[] = 'tp';
+            }
+
+            $tdGroups = $request->td_groups ?? [];
+            $tpGroups = $request->tp_groups ?? [];
+        }
+
+        $newRequest->group_types = json_encode($groupTypes);
+        $newRequest->td_groups = json_encode($tdGroups);
+        $newRequest->tp_groups = json_encode($tpGroups);
+
+        $newRequest->save();
+
+        return redirect()->back()->with('success', 'Votre souhait a été enregistré avec succès.');
+    }
+
+
     public function myRequests()
     {
         $requests = prof_request::with(['module'])
@@ -84,7 +145,7 @@ class ProfessorController extends Controller
     public function cancelRequest(prof_request $prof_request)
     {
 
-        $id=auth()->user()->id;
+        $id = auth()->user()->id;
         // dd($id,$prof_request->prof_id);
         // Verify the request belongs to the current user
         if ($prof_request->prof_id != $id) {
@@ -100,25 +161,25 @@ class ProfessorController extends Controller
         return back()->with('success', 'Request canceled successfully.');
     }
 
-    public function mesModules()
-    {
-        $professor = auth()->user();
+    // public function mesModules()
+    // {
+    //     $professor = auth()->user();
 
-        // $modules = $professor->modules()
-        //     ->with('filiere') // Chargement anticipé de la filière
-        //     ->orderBy('semester')
-        //     ->get();
+    //     // $modules = $professor->modules()
+    //     //     ->with('filiere') // Chargement anticipé de la filière
+    //     //     ->orderBy('semester')
+    //     //     ->get();
 
-        $modules = Module::where('professor_id',$professor->id)
-            ->with('filiere') // Chargement anticipé de la filière
-            ->orderBy('semester')
-            ->get();
+    //     $modules = Module::where('professor_id',$professor->id)
+    //         ->with('filiere') // Chargement anticipé de la filière
+    //         ->orderBy('semester')
+    //         ->get();
 
-        return view('modules.mesModules', [
-            'currentSemester' => $this->getCurrentSemester(),
-            'modules' => $modules
-        ]);
-    }
+    //     return view('modules.mesModules', [
+    //         'currentSemester' => $this->getCurrentSemester(),
+    //         'modules' => $modules
+    //     ]);
+    // }
 
 
     //helper

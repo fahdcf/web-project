@@ -19,6 +19,14 @@ return new class extends Migration {
             // Foreign key to users table (assumes professors are users)
 
             $table->foreign('prof_id')->references('id')->on('users')->onDelete('cascade');
+
+
+            // New fields for group preferences
+            $table->json('group_types')->nullable(); // Stores which types (CM, TD, TP) the professor wants
+            $table->json('td_groups')->nullable();   // Stores specific TD groups if selected
+            $table->json('tp_groups')->nullable();   // Stores specific TP groups if selected
+            $table->text('comment')->nullable();     // Professor's comment on the request
+
         });
     }
 

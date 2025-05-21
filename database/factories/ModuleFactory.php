@@ -16,17 +16,21 @@ class ModuleFactory extends Factory
         return [
             'name' => 'Module ' . $this->faker->unique()->word(),
 
-            'code' => 'M' . $this->faker->unique()->randomNumber(nbDigits:3,strict:true),
+            'code' => 'M' . $this->faker->unique()->randomNumber(nbDigits: 3, strict: true),
             'type' => 'premier',
 
             'description' => $this->faker->paragraph(),
             'semester' => $this->faker->numberBetween(1, 6),
 
 
-            'tp_hours'=> $this->faker->numberBetween(10, 100),
-            'td_hours'=> $this->faker->numberBetween(10, 100),
-            'cm_hours'=> $this->faker->numberBetween(10, 100),
+            'tp_hours' => $this->faker->numberBetween(10, 100),
+            'td_hours' => $this->faker->numberBetween(10, 100),
+            'cm_hours' => $this->faker->numberBetween(10, 100),
 
+
+
+            'nbr_groupes_td' => $this->faker->numberBetween(1, 3),
+            'nbr_groupes_td' => $this->faker->numberBetween(1, 3),
 
             'status' => $this->faker->randomElement(['active', 'inactive']),
 
@@ -44,7 +48,7 @@ class ModuleFactory extends Factory
             'credits' => $this->faker->numberBetween(1, 5),
             'evaluation' => $this->faker->numberBetween(1, 6),
 
-            'type'=>$this->faker->randomElement(['complet','element'])
+            'type' => $this->faker->randomElement(['complet', 'element'])
         ];
     }
 }

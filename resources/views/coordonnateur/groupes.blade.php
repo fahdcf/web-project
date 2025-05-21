@@ -94,7 +94,7 @@
                                                 <!-- Module Body -->
                                                 <div class="card-body py-3">
                                                     <!-- TD Groups -->
-                                                    @if ($module->tdGroups->count() > 0)
+                                                    @if ($module->nbr_groupes_td > 0)
                                                         <div class="mb-3">
                                                             <div
                                                                 class="d-flex justify-content-between align-items-center mb-2">
@@ -104,46 +104,57 @@
                                                                 </strong>
                                                                 <span
                                                                     class="badge bg-primary-soft text-primary rounded-pill fs-11">
-                                                                    {{ $module->tdGroups->count() }} groupes
+                                                                    {{ $module->nbr_groupes_td }} groupes
                                                                 </span>
                                                             </div>
                                                             <ul class="list-group list-group-flush small border-0">
-                                                                @foreach ($module->tdGroups as $group)
+                                                                @for ($i = 1; $i <= $module->nbr_groupes_td; $i++)
                                                                     <li
                                                                         class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0 py-2 border-0">
                                                                         <span class="d-flex align-items-center">
                                                                             <span
                                                                                 class="group-badge bg-primary-soft text-primary rounded-circle me-2 d-flex align-items-center justify-content-center">
-                                                                                {{ $loop->iteration }}
+                                                                                {{ $i }}
                                                                             </span>
                                                                             <span class="d-flex flex-column">
                                                                                 <span class="fw-medium">TD
-                                                                                    {{ $loop->iteration }}</span>
-
+                                                                                    {{ $i }}</span>
                                                                                 
-                                                                                @if ($group->professor)
+                                                                                <!-- Professeur assigné - à adapter selon votre structure -->
+                                                                                @php
+                                                                                    $professorField = "td{$i}_professor_id";
+                                                                                    $professor = isset($module->$professorField) ? App\Models\User::find($module->$professorField) : null;
+                                                                                @endphp
+                                                                                
+                                                                                @if ($professor)
                                                                                     <small
-                                                                                        class="text-muted fs-11">{{ $group->professor->fullname }}
+                                                                                        class="text-muted fs-11">{{ $professor->fullname }}
                                                                                     </small>
                                                                                 @endif
                                                                             </span>
                                                                         </span>
                                                                         <span class="text-muted fs-12">
+                                                                            @php
+                                                                                $nbrStudentField = "td{$i}_nbr_student";
+                                                                                $maxStudentsField = "td{$i}_max_students";
+                                                                                $nbrStudent = $module->$nbrStudentField ?? 0;
+                                                                                $maxStudents = $module->$maxStudentsField ?? 30;
+                                                                            @endphp
                                                                             <span
-                                                                                class="{{ $group->nbr_student >= $group->max_students ? 'text-danger' : 'text-success' }} fw-medium">
-                                                                                {{ $group->nbr_student }}
+                                                                                class="{{ $nbrStudent >= $maxStudents ? 'text-danger' : 'text-success' }} fw-medium">
+                                                                                {{ $nbrStudent }}
                                                                             </span>
                                                                             <span
-                                                                                class="text-muted">/{{ $group->max_students }}</span>
+                                                                                class="text-muted">/{{ $maxStudents }}</span>
                                                                         </span>
                                                                     </li>
-                                                                @endforeach
+                                                                @endfor
                                                             </ul>
                                                         </div>
                                                     @endif
 
                                                     <!-- TP Groups -->
-                                                    @if ($module->tpGroups->count() > 0)
+                                                    @if ($module->nbr_groupes_tp > 0)
                                                         <div class="mb-2">
                                                             <div
                                                                 class="d-flex justify-content-between align-items-center mb-2">
@@ -153,37 +164,50 @@
                                                                 </strong>
                                                                 <span
                                                                     class="badge bg-success-soft text-success rounded-pill fs-11">
-                                                                    {{ $module->tpGroups->count() }} groupes
+                                                                    {{ $module->nbr_groupes_tp }} groupes
                                                                 </span>
                                                             </div>
                                                             <ul class="list-group list-group-flush small border-0">
-                                                                @foreach ($module->tpGroups as $group)
+                                                                @for ($i = 1; $i <= $module->nbr_groupes_tp; $i++)
                                                                     <li
                                                                         class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0 py-2 border-0">
                                                                         <span class="d-flex align-items-center">
                                                                             <span
                                                                                 class="group-badge bg-success-soft text-success rounded-circle me-2 d-flex align-items-center justify-content-center">
-                                                                                {{ $loop->iteration }}
+                                                                                {{ $i }}
                                                                             </span>
                                                                             <span class="d-flex flex-column">
                                                                                 <span class="fw-medium">TP
-                                                                                    {{ $loop->iteration }}</span>
-                                                                                @if ($group->professor)
+                                                                                    {{ $i }}</span>
+                                                                                
+                                                                                <!-- Professeur assigné - à adapter selon votre structure -->
+                                                                                @php
+                                                                                    $professorField = "tp{$i}_professor_id";
+                                                                                    $professor = isset($module->$professorField) ? App\Models\User::find($module->$professorField) : null;
+                                                                                @endphp
+                                                                                
+                                                                                @if ($professor)
                                                                                     <small
-                                                                                        class="text-muted fs-11">{{ $group->professor->fullname }}</small>
+                                                                                        class="text-muted fs-11">{{ $professor->fullname }}</small>
                                                                                 @endif
                                                                             </span>
                                                                         </span>
                                                                         <span class="text-muted fs-12">
+                                                                            @php
+                                                                                $nbrStudentField = "tp{$i}_nbr_student";
+                                                                                $maxStudentsField = "tp{$i}_max_students";
+                                                                                $nbrStudent = $module->$nbrStudentField ?? 0;
+                                                                                $maxStudents = $module->$maxStudentsField ?? 20;
+                                                                            @endphp
                                                                             <span
-                                                                                class="{{ $group->nbr_student >= $group->max_students ? 'text-danger' : 'text-success' }} fw-medium">
-                                                                                {{ $group->nbr_student }}
+                                                                                class="{{ $nbrStudent >= $maxStudents ? 'text-danger' : 'text-success' }} fw-medium">
+                                                                                {{ $nbrStudent }}
                                                                             </span>
                                                                             <span
-                                                                                class="text-muted">/{{ $group->max_students }}</span>
+                                                                                class="text-muted">/{{ $maxStudents }}</span>
                                                                         </span>
                                                                     </li>
-                                                                @endforeach
+                                                                @endfor
                                                             </ul>
                                                         </div>
                                                     @endif
@@ -214,7 +238,7 @@
 
     <style>
         :root {
-            --primary-soft: rgba(13, 110, 253, 0.08);
+            --primary-soft: #18027e;
             --success-soft: rgba(25, 135, 84, 0.08);
             --info-soft: rgba(13, 202, 240, 0.08);
             --white-10: rgba(255, 255, 255, 0.1);

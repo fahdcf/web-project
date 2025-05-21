@@ -1,8 +1,8 @@
 <x-coordonnateur_layout>
 
     <div class="container-fluid p-0 pt-5">
-
         <x-global_alert />
+
 
 
         <!-- En-tête -->

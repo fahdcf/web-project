@@ -3,10 +3,17 @@
 namespace App\Http\Controllers\coordonnateur;
 
 use App\Http\Controllers\Controller;
+use App\Models\admin_action;
+use App\Models\chef_action;
 use App\Models\Filiere;
 use App\Models\Groupe;
 use App\Models\Module;
+use App\Models\prof_request;
+use App\Models\Student;
+use App\Models\task;
 use App\Models\User;
+use App\Models\user_log;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class CoordonnateurController extends Controller
@@ -26,135 +33,45 @@ class CoordonnateurController extends Controller
     //     return view('coordonnateur.groupes');
     // }
 
-    public function index()
+    public function dashboard()
     {
-        // Données fictives pour la filière
-        $filiere = (object)[
-            'id' => 1,
-            'nom' => 'Génie Informatique',
-            'code' => 'GI'
-        ];
 
-        // Données statistiques fictives
-        $stats = [
-            'total_ues' => 15,
-            'total_vacataires' => 8,
-            'groupes_pending' => 3,
-            'edt_pending' => 7
-        ];
 
-        // Données fictives pour les UE
-        $ues = [
-            (object)[
-                'id' => 1,
-                'code' => 'M1101',
-                'name' => 'Programmation Web',
-                'semester' => 1,
-                'professeur' => (object)[
-                    'id' => 1,
-                    'nom_complet' => 'Pr. Ahmed ZEROUAL'
-                ],
-                'valide' => true
-            ],
-            (object)[
-                'id' => 2,
-                'code' => 'M1102',
-                'name' => 'Base de Données',
-                'semester' => 1,
-                'professeur' => null,
-                'valide' => false
-            ],
-            // Ajouter d'autres UE fictives au besoin...
-        ];
+        $studentCount = student::get()->count();
+        $professorCount = User::get()->count();
+        $chefHistory = chef_action::latest()->take(4)->get();
+        $tasks = task::where('user_id', auth()->user()->id)->latest()->take(5)->get();
 
-        // Données fictives pour les groupes
-        $groupes = [
-            (object)[
-                'ue' => (object)[
-                    'code' => 'M1101',
-                    'semester' => 1
-                ],
-                'nb_td' => 2,
-                'nb_tp' => 2,
-                'confirme' => true
-            ],
-            (object)[
-                'ue' => (object)[
-                    'code' => 'M1102',
-                    'semester' => 1
-                ],
-                'nb_td' => 3,
-                'nb_tp' => 3,
-                'confirme' => false
-            ],
-        ];
+        $departmentName =  auth()->user()->manage->name;
+        $professorsMin = user::where('departement', $departmentName)->paginate(15);
 
-        // Données fictives pour les vacataires
-        $vacataires = [
-            (object)[
-                'id' => 1,
-                'nom_complet' => 'M. Karim BENNANI',
-                'email' => 'k.bennani@example.com',
-                'specialite' => 'Développement Web',
-                'ues_count' => 2
-            ],
-            (object)[
-                'id' => 2,
-                'nom_complet' => 'Mme. Fatima ALAOUI',
-                'email' => 'f.alaoui@example.com',
-                'specialite' => 'Base de Données',
-                'ues_count' => 1
-            ],
-        ];
 
-        // Affectations aux vacataires
-        $affectations_vacataires = [
-            (object)[
-                'ue' => (object)[
-                    'code' => 'M1101',
-                    'semester' => 1
-                ],
-                'vacataire' => (object)[
-                    'nom_complet' => 'M. Karim BENNANI',
-                    'email' => 'k.bennani@example.com'
-                ]
-            ]
-        ];
+        $professorsMin = User::where('departement', $departmentName)->latest()->take(3)->get();
+        $module_requests = prof_request::where('type', 'module')->where('status', 'pending')->latest()->take(3)->get();
 
-        // Créneaux EDT fictifs
-        $creneaux = [
-            (object)[
-                'id' => 1,
-                'jour' => 'Lundi',
-                'plage' => '8h-10h'
-            ],
-            (object)[
-                'id' => 2,
-                'jour' => 'Mardi',
-                'plage' => '10h-12h'
-            ],
-        ];
+        // Get user logs this week
+        $logs = user_log::whereBetween('created_at', [
+            Carbon::now()->startOfWeek(), // Monday
+            Carbon::now()->endOfWeek(),   // Sunday
+        ])->get();
 
-        // Historique des années
-        $annees_historique = [
-            '2023/2024',
-            '2022/2023',
-            '2021/2022'
-        ];
-        $annee_universitaire = 2024;
 
-        return view('coordonnateur.dashboard', compact(
-            'filiere',
-            'stats',
-            'ues',
-            'groupes',
-            'vacataires',
-            'affectations_vacataires',
-            'creneaux',
-            'annees_historique',
-            'annee_universitaire'
+        $logsByDay = $logs->groupBy(function ($log) {
+            return ucfirst(Carbon::parse($log->created_at)->locale('fr')->isoFormat('dddd'));
+        });
 
-        ));
+        // Prepare counts for each day
+        $days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+
+        // Build login counts
+        $loginCounts = [];
+        foreach ($days as $day) {
+            $loginCounts[] = isset($logsByDay[$day]) ? $logsByDay[$day]->count() : 0;
+        }
+
+
+
+        return View('coordonnateur.dashboard', ['tasks' => $tasks, 'studentCount' => $studentCount, 'professorCount' => $professorCount, 'chefHistory' => $chefHistory, 'professorsMin' => $professorsMin, 'loginCounts' => $loginCounts, 'module_requests' => $module_requests]);
     }
 
 

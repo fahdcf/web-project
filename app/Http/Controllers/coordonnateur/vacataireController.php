@@ -301,20 +301,21 @@ class vacataireController extends Controller
 
     ////////////////
 
+    // groupe controller(new way)
 
-    public function mesModules()
-    {
-        $vacataire = auth()->user();
+    // public function mesModules()
+    // {
+    //     $vacataire = auth()->user();
 
-        $modules = $vacataire->modulesVacataire()
+    //     $modules = $vacataire->modulesVacataire()
 
-            ->with('filiere') // Chargement anticipé de la filière
-            ->orderBy('semester')
-            ->get();
+    //         ->with('filiere') // Chargement anticipé de la filière
+    //         ->orderBy('semester')
+    //         ->get();
 
 
-        return view('modules.mesModules', [
-            'modules' => $modules
-        ]);
-    }
+    //     return view('modules.mesModules', [
+    //         'modules' => $modules
+    //     ]);
+    // }
 }

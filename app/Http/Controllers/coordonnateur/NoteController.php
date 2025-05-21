@@ -4,6 +4,7 @@ namespace App\Http\Controllers\coordonnateur;
 
 use App\Http\Controllers\Controller;
 use App\Imports\NotesImport;
+use App\Models\Groupe;
 use App\Models\Module;
 use App\Models\Note;
 use Illuminate\Http\Request;
@@ -17,14 +18,13 @@ class NoteController extends Controller
 
     public function showUploadForm()
     {
+
+
         $user = auth()->user();
-        if ($user->role->isprof) {
-            $modules = Module::where('professor_id',)->get();
-        } elseif ($user->role->isvocataire) {
-            $modules = $user->modulesVacataire();
-        } else {
-            abort(403, 'the user is not a professor or a vacataire , please login first...');
-        }
+        $modules = $user->assignedModules()->with('filiere')
+            ->get();
+
+
         $uploads = Note::where('prof_id', auth()->id())
             ->with(['module'])
             ->latest()

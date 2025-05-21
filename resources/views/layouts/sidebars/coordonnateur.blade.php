@@ -1,20 +1,3 @@
-<!-- Navigation Links -->
-{{-- <div class="nav_list"> --}}
-<!-- Tableau de Bord -->
-{{-- <a href="{{ route('coordonnateur.dashboard') }}" class="nav_link ">
-                    <i class="bx bx-grid-alt nav_icon"></i>
-                    <span class="nav_name">Tableau de Bord</span>
-                </a> --}}
-
-
-{{-- <a href="{{ route('coordonnateur.dashboard') }}"
-                    class="nav_link {{ request()->is('coordonnateur/dashboard') ? 'active' : '' }}">
-                    <i class="bx bx-grid-alt nav_icon" style="padding-left: 2px; font-size: 18px;"></i>
-                    <span class="nav_name">Tableau de Bord</span>
-                </a> --}}
-
-
-
 <!-- Unités d'Enseignement -->
 <a href="{{ route('coordonnateur.modules.index') }}"
     class="nav_link {{ request()->is('coordonnateur/modules') ? 'active' : '' }} ">
@@ -74,19 +57,8 @@
 </div>
 
 <!-- Bottom Section -->
-<div class="nav_bottom">
-    <a href="#" class="nav_link {{ request()->is('coordonnateur/lkadflkadlfaj') ? 'active' : '' }} ">
-        <i class="bx bx-cog nav_icon"></i>
-        <span class="nav_name">Paramètres</span>
-    </a>
-    <a href="#" class="nav_link {{ request()->is('coordonnateur/lkadflkadlfaj') ? 'active' : '' }} ">
-        <i class="bx bx-user nav_icon"></i>
-        <span class="nav_name">Mon Profil</span>
-    </a>
-    <a href="#" class="nav_link" id="logout-btn">
-        <i class="bx bx-log-out nav_icon"></i>
-        <span class="nav_name">Déconnexion</span>
-    </a>
+   
+
     {{-- 1. 📚 Gestion des Unités d’Enseignement ✅ Ajouter une nouvelle UE 📄 Lister toutes les UE de la filière ✏️
 Modifier les informations d’une UE (volume horaire, semestre, spécialité…) 👨‍🏫 Définir le responsable de chaque UE --}}
     {{--
