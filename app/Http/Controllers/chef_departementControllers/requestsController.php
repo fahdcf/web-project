@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\chef_departementControllers;
 use App\Http\Controllers\Controller;
 
-use App\Models\Role;
+use App\Models\Assignment;
+ use App\Models\Role;
  use App\Models\User;
   use App\Models\Module;
 
@@ -19,18 +20,15 @@ class requestsController extends Controller
 
    public function index()
 {
-    $module_requests = prof_request::where('type', 'module')->get();
-
     $FilieretargetIDs = Filiere::where('department_id', auth()->user()->manage->id)
         ->pluck('id'); // Plucks all the IDs into a collection
+   
+        $module_requests = prof_request::whereIn('module_id', $FilieretargetIDs)->get();
 
-    $filiere_requests = prof_request::where('type', 'filiere')
-        ->whereIn('target_id', $FilieretargetIDs)
-        ->get();
 
     return view('chef_departement.demandes', [
         'module_requests' => $module_requests,
-        'filiere_requests' => $filiere_requests
+        
     ]);
 }
 
@@ -46,97 +44,76 @@ class requestsController extends Controller
         }
 
         $request->save();
-        return redirect()->back(); // ✅ correct
-
-
-
- }
-
-  public function accept($id){
-    
-
-        $request = prof_request::findOrFail($id);
-
-        if($request->type=="filiere"){
-        $targetFiliereId=$request->target_id;
-
-        $profID=$request->prof_id;
-        $targetFiliere=filiere::findOrFail($targetFiliereId);
-
-        $oldcoor=user::findOrFail($targetFiliere->coordonnateur_id) ;
-       
-               if($oldcoor->role){
-
-       
-        $oldcoorRole=$oldcoor->role;
-        $oldcoorRole->iscoordonnateur=0;
-        $oldcoorRole->save();
-    }
-    else{
-             $newcoorRole=Role::create(['user_id'=> $targetFiliere->coordonnateur_id]);
-              $newcoorRole->iscoordonnateur=0;
-              $newcoorRole->save();
-    }
-
-        $targetFiliere->coordonnateur_id=$profID;
-        $targetFiliere->save();
-    
-
-       $newcoor=user::findOrFail($profID) ;
-
-       if($newcoor->role){
-
-           $newcoorRole=$newcoor->role;
-           
-           $newcoorRole->iscoordonnateur=1;
-           $newcoorRole->save();
-           
-        }
-        else{
-              $newcoorRole=Role::create(['user_id'=>$profID]);
-              $newcoorRole->iscoordonnateur=1;
-              $newcoorRole->save();
-
-
-
-        }
-           $request->status="approved";
-           $request->save();
-           
-           return redirect()->back();
-
-
-        }
-
-            elseif($request->type=="module"){
-        $targetModuleId=$request->target_id;
-
-        $profID=$request->prof_id;
-        $targetModule=Module::findOrFail($targetModuleId);
-
-       
-        $targetModule->professor_id=$profID;
-        $targetModule->save();
-        
-           $request->status="approved";
-           $request->save();
-           
-           return redirect()->back();
-
-    
-
-    }
-        
-
-        
-
         return redirect()->back(); 
 
 
 
  }
 
+ 
+
+  public function accept($id){
+    
+
+        $request = prof_request::findOrFail($id);
+        
+        
+        
+        $targetModuleId=$request->module_id;
+        $module = Module::findOrFail($targetModuleId);
 
 
+        $profID=$request->prof_id;
+
+       $assign=[
+        'module_id'=>$targetModuleId,
+        'prof_id'=> $profID,
+       ];
+
+       $hours=0;
+       if($request->toTeach_cm){
+        $assign['teach_cm'] = $request->toTeach_cm;
+        $hours=$hours + $module->cm_hours;
+
+       }
+
+        if($request->toTeach_td){
+        $assign['teach_td'] = $request->toTeach_td;
+        $hours=$hours + $module->td_hours;
+
+       }
+
+        if($request->toTeach_tp){
+        $assign['teach_tp'] = $request->toTeach_tp;
+        $hours=$hours + $module->tp_hours;
+
+       }
+
+       $assign['hours']=$hours;
+
+        
+           $request->status="approved";
+            $request->action_by=auth()->user()->id;
+
+           $request->save();
+           Assignment::create($assign);
+           return redirect()->back();
+
+    
+
+    
+        
+
+        
+
+
+
+
+ 
+
+
+
+
+}
 
 }

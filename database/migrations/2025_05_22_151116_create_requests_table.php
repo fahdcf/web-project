@@ -7,18 +7,24 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('requests', function (Blueprint $table) {
+        Schema::create('prof_requests', function (Blueprint $table) {
             $table->id();
             $table->integer('prof_id');
-            $table->integer('target_id');
-            $table->enum('type', ['module', 'filiere', 'departement']);
+            $table->integer('module_id');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->text('rejection_reason')->nullable();
+            
+            // New columns
+            $table->boolean('toTeach_cm')->default(false);
+            $table->boolean('toTeach_td')->default(false);
+            $table->boolean('toTeach_tp')->default(false);
+            $table->integer('action_by')->nullable();
+
             $table->timestamps();
 
-            // Foreign key to users table (assumes professors are users)
-
+            // Foreign keys
             $table->foreign('prof_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('action_by')->references('id')->on('users')->onDelete('set null');
         });
     }
 

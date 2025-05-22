@@ -43,6 +43,12 @@ class Module extends Model
 
     protected $guarded = [];
 
+     public function assignment()
+    {
+        return $this->hasMany(Assignment::class);
+    }
+
+    
 
     // Relation avec le professeur responsable
     public function professor()
@@ -57,18 +63,76 @@ class Module extends Model
 
     public function users()
     {
+
         return $this->belongsToMany(User::class, 'module_user')->withPivot('role', 'hours');
     }
+
 
     // Relation avec la filière
     public function filiere()
     {
+
         return $this->belongsTo(Filiere::class); // A module belongs to a filiere
     }
 
+    public function getProfCoursAttribute(){
+        
+
+        $assaigns=Assignment::where('module_id',$this->id)->where('teach_cm',1)->first();
+
+       
+
+        if($assaigns){
+
+           $prof=User::findOrFail($assaigns->prof_id);
+           return $prof;
+
+        }
+                else return null;
+
+    }
+
+     public function getProfTpAttribute(){
+        
+
+        $assaigns=Assignment::where('module_id',$this->id)->where('teach_tp',1)->first();
+
+       
+
+        if($assaigns){
+
+           $prof=User::findOrFail($assaigns->prof_id);
+           return $prof;
+
+        }
+
+                else return null;
+
+    }
+
+
+     public function getProfTdAttribute(){
+        
+
+        $assaigns=Assignment::where('module_id',$this->id)->where('teach_td',1)->first();
+
+       
+
+        if($assaigns){
+
+           $prof=User::findOrFail($assaigns->prof_id);
+           return $prof;
+
+        }
+
+        else return null;
+    }
+
+    
     // Calcul du volume horaire total
     public function volume_horaire()
     {
+        
         return $this->cm_hours + $this->td_hours + $this->tp_hours;
     }
 

@@ -438,3 +438,4 @@ Route::get('chef/modules_vacantes',[chefModulesController::class,'vacantesList']
 Route::post('chef/modules_vacantes/affecter/{id}',[chefModulesController::class,'affecter']); 
 Route::get('chef/professeur_profile/{id}',[ChefProfessorController::class,'professeur_profile']);
 Route::post('chef/professeur_profile/{id}',[ChefProfessorController::class,'edit']);
+Route::post('chef/professeurs/affecter', [ChefProfessorController::class,'affecter']);
