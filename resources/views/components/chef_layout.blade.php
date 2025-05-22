@@ -26,7 +26,7 @@
         font-family: var(--body-font);
         font-size: var(--normal-font-size);
         transition: .5s ;
-        background-color: #f5f5f5;
+        background-color: #f8f9fa;
     }
     
     .modal-backdrop {

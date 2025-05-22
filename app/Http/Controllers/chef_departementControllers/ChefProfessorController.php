@@ -6,6 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Module;
 use App\Models\user_detail;
+use App\Models\Filiere;
+use App\Models\Assignment;
+
+
+use Illuminate\Http\Request;
 
 use App\Models\chef_action;
 
@@ -26,9 +31,19 @@ class ChefProfessorController extends Controller
         $user=User::findOrFail($id);
 
                     $modules=Module::all();
+                    $assignement=Assignment::where('prof_id', $user->id)->get();
+                    
+     $filieres=filiere::where('department_id',auth()->user()->manage->id)->get();
+                    
+            $FilieretargetIDs = Filiere::where('department_id', auth()->user()->manage->id)
+        ->pluck('id'); // Plucks all the IDs into a collection
 
+        
+ $available_modules = Module::where('professor_id', null)->whereIn('filiere_id', $FilieretargetIDs)->get();
+       
+                 
 
-        return view('chef_departement.professor_profile', ['user'=>$user,'modules'=>$modules]);
+        return view('chef_departement.professor_profile', ['user'=>$user,'modules'=>$modules, 'available_modules'=> $available_modules, 'assignement'=>$assignement]);
 
     }
 
@@ -86,32 +101,118 @@ class ChefProfessorController extends Controller
     
     public function removeModule($id){
 
-        $module= Module::findOrFail($id);
-        $profId =$module->professor_id;
-              $prof = User::findOrFail($profId);
+        $assign= Assignment::findOrFail($id);
+        $profId =$assign->prof_id;
+        $prof = User::findOrFail($profId);
 
-        $module->professor_id=null;
-        $module->status='inactive';
-
-
-        $module->save();
 
 
             $chefActionDetails=[
             'chef_id'=>auth()->user()->id,
             'action_type' =>'retirer',
-            'description'=>auth()->user()->firstname . " " . auth()->user()->lastname ." a retireé le module " . $module->name . " de professeur " . $prof->firstname . " " . $prof->lastname ,
+            'description'=>auth()->user()->firstname . " " . auth()->user()->lastname ." a retireé le module " . $assign->module->name . " de professeur " . $prof->firstname . " " . $prof->lastname ,
             'target_table' =>'modules',
-            'target_id' => $module->id,
+            'target_id' => $assign->module->id,
         ];
 
 
-        
-        
+        Assignment::findOrFail($id)->delete();
+
         chef_action::create($chefActionDetails);
-   
 
         return redirect()->back();
     }
+
+
+    public function affecter(){
+
+$tab=[];
+$i=0;
+
+
+
+foreach (request('modules') as $assaign) {
+
+         $id=$assaign['module_id'];
+   
+        $module=Module::findOrFail($id);
+
+
+if($assaign['prof_id']){
+
+    $prof=user::findOrFail($assaign['prof_id']);
+    $module->professor_id=$assaign['prof_id'];
+
+    $module->status="active";
+    
+
+    $newAssign=[
+        'prof_id'=>$prof->id,
+        'module_id'=>$module->id,
+    ];
+
+    $hours=0;
+ 
+
+        if($assaign['cm']=="cm"){
+
+
+     $newAssign['teach_cm'] = 1;
+$hours=$hours + $module->cm_hours;
+
+
+        }
+
+       if($assaign['tp']=="tp"){
+                  $newAssign['teach_tp'] = 1;
+           $hours=$hours + $module->tp_hours;
+
+
+        }
+
+        if($assaign['td']=="td") {
+                $newAssign['teach_td'] = 1;
+$hours=$hours + $module->td_hours;
+
+
+
+        }
+
+    
+        $newAssign['hours']=$hours;
+
+$tab[$i]=$newAssign;
+$i++;
+
+        Assignment::create($newAssign);
+       
+        $module->save();
+
+
+        $chefActionDetails=[
+             'chef_id'=>auth()->user()->id,
+             'action_type' =>'affecter',
+             'description'=>auth()->user()->firstname . " " . auth()->user()->lastname ." a affecteé le module " . $module->name . " a le professeur " . $prof->firstname . " " . $prof->lastname ,
+             'target_table' =>'modules',
+             'target_id' => $module->id,
+         ];
+    
+    
+         
+         
+         chef_action::create($chefActionDetails);
+
+    } 
+    
+    
+}
+
+
+
+
+
+    return redirect()->back();
+
+}
 
 }

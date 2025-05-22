@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\chef_departementControllers;
 use App\Http\Controllers\Controller;
 
-use App\Models\chef_action;
+use App\Models\Assignment;
+ use App\Models\chef_action;
  use App\Models\Module;
  use App\Models\User;
 use App\Models\prof_request;
@@ -24,8 +25,17 @@ class chefModulesController extends Controller
 
         $filieres=Filiere::where('department_id',auth()->user()->manage->id)->get();
         
- $modules = Module::whereNot('professor_id', null)->whereIn('filiere_id', $FilieretargetIDs)->get();
-       
+$modules = Module::whereNot('professor_id', null)->whereIn('filiere_id', $FilieretargetIDs)
+    ->where(function ($query) {
+        $query->whereHas('assignment', function ($q) {
+            $q->where('teach_tp', 1);
+        })->orWhereDoesntHave('assignment', function ($q) {
+            $q->where('teach_td', 1);
+        })->orWhereDoesntHave('assignment', function ($q) {
+            $q->where('teach_cm', 1);
+        });
+    })
+    ->get();
         return view('chef_departement.modules',['modules'=> $modules ,'filieres'=>$filieres]);
     }
 
@@ -39,7 +49,20 @@ class chefModulesController extends Controller
 
         $filieres=Filiere::where('department_id',auth()->user()->manage->id)->get();
         
- $modules = Module::where('professor_id', null)->whereIn('filiere_id', $FilieretargetIDs)->get();
+ //$modules = Module::where('professor_id', null)->whereIn('filiere_id', $FilieretargetIDs)->get();
+
+  $modules = Module::whereIn('filiere_id', $FilieretargetIDs)
+    ->where(function ($query) {
+        $query->whereDoesntHave('assignment', function ($q) {
+            $q->where('teach_tp', 1);
+        })->orWhereDoesntHave('assignment', function ($q) {
+            $q->where('teach_td', 1);
+        })->orWhereDoesntHave('assignment', function ($q) {
+            $q->where('teach_cm', 1);
+        });
+    })
+    ->get();
+
 
         $departmentName=auth()->user()->manage->name;
         $professors=user::where('departement',$departmentName)->simplePaginate(5);
@@ -55,12 +78,61 @@ request()->validate([
     'prof_id' => 'required',
 ]);
 
-
 if(request('prof_id')){
     $prof=user::findOrFail(request('prof_id'));
     $module->professor_id=request('prof_id');
     $module->status="active";
-    $module->save();
+    
+
+    $newAssign=[
+        'prof_id'=>$prof->id,
+        'module_id'=>$module->id,
+    ];
+    $hours=0;
+ 
+
+        if(request('isCm')=="cm"){
+
+
+     $newAssign['teach_cm'] = 1;
+$hours=$hours + $module->cm_hours;
+
+
+        }
+
+       if(request('isTp')=="tp"){
+                  $newAssign['teach_tp'] = 1;
+           $hours=$hours + $module->tp_hours;
+
+
+        }
+
+        if(request('isTd')=="td") {
+                $newAssign['teach_td'] = 1;
+$hours=$hours + $module->td_hours;
+
+
+
+        }
+
+        if(request('isAll')){
+                $newAssign['teach_cm'] = 1;
+                $newAssign['teach_tp'] = 1;
+                $newAssign['teach_td'] = 1;
+
+               $hours=$hours + $module->cm_hours + $module->td_hours + $module->tp_hours;
+
+        }
+        $newAssign['hours']=$hours;
+
+        Assignment::create($newAssign);
+       
+        $module->save();
+
+
+    }
+
+
 
 
 
@@ -82,10 +154,8 @@ if(request('prof_id')){
     return redirect()->back();
 }
 
-    return redirect()->back();
-
-        
+   
     }
-}
+
 
 

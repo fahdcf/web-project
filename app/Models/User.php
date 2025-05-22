@@ -67,19 +67,21 @@ class User extends Authenticatable
     }
 
 
-    public function gethoursAttribute()
-    {
+    public function gethoursAttribute(){
+        
+
+        $assaigns=Assignment::where('prof_id',$this->id)->get();
 
         $modules = Module::where('professor_id', $this->id)->get();
 
-        $hours = 0;
+        if($assaigns){
 
-        if ($modules) {
-
-            foreach ($modules as $key => $module) {
-
-                $hours = $hours + $module->cm_hours + $module->tp_hours + $module->td_hours;
+            foreach ($assaigns as  $assaign) {
+                
+                $hours=$hours + $assaign->hours;
+                
             }
+
         }
 
         return $hours;
