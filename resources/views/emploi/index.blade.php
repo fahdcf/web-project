@@ -150,53 +150,240 @@
         @endif
 
 
-        <div class="pt-5 pb-2">
-            <div class="accordion rounded" id="accordionFilters">
-                <div class="accordion-item border-0">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed shadow-none" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapsefilters" aria-expanded="false" aria-controls="collapsefilters">
-                            <i class="bi bi-funnel-fill me-2"></i> Filtres avancés
-                        </button>
-                    </h2>
-                    <div id="collapsefilters" class="accordion-collapse collapse" data-bs-parent="#accordionFilters">
-                        <div class="accordion-body pt-0">
-                            <form id="filterForm" action="{{ route('emploi.index') }}" method="GET">
-                                <div class="row g-3">
-                                    <div class="col-md-6 col-lg-4">
-                                        <label for="academic_year" class="form-label small fw-bold text-muted">Année
-                                            Académique</label>
-                                        <select class="form-select" id="academic_year" name="academic_year">
-                                            <option value="">Toutes les années</option>
-                                            @foreach ($academicYears as $year)
-                                                <option value="{{ $year }}"
-                                                    {{ request('academic_year') == $year ? 'selected' : '' }}>
-                                                    {{ $year }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6 col-lg-2 d-flex align-items-end">
-                                        <button type="submit" class="btn btn-primary w-100">
-                                            <i class="bi bi-filter-circle me-1"></i> Filtrer
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+        <div class="header-container mb-4">
+            <style>
+                .header-container {
+                    background: white;
+                    border-radius: 8px;
+                    padding: 20px;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                }
+
+                .header-title {
+                    color: #4723d9;
+                    font-weight: 600;
+                    font-size: 1.75rem;
+                    margin: 0;
+                }
+
+                .form-select {
+                    border-color: #e0e0e0;
+                    font-size: 0.9rem;
+                    padding: 8px 12px;
+                    border-radius: 6px;
+                    background-color: #f8f9fa;
+                    transition: border-color 0.2s;
+                }
+
+                .form-select:focus {
+                    border-color: #4723d9;
+                    box-shadow: 0 0 0 2px rgba(71, 35, 217, 0.2);
+                    outline: none;
+                }
+
+                .btn-primary {
+                    background-color: #4723d9;
+                    border-color: #4723d9;
+                    font-size: 0.9rem;
+                    padding: 8px 16px;
+                    border-radius: 6px;
+                    font-weight: 500;
+                    transition: all 0.2s;
+                }
+
+                .btn-primary:hover {
+                    background-color: white;
+                    color: #4723d9;
+                    border-color: #4723d9;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                }
+
+                .btn-outline-primary {
+                    border-color: #4723d9;
+                    color: #4723d9;
+                    font-size: 0.9rem;
+                    padding: 8px 16px;
+                    border-radius: 6px;
+                    font-weight: 500;
+                    transition: all 0.2s;
+                    white-space: nowrap;
+                }
+
+                .btn-outline-primary:hover {
+                    background-color: #4723d9;
+                    color: white;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                }
+
+                .btn-outline-primary:hover .btn-text-prof {
+                    color: white;
+                }
+
+                .btn-text-emploi,
+                .btn-text-prof {
+                    display: inline;
+                }
+
+                @media (max-width: 768px) {
+                    .header-container {
+                        padding: 15px;
+                    }
+
+                    .header-title {
+                        font-size: 1.5rem;
+                        margin-bottom: 15px;
+                        text-align: center;
+                    }
+
+                    .form-select,
+                    .btn-outline-primary {
+                        width: 100%;
+                        margin-bottom: 10px;
+                    }
+
+                    .btn-outline-primary {
+                        white-space: normal;
+                        text-align: center;
+                        padding: 10px 16px;
+                    }
+
+                    .btn-text-emploi,
+                    .btn-text-prof {
+                        display: block;
+                    }
+
+                    .btn-text-emploi {
+                        margin-bottom: 2px;
+                    }
+                }
+
+                /* Improved grid layout */
+                .header-grid {
+                    display: grid;
+                    grid-template-columns: 1fr auto auto;
+                    gap: 1rem;
+                    align-items: center;
+                }
+
+                @media (max-width: 992px) {
+                    .header-grid {
+                        grid-template-columns: 1fr auto;
+                    }
+
+                    .header-title {
+                        grid-column: 1 / -1;
+                        text-align: center;
+                        margin-bottom: 10px;
+                        text-decoration: underline;
+                    }
+                }
+
+                @media (max-width: 768px) {
+                    .header-grid {
+                        grid-template-columns: 1fr;
+                        gap: 0.75rem;
+                    }
+
+                    .btn-outline-primary {
+                        white-space: normal;
+                        text-align: center;
+                        padding: 10px 16px;
+                        line-height: 1.3;
+                        /* Add this for better line spacing */
+                    }
+
+                    .btn-text-emploi,
+                    .btn-text-prof {
+                        display: inline;
+                        /* Change from 'block' to 'inline' */
+                        margin-bottom: 0;
+                        /* Remove bottom margin */
+                    }
+
+                    .btn-text-emploi:after {
+                        content: " ";
+                        /* Add space after "Emploi des" */
+                    }
+
+                }
+            </style>
+
+            <div class="header-grid">
+                <h3 class="header-title">Emplois du Temps - {{ $filiere->name }}</h3>
+
+                <select class="form-select" onchange="window.location.href=this.value">
+                    <option value="">Toutes les années</option>
+                    @foreach ($academicYears as $year)
+                        <option value="{{ route('emploi.index', ['academic_year' => $year]) }}"
+                            {{ $academicYear == $year ? 'selected' : '' }}>
+                            {{ $year }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <a href="{{ route('emploi.prof') }}" class="btn btn-outline-primary">
+                    <i class="bi bi-person me-2"></i>
+                    <span class="btn-text-emploi">Emploi des</span>
+                    <span class="btn-text-prof">Profs</span>
+                </a>
             </div>
         </div>
 
+
+
+
         <div class="table-container mt-4 mb-5 flex-column">
+            <style>
+                /* Status indicator styling */
+                .status-indicator {
+                    display: inline-block;
+                    padding: 4px 8px;
+                    border-radius: 12px;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                }
+
+                .status-active {
+                    background-color: #e6f7ee;
+                    color: #0a7b4c;
+                }
+
+                .status-inactive {
+                    background-color: #feeceb;
+                    color: #d92d20;
+                }
+
+                .status-undefined {
+                    color: #6c757d;
+                }
+
+                /* Action buttons styling */
+                .action-btn {
+                    padding: 0.25rem 0.5rem;
+                    font-size: 0.875rem;
+                    border-radius: 4px;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 4px;
+                }
+
+                .btn-create {
+                    background-color: #4723d9;
+                    color: white;
+                }
+
+                .btn-create:hover {
+                    background-color: #3a1cb3;
+                }
+            </style>
+
             <div class="table-responsive p-3">
                 <table class="table bg-white table-hover">
                     <thead>
                         <tr>
                             <th>Semestre</th>
                             <th>Emploi du Temps</th>
-                            <th>is_active</th>
+                            <th>Statut</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -218,36 +405,32 @@
                                 <td>
                                     @if ($emploi)
                                         <span
-                                            class="badge rounded-pill bg-{{ $emploi->is_active  == true ? 'success' : 'danger' }}">
-                                            {{ $emploi->is_active  == true ? 'Actif' : 'Inactif' }}
+                                            class="status-indicator status-{{ $emploi->is_active ? 'active' : 'inactive' }}">
+                                            {{ $emploi->is_active ? 'Actif' : 'Inactif' }}
                                         </span>
                                     @else
-                                        <span class="text-muted">-</span>
+                                        <span class="status-undefined">-</span>
                                     @endif
-
-
-
-
-
                                 </td>
 
                                 <td>
                                     <div class="d-flex justify-content-center align-items-center gap-2">
                                         @if ($emploi)
-                                            <a href="{{ route('emploi.edit', $emploi->id) }}" class="btn btn-sm"
+                                            <a href="{{ route('emploi.edit', $emploi->id) }}"
+                                                class="btn btn-sm action-btn"
                                                 style="background-color:#4723d9; color:#ffffff;" title="Modifier">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
-                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                            <button class="btn btn-danger btn-sm action-btn" data-bs-toggle="modal"
                                                 data-bs-target="#deleteEmploiModal{{ $emploi->id }}"
                                                 title="Supprimer">
                                                 <i class="bi bi-trash3"></i>
                                             </button>
                                         @else
                                             <a href="{{ route('emploi.create', ['semester' => $semester]) }}"
-                                                class="btn btn-sm" style="background-color:#4723d9; color:#ffffff;"
-                                                title="Créer">
+                                                class="btn btn-sm action-btn btn-create" title="Créer">
                                                 <i class="bi bi-plus-circle"></i>
+                                                <span>Créer</span>
                                             </a>
                                         @endif
                                     </div>

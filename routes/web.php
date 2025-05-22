@@ -207,14 +207,14 @@ Route::middleware(['auth'])
 Route::middleware(['auth'])
     ->group(function () {
         Route::get('/config_semester_suivant', [GroupeController::class, 'configureNextSemester'])
-            ->name('config_semester_suivant');
+            ->name('coordonnateur.groupes.config');
         //saving action tout les moduel du semester
         Route::post('/config-semestre-suivant', [GroupeController::class, 'saveNextSemesterConfig'])
-            ->name('save_semester_suivant');
+            ->name('coordonnateur.groupes.save');
 
         //saving acon modufication dune seule module groupes
         Route::post('/module_config/update', [GroupeController::class, 'updateModuleConfig'])
-            ->name('module_config_update');
+            ->name('coordonnateur.groupes.save.module');
     });
 
 # Groupes - Coordinateur
@@ -345,11 +345,14 @@ Route::put('/emplois/{emploi}', [EmploiController::class, 'update'])->name('empl
 
 Route::delete('/emplois/{emploi}', [EmploiController::class, 'destroy'])->name('emploi.destroy');
 
+Route::get('/emplois/prof', [EmploiController::class, 'prof'])->name('emploi.prof');
+Route::get('/my-timetable', [EmploiController::class, 'myTimetable'])->name('emploi.myTimetable');
 
 
 
 
 
+Route::get('/my-timetable/export', [EmploiController::class, 'myTimetableExport'])->name('emploi.my-timetable.export');
 
 
 

@@ -185,45 +185,6 @@ class GroupeController extends Controller
 
         return redirect()->back()->with('success', 'Configuration saved successfully');
     }
-
-    private function syncGroups($module, $type, $targetCount, $maxStudents)
-    {
-        $semestersData = $this->getNextSemester();
-
-        $currentGroups = $module->groupes()->where('type', $type)->get();
-
-        // Supprimer les groupes excédentaires
-        if ($currentGroups->count() > $targetCount) {
-            $module->groupes()
-                ->where('type', $type)
-                ->orderBy('id', 'desc')
-                ->limit($currentGroups->count() - $targetCount)
-                ->delete();
-        }
-
-        // Mettre à jour la taille maximale des groupes existants
-        $module->groupes()
-            ->where('type', $type)
-            ->update(['max_students' => $maxStudents]);
-
-        // Ajouter les groupes manquants
-        if ($currentGroups->count() < $targetCount) {
-            $groupsToAdd = $targetCount - $currentGroups->count();
-
-            for ($i = 0; $i < $groupsToAdd; $i++) {
-                Groupe::create([
-                    'module_id' => $module->id,
-                    'type' => $type,
-                    'max_students' => $maxStudents,
-                    'nbr_student' => 0,
-                    'academicYear' => $semestersData['academic_year'], // Use correct column name
-                    // 'name' => $type . ' ' . ($currentGroups->count() + $i + 1)
-                ]);
-            }
-        }
-    }
-
-
     ////////////////////////////////
     public function configureNextSemester()
     {
@@ -315,12 +276,6 @@ class GroupeController extends Controller
 
     public function availableModules(Request $request)
     {
-        // $modules = Module::query()
-        //     ->with(['filiere', 'responsable'])
-        //     ->whereDoesntHave('assignments')
-        //     ->where('status', 'active')
-        //     ->get();
-
         $modules = Module::with(['filiere', 'responsable', 'assignments'])
             ->where('status', 'active')
             ->where(function ($query) {

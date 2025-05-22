@@ -34,14 +34,18 @@ class ModuleController extends Controller
                 ->get();
         }
 
-
-
-
-
-        $modules=Module::where('filiere_id', $user->manage->id)->get();
-
+        $modules = Module::where('filiere_id', $user->manage->id)->get();
+        if (request('semester')) {
+            if (request('semester') !== "all")
+                $modules = Module::where('filiere_id', $user->manage->id)->where('semester', request('semester'))->get();
+        }
+        if (request('status')) {
+            if (request('status') !== "all")
+                $modules = Module::where('filiere_id', $user->manage->id)->where('status', request('status'))->get();
+        }
 
         $filiere = $user->manage;
+
         $allVacataires = User::whereHas('role', function ($query) {
             $query->where('isvocataire', true);
         })->get();
@@ -51,7 +55,7 @@ class ModuleController extends Controller
             'allVacataires' => $allVacataires,
             'semesters' => $semestersData,
             'searchResults' => null,
-            'modules'=>$modules
+            'modules' => $modules
         ]);
     }
 
@@ -213,70 +217,70 @@ class ModuleController extends Controller
 
 
     public function update(Request $request, Module $module)
-{
-    // Validation rules (similar to store, but parent_id is conditionally nullable)
-    $rules = [
-        'type' => 'required|in:complet,element',
-        'name' => 'required|string|max:255',
-        'specialty' => 'nullable|string|max:255',
-        'status' => 'required|in:active,inactive',
+    {
+        // Validation rules (similar to store, but parent_id is conditionally nullable)
+        $rules = [
+            'type' => 'required|in:complet,element',
+            'name' => 'required|string|max:255',
+            'specialty' => 'nullable|string|max:255',
+            'status' => 'required|in:active,inactive',
 
-        'semester' => 'required|integer|min:1',
-        'credits' => 'required|integer|min:1',
-        'evaluation' => 'required|integer|min:1',
-        'description' => 'nullable|string',
-        'cm_hours' => 'nullable|integer',
-        'td_hours' => 'nullable|integer',
-        'tp_hours' => 'nullable|integer',
-        'autre_hours' => 'nullable|integer',
-        'responsable_id' => 'nullable|exists:users,id',
-    ];
+            'semester' => 'required|integer|min:1',
+            'credits' => 'required|integer|min:1',
+            'evaluation' => 'required|integer|min:1',
+            'description' => 'nullable|string',
+            'cm_hours' => 'nullable|integer',
+            'td_hours' => 'nullable|integer',
+            'tp_hours' => 'nullable|integer',
+            'autre_hours' => 'nullable|integer',
+            'responsable_id' => 'nullable|exists:users,id',
+        ];
 
-    // Conditionally add 'parent_id' validation if type is 'element'
-    if ($request->input('type') === 'element') {
-        $rules['parent_id'] = 'required|exists:modules,id|different:' . $module->id;
-    } else {
-        $rules['parent_id'] = 'nullable';
-    }
-
-    $validated = $request->validate($rules);
-
-    // Logic for handling 'element' type update
-    if ($validated['type'] === 'element') {
-        // Find the parent module
-        $parent = Module::find($validated['parent_id']);
-
-        // Check if parent module exists
-        if (!$parent) {
-            return back()->withErrors(['parent_id' => 'Parent module not found.'])->withInput();
-        }
-
-        // Generate the code for the element (it might be better to keep the original code if it doesn't change)
-        // Option 1: Keep the existing code
-        // $code = $module->code;
-
-        // Option 2: Regenerate the code based on the new parent (use with caution if the code is used elsewhere)
-        $code = $parent->code . '-' . (Module::where('parent_id', $validated['parent_id'])->where('id', '!=', $module->id)->count() + 1);
-
-        $validated['parent_id'] = $validated['parent_id'];
-        $validated['code'] = $code;
-    }else { // Logic for 'complet' type update
-        // Generate the code for the complete module if the semester changes
-        if ($module->type === 'complet' && $module->semester !== $validated['semester']) {
-            $validated['code'] = "M" . $validated['semester'] . "-" . $module->id;
+        // Conditionally add 'parent_id' validation if type is 'element'
+        if ($request->input('type') === 'element') {
+            $rules['parent_id'] = 'required|exists:modules,id|different:' . $module->id;
         } else {
-            // Keep the existing code if the semester doesn't change and it's a complete module
-            $validated['code'] = $module->code;
+            $rules['parent_id'] = 'nullable';
         }
-        $validated['parent_id'] = null;
+
+        $validated = $request->validate($rules);
+
+        // Logic for handling 'element' type update
+        if ($validated['type'] === 'element') {
+            // Find the parent module
+            $parent = Module::find($validated['parent_id']);
+
+            // Check if parent module exists
+            if (!$parent) {
+                return back()->withErrors(['parent_id' => 'Parent module not found.'])->withInput();
+            }
+
+            // Generate the code for the element (it might be better to keep the original code if it doesn't change)
+            // Option 1: Keep the existing code
+            // $code = $module->code;
+
+            // Option 2: Regenerate the code based on the new parent (use with caution if the code is used elsewhere)
+            $code = $parent->code . '-' . (Module::where('parent_id', $validated['parent_id'])->where('id', '!=', $module->id)->count() + 1);
+
+            $validated['parent_id'] = $validated['parent_id'];
+            $validated['code'] = $code;
+        } else { // Logic for 'complet' type update
+            // Generate the code for the complete module if the semester changes
+            if ($module->type === 'complet' && $module->semester !== $validated['semester']) {
+                $validated['code'] = "M" . $validated['semester'] . "-" . $module->id;
+            } else {
+                // Keep the existing code if the semester doesn't change and it's a complete module
+                $validated['code'] = $module->code;
+            }
+            $validated['parent_id'] = null;
+        }
+
+
+        // Update the module attributes
+        $module->update($validated);
+
+        return redirect()->route('coordonnateur.modules.index')->with('success', 'UE mise à jour avec succès!');
     }
-
-
-    // Update the module attributes
-    $module->update($validated);
-
-    return redirect()->route('coordonnateur.modules.index')->with('success', 'UE mise à jour avec succès!');
-}
 
 
     public function destroy(Module $module)

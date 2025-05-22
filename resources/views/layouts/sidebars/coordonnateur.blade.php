@@ -20,7 +20,7 @@
 </a>
 
 <!-- Emploi du Temps -->
-<a href="#" class="nav_link {{ request()->is('coordonnateur/lkadflkadlfaj') ? 'active' : '' }} ">
+<a href="{{ route('emploi.index') }}" class="nav_link {{ request()->is('coordonnateur/emplois') ? 'active' : '' }} ">
     <i class="bx bx-calendar nav_icon"></i>
     <span class="nav_name">Emploi du Temps</span>
 </a>

@@ -143,4 +143,11 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Module::class, 'assignments', 'prof_id', 'module_id');
     }
+
+
+
+    public function assignments()
+    {
+        return $this->hasMany(Assignment::class, 'prof_id');
+    }
 }

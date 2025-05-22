@@ -117,10 +117,10 @@
                             <div class="detail-item">
                                 <i class="bi bi-person-fill detail-icon"></i>
                                 <div>
-                                    <span class="detail-label">Professeur</span>
+                                    <span class="detail-label">Responsable</span>
                                     <span class="detail-value">
-                                        @if ($module->professor)
-                                            {{ $module->professor->firstname }} {{ $module->professor->lastname }}
+                                        @if ($module->responsable)
+                                            {{ $module->responsable->firstname }} {{ $module->responsable->lastname }}
                                         @else
                                             <span style="color: #e74c3c">Non associé</span>
                                         @endif

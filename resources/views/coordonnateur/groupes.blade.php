@@ -1,358 +1,905 @@
 <x-coordonnateur_layout>
-    <div class="container-fluid py-4">
+    <div class="container-fluid px-4 py-5">
         <x-global_alert />
 
-        <div class="row">
-            <div class="col-12">
-                <div class="card shadow-xs border-0 overflow-hidden">
-                    <!-- Enhanced Header -->
-                    <div
-                        class="card-header position-relative overflow-hidden bg-primary text-white py-3 px-4 d-flex justify-content-between align-items-center rounded-top">
-                        <!-- Background pattern overlay (subtle) -->
-                        <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10 bg-pattern"
-                            style="z-index: 0;"></div>
-
-                        <!-- Left Content -->
-                        <div class="position-relative z-1">
-                            <h5 class="mb-1 fw-semibold d-flex align-items-center">
-                                <i class="fas fa-layer-group me-2 fs-5"></i>
-                                Filière: <strong class="ms-1">{{ $filiere->name }}</strong>
-                            </h5>
-                            <div class="d-flex flex-wrap gap-2 mt-1">
-                                <span
-                                    class="badge bg-white text-primary rounded-pill d-flex align-items-center px-2 py-1 shadow-sm">
-                                    <i class="fas fa-calendar-alt me-1 fs-6"></i> {{ $currentYear }}
-                                </span>
-                                <span
-                                    class="badge bg-white text-primary rounded-pill d-flex align-items-center px-2 py-1 shadow-sm">
-                                    <i class="fas fa-clock me-1 fs-6"></i> Semestre {{ $currentSemester }}
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Right Button -->
-                        <div class="position-relative z-1">
-                            <a href="{{ route('config_semester_suivant') }}"
-                                class="btn btn-light btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center">
-                                <i class="fas fa-cog me-2"></i> Config. Sém. Suivant
-                            </a>
+        <!-- Header Section -->
+        <div class="header-container mb-4">
+            <div class="header-grid">
+                <div class="d-flex align-items-center gap-3">
+                    <i class="fas fa-layer-group fa-2x" style="color: #330bcf;"></i>
+                    <div>
+                        <h3 style="color: #330bcf; font-weight: 500;">
+                            Gestion des Groupes TD/TP - {{ $filiere->name }}
+                        </h3>
+                        <div class="d-flex flex-wrap gap-2 mt-2">
+                            <span class="badge bg-light text-primary border border-primary rounded-pill px-3 py-2">
+                                <i class="fas fa-calendar-alt me-1"></i> {{ $currentYear }}
+                            </span>
+                            <span class="badge bg-light text-primary border border-primary rounded-pill px-3 py-2">
+                                <i class="fas fa-clock me-1"></i> Semestre Actuel {{ $currentSemester }}
+                            </span>
                         </div>
                     </div>
+                </div>
+                <a href="{{ route('coordonnateur.groupes.config') }}"
+                    class="btn btn-primary rounded fw-semibold my-2 me-2">
+                    <i class="fas fa-cog"></i> Config. Sém. Suivant
+                </a>
+            </div>
+        </div>
 
 
-                    <!-- Main Content -->
-                    <div class="card-body p-0">
-                        @foreach ($modules as $semester => $semesterModules)
-                            <div class="year-section p-4 border-bottom border-light">
-                                <!-- Year Header -->
-                                <div class="d-flex align-items-center mb-3 gap-3">
-                                    <div
-                                        class="year-badge bg-primary-soft rounded-3 p-2 d-flex align-items-center justify-content-center">
-                                        <span class="text-primary fw-bold fs-5">L{{ ceil($semester / 2) }}</span>
-                                    </div>
-                                    <div>
-                                        <h4 class="m-0 text-dark fw-semibold">
-                                            {{ match (true) {
-                                                $semester == 1 || $semester == 2 => 'Première Année',
-                                                $semester == 3 || $semester == 4 => 'Deuxième Année',
-                                                $semester == 5 || $semester == 6 => 'Troisième Année',
-                                                default => '',
-                                            } }}
-                                        </h4>
-                                        <small class="text-muted">Semestre {{ $semester }}</small>
-                                    </div>
-                                </div>
+        <!-- Filters and Search -->
+        <div class="header-container mb-4">
+            <div class="row g-3">
+                <!-- Semester Filter Dropdown -->
+                <div class="col-md-6 col-lg-3 filter-dropdown">
+                    <label for="semester" class="form-label small fw-bold text-muted">Semestre</label>
+                    <select id="semester" class="form-select border border-primary text-primary"
+                        style="font-weight: 500;"
+                        onchange="window.location.href='{{ route('coordonnateur.groupes.config') }}?semester=' + this.value">
+                        <option value="all" {{ request('semester') == 'all' ? 'selected' : '' }}>Tous</option>
+                        @for ($i = 1; $i <= 6; $i++)
+                            <option value="{{ $i }}" {{ request('semester') == $i ? 'selected' : '' }}>
+                                {{ $i == 1 ? '1er' : $i . 'ème' }} Annee
+                            </option>
+                        @endfor
+                    </select>
+                </div>
 
-                                <!-- Modules Scrollable Container -->
-                                <div class="scroll-container pb-3">
-                                    <div class="d-flex flex-row flex-nowrap gap-3 pb-3">
-                                        @foreach ($semesterModules as $module)
-                                            <div class="card module-card border-0 shadow-xs hover-lift transition-all">
-                                                <!-- Module Header -->
-                                                <div
-                                                    class="card-header bg-white d-flex justify-content-between align-items-center border-bottom py-3 position-relative">
-                                                    <div class="w-75 pe-2">
-                                                        <h6 class="mb-0 fw-semibold text-truncate text-dark">
-                                                            {{ $module->name }}</h6>
-                                                        <div class="d-flex align-items-center gap-2 mt-1">
-                                                            <small class="text-muted text-truncate d-inline-block">
-                                                                <i
-                                                                    class="fas fa-hashtag me-1 text-primary"></i>{{ $module->code }}
-                                                            </small>
-                                                            <small class="text-muted text-truncate d-inline-block">
-                                                                <i class="fas fa-user-tie me-1 text-primary"></i>
-                                                                {{ $module->responsable ? $module->responsable->fullname : 'Non assigné' }}
-                                                            </small>
-                                                        </div>
-                                                    </div>
-                                                    <span
-                                                        class="badge {{ $semester % 2 == 1 ? 'bg-info-soft text-info' : 'bg-success-soft text-success' }} rounded-pill fs-11 fw-semibold">
-                                                        S{{ $semester }}
-                                                    </span>
-                                                </div>
-
-                                                <!-- Module Body -->
-                                                <div class="card-body py-3">
-                                                    <!-- TD Groups -->
-                                                    @if ($module->nbr_groupes_td > 0)
-                                                        <div class="mb-3">
-                                                            <div
-                                                                class="d-flex justify-content-between align-items-center mb-2">
-                                                                <strong
-                                                                    class="text-primary d-flex align-items-center fs-13">
-                                                                    <i class="fas fa-users me-2 fs-12"></i> Groupes TD
-                                                                </strong>
-                                                                <span
-                                                                    class="badge bg-primary-soft text-primary rounded-pill fs-11">
-                                                                    {{ $module->nbr_groupes_td }} groupes
-                                                                </span>
-                                                            </div>
-                                                            <ul class="list-group list-group-flush small border-0">
-                                                                @for ($i = 1; $i <= $module->nbr_groupes_td; $i++)
-                                                                    <li
-                                                                        class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0 py-2 border-0">
-                                                                        <span class="d-flex align-items-center">
-                                                                            <span
-                                                                                class="group-badge bg-primary-soft text-primary rounded-circle me-2 d-flex align-items-center justify-content-center">
-                                                                                {{ $i }}
-                                                                            </span>
-                                                                            <span class="d-flex flex-column">
-                                                                                <span class="fw-medium">TD
-                                                                                    {{ $i }}</span>
-                                                                                
-                                                                                <!-- Professeur assigné - à adapter selon votre structure -->
-                                                                                @php
-                                                                                    $professorField = "td{$i}_professor_id";
-                                                                                    $professor = isset($module->$professorField) ? App\Models\User::find($module->$professorField) : null;
-                                                                                @endphp
-                                                                                
-                                                                                @if ($professor)
-                                                                                    <small
-                                                                                        class="text-muted fs-11">{{ $professor->fullname }}
-                                                                                    </small>
-                                                                                @endif
-                                                                            </span>
-                                                                        </span>
-                                                                        <span class="text-muted fs-12">
-                                                                            @php
-                                                                                $nbrStudentField = "td{$i}_nbr_student";
-                                                                                $maxStudentsField = "td{$i}_max_students";
-                                                                                $nbrStudent = $module->$nbrStudentField ?? 0;
-                                                                                $maxStudents = $module->$maxStudentsField ?? 30;
-                                                                            @endphp
-                                                                            <span
-                                                                                class="{{ $nbrStudent >= $maxStudents ? 'text-danger' : 'text-success' }} fw-medium">
-                                                                                {{ $nbrStudent }}
-                                                                            </span>
-                                                                            <span
-                                                                                class="text-muted">/{{ $maxStudents }}</span>
-                                                                        </span>
-                                                                    </li>
-                                                                @endfor
-                                                            </ul>
-                                                        </div>
-                                                    @endif
-
-                                                    <!-- TP Groups -->
-                                                    @if ($module->nbr_groupes_tp > 0)
-                                                        <div class="mb-2">
-                                                            <div
-                                                                class="d-flex justify-content-between align-items-center mb-2">
-                                                                <strong
-                                                                    class="text-success d-flex align-items-center fs-13">
-                                                                    <i class="fas fa-flask me-2 fs-12"></i> Groupes TP
-                                                                </strong>
-                                                                <span
-                                                                    class="badge bg-success-soft text-success rounded-pill fs-11">
-                                                                    {{ $module->nbr_groupes_tp }} groupes
-                                                                </span>
-                                                            </div>
-                                                            <ul class="list-group list-group-flush small border-0">
-                                                                @for ($i = 1; $i <= $module->nbr_groupes_tp; $i++)
-                                                                    <li
-                                                                        class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0 py-2 border-0">
-                                                                        <span class="d-flex align-items-center">
-                                                                            <span
-                                                                                class="group-badge bg-success-soft text-success rounded-circle me-2 d-flex align-items-center justify-content-center">
-                                                                                {{ $i }}
-                                                                            </span>
-                                                                            <span class="d-flex flex-column">
-                                                                                <span class="fw-medium">TP
-                                                                                    {{ $i }}</span>
-                                                                                
-                                                                                <!-- Professeur assigné - à adapter selon votre structure -->
-                                                                                @php
-                                                                                    $professorField = "tp{$i}_professor_id";
-                                                                                    $professor = isset($module->$professorField) ? App\Models\User::find($module->$professorField) : null;
-                                                                                @endphp
-                                                                                
-                                                                                @if ($professor)
-                                                                                    <small
-                                                                                        class="text-muted fs-11">{{ $professor->fullname }}</small>
-                                                                                @endif
-                                                                            </span>
-                                                                        </span>
-                                                                        <span class="text-muted fs-12">
-                                                                            @php
-                                                                                $nbrStudentField = "tp{$i}_nbr_student";
-                                                                                $maxStudentsField = "tp{$i}_max_students";
-                                                                                $nbrStudent = $module->$nbrStudentField ?? 0;
-                                                                                $maxStudents = $module->$maxStudentsField ?? 20;
-                                                                            @endphp
-                                                                            <span
-                                                                                class="{{ $nbrStudent >= $maxStudents ? 'text-danger' : 'text-success' }} fw-medium">
-                                                                                {{ $nbrStudent }}
-                                                                            </span>
-                                                                            <span
-                                                                                class="text-muted">/{{ $maxStudents }}</span>
-                                                                        </span>
-                                                                    </li>
-                                                                @endfor
-                                                            </ul>
-                                                        </div>
-                                                    @endif
-                                                </div>
-
-                                                <!-- Module Footer -->
-                                                <div class="card-footer bg-white border-top-0 py-2 text-center">
-                                                    <div class="d-flex justify-content-center gap-2">
-                                                        <a href="#"
-                                                            class="btn btn-sm btn-outline-primary rounded-pill p-2 border-1 fs-11 fw-medium">
-                                                            <i class="fas fa-edit me-1"></i> Modifier
-                                                        </a>
-
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
+                <!-- Search Bar -->
+                <div class="col-md-6 col-lg-6 search-bar">
+                    <label for="moduleSearch" class="form-label small fw-bold text-muted">Recherche</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control border-start-0" id="moduleSearch"
+                            placeholder="Rechercher par nom / code...">
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <style>
-        :root {
-            --primary-soft: #18027e;
-            --success-soft: rgba(25, 135, 84, 0.08);
-            --info-soft: rgba(13, 202, 240, 0.08);
-            --white-10: rgba(255, 255, 255, 0.1);
-        }
+        <!-- Modules by Semester -->
+        @foreach ($modules as $semester => $semesterModules)
+            <div class="header-container mb-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="year-badge bg-primary-soft rounded-circle p-3">
+                            <span class="text-primary fw-bold fs-5">S{{ $semester }}</span>
+                        </div>
+                        <div>
+                            <h4 class="m-0 fw-bold text-dark">
+                                {{ match ($semester) {
+                                    1 => 'Première Année - S1',
+                                    2 => 'Première Année - S2',
+                                    3 => 'Deuxième Année - S3',
+                                    4 => 'Deuxième Année - S4',
+                                    5 => 'Troisième Année - S5',
+                                    6 => 'Troisième Année - S6',
+                                    default => 'Semestre ' . $semester,
+                                } }}
+                            </h4>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary rounded-pill px-4 py-2 fw-semibold"
+                        data-bs-toggle="modal" data-bs-target="#configNbGroupesGeneralModal"
+                        data-semester="{{ $semester }}" onclick="prepareModal(this)"
+                        aria-label="Configurer tous les modules du semestre {{ $semester }}">
+                        <i class="fas fa-layer-group me-2"></i> Configurer Tous les Modules
+                    </button>
+                </div>
 
-        .bg-pattern {
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54 50.41c0 1.1-.9 2-2 2h-4v-4h4c1.1 0 2 .9 2 2zM6 8h4V4H6c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2zm48 0h4V6c0-1.1-.9-2-2-2h-4v4c0 1.1.9 2 2 2zM6 54h4v-4H6c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
-        }
+                <div class="position-relative">
+                    <div class="modules-scroll-container">
+                        <div class="d-flex flex-nowrap overflow-auto pb-3 gap-3">
+                            @foreach ($semesterModules as $module)
+                                <div class="module-card-container"
+                                    style="min-width: 320px; width: 320px; max-width: 100%;">
 
-        .bg-primary-soft {
-            background-color: var(--primary-soft);
-        }
+                                    <div class="module-card">
+                                        <div class="module-header">
+                                            <div class="module-title-container">
+                                                <h3 class="module-name">{{ $module->name }}</h3>
+                                                <div class="module-hours-badge">{{ $module->code }}</div>
+                                            </div>
+                                        </div>
 
-        .bg-success-soft {
-            background-color: var(--success-soft);
-        }
+                                        <div class="module-details">
+                                            <!-- Responsable -->
+                                            <div class="detail-item">
+                                                <i class="bi bi-person-fill detail-icon"></i>
+                                                <div>
+                                                    <span class="detail-label">Responsable</span>
+                                                    <span class="detail-value">
+                                                        {{ $module->responsable ? $module->responsable->fullname : 'Non assigné' }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <!-- Semester -->
+                                            <div class="detail-item">
+                                                <i class="bi bi-calendar-week detail-icon"></i>
+                                                <div>
+                                                    <span class="detail-label">Semestre</span>
+                                                    <span class="detail-value">
+                                                        @if ($module->semester == 1)
+                                                            1er Semestre
+                                                        @else
+                                                            {{ $module->semester }}ème Semestre
+                                                        @endif
+                                                    </span>
+                                                </div>
+                                            </div>
 
-        .bg-info-soft {
-            background-color: var(--info-soft);
-        }
+                                            @if ($module->nbr_groupes_td > 0)
+                                                <div class="detail-item">
+                                                    <i class="bi bi-people-fill detail-icon"
+                                                        style="color: #3498db;"></i>
+                                                    <div>
+                                                        <span class="detail-label">Prof. TD</span>
+                                                        <span class="detail-value">
+                                                            @if ($module->td_professor_id)
+                                                                {{ App\Models\User::find($module->td_professor_id)->fullname }}
+                                                            @else
+                                                                <span style="color: #e74c3c">Non assigné</span>
+                                                            @endif
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            @endif
 
-        .bg-white-10 {
-            background-color: var(--white-10);
-        }
+                                            <!-- TP Professor -->
+                                            @if ($module->nbr_groupes_tp > 0)
+                                                <div class="detail-item">
+                                                    <i class="bi bi-flask detail-icon" style="color: #2ecc71;"></i>
+                                                    <div>
+                                                        <span class="detail-label">Prof. TP</span>
+                                                        <span class="detail-value">
+                                                            @if ($module->tp_professor_id)
+                                                                {{ App\Models\User::find($module->tp_professor_id)->fullname }}
+                                                            @else
+                                                                <span style="color: #e74c3c">Non assigné</span>
+                                                            @endif
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            @endif
 
-        .shadow-xs {
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
 
-        .scroll-container {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
-            scrollbar-color: #e0e0e0 transparent;
-        }
+                                            <div class="detail-item">
+                                                <i class="bi bi-grid detail-icon"></i>
+                                                <div>
+                                                    <span class="detail-label">Groupes</span>
+                                                    <div class="groups-container d-flex gap-2 mt-2">
+                                                            <div
+                                                                class="group-box bg-primary-soft border border-primary rounded-3 p-2 flex-grow-1">
+                                                                <div class="d-flex align-items-center gap-2">
+                                                                    <i class="bi bi-users text-primary"></i>
+                                                                    <span class="fw-medium">TD</span>
+                                                                    <span class="badge bg-primary rounded-pill ms-auto">
+                                                                        {{ $module->nbr_groupes_td }}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div
+                                                                class="group-box bg-success-soft border border-success rounded-3 p-2 flex-grow-1">
+                                                                <div class="d-flex align-items-center gap-2">
+                                                                    <i class="bi bi-flask text-success"></i>
+                                                                    <span class="fw-medium">TP</span>
+                                                                    <span class="badge bg-success rounded-pill ms-auto">
+                                                                        {{ $module->nbr_groupes_tp }}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-        .scroll-container::-webkit-scrollbar {
-            height: 6px;
-            background: transparent;
-        }
+                                        </div>
 
-        .scroll-container::-webkit-scrollbar-track {
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
+                                        <div class="module-actions">
+                                            <button class="view-btn"
+                                                onclick="showPopup({{ $module->id }}, '{{ $module->name }}')"
+                                                aria-label="Consulter les détails du module {{ $module->name }}">
+                                                <i class="bi bi-eye-fill"></i> Voir plus
+                                            </button>
+                                            <button class="view-btn" data-bs-toggle="modal"
+                                                data-bs-target="#configModuleModal"
+                                                data-module-id="{{ $module->id }}"
+                                                data-module-name="{{ $module->name }}"
+                                                data-td-count="{{ $module->nbr_groupes_td }}"
+                                                data-tp-count="{{ $module->nbr_groupes_tp }}"
+                                                data-td-max="{{ $module->td1_max_students ?? 30 }}"
+                                                data-tp-max="{{ $module->tp1_max_students ?? 20 }}"
+                                                onclick="loadModuleConfig(this)"
+                                                aria-label="Configurer le module {{ $module->name }}">
+                                                <i class="bi bi-cog-fill"></i> Configurer
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
 
-        .scroll-container::-webkit-scrollbar-thumb {
-            background: #d1d5db;
-            border-radius: 10px;
-        }
+                    <!-- Scroll Indicators -->
+                    <div class="scroll-indicators d-none d-md-flex">
+                        <button class="btn btn-light scroll-btn scroll-left shadow-sm rounded-circle p-3"
+                            onclick="scrollModules(this, 'left')" aria-label="Faire défiler vers la gauche">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="btn btn-light scroll-btn scroll-right shadow-sm rounded-circle p-3"
+                            onclick="scrollModules(this, 'right')" aria-label="Faire défiler vers la droite">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        @endforeach
 
-        .module-card {
-            min-width: 320px;
-            border-radius: 12px;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            will-change: transform;
-        }
+        <!-- Popup Template -->
+        @foreach ($modules->flatten() as $module)
+            <div id="popupfor{{ $module->id }}" class="overlay">
+                <div class="popup bg-white rounded-3 p-4 shadow-lg" style="max-width: 600px;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="text-primary fw-bold mb-0">Détails du Module</h5>
+                        <button type="button" class="btn-close" onclick="closePopup({{ $module->id }})"
+                            aria-label="Close"></button>
+                    </div>
 
-        .hover-lift:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
+                    <div class="module-details">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="bi bi-book fs-4" style="color: white !important;"></i>
+                            </div>
+                            <h4 class="mb-0 fw-bold" id="moduleName{{ $module->id }}">{{ $module->name }}</h4>
+                        </div>
 
-        .transition-all {
-            transition-property: all;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 150ms;
-        }
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="bg-light p-3 rounded">
+                                    <small class="text-muted d-block">Code</small>
+                                    <span class="fw-semibold">{{ $module->code }}</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bg-light p-3 rounded">
+                                    <small class="text-muted d-block">Semestre</small>
+                                    <span class="fw-semibold">
+                                        {{ $module->semester == 1 ? '1er Semestre' : $module->semester . 'ème Semestre' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bg-light p-3 rounded">
+                                    <small class="text-muted d-block">Crédits</small>
+                                    <span class="fw-semibold">{{ $module->credits }} ECTS</span>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="bg-light p-3 rounded">
+                                    <small class="text-muted d-block">Responsable</small>
+                                    <span class="fw-semibold">
+                                        {{ $module->responsable ? $module->responsable->fullname : 'Non assigné' }}
+                                    </span>
+                                </div>
+                            </div>
+                            @if ($module->nbr_groupes_td > 0)
+                                <div class="col-12">
+                                    <div class="bg-light p-3 rounded">
+                                        <small class="text-muted d-block">Groupes TD</small>
+                                        <span class="fw-semibold">{{ $module->nbr_groupes_td }} groupes</span>
+                                    </div>
+                                </div>
+                            @endif
+                            @if ($module->nbr_groupes_tp > 0)
+                                <div class="col-12">
+                                    <div class="bg-light p-3 rounded">
+                                        <small class="text-muted d-block">Groupes TP</small>
+                                        <span class="fw-semibold">{{ $module->nbr_groupes_tp }} groupes</span>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
 
-        .year-section {
-            background-color: #fcfcfc;
-        }
+                    <div class="text-end mt-4">
+                        <button type="button" class="btn btn-primary px-4"
+                            onclick="closePopup({{ $module->id }})">
+                            Fermer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        @endforeach
 
-        .year-section:nth-child(odd) {
-            background-color: #fff;
-        }
+        <!-- Configuration Modals -->
+        <div class="modal fade" id="configNbGroupesGeneralModal" tabindex="-1"
+            aria-labelledby="configNbGroupesGeneralModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="popup bg-white rounded-3 p-4 shadow-lg">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="text-primary fw-bold mb-0" id="configNbGroupesGeneralModalLabel">
+                            <i class="fas fa-sliders-h me-2"></i> Configuration Globale des Groupes
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
 
-        .year-badge {
-            width: 40px;
-            height: 40px;
-            flex-shrink: 0;
-        }
+                    <form action="{{ route('coordonnateur.groupes.save') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="semester" value="">
 
-        .group-badge {
-            width: 24px;
-            height: 24px;
-            flex-shrink: 0;
-            font-size: 11px;
-            font-weight: 600;
-        }
+                        <div class="module-details">
+                            <div class="alert alert-light border mb-4 rounded-3">
+                                <i class="fas fa-info-circle me-2 text-primary"></i>
+                                Configuration pour tous les modules du Semestre <strong
+                                    class="semester-display">SX</strong>
+                            </div>
 
-        .fs-10 {
-            font-size: 10px !important;
-        }
+                            <div class="row g-4">
+                                <!-- TD groupes Configuration -->
+                                <div class="col-md-6">
+                                    <div class="bg-light p-3 rounded">
+                                        <h6 class="fw-bold d-flex align-items-center mb-3">
+                                            <i class="bi bi-users text-primary me-2"></i> Groupes TD
+                                        </h6>
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-medium">Nombre de groupes</label>
+                                            <input type="number" class="form-control rounded-3" name="nb_groupes_td"
+                                                value="1" min="0" max="10" required
+                                                aria-describedby="nb_groupes_td_help">
+                                            <small id="nb_groupes_td_help" class="form-text text-muted">Nombre de
+                                                groupes de TD par module.</small>
+                                        </div>
+                                    </div>
+                                </div>
 
-        .fs-11 {
-            font-size: 11px !important;
-        }
+                                <!-- TP groupes Configuration -->
+                                <div class="col-md-6">
+                                    <div class="bg-light p-3 rounded">
+                                        <h6 class="fw-bold d-flex align-items-center mb-3">
+                                            <i class="bi bi-flask text-success me-2"></i> Groupes TP
+                                        </h6>
+                                        <div class="mb RAC-3">
+                                            <label class="form-label small fw-medium">Nombre de groupes</label>
+                                            <input type="number" class="form-control rounded-3" name="nb_groupes_tp"
+                                                value="1" min="0" max="10" required
+                                                aria-describedby="nb_groupes_tp_help">
+                                            <small id="nb_groupes_tp_help" class="form-text text-muted">Nombre de
+                                                groupes de TP par module.</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-        .fs-12 {
-            font-size: 12px !important;
-        }
+                        <div class="text-end mt-4">
+                            <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                                data-bs-dismiss="modal" aria-label="Annuler">
+                                Annuler
+                            </button>
+                            <button type="submit" class="btn btn-primary rounded-pill px-4 fw-medium"
+                                aria-label="Appliquer la configuration">
+                                <i class="fas fa-save me-2"></i> Appliquer à S<span
+                                    class="semester-display-btn">X</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
-        .fs-13 {
-            font-size: 13px !important;
-        }
+        <div class="modal fade" id="configModuleModal" tabindex="-1" aria-labelledby="configModuleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="popup bg-white rounded-3 p-4 shadow-lg">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="text-primary fw-bold mb-0" id="configModuleModalLabel">
+                            <i class="fas fa-cog me-2"></i> <span id="moduleConfigTitle">Configuration du
+                                module</span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
 
-        .border-light {
-            border-color: rgba(0, 0, 0, 0.03) !important;
-        }
+                    <form method="POST" action="{{ route('coordonnateur.groupes.save.module') }}">
+                        @csrf
+                        <input type="hidden" name="module_id" id="configModuleId">
 
-        .z-1 {
-            position: relative;
-            z-index: 1;
-        }
-    </style>
+                        <div class="module-details">
+                            <div class="row g-4">
+                                <!-- TD groupes Configuration -->
+                                <div class="col-md-6">
+                                    <div class="bg-light p-3 rounded">
+                                        <h6 class="fw-bold d-flex align-items-center mb-3">
+                                            <i class="bi bi-users text-primary me-2"></i> Groupes TD
+                                        </h6>
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-medium">Nombre de groupes</label>
+                                            <input type="number" class="form-control rounded-3" name="nb_groupes_td"
+                                                id="tdCountInput" min="0" max="10" required
+                                                aria-describedby="nb_groupes_td_help">
+                                            <small id="nb_groupes_td_help" class="form-text text-muted">Nombre de
+                                                groupes de TD pour ce module.</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- TP groupes Configuration -->
+                                <div class="col-md-6">
+                                    <div class="bg-light p-3 rounded">
+                                        <h6 class="fw-bold d-flex align-items-center mb-3">
+                                            <i class="bi bi-flask text-success me-2"></i> Groupes TP
+                                        </h6>
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-medium">Nombre de groupes</label>
+                                            <input type="number" class="form-control rounded-3" name="nb_groupes_tp"
+                                                id="tpCountInput" min="0" max="10" required
+                                                aria-describedby="nb_groupes_tp_help">
+                                            <small id="nb_groupes_tp_help" class="form-text text-muted">Nombre de
+                                                groupes de TP pour ce module.</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-end mt-4">
+                            <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                                data-bs-dismiss="modal" aria-label="Annuler">
+                                Annuler
+                            </button>
+                            <button type="submit" class="btn btn-primary rounded-pill px-4 fw-medium"
+                                aria-label="Enregistrer la configuration">
+                                <i class="fas fa-save me-2"></i> Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            /* Add to your stylesheet */
+            .groups-container {
+                min-width: 200px;
+            }
+
+            .group-box {
+                transition: all 0.2s ease;
+            }
+
+            .group-box:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .bg-primary-soft {
+                background-color: rgba(13, 110, 253, 0.1);
+            }
+
+            .bg-success-soft {
+                background-color: rgba(25, 135, 84, 0.1);
+            }
+
+            .detail-icon {
+                /* Ensure consistent icon sizing */
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                background-color: #f0f0f0;
+                color: #4723d9;
+            }
+
+            :root {
+                --primary: #4723d9;
+                --primary-soft: #e8e5ff;
+                --success: #198754;
+                --success-soft: rgba(25, 135, 84, 0.08);
+                --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                --card-hover-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+            }
+
+            body {
+                background-color: #f8f9fa;
+            }
+
+            .header-container {
+                background: white;
+                border-radius: 8px;
+                padding: 20px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .header-grid {
+                display: grid;
+                grid-template-columns: 1fr auto;
+                gap: 1rem;
+                align-items: center;
+            }
+
+            .form-select {
+                border-color: #e0e0e0;
+                font-size: 0.9rem;
+                padding: 8px 12px;
+                border-radius: 6px;
+                background-color: #f8f9fa;
+                transition: border-color 0.2s;
+            }
+
+            .form-select:focus {
+                border-color: #4723d9;
+                box-shadow: 0 0 0 2px rgba(71, 35, 217, 0.2);
+                outline: none;
+            }
+
+            .btn-primary {
+                background-color: #4723d9;
+                border-color: #4723d9;
+                font-size: 0.9rem;
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-weight: 500;
+                transition: all 0.2s;
+            }
+
+            .btn-primary:hover {
+                background-color: white;
+                color: #4723d9;
+                border-color: #4723d9;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .btn-outline-secondary {
+                border-color: #6c757d;
+                color: #6c757d;
+                font-size: 0.9rem;
+                padding: 8px 16px;
+                border-radius: 6px;
+                transition: all 0.2s;
+            }
+
+            .btn-outline-secondary:hover {
+                background-color: #6c757d;
+                color: white;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .module-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: var(--card-shadow);
+                overflow: hidden;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                border: 1px solid #4723d91e;
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+            }
+
+            .module-card:hover {
+                transform: translateY(-2px);
+                box-shadow: var(--card-hover-shadow);
+            }
+
+            .module-header {
+                padding: 16px 20px;
+                background: linear-gradient(135deg, #4723d9 0%, #6047c7 100%);
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .module-title-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+            }
+
+            .module-name {
+                margin: 0;
+                font-size: 1.2rem;
+                font-weight: 600;
+                color: #f0f0f0;
+                flex: 1;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .module-hours-badge {
+                background: #ffffff14;
+                color: white;
+                padding: 4px 10px;
+                border-radius: 20px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                margin-left: 10px;
+            }
+
+            .module-details {
+                padding: 16px 20px;
+                display: grid;
+                gap: 14px;
+                flex: 1;
+            }
+
+            .detail-item {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .detail-icon {
+                color: #4723d9;
+                font-size: 1rem;
+                margin-top: 2px;
+            }
+
+            .detail-label {
+                display: block;
+                font-size: 0.75rem;
+                color: #95a5a6;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .detail-value {
+                display: block;
+                font-size: 0.95rem;
+                font-weight: 500;
+                color: #34495e;
+                margin-top: 2px;
+            }
+
+            .module-actions {
+                padding: 12px 20px;
+                border-top: 1px solid #f0f0f0;
+                display: flex;
+                justify-content: space-between;
+                gap: 10px;
+            }
+
+            .view-btn {
+                background: none;
+                border: 1px solid #4723d9;
+                color: #4723d9;
+                font-size: 0.9rem;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 6px 12px;
+                border-radius: 6px;
+                transition: all 0.2s ease;
+                flex: 1;
+                justify-content: center;
+            }
+
+            .view-btn:hover {
+                background: rgba(71, 35, 217, 0.1);
+            }
+
+            .overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: none;
+                justify-content: center;
+                align-items: center;
+                z-index: 1050;
+                backdrop-filter: blur(4px);
+            }
+
+            .popup {
+                max-width: 90%;
+                animation: fadeIn 0.3s;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .year-badge {
+                width: 60px;
+                height: 60px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: var(--primary-soft);
+            }
+
+            .modules-scroll-container .d-flex {
+                -ms-overflow-style: none;
+                scrollbar-width: thin;
+                scrollbar-color: #6c757d #f8f9fa;
+                scroll-behavior: smooth;
+            }
+
+            .modules-scroll-container .d-flex::-webkit-scrollbar {
+                height: 6px;
+                background-color: #f8f9fa;
+                border-radius: 3px;
+            }
+
+            .modules-scroll-container .d-flex::-webkit-scrollbar-thumb {
+                background-color: #6c757d;
+                border-radius: 3px;
+            }
+
+            .scroll-indicators {
+                position: absolute;
+                top: 50%;
+                width: 100%;
+                transform: translateY(-50%);
+                display: flex;
+                justify-content: space-between;
+                pointer-events: none;
+                z-index: 10;
+            }
+
+            .scroll-btn {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                pointer-events: auto;
+                background-color: #ffffff;
+                border: 1px solid #dee2e6;
+                transition: opacity 0.2s ease, transform 0.2s ease;
+            }
+
+            .scroll-btn:hover {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+
+            .scroll-btn:disabled {
+                opacity: 0.5;
+                pointer-events: none;
+            }
+
+            .scroll-left {
+                margin-left: -20px;
+            }
+
+            .scroll-right {
+                margin-right: -20px;
+            }
+
+            .form-control {
+                border-radius: 0.5rem;
+                transition: all 0.2s ease;
+            }
+
+            .form-control:focus {
+                border-color: #4723d9;
+                box-shadow: 0 0 0 0.2rem rgba(71, 35, 217, 0.2);
+            }
+
+            @media (max-width: 768px) {
+                .header-container {
+                    padding: 15px;
+                }
+
+                .header-grid {
+                    grid-template-columns: 1fr;
+                    gap: 0.75rem;
+                }
+
+                .search-bar {
+                    min-width: 100%;
+                    order: -1;
+                }
+
+                .filter-dropdown {
+                    width: 100%;
+                }
+
+                .popup {
+                    max-width: 95%;
+                    margin: 1rem;
+                }
+
+                .module-card-container {
+                    min-width: 300px;
+                    width: 300px;
+                }
+            }
+
+            @media (max-width: 576px) {
+                .module-card-container {
+                    min-width: 260px;
+                    width: 260px;
+                }
+            }
+        </style>
+
+        <script>
+            function prepareModal(button) {
+                const semester = button.getAttribute('data-semester');
+                document.querySelector('#configNbGroupesGeneralModal input[name="semester"]').value = semester;
+                document.querySelectorAll(
+                    '#configNbGroupesGeneralModal .semester-display, #configNbGroupesGeneralModal .semester-display-btn'
+                ).forEach(el => el.textContent = semester);
+            }
+
+            function loadModuleConfig(button) {
+                document.getElementById('moduleConfigTitle').textContent = `Configuration: ${button.dataset.moduleName}`;
+                document.getElementById('configModuleId').value = button.dataset.moduleId;
+                document.getElementById('tdCountInput').value = button.dataset.tdCount || 1;
+                document.getElementById('tpCountInput').value = button.dataset.tpCount || 0;
+            }
+
+            function scrollModules(button, direction) {
+                const container = button.closest('.position-relative').querySelector('.d-flex');
+                const scrollAmount = 320;
+                container.scrollTo({
+                    left: direction === 'left' ? container.scrollLeft - scrollAmount : container.scrollLeft +
+                        scrollAmount,
+                    behavior: 'smooth'
+                });
+            }
+
+            function showPopup(moduleId, moduleName) {
+                document.getElementById('moduleName' + moduleId).innerText = moduleName;
+                document.getElementById("popupfor" + moduleId).style.display = "flex";
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closePopup(moduleId) {
+                document.getElementById("popupfor" + moduleId).style.display = "none";
+                document.body.style.overflow = 'auto';
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const scrollContainers = document.querySelectorAll('.modules-scroll-container .d-flex');
+                scrollContainers.forEach(container => {
+                    checkScrollButtons(container);
+                    container.addEventListener('scroll', () => checkScrollButtons(container));
+                });
+
+                function checkScrollButtons(container) {
+                    const parent = container.closest('.position-relative');
+                    const leftBtn = parent.querySelector('.scroll-left');
+                    const rightBtn = parent.querySelector('.scroll-right');
+                    if (!leftBtn || !rightBtn) return;
+                    leftBtn.disabled = container.scrollLeft <= 10;
+                    rightBtn.disabled = container.scrollLeft + container.clientWidth >= container.scrollWidth - 10;
+                }
+
+                let searchFilter = '';
+                document.getElementById('moduleSearch').addEventListener('input', function() {
+                    searchFilter = this.value.toLowerCase();
+                    applyFilters();
+                });
+
+                function applyFilters() {
+                    const moduleCards = document.querySelectorAll('.module-card-container');
+                    moduleCards.forEach(card => {
+                        const moduleName = card.querySelector('.module-name').textContent.toLowerCase();
+                        const moduleCode = card.querySelector('.module-hours-badge').textContent.toLowerCase();
+                        const searchMatch = searchFilter === '' ||
+                            moduleName.includes(searchFilter) ||
+                            moduleCode.includes(searchFilter);
+                        card.style.display = searchMatch ? 'block' : 'none';
+                    });
+                }
+            });
+        </script>
 </x-coordonnateur_layout>

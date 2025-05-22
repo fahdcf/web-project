@@ -179,16 +179,16 @@
     <div class="container-fluid p-0 pt-4">
 
         @if ($errors->any())
-                <div class="alert alert-danger error-message">
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+            <div class="alert alert-danger error-message">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-            
+
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show">
                 {{ session('success') }}
@@ -230,8 +230,9 @@
                     </div>
                     <div class="mb-4">
                         <div class="form-check">
+                            <input type="hidden" name="is_active" value="0">
                             <input type="checkbox" class="form-check-input" id="is_active" name="is_active"
-                                {{ $emploi->is_active ? 'checked' : '' }}>
+                                value="1" {{ old('is_active', $emploi->is_active ?? false) ? 'checked' : '' }}>
                             <label for="is_active" class="form-check-label small fw-bold text-muted">Actif</label>
                         </div>
                     </div>
@@ -428,7 +429,7 @@
                                 document.getElementById('session_type').value = sessionData.type;
                                 document.getElementById('session_salle').value = sessionData.salle;
                                 document.getElementById('session_groupe').value = sessionData
-                                .groupe;
+                                    .groupe;
                                 document.getElementById('session_duration').value = sessionData
                                     .duration;
                                 document.getElementById('session_day').value = sessionData.jour;
@@ -595,7 +596,7 @@
                 sessions.forEach(session => {
                     const container = document.querySelector(
                         `.sessions[data-day="${session.jour}"][data-time-index="${session.time_index}"]`
-                        );
+                    );
                     if (container) {
                         container.insertAdjacentHTML('beforeend', `
                     <div class="session-card ${session.type.toLowerCase()}" data-session-id="${session.temp_id}">

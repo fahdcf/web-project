@@ -160,86 +160,290 @@
 
     <div class="container-fluid p-0 pt-5">
 
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <x-global_alert />
+
+        <div class="header-container mb-4">
+            <style>
+                .header-container {
+                    background: white;
+                    border-radius: 8px;
+                    padding: 20px;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                }
+
+                .header-title {
+                    color: #4723d9;
+                    font-weight: 600;
+                    font-size: 1.75rem;
+                    margin: 0;
+                }
+
+                .form-select {
+                    border-color: #e0e0e0;
+                    font-size: 0.9rem;
+                    padding: 8px 12px;
+                    border-radius: 6px;
+                    background-color: #f8f9fa;
+                    transition: border-color 0.2s;
+                }
+
+                .form-select:focus {
+                    border-color: #4723d9;
+                    box-shadow: 0 0 0 2px rgba(71, 35, 217, 0.2);
+                    outline: none;
+                }
+
+                /* .btn-primary {
+                    background-color: #4723d9;
+                    border-color: #4723d9;
+                    font-size: 0.9rem;
+                    padding: 8px 16px;
+                    border-radius: 6px;
+                    font-weight: 500;
+                    transition: all 0.2s;
+                } */
+
+                .btn-primary:hover {
+                    background-color: white;
+                    color: #4723d9;
+                    border-color: #4723d9;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                }
+
+                .btn-outline-primary {
+                    border-color: #4723d9;
+                    color: #4723d9;
+                    font-size: 0.9rem;
+                    padding: 8px 16px;
+                    border-radius: 6px;
+                    font-weight: 500;
+                    transition: all 0.2s;
+                    white-space: nowrap;
+                }
+
+                .btn-outline-primary:hover {
+                    background-color: #4723d9;
+                    color: white;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                }
+
+                .btn-outline-primary:hover .btn-text-prof {
+                    color: white;
+                }
+
+                .btn-text-emploi,
+                .btn-text-prof {
+                    display: inline;
+                }
+
+                @media (max-width: 768px) {
+                    .header-container {
+                        padding: 15px;
+                    }
+
+                    .header-title {
+                        font-size: 1.5rem;
+                        margin-bottom: 15px;
+                        text-align: center;
+                    }
+
+                    .form-select,
+                    .btn-outline-primary {
+                        width: 100%;
+                        margin-bottom: 10px;
+                    }
+
+                    .btn-outline-primary {
+                        white-space: normal;
+                        text-align: center;
+                        padding: 10px 16px;
+                    }
+
+                    .btn-text-emploi,
+                    .btn-text-prof {
+                        display: block;
+                    }
+
+                    .btn-text-emploi {
+                        margin-bottom: 2px;
+                    }
+                }
+
+                /* Improved grid layout */
+                .header-grid {
+                    display: grid;
+                    grid-template-columns: 1fr auto auto;
+                    gap: 1rem;
+                    align-items: center;
+                }
+
+                @media (max-width: 992px) {
+                    .header-grid {
+                        grid-template-columns: 1fr auto;
+                    }
+
+                    .header-title {
+                        grid-column: 1 / -1;
+                        text-align: center;
+                        margin-bottom: 10px;
+                        text-decoration: underline;
+                    }
+                }
+
+                @media (max-width: 768px) {
+                    .header-grid {
+                        grid-template-columns: 1fr;
+                        gap: 0.75rem;
+                    }
+
+                    .btn-outline-primary {
+                        white-space: normal;
+                        text-align: center;
+                        padding: 10px 16px;
+                        line-height: 1.3;
+                        /* Add this for better line spacing */
+                    }
+
+                    .btn-text-emploi,
+                    .btn-text-prof {
+                        display: inline;
+                        /* Change from 'block' to 'inline' */
+                        margin-bottom: 0;
+                        /* Remove bottom margin */
+                    }
+
+                    .btn-text-emploi:after {
+                        content: " ";
+                        /* Add space after "Emploi des" */
+                    }
+
+                }
+
+                .btn-primary {
+                    background-color: #4723d9;
+                    border-color: #4723d9;
+                    font-size: 0.9rem;
+                    padding: 8px 16px;
+                    border-radius: 6px;
+                    font-weight: 500;
+                    transition: all 0.2s;
+                    display: inline-flex;
+                    /* Changed from default */
+                    align-items: center;
+                    /* Vertically center items */
+                    gap: 8px;
+                    /* Space between icon and text */
+                }
+
+                .btn-primary i {
+                    font-size: 1em;
+                    /* Match icon size with text */
+                    line-height: 1;
+                    /* Fix vertical alignment */
+                }
+            </style>
+
+            <div class="header-grid mt">
+                <div class="d-flex align-items-center gap-3">
+                    <h3 style="color: #330bcf; font-weight: 500;">Gestion des vacataires du filiere :</h3>
+                </div>
+
+                <a href="{{ route('coordonnateur.vacataires.create') }}"
+                    class="btn btn-primary rounded fw-semibold my-2 me-2">
+                    <i class="bx bx-user-plus nav_icon"></i>
+                    Ajouter un vacataire
+                </a>
             </div>
-        @endif
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-            <h3 style="color: #330bcf; font-weight: 500;">Liste des vacataires</h3>
-            <a type="submit" href="{{ route('coordonnateur.vacataires.create') }}"
-                class="btn text-white rounded  fw-semibold my-2"
-                style=" background-color: #4723d9; color:#ebebec !important;vertical-align: middle ;">
-                Ajouter un vacataire
-            </a>
+
         </div>
 
 
-        <div class="pt-5 pb-2">
-            <div class="accordion rounded" id="accordionFilters">
-                <div class="accordion-item border-0">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed shadow-none" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapsefilters" aria-expanded="false" aria-controls="collapsefilters">
-                            <i class="bi bi-funnel-fill me-2"></i> Filtres avancés
-                        </button>
-                    </h2>
-                    <div id="collapsefilters" class="accordion-collapse collapse" data-bs-parent="#accordionFilters">
-                        <div class="accordion-body pt-0">
-                            <form id="filterForm" action="{{ route('coordonnateur.vacataires.index') }}" method="GET">
-                                <div class="row g-3">
-                                    <div class="col-md-6 col-lg-4">
-                                        <label for="search"
-                                            class="form-label small fw-bold text-muted">Recherche</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-transparent"><i
-                                                    class="bi bi-search"></i></span>
-                                            <input type="text" id="search" name="search"
-                                                class="form-control border-start-0" placeholder="Nom, ID ou email"
-                                                value="{{ request('search') }}">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6 col-lg-3">
-                                        <label for="statusFilter"
-                                            class="form-label small fw-bold text-muted">Statut</label>
-                                        <select class="form-select" id="statusFilter" name="status">
-                                            <option value="">Tous les statuts</option>
-                                            <option value="active"
-                                                {{ request('status') == 'active' ? 'selected' : '' }}>Actif</option>
-                                            <option value="inactive"
-                                                {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactif</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-md-6 col-lg-3">
-                                        <label for="rowsPerPage"
-                                            class="form-label small fw-bold text-muted">Affichage</label>
-                                        <select id="rowsPerPage" name="rows" class="form-select">
-                                            <option value="5" {{ request('rows') == '5' ? 'selected' : '' }}>5
-                                                lignes</option>
-                                            <option value="15" {{ request('rows') == '15' ? 'selected' : '' }}>15
-                                                lignes</option>
-                                            <option value="30" {{ request('rows') == '30' ? 'selected' : '' }}>30
-                                                lignes</option>
-                                            <option value="100" {{ request('rows') == '100' ? 'selected' : '' }}>100
-                                                lignes</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-md-6 col-lg-2 d-flex align-items-end">
-                                        <button type="submit" class="btn btn-primary w-100">
-                                            <i class="bi bi-filter-circle me-1"></i> Filtrer
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+        <div class="header-container mb-4">
+            <div class="row g-3">
+                <div class="col-md-6 col-lg-6">
+                    <label for="search" class="form-label small fw-bold text-muted">Recherche</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent"><i class="bi bi-search"></i></span>
+                        <input type="text" id="search" name="search" class="form-control border-start-0"
+                            placeholder="Nom, ID ou email" value="{{ request('search') }}">
                     </div>
                 </div>
+
+                <!-- Status Filter Dropdown -->
+                <div class="col-md-6 col-lg-3 filter-dropdown">
+                    <label for="statusFilter" class="form-label small fw-bold text-muted">Statut</label>
+                    <select id="statusFilter" class="form-select border border-primary text-primary"
+                        style=" font-weight: 500;"
+                        onchange="window.location.href='{{ route('coordonnateur.vacataires.index') }}?status=' + this.value">
+                        <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>
+                            Tous</option>
+                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
+                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive
+                        </option>
+                    </select>
+                </div>
+
+
+                <div class="col-md-6 col-lg-3 filter-dropdown">
+                    <label for="rowsFilter" class="form-label small fw-bold text-muted">Affichage</label>
+                    <select id="rowsFilter" class="form-select border border-primary text-primary"
+                        style=" font-weight: 500;"
+                        onchange="window.location.href='{{ route('coordonnateur.vacataires.index') }}?rows=' + this.value">
+                        <option value="5" {{ request('rows') == '5' ? 'selected' : '' }}>5
+                            lignes</option>
+                        <option value="15" {{ request('rows') == '15' ? 'selected' : '' }}>
+                            15
+                            lignes</option>
+                        <option value="30" {{ request('rows') == '30' ? 'selected' : '' }}>
+                            30
+                            lignes</option>
+                        <option value="100" {{ request('rows') == '100' ? 'selected' : '' }}>100
+                            lignes</option>
+                    </select>
+                </div>
             </div>
+
         </div>
+       
+
+        <style>
+            /* Custom styling for better appearance */
+            .filter-dropdown select {
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .filter-dropdown select:hover {
+                border-color: #4723d9 !important;
+                box-shadow: 0 0 0 2px rgba(71, 35, 217, 0.1);
+            }
+
+            .search-bar .input-group {
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            }
+
+            .search-bar .form-control:focus {
+                box-shadow: none;
+                border-color: #ced4da;
+            }
+
+            .search-bar .input-group-text {
+                transition: all 0.3s ease;
+            }
+
+            /* Responsive adjustments */
+            @media (max-width: 768px) {
+                .d-flex.flex-wrap {
+                    gap: 12px !important;
+                }
+
+                .filter-dropdown select,
+                .search-bar {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                }
+            }
+        </style>
 
         <div class="table-container mt-4 mb-5 flex-column">
             <div class="table-responsive p-3 ">
@@ -279,14 +483,61 @@
                                     </div>
                                 </td>
                                 <td class="text-center">
-                                    @if ($vacataire->userDetails)
+                                    @if ($vacataire->user_details)
                                         <span
-                                            class="badge rounded-pill bg-{{ $vacataire->userDetails->status == 'active' ? 'success' : 'danger' }}">
-                                            {{ $vacataire->userDetails->status == 'active' ? 'Actif' : 'Inactif' }}
+                                            class="status-indicator status-{{ $vacataire->user_details->status == 'active' ? 'active' : 'inactive' }}">
+                                            {{ $vacataire->user_details->status == 'active' ? 'Actif' : 'Inactif' }}
                                         </span>
                                     @else
-                                        <span class="badge rounded-pill bg-secondary">N/A</span>
+                                        <span class="status-undefined">-</span>
                                     @endif
+
+
+                                    <style>
+                                        /* Status indicator styling */
+                                        .status-indicator {
+                                            display: inline-block;
+                                            padding: 4px 8px;
+                                            border-radius: 12px;
+                                            font-size: 0.85rem;
+                                            font-weight: 500;
+                                        }
+
+                                        .status-active {
+                                            background-color: #e6f7ee;
+                                            color: #0a7b4c;
+                                        }
+
+                                        .status-inactive {
+                                            background-color: #feeceb;
+                                            color: #d92d20;
+                                        }
+
+                                        .status-undefined {
+                                            color: #6c757d;
+                                        }
+
+                                        /* Action buttons styling */
+                                        .action-btn {
+                                            padding: 0.25rem 0.5rem;
+                                            font-size: 0.875rem;
+                                            border-radius: 4px;
+                                            display: inline-flex;
+                                            align-items: center;
+                                            gap: 4px;
+                                        }
+
+                                        .btn-create {
+                                            background-color: #4723d9;
+                                            color: white;
+                                        }
+
+                                        .btn-create:hover {
+                                            background-color: #3a1cb3;
+                                        }
+                                    </style>
+
+
                                 </td>
                                 <td>
                                     <a href="mailto:{{ $vacataire->email }}"
@@ -295,8 +546,8 @@
                                 <td class="text-center">{{ $vacataire->created_at->format('Y-m-d') }}</td>
                                 <td>
                                     <div class="d-flex justify-content-center align-items-center gap-2">
-                                        <a href="{{ route('assign', $vacataire->id) }}" class="btn btn-sm btn-primary"
-                                            title="Assigner UE">
+                                        <a href="{{ route('assign', $vacataire->id) }}"
+                                            class="btn btn-sm btn-primary" title="Assigner UE">
                                             <i class="bi bi-journal-plus"></i>
                                         </a>
                                         <a href="{{ route('coordonnateur.vacataires.edit', $vacataire->id) }}"

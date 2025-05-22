@@ -80,15 +80,27 @@ class CoordonnateurController extends Controller
         $user = auth()->user();
 
         //list des vacatairee
+
         $vacataires = User::whereHas('role', function ($query) {
             $query->where('isvocataire', true);
         })->with('user_details')->simplePaginate(10);
 
 
-        // $modules = Module::where('filiere_id', $user->manage->id)
-        //     ->whereNull('professor_id')
-        //     ->orderBy('name')
-        //     ->get();
+        if (request('status')) {
+            if (request('status') !== "all")
+                $vacataires = User::whereHas('role', function ($query) {
+                    $query->where('isvocataire', true);
+                })->whereHas('user_details', function ($query) {
+                    $query->where('status', request('status'));
+                })->with('user_details')->simplePaginate(10);
+        }
+
+        if (request('rows')) {
+            $vacataires = User::whereHas('role', function ($query) {
+                $query->where('isvocataire', true);
+            })->with('user_details')->simplePaginate(request('rows'));
+        }
+
 
         return view('coordonnateur.vacataires.index', compact('vacataires'));
     }
