@@ -9,7 +9,7 @@ use App\Models\Student;
 
 use App\Models\User;
 use App\Models\task;
-use App\Models\pending_user;
+use App\Models\Filiere;
 use App\Models\user_log;
 use Illuminate\Support\Facades\Auth;
 
@@ -84,7 +84,12 @@ class homeController extends Controller
 
 
                $professorsMin = User::where('departement',$departmentName)->latest()->take(3)->get();
-               $module_requests = prof_request::where('type','module')->where('status','pending')->latest()->take(3)->get();
+           
+                  $FilieretargetIDs = Filiere::where('department_id', auth()->user()->manage->id)
+        ->pluck('id'); // Plucks all the IDs into a collection
+   
+        $module_requests = prof_request::whereIn('module_id', $FilieretargetIDs)->where('status','pending')->latest()->take(3)->get();
+
 
                 // Get user logs this week
                 $logs = user_log::whereBetween('created_at', [
