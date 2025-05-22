@@ -11,13 +11,14 @@ class Assignment extends Model
 
     protected $fillable = [
         'module_id', // Foreign key to modules table
-        'user_id',   // Foreign key to users table (professors or vacataires)
-        'role',      // Role in the assignment (e.g., 'enseignant', 'responsable')
-        'hours',     // Number of hours assigned
-        'is_responsible', // Boolean to indicate if this user is the module responsible
+        'prof_id',   // Foreign key to users table (professors or vacataires)
+        'hours',
+       'teach_cm',
+       'teach_tp',
+       'teach_td',
         'start_date', // Optional: Start date of the assignment
         'end_date',   // Optional: End date of the assignment
-        // Add any other relevant fields
+       
     ];
 
     public function module()
