@@ -1,92 +1,68 @@
 <x-coordonnateur_layout>
-    <div class="container-fluid px-4 py-4">
-
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-
+    <div class="container-fluid px-4 py-5">
         <!-- Header Section -->
-        <div
-            class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4 p-3 bg-white rounded shadow-sm">
-            <div>
-                <div class="d-flex align-items-center mb-2">
-                    <i class="fas fa-book-open fa-xl text-primary me-3"></i>
-                    <h1 class="h3 mb-0 text-gray-800">Gestion des Unités d'Enseignement</h1>
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-4 mb-5 p-5 bg-primary-subtle rounded-3 shadow-sm">
+            <div class="d-flex flex-column gap-2">
+                <div class="d-flex align-items-center gap-3">
+                    <i class="fas fa-book-open fa-2x text-primary"></i>
+                    <h1 class="h4 mb-0 fw-bold text-dark">Gestion des Unités d'Enseignement</h1>
                 </div>
-
-                <div class="d-flex flex-wrap gap-3">
-                    <div class="d-flex align-items-center">
-                        <span class="badge bg-light text-dark border">
-                            <i class="fas fa-graduation-cap me-1 text-primary"></i>
-                            Filière: <strong>{{ $filiere->name }}</strong>
-                        </span>
-                    </div>
-
-                    <div class="d-flex align-items-center">
-                        <span class="badge bg-light text-dark border">
-                            <i class="fas fa-user-tie me-1 text-primary"></i>
-                            Coordonnateur:
-                            <strong>{{ auth()->user()->lastname }} {{ auth()->user()->firstname }}</strong>
-                        </span>
-                    </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="badge bg-light text-dark border border-secondary-subtle">
+                        <i class="fas fa-graduation-cap me-1 text-primary"></i>
+                        Filière: <strong>{{ $filiere->name }}</strong>
+                    </span>
+                    <span class="badge bg-light text-dark border border-secondary-subtle">
+                        <i class="fas fa-user-tie me-1 text-primary"></i>
+                        Coordonnateur: <strong>{{ auth()->user()->lastname }} {{ auth()->user()->firstname }}</strong>
+                    </span>
                 </div>
             </div>
-
-            <a href="{{ route('coordonnateur.modules.create') }}" class="btn btn-primary d-flex align-items-center">
-                <i class="fas fa-plus-circle me-2"></i>
-                <span>Nouvelle UE</span>
+            <a href="{{ route('coordonnateur.modules.create') }}" class="btn btn-primary d-flex align-items-center gap-2">
+                <i class="fas fa-plus-circle"></i>
+                Nouvelle UE
             </a>
         </div>
 
         <!-- Search and Filter Card -->
-        <div class="card shadow-sm mb-4 border-0">
-            <div class="card-body p-3">
+        <div class="card mb-5 rounded-3 shadow-sm border-0">
+            <div class="card-body p-5">
                 <form action="{{ route('coordonnateur.modules.search') }}" method="POST">
                     @csrf
                     <div class="row g-3 align-items-end">
-                        <div class="col-md-4 col-lg-3">
-                            <label class="form-label small fw-bold text-muted">Semestre</label>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-medium text-muted">Semestre</label>
                             <select class="form-select" name="filterSemester" id="filterSemester">
                                 <option value="all">Tous les semestres</option>
                                 @for ($i = 1; $i <= 6; $i++)
-                                    <option value="{{ $i }}"
-                                        {{ request('filterSemester') == $i ? 'selected' : '' }}>
+                                    <option value="{{ $i }}" {{ request('filterSemester') == $i ? 'selected' : '' }}>
                                         Semestre {{ $i }}
                                     </option>
                                 @endfor
                             </select>
                         </div>
-
-                        <div class="col-md-4 col-lg-3">
-                            <label class="form-label small fw-bold text-muted">Statut</label>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-medium text-muted">Statut</label>
                             <select class="form-select" name="filterStatus" id="filterStatus">
                                 <option value="all">Tous statuts</option>
-                                <option value="active" {{ request('filterStatus') == 'active' ? 'selected' : '' }}>Actif
-                                </option>
-                                <option value="inactive" {{ request('filterStatus') == 'inactive' ? 'selected' : '' }}>
-                                    Inactif</option>
-
+                                <option value="active" {{ request('filterStatus') == 'active' ? 'selected' : '' }}>Actif</option>
+                                <option value="inactive" {{ request('filterStatus') == 'inactive' ? 'selected' : '' }}>Inactif</option>
                             </select>
                         </div>
-
-                        <div class="col-md-4 col-lg-4">
-                            <label class="form-label small fw-bold text-muted">Recherche</label>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-medium text-muted">Recherche</label>
                             <div class="input-group">
-                                <input type="text" class="form-control border-end-0"
-                                    placeholder="Code, intitulé ou responsable..." name="searchInput" id="searchInput"
-                                    value="{{ request('searchInput') }}">
-                                <button class="btn btn-outline-secondary border-start-0" type="submit">
-                                    <i class="fas fa-search"></i>
-                                </button>
+                                <span class="input-group-text bg-white border-end-0">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                                <input type="text" class="form-control border-start-0" placeholder="Code, intitulé ou responsable..." 
+                                       name="searchInput" id="searchInput" value="{{ request('searchInput') }}">
                             </div>
                         </div>
-
-                        <div class="col-md-12 col-lg-2">
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="fas fa-filter me-1"></i> Appliquer
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
+                                <i class="fas fa-filter"></i>
+                                Filtrer
                             </button>
                         </div>
                     </div>
@@ -97,50 +73,42 @@
         <!-- Search Results Section -->
         @if (isset($searchResults))
             <div class="collapse {{ $searchResults->isNotEmpty() ? 'show' : '' }}" id="searchResultsCollapse">
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0 fw-semibold">
-                            <i class="fas fa-search me-2"></i>
+                <div class="card mb-5 rounded-3 shadow-sm border-0">
+                    <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 fw-semibold d-flex align-items-center gap-2">
+                            <i class="fas fa-search text-muted"></i>
                             Résultats ({{ $searchResults->count() }})
                         </h6>
-                        <button class="btn btn-sm btn-link text-decoration-none" type="button"
-                            data-bs-toggle="collapse" data-bs-target="#searchResultsCollapse">
+                        <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="collapse" data-bs-target="#searchResultsCollapse">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
-
                     @if ($searchResults->isNotEmpty())
                         <div class="card-body p-0">
                             <div class="list-group list-group-flush">
                                 @foreach ($searchResults as $module)
-                                    <div class="list-group-item">
-                                        <div
-                                            class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
-                                            <div class="mb-2 mb-md-0">
-                                                <h6 class="mb-1 fw-semibold">{{ $module->code }} - {{ $module->name }}
-                                                </h6>
-                                                <div class="d-flex flex-wrap gap-3">
-                                                    <small class="text-muted">
-                                                        <i class="fas fa-calendar me-1"></i> S{{ $module->semester }}
-                                                    </small>
-                                                    <small class="text-muted">
-                                                        <i class="fas fa-clock me-1"></i>
-                                                        {{ $module->cm_hours + $module->td_hours + $module->tp_hours }}h
-                                                    </small>
-                                                    <span
-                                                        class="badge bg-{{ $module->status === 'active' ? 'success' : 'danger' }}">
+                                    <div class="list-group-item border-0 py-4 px-4">
+                                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                                            <div>
+                                                <h6 class="mb-1 fw-semibold text-dark">{{ $module->code }} - {{ $module->name }}</h6>
+                                                <div class="d-flex flex-wrap gap-3 text-sm text-muted">
+                                                    <span><i class="fas fa-calendar me-1"></i> S{{ $module->semester }}</span>
+                                                    <span><i class="fas fa-clock me-1"></i> {{ $module->cm_hours + $module->td_hours + $module->tp_hours }}h</span>
+                                                    <span class="badge {{ $module->status === 'active' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }}">
                                                         {{ $module->status === 'active' ? 'Actif' : 'Inactif' }}
                                                     </span>
                                                 </div>
                                             </div>
                                             <div class="d-flex gap-2">
-                                                <a href="{{ route('coordonnateur.modules.show', $module->id) }}"
-                                                    class="btn btn-sm btn-outline-primary">
-                                                    <i class="fas fa-eye me-1"></i> Détails
+                                                <a href="{{ route('coordonnateur.modules.show', $module->id) }}" 
+                                                   class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1">
+                                                    <i class="fas fa-eye"></i>
+                                                    Détails
                                                 </a>
-                                                <a href="{{ route('coordonnateur.modules.edit', $module->id) }}"
-                                                    class="btn btn-sm btn-outline-secondary">
-                                                    <i class="fas fa-edit me-1"></i> Modifier
+                                                <a href="{{ route('coordonnateur.modules.edit', $module->id) }}" 
+                                                   class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1">
+                                                    <i class="fas fa-edit"></i>
+                                                    Modifier
                                                 </a>
                                             </div>
                                         </div>
@@ -149,9 +117,9 @@
                             </div>
                         </div>
                     @else
-                        <div class="card-body">
-                            <div class="alert alert-info mb-0">
-                                <i class="fas fa-info-circle me-2"></i>
+                        <div class="card-body p-4">
+                            <div class="alert alert-info mb-0 d-flex align-items-center gap-2">
+                                <i class="fas fa-info-circle"></i>
                                 Aucun résultat ne correspond à votre recherche
                             </div>
                         </div>
@@ -159,154 +127,115 @@
                 </div>
             </div>
         @endif
-    </div>
 
-
-    <div class="container-fluid px-4 py-4">
-
-
+        <!-- Semester Cards -->
         @foreach ($semesters as $semesterName => $modules)
-            <div class="card shadow-sm mb-4 border-0 p-3">
-
-                {{-- 
-    <div class="card shadow-sm mb-4 border-0">
-        <div class="card-body p-3"> --}}
-
-
-                <!-- En-tête amélioré -->
-                <div class="card-header bg-light d-flex justify-content-between align-items-center flex-wrap py-2">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-calendar-alt text-primary me-2 fs-5"></i>
-                        <h5 class="mb-0 fw-semibold">Semestre {{ $semesterName }}</h5>
-                    </div>
-
-                    <div class="d-flex flex-wrap gap-3 align-items-center">
-                        <div class="d-flex align-items-center text-muted">
-                            <i class="fas fa-book me-1"></i>
-                            <span>{{ $modules->count() }} Modules</span>
+            <div class="card mb-5 rounded-3 shadow-sm border-0">
+                <div class="card-header bg-light border-bottom py-3 px-4">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-primary-subtle p-2 rounded-3">
+                                <i class="fas fa-calendar-alt text-primary"></i>
+                            </div>
+                            <h5 class="mb-0 fw-semibold text-dark">Semestre {{ $semesterName }}</h5>
                         </div>
-
-                        <div class="d-flex align-items-center text-muted">
-                            <i class="fas fa-hourglass-half me-1"></i>
-                            <span>{{ $modules->sum('credits') }} ECTS</span>
+                        <div class="d-flex flex-wrap gap-3 text-sm text-muted">
+                            <span class="d-flex align-items-center gap-1">
+                                <i class="fas fa-book"></i>
+                                {{ $modules->count() }} Modules
+                            </span>
+                            <span class="d-flex align-items-center gap-1">
+                                <i class="fas fa-hourglass-half"></i>
+                                {{ $modules->sum('credits') }} ECTS
+                            </span>
+                            @if ($modules->where('status', 'inactive')->count() > 0)
+                                <span class="badge bg-warning-subtle text-warning d-flex align-items-center gap-1">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    {{ $modules->where('status', 'inactive')->count() }} Non assignés
+                                </span>
+                            @else
+                                <span class="badge bg-success-subtle text-success d-flex align-items-center gap-1">
+                                    <i class="fas fa-check-circle"></i>
+                                    Planification OK
+                                </span>
+                            @endif
                         </div>
-
-                        @if ($modules->where('status', 'inactive')->count() > 0)
-                            <span class="badge bg-warning rounded-pill py-2">
-                                <i class="fas fa-exclamation-triangle me-1"></i>
-                                {{ $modules->where('status', 'inactive')->count() }} Non assignés
-                            </span>
-                        @else
-                            <span class="badge bg-success rounded-pill py-2">
-                                <i class="fas fa-check-circle me-1"></i>
-                                Planification OK
-                            </span>
-                        @endif
                     </div>
                 </div>
-
-                <!-- Tableau optimisé -->
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
+                        <thead class="bg-light">
                             <tr>
-                                <th width="100" class="ps-3">Code</th>
-                                <th>Intitulé</th>
-                                <th width="90">Crédits</th>
-                                <th width="160">Volume Horaire</th>
-                                <th width="120">Statut</th>
-                                <th width="180" class="pe-3 text-end">Actions</th>
+                                <th class="px-4 py-3 text-sm fw-semibold text-muted">Code</th>
+                                <th class="px-4 py-3 text-sm fw-semibold text-muted">Intitulé</th>
+                                <th class="px-4 py-3 text-sm fw-semibold text-muted">Crédits</th>
+                                <th class="px-4 py-3 text-sm fw-semibold text-muted">Volume Horaire</th>
+                                <th class="px-4 py-3 text-sm fw-semibold text-muted">Statut</th>
+                                <th class="px-4 py-3 text-sm fw-semibold text-muted text-end">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="border-top-0">
                             @foreach ($modules as $module)
-                                <tr>
-                                    <!-- Colonne Code -->
-                                    <td class="ps-3 fw-bold text-primary">
-                                        {{ $module->code }}
-                                    </td>
-
-                                    <!-- Colonne Intitulé améliorée -->
-                                    <td>
+                                <tr data-semester="{{ $module->semester }}" data-status="{{ $module->status }}">
+                                    <td class="px-4 py-3 fw-medium text-primary">{{ $module->code }}</td>
+                                    <td class="px-4 py-3">
                                         <div class="d-flex flex-column">
-                                            <span class="fw-semibold">{{ $module->name }}</span>
+                                            <span class="fw-medium text-dark">{{ $module->name }}</span>
                                             <small class="text-muted">
-                                                Resp:
+                                                Resp: 
                                                 @if ($module->responsable)
-                                                    <span
-                                                        class="fw-medium">{{ $module->responsable->lastname }}</span>
+                                                    <span class="fw-medium">{{ $module->responsable->lastname }}</span>
                                                 @else
                                                     <span class="text-danger">Non assigné</span>
                                                 @endif
                                             </small>
                                         </div>
                                     </td>
-
-                                    <!-- Colonne Crédits -->
-                                    <td>
-                                        <span class="badge bg-secondary bg-opacity-10 text-white">
+                                    <td class="px-4 py-3">
+                                        <span class="badge bg-light text-dark border border-secondary-subtle">
                                             {{ $module->credits }} ECTS
                                         </span>
                                     </td>
-
-                                    <!-- Colonne Volume Horaire optimisée -->
-                                    <td>
+                                    <td class="px-4 py-3">
                                         <div class="d-flex flex-wrap gap-2">
-                                            <span class="badge bg-primary bg-opacity-10 text-white ">
+                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
                                                 CM: {{ $module->cm_hours }}h
                                             </span>
-                                            <span class="badge bg-primary bg-opacity-10 text-white ">
-                                                TP: {{ $module->tp_hours }}h
-                                            </span>
-                                            <span class="badge bg-primary bg-opacity-10 text-white ">
+                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
                                                 TD: {{ $module->td_hours }}h
                                             </span>
-                                            <span class="badge bg-primary bg-opacity-10 text-white ">
-                                                Autre: {{ $module->autre_hours }}h
+                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                                                TP: {{ $module->tp_hours }}h
                                             </span>
-
-
                                         </div>
                                     </td>
-
-                                    <!-- Colonne Statut améliorée -->
-                                    <td>
-                                        <span
-                                            class="badge rounded-pill py-2 {{ $module->status === 'active' ? 'bg-success' : 'bg-danger' }}">
-                                            <i
-                                                class="fas {{ $module->status === 'active' ? 'fa-check-circle' : 'fa-times-circle' }} me-1"></i>
+                                    <td class="px-4 py-3">
+                                        <span class="badge {{ $module->status === 'active' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }} d-flex align-items-center gap-1">
+                                            <i class="fas {{ $module->status === 'active' ? 'fa-check-circle' : 'fa-times-circle' }}"></i>
                                             {{ $module->status === 'active' ? 'Actif' : 'Inactif' }}
                                         </span>
                                     </td>
-
-                                    <!-- Colonne Actions optimisée -->
-                                    <td class="pe-3 text-end">
-                                        <div class="btn-group btn-group-sm" role="group">
-                                            <!-- Bouton Éditer -->
-                                            <a href="{{ route('coordonnateur.modules.edit', $module->id) }}"
-                                                class="btn btn-outline-primary px-3" title="Modifier"
-                                                data-bs-toggle="tooltip">
+                                    <td class="px-4 py-3 text-end">
+                                        <div class="d-flex justify-content-end gap-1">
+                                            <a href="{{ route('coordonnateur.modules.edit', $module->id) }}" 
+                                               class="btn btn-sm btn-outline-secondary rounded-circle p-2" 
+                                               data-bs-toggle="tooltip" title="Modifier">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-
-                                            <!-- Bouton Assigner -->
-                                            <a href="{{ route('coordonnateur.modules.assigner', $module->id) }}"
-                                                class="btn btn-outline-success px-3" title="Assigner vacataires"
-                                                data-bs-toggle="tooltip">
+                                            <a href="{{ route('coordonnateur.modules.assigner', $module->id) }}" 
+                                               class="btn btn-sm btn-outline-success rounded-circle p-2" 
+                                               data-bs-toggle="tooltip" title="Assigner">
                                                 <i class="fas fa-user-plus"></i>
                                             </a>
-
-                                            <!-- Bouton Voir -->
-                                            <a href="{{ route('coordonnateur.modules.show', $module->id) }}"
-                                                class="btn btn-outline-info px-3" title="Détails"
-                                                data-bs-toggle="tooltip">
+                                            <a href="{{ route('coordonnateur.modules.show', $module->id) }}" 
+                                               class="btn btn-sm btn-outline-primary rounded-circle p-2" 
+                                               data-bs-toggle="tooltip" title="Détails">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-
-                                            <!-- Bouton Supprimer -->
-                                            <button class="btn btn-outline-danger px-3 delete-module"
-                                                data-id="{{ $module->id }}" data-name="{{ $module->name }}"
-                                                title="Supprimer" data-bs-toggle="tooltip">
+                                            <button class="btn btn-sm btn-outline-danger rounded-circle p-2 delete-module" 
+                                                    data-id="{{ $module->id }}" 
+                                                    data-name="{{ $module->name }}"
+                                                    data-bs-toggle="tooltip" title="Supprimer">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </div>
@@ -319,21 +248,23 @@
             </div>
         @endforeach
 
-        <!-- Modal de confirmation de suppression -->
+        <!-- Delete Confirmation Modal -->
         <div class="modal fade" id="deleteModuleModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title">Confirmer la suppression</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content rounded-3 border-0 shadow">
+                    <div class="modal-header bg-danger text-white border-0 py-3 px-4">
+                        <h5 class="modal-title fw-semibold">Confirmer la suppression</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <p>Voulez-vous vraiment supprimer le module <strong id="moduleNameToDelete"></strong> ?</p>
-                        <p class="text-danger">Cette action est irréversible !</p>
+                    <div class="modal-body p-4">
+                        <p class="text-dark">Voulez-vous vraiment supprimer le module <strong id="moduleNameToDelete" class="fw-semibold"></strong> ?</p>
+                        <p class="text-danger mt-2 d-flex align-items-center gap-2">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Cette action est irréversible !
+                        </p>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <div class="modal-footer border-0 p-4 pt-0">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                         <form id="deleteModuleForm" method="POST">
                             @csrf
                             @method('DELETE')
@@ -343,103 +274,144 @@
                 </div>
             </div>
         </div>
-
-        @push('styles')
-            <style>
-                /* Styles optimisés */
-                .table th {
-                    font-size: 0.85rem;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                }
-
-                .badge {
-                    font-weight: 500;
-                }
-
-                .btn-group-sm .btn {
-                    padding: 0.35rem 0.5rem;
-                }
-
-                @media (max-width: 768px) {
-                    .card-header {
-                        flex-direction: column;
-                        align-items: flex-start;
-                        gap: 0.5rem;
-                    }
-
-                    .table-responsive {
-                        font-size: 0.9rem;
-                    }
-                }
-            </style>
-        @endpush
-
-        @push('scripts')
-            <script>
-                // Activation des tooltips
-                document.addEventListener('DOMContentLoaded', function() {
-                    // Tooltips
-                    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                    tooltipTriggerList.map(function(tooltipTriggerEl) {
-                        return new bootstrap.Tooltip(tooltipTriggerEl);
-                    });
-
-                    // Gestion de la suppression
-                    document.querySelectorAll('.delete-module').forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            const moduleId = this.dataset.id;
-                            const moduleName = this.dataset.name;
-
-                            document.getElementById('moduleNameToDelete').textContent = moduleName;
-                            document.getElementById('deleteModuleForm').action =
-                                `/coordonnateur/modules/${moduleId}`;
-
-                            new bootstrap.Modal(document.getElementById('deleteModuleModal')).show();
-                        });
-                    });
-                });
-            </script>
-        @endpush
-
-
     </div>
 
+    @push('styles')
+        <style>
+            body {
+                font-family: system-ui, -apple-system, sans-serif;
+                background-color: #f8f9fa;
+            }
+
+            .card {
+                border-radius: 0.5rem;
+                overflow: hidden;
+            }
+
+            .shadow-sm {
+                box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            }
+
+            .table th, .table td {
+                vertical-align: middle;
+            }
+
+            .table-hover tbody tr:hover {
+                background-color: #f1f3f5;
+            }
+
+            .form-select, .form-control {
+                transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            }
+
+            .btn-close-white {
+                filter: invert(1);
+            }
+
+            .badge {
+                font-weight: 500;
+                padding: 0.35em 0.65em;
+            }
+
+            .rounded-circle {
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* Responsive adjustments */
+            @media (max-width: 768px) {
+                .table-responsive {
+                    -webkit-overflow-scrolling: touch;
+                }
+                .table th, .table td {
+                    font-size: 0.875rem;
+                    padding: 0.5rem;
+                }
+                .btn-sm {
+                    font-size: 0.75rem;
+                    padding: 0.25rem 0.5rem;
+                }
+            }
+        </style>
+    @endpush
 
     @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
-            $(document).ready(function() {
+            document.addEventListener('DOMContentLoaded', () => {
                 // Initialize tooltips
-                $('[data-bs-toggle="tooltip"]').tooltip();
+                document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+                    new bootstrap.Tooltip(el, {
+                        placement: 'top',
+                        trigger: 'hover'
+                    });
+                });
 
-                // Filter functionality
-                function applyFilters() {
-                    const semester = $('#filterSemester').val();
-                    const status = $('#filterStatus').val();
-                    const search = $('#searchInput').val().toLowerCase();
+                // Delete module handling
+                document.querySelectorAll('.delete-module').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const moduleId = btn.dataset.id;
+                        const moduleName = btn.dataset.name;
 
-                    $('.card').each(function() {
-                        const card = $(this);
-                        const semesterMatch = semester === 'all' || card.find('tbody tr').data('semester') ==
-                            semester;
-                        const hasVisibleRows = card.find('tbody tr').filter(function() {
-                            const rowStatus = $(this).data('status');
-                            const rowText = $(this).text().toLowerCase();
+                        document.getElementById('moduleNameToDelete').textContent = moduleName;
+                        document.getElementById('deleteModuleForm').action = `/coordonnateur/modules/${moduleId}`;
 
+                        new bootstrap.Modal(document.getElementById('deleteModuleModal'), {
+                            backdrop: 'static',
+                            keyboard: false
+                        }).show();
+                    });
+                });
+
+                // Optimized filter functionality
+                const applyFilters = debounce(() => {
+                    const semester = document.getElementById('filterSemester').value;
+                    const status = document.getElementById('filterStatus').value;
+                    const search = document.getElementById('searchInput').value.toLowerCase().trim();
+
+                    document.querySelectorAll('.card[data-semester]').forEach(card => {
+                        const rows = card.querySelectorAll('tbody tr');
+                        let hasVisibleRows = false;
+
+                        rows.forEach(row => {
+                            const rowSemester = row.dataset.semester;
+                            const rowStatus = row.dataset.status;
+                            const rowText = row.textContent.toLowerCase();
+
+                            const semesterMatch = semester === 'all' || rowSemester == semester;
                             const statusMatch = status === 'all' || status == rowStatus;
                             const searchMatch = search === '' || rowText.includes(search);
 
-                            return statusMatch && searchMatch;
-                        }).toggle(statusMatch && searchMatch).length > 0;
+                            row.style.display = semesterMatch && statusMatch && searchMatch ? '' : 'none';
+                            if (semesterMatch && statusMatch && searchMatch) hasVisibleRows = true;
+                        });
 
-                        card.toggle(semesterMatch && hasVisibleRows);
+                        card.style.display = hasVisibleRows ? '' : 'none';
                     });
+                }, 300);
+
+                // Debounce utility
+                function debounce(func, wait) {
+                    let timeout;
+                    return function executedFunction(...args) {
+                        const later = () => {
+                            clearTimeout(timeout);
+                            func(...args);
+                        };
+                        clearTimeout(timeout);
+                        timeout = setTimeout(later, wait);
+                    };
                 }
 
-                $('#filterSemester, #filterStatus').on('change', applyFilters);
-                $('#searchInput').on('keyup', applyFilters);
+                // Event listeners
+                document.getElementById('filterSemester').addEventListener('change', applyFilters);
+                document.getElementById('filterStatus').addEventListener('change', applyFilters);
+                document.getElementById('searchInput').addEventListener('input', applyFilters);
 
+                // Initial filter application
+                applyFilters();
             });
         </script>
     @endpush

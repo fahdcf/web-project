@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\admin_action;
 use App\Models\chef_action;
 use App\Models\prof_request;
-use App\Models\student;
+use App\Models\Student;
+
 use App\Models\User;
 use App\Models\task;
 use App\Models\Filiere;
@@ -30,13 +31,16 @@ use Carbon\Carbon;
 
 class homeController extends Controller
 {
+    
     public function index()
     {
+                // dd(auth()->user()->role);
+
         if (Auth::check()) {
             if (Auth()->user()->role->isadmin) {
 
 
-                $studentCount = student::get()->count();
+                $studentCount = Student::get()->count();
                 $professorCount = User::get()->count();
                 $adminsHistory = admin_action::latest()->take(4)->get();
                 $tasks = task::where('user_id', auth()->user()->id)->latest()->take(5)->get();
@@ -134,6 +138,7 @@ class homeController extends Controller
                 return redirect()->route('professor.dashboard');
             } else {
                 return view('dashboard');
+
             }
         } else {
             return redirect('login');

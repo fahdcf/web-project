@@ -35,6 +35,12 @@ class ModuleController extends Controller
         }
 
 
+
+
+
+        $modules=Module::where('filiere_id', $user->manage->id)->get();
+
+
         $filiere = $user->manage;
         $allVacataires = User::whereHas('role', function ($query) {
             $query->where('isvocataire', true);
@@ -44,7 +50,8 @@ class ModuleController extends Controller
             'filiere' => $filiere,
             'allVacataires' => $allVacataires,
             'semesters' => $semestersData,
-            'searchResults' => null
+            'searchResults' => null,
+            'modules'=>$modules
         ]);
     }
 

@@ -72,7 +72,7 @@ class User extends Authenticatable
 
         $assaigns=Assignment::where('prof_id',$this->id)->get();
 
-        $hours=0;
+        $modules = Module::where('professor_id', $this->id)->get();
 
         if($assaigns){
 
@@ -85,7 +85,6 @@ class User extends Authenticatable
         }
 
         return $hours;
-
     }
 
 
@@ -99,7 +98,22 @@ class User extends Authenticatable
     public function modules()
     {
         // Un module peut être enseigné par plusieurs utilisateurs (professeurs et vacataires), et un utilisateur peut enseigner dans plusieurs modules
-        return $this->belongsToMany(Module::class, 'module_user')->withPivot('hours', 'role');
+        return $this->hasMany(Module::class, 'professor_id');
+    }
+
+
+    // public function getCoordonatedFiliere()
+    // {
+    //     if($this->role->iscoordonnateur) {
+    //         return Filiere::where('coordonnateur_id', $this->id)->first();
+    //     } else abort(403,"you are not a coordinator for this action . log in first..");
+    // }
+
+
+
+    public function modulesVacataire()
+    {
+        return $this->belongsToMany(Module::class, 'module_user')->withPivot('role', 'hours');
     }
 
     public function filieres()
@@ -124,5 +138,11 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return (bool) optional($this->role)->isadmin;
+    }
+    //////////////////////////////////////////////////////
+
+    public function assignedModules()
+    {
+        return $this->belongsToMany(Module::class, 'assignments', 'prof_id', 'module_id');
     }
 }

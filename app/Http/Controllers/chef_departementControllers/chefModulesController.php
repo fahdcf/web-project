@@ -10,7 +10,7 @@ use App\Models\Assignment;
 use App\Models\prof_request;
 
 use App\Models\Departement;
-use App\Models\filiere;
+use App\Models\Filiere;
 
  use App\Models\admin_action;
 class chefModulesController extends Controller
@@ -23,7 +23,7 @@ class chefModulesController extends Controller
             $FilieretargetIDs = Filiere::where('department_id', auth()->user()->manage->id)
         ->pluck('id'); // Plucks all the IDs into a collection
 
-        $filieres=filiere::where('department_id',auth()->user()->manage->id)->get();
+        $filieres=Filiere::where('department_id',auth()->user()->manage->id)->get();
         
 $modules = Module::whereNot('professor_id', null)->whereIn('filiere_id', $FilieretargetIDs)
     ->where(function ($query) {
@@ -47,7 +47,7 @@ $modules = Module::whereNot('professor_id', null)->whereIn('filiere_id', $Filier
             $FilieretargetIDs = Filiere::where('department_id', auth()->user()->manage->id)
         ->pluck('id'); // Plucks all the IDs into a collection
 
-        $filieres=filiere::where('department_id',auth()->user()->manage->id)->get();
+        $filieres=Filiere::where('department_id',auth()->user()->manage->id)->get();
         
  //$modules = Module::where('professor_id', null)->whereIn('filiere_id', $FilieretargetIDs)->get();
 

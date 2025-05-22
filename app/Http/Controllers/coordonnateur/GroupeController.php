@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\coordonnateur;
 
 use App\Http\Controllers\Controller;
-
-
+use App\Models\Assignment;
 use App\Models\Filiere;
 use App\Models\Group;
 
@@ -93,7 +92,7 @@ class GroupeController extends Controller
             : [2, 4, 6];  // Semestres pairs (Printemps)
 
         // Chargement des modules pour le type de semestre courant
-        $modules = Module::with(['tdGroups', 'tpGroups', 'professor', 'responsable'])
+        $modules = Module::with(['professor', 'responsable'])
             ->where('filiere_id', $filiere->id)
             ->where('status', 'active')
             ->whereIn('semester', $targetSemesters)
@@ -224,9 +223,6 @@ class GroupeController extends Controller
         }
     }
 
-    ///////////////////////////////////////////
-
-
 
     ////////////////////////////////
     public function configureNextSemester()
@@ -249,7 +245,7 @@ class GroupeController extends Controller
             : [2, 4, 6];  // Semestres pairs (Printemps)
 
         // Chargement des modules pour le type de semestre courant
-        $modules = Module::with(['tdGroups', 'tpGroups', 'professor', 'responsable'])
+        $modules = Module::with(['professor', 'responsable'])
             ->where('filiere_id', $filiere->id)
             ->where('status', 'active')
             ->whereIn('semester', $targetSemesters)
@@ -269,50 +265,118 @@ class GroupeController extends Controller
         ]);
     }
 
-    // public function saveNextSemesterConfig(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'groups.td.*.max_students' => 'required|integer|min:10|max:50',
-    //         'groups.tp.*.max_students' => 'required|integer|min:5|max:30',
-    //         'groups.td.*.annee' => 'required|integer',
-    //         'groups.tp.*.annee' => 'required|integer'
-    //     ]);
-
-    //     // Get the next semester data
-    //     $nextSemester = $this->getNextSemester();
-    //     $academicYear = $nextSemester['academic_year'];
-
-    //     // Process TD groups
-    //     foreach ($validated['groups']['td'] ?? [] as $groupId => $data) {
-    //         Groupe::where('id', $groupId)
-    //             ->where('type', 'TD')
-    //             ->update([
-    //                 'max_students' => $data['max_students'],
-    //                 'annee' => $academicYear
-    //             ]);
-    //     }
-
-    //     // Process TP groups
-    //     foreach ($validated['groups']['tp'] ?? [] as $groupId => $data) {
-    //         Groupe::where('id', $groupId)
-    //             ->where('type', 'TP')
-    //             ->update([
-    //                 'max_students' => $data['max_students'],
-    //                 'annee' => $academicYear
-    //             ]);
-    //     }
-
-    //     return back()->with('success', 'Configuration enregistrée avec succès!');
-    // }
-
-    private function updateGroups(array $groups, string $model)
+    ///////////////////////////////////////////////////////////////////////////////////////////
+    public function mesModules()
     {
-        foreach ($groups as $id => $data) {
-            $model::find($id)->update([
-                'professor_id' => $data['professor_id'],
-                'max_students' => $data['max_students']
-            ]);
-        }
+
+
+        $user = auth()->user();
+        $modules = $user->assignedModules()->with('filiere')
+            ->get();
+
+
+        return view('modules.mesModules', [
+            'modules' => $modules
+        ]);
     }
 
+
+    // public function availableModules()
+    // {
+    //     $groupes = Groupe::whereNull('user_id')
+    //         ->with(['module' => function ($query) {
+    //             $query->withCount([
+    //                 'groupes as cm_groups_count' => function ($query) {
+    //                     $query->where('type', 'cm')->whereNull('user_id');
+    //                 },
+    //                 'groupes as td_groups_count' => function ($query) {
+    //                     $query->where('type', 'td')->whereNull('user_id');
+    //                 },
+    //                 'groupes as tp_groups_count' => function ($query) {
+    //                     $query->where('type', 'tp')->whereNull('user_id');
+    //                 }
+    //             ]);
+    //         }])
+    //         ->get();
+
+    //     return view('modules.availableModules', compact('groupes'));
+    // }
+    ///////////////////////////
+
+    // public function availableModules()
+    // {
+    //     // Get unique modules with available groups count
+    //     $modules = Module::with(['filiere', 'responsable'])
+
+    //         ->get();
+
+    //     return view('modules.availableModules', compact('modules'));
+    // }
+
+    public function availableModules(Request $request)
+    {
+        // $modules = Module::query()
+        //     ->with(['filiere', 'responsable'])
+        //     ->whereDoesntHave('assignments')
+        //     ->where('status', 'active')
+        //     ->get();
+
+        $modules = Module::with(['filiere', 'responsable', 'assignments'])
+            ->where('status', 'active')
+            ->where(function ($query) {
+                // Modules sans aucune assignation
+                $query->doesntHave('assignments')
+                    ->orWhereHas('assignments', function ($q) {
+                        // Ou modules avec au moins un type non assigné
+                        $q->where('teach_cm', false)
+                            ->orWhere('teach_td', false)
+                            ->orWhere('teach_tp', false);
+                    });
+            })
+            ->get();
+
+
+
+
+        return view('modules.availableModules', compact('modules'));
+    }
+
+
+
+
+    //     public function availableModules()
+    // {
+    //     // Get all groups with module and filter only the available ones
+    //     $allGroupes = Groupe::with('module.filiere', 'module.responsable')
+    //         ->get();
+
+    //     // Group all groupes by module_id
+    //     $modulesGrouped = $allGroupes->groupBy('module_id');
+
+    //     // Prepare final modules array
+    //     $modules = [];
+
+    //     foreach ($modulesGrouped as $moduleId => $groupes) {
+    //         $module = $groupes->first()->module;
+
+    //         $availableCM = $groupes->where('type', 'CM')->whereNull('user_id')->count();
+    //         $availableTD = $groupes->where('type', 'TD')->whereNull('user_id')->count();
+    //         $availableTP = $groupes->where('type', 'TP')->whereNull('user_id')->count();
+
+    //         $modules[] = [
+    //             'module' => $module,
+    //             'available' => [
+    //                 'CM' => $availableCM,
+    //                 'TD' => $availableTD,
+    //                 'TP' => $availableTP,
+    //             ]
+    //         ];
+    //     }
+
+    //     return view('modules.availableModules', compact('modules'));
+    // }
+
 }
+
+
+                            ////////////////////////////////////

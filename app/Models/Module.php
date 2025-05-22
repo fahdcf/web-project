@@ -12,35 +12,6 @@ class Module extends Model
     protected $table = 'modules'; // Vérifiez cette ligne
     use HasFactory;
 
-    // Liste des statuts possibles
-
-    // protected $fillable = [
-    //     'code',
-    //     'name',
-    //     'credits',
-    //     'evaluation',
-    //     'specialite',
-    //     'semester',
-    //     'description',
-
-    //     'cm_hours',
-    //     'td_hours',
-    //     'tp_hours',
-    //     'autre_hours',
-
-    //     'status',
-    //     'type',
-    //     'parent_id',
-
-    //     'filiere_id',
-    //     'professor_id',
-    //     'responsable_id',
-
-    //     // 'nb_groupes_td',
-    //     // 'nb_groupes_tp',
-
-    // ];
-
     protected $guarded = [];
 
      public function assignment()
@@ -56,16 +27,17 @@ class Module extends Model
         return $this->belongsTo(User::class, 'professor_id'); // A module belongs to a professor
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'module_user');
+    }
+
     public function responsable()
     {
         return $this->belongsTo(User::class, 'responsable_id'); // A module belongs to a professor
     }
 
-    public function users()
-    {
-
-        return $this->belongsToMany(User::class, 'module_user')->withPivot('role', 'hours');
-    }
+   
 
 
     // Relation avec la filière
@@ -136,21 +108,54 @@ class Module extends Model
         return $this->cm_hours + $this->td_hours + $this->tp_hours;
     }
 
+    public function seances()
+    {
+        return $this->hasMany(Seance::class);
+    }
 
     /////////////////////////////////////////////////
-    public function groupes()
+    // public function groupes()
+    // {
+    //     return $this->hasMany(Groupe::class,); // A module has many groupes 
+    // }
+
+    // public function tdGroups(): HasMany
+    // {
+    //     return $this->groupes()->where('type', 'TD');
+    // }
+
+    // public function tpGroups(): HasMany
+    // {
+    //     return $this->groupes()->where('type', 'TP');
+    // }
+
+    ///////////////////////////////
+    public function requests()
     {
-        return $this->hasMany(Groupe::class,); // A module has many groupes 
+        return $this->hasMany(prof_request::class, 'target_id')->where('type', 'module');;
+    }
+    ////////
+
+
+    public function notes()
+    {
+        return $this->hasMany(Note::class);
     }
 
-    public function tdGroups(): HasMany
+
+
+    public function students()
     {
-        return $this->groupes()->where('type', 'TD');
+        return $this->belongsToMany(Student::class, 'notes')
+            ->withPivot('note', 'session_type', 'semester');
     }
 
-    public function tpGroups(): HasMany
+    /////////////////////////////////////////////////////////////////////////////////
+    // Dans Module.php
+    public function assignments()
     {
-        return $this->groupes()->where('type', 'TP');
+        return $this->hasMany(Assignment::class);
     }
+    
 }
 ////////////////////

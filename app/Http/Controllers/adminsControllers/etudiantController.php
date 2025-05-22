@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Redirect;
 use App\Models\Departement;
 use App\Models\admin_action;
 
-use App\Models\filiere;
+use App\Models\Filiere;
 use App\Models\Role;
 
 use Illuminate\Support\Facades\Notification;
@@ -31,7 +31,7 @@ class etudiantController extends Controller
         $etudiants = student::orderBy('created_at', 'desc')
         ->simplePaginate(7);
     
-        $filieres=filiere::all();
+        $filieres=Filiere::all();
     
     
         return view('admin.etudiants',['etudiants' => $etudiants,'filieres'=>$filieres]);

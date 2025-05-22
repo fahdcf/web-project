@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Validator;
 class vacataireController extends Controller
 {
 
+
     public function index(Request $request)
     {
         $query = User::where('role', 'vacataire')->with('userDetails');
@@ -297,4 +298,24 @@ class vacataireController extends Controller
             ->route('assign', $vacataire->id)
             ->with('success', 'Assignation mise à jour avec succès');
     }
+
+    ////////////////
+
+    // groupe controller(new way)
+
+    // public function mesModules()
+    // {
+    //     $vacataire = auth()->user();
+
+    //     $modules = $vacataire->modulesVacataire()
+
+    //         ->with('filiere') // Chargement anticipé de la filière
+    //         ->orderBy('semester')
+    //         ->get();
+
+
+    //     return view('modules.mesModules', [
+    //         'modules' => $modules
+    //     ]);
+    // }
 }

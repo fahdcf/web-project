@@ -20,6 +20,8 @@ class Groupe extends Model
         return $this->belongsTo(Module::class);
     }
 
+    
+
 
 
     public function students(){
