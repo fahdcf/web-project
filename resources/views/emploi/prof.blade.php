@@ -307,7 +307,7 @@
 
 
 
-                
+
 
                 <a href="{{ route('emploi.my-timetable.export') }}"
                     class="btn btn-primary rounded fw-semibold my-2 me-2">
@@ -341,7 +341,11 @@
                 @endif
 
                 @if ($prof_id && $seances->isEmpty())
+                    @if (Route::currentRouteName() === 'emploi.myTimetable')
+                    Aucune séance trouvée pour vous , (les emploix du temps est pas configuree par les coordonnateur des filieres)
+                    @else
                     <p class="text-muted">Aucune séance trouvée pour ce professeur.</p>
+                    @endif
                 @elseif ($prof_id)
                     <div class="table-container">
                         <div class="table-responsive p-3">

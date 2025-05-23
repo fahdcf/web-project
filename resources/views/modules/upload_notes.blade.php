@@ -363,6 +363,9 @@
                 <h5 class="mb-0"><i class="fas fa-history me-2"></i>Historique des Uploads</h5>
             </div>
             <div class="card-body">
+                 <div class="mb-3">
+                    <input type="text" id="historySearch" class="form-control" placeholder="Rechercher par module, session ou date...">
+                </div>
                 @if ($uploads->count() > 0)
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -388,10 +391,9 @@
                                             </span>
                                         </td>
                                         <td>
-                                            {{ $upload->original_name ?? 'Nom inconnu' }}
-                                            <a href="{{ Storage::url($upload->storage_path) }}" target="_blank"
-                                                class="ms-2">
-                                                <i class="fas fa-download"></i>
+                                            <a href="{{ Storage::url($upload->storage_path) }}" target="_blank">
+                                                <i class="fas fa-file-excel text-success me-2"></i>
+                                                {{ $upload->original_name ?? 'Nom inconnu' }}
                                             </a>
                                         </td>
                                         <td>
@@ -603,4 +605,5 @@
             showModal('error', 'Erreur', '{{ session('error') }}');
         @endif
     </script>
+
 </x-coordonnateur_layout>
