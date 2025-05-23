@@ -8,7 +8,6 @@ class prof_request extends Model
 {
 
     protected $guarded = [];
-    protected $table = "prof_requests"; //le nom du table concerne pouisque pas meme nom du model
 
 
 
