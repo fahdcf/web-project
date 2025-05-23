@@ -246,7 +246,7 @@
                                 <td>
                                     <div  class="d-flex  justify-content-center align-items-center gap-2" >
                                         
-                                            <a href="{{url('profile/'. $etudiant->id)}}" class="btn btn-sm" style="background-color: #4723d9; color: white;"><i class="bi bi-pencil-square"></i></a>
+                                            <a href="{{url('etudiant-profile/'. $etudiant->id)}}" class="btn btn-sm" style="background-color: #4723d9; color: white;"><i class="bi bi-pencil-square"></i></a>
                                         
                                         
                                         <button class="btn ml-1 btn-danger btn-sm" data-toggle="modal" data-target="#Modalforid{{$etudiant['id']}}"><i class="bi bi-trash3"></i>

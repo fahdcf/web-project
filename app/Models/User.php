@@ -74,6 +74,7 @@ class User extends Authenticatable
 
         $modules = Module::where('professor_id', $this->id)->get();
 
+        $hours=0;
         if($assaigns){
 
             foreach ($assaigns as  $assaign) {

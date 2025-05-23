@@ -443,7 +443,7 @@ Route::get('admins/add', [adminsController::class, 'showadd']);
 
 Route::Post('admins/add', [adminsController::class, 'add']);
 
-Route::patch('admins/add', [adminProfileController::class, 'choose']);
+Route::patch('admins/add', [adminsController::class, 'choose']);
 
 
 Route::get('/admins/modifier/{id}', [adminsController::class, 'showmodify']);
