@@ -4,6 +4,7 @@ namespace App\Http\Controllers\coordonnateur;
 
 use App\Http\Controllers\Controller;
 use App\Models\Assignment;
+use App\Models\Departement;
 use App\Models\Filiere;
 use App\Models\Module;
 use App\Models\User;
@@ -430,4 +431,58 @@ class ModuleController extends Controller
 
         return back()->with('success', 'Assignation supprimée');
     }
+
+    ////////////////////////////////////////////////////////////////
+
+
+    public function availableModules(Request $request)
+    {
+        $modules = Module::with(['filiere', 'responsable', 'assignments'])
+            ->where('status', 'active')
+            ->where(function ($query) {
+                // Modules sans aucune assignation
+                $query->doesntHave('assignments')
+                    ->orWhereHas('assignments', function ($q) {
+                        // Ou modules avec au moins un type non assigné
+                        $q->where('teach_cm', false)
+                            ->orWhere('teach_td', false)
+                            ->orWhere('teach_tp', false);
+                    });
+            })
+            ->get();
+        // $module = Module::find(1); // Get a single module
+        // dd($module->cmAssignation->teach_cm); // No parentheses needed (Lazy-loaded)
+        return view('modules.availableModules', compact('modules'));
+    }
+
+
+
+    // public function vacantesList()
+    // {
+    //     $FilieretargetIDs = Filiere::all()
+    //         ->pluck('id'); // Plucks all the IDs into a collection
+    //     $filieres = Filiere::get();
+    //     // $filieres = Filiere::where('department_id', auth()->user()->manage->id)->get();
+
+    //     //$modules = Module::where('professor_id', null)->whereIn('filiere_id', $FilieretargetIDs)->get();
+
+    //     $modules = Module::whereIn('filiere_id', $FilieretargetIDs)
+    //         ->where(function ($query) {
+    //             $query->whereDoesntHave('assignment', function ($q) {
+    //                 $q->where('teach_tp', 1);
+    //             })->orWhereDoesntHave('assignment', function ($q) {
+    //                 $q->where('teach_td', 1);
+    //             })->orWhereDoesntHave('assignment', function ($q) {
+    //                 $q->where('teach_cm', 1);
+    //             });
+    //         })
+    //         ->get();
+
+
+    //     // $departmentName = auth()->user()->manage->name;
+    //     // $professors = user::where('departement', $departmentName)->simplePaginate(5);
+
+
+    //     return view('chef_departement.modules_vacantes', ['modules' => $modules, 'filieres' => $filieres]);
+    // }
 }

@@ -227,19 +227,7 @@ class GroupeController extends Controller
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////
-    public function mesModules()
-    {
-
-
-        $user = auth()->user();
-        $modules = $user->assignedModules()->with('filiere')
-            ->get();
-
-
-        return view('modules.mesModules', [
-            'modules' => $modules
-        ]);
-    }
+    
 
 
     // public function availableModules()
@@ -289,10 +277,6 @@ class GroupeController extends Controller
                     });
             })
             ->get();
-
-
-
-
         return view('modules.availableModules', compact('modules'));
     }
 

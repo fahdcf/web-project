@@ -156,6 +156,23 @@ class Module extends Model
     {
         return $this->hasMany(Assignment::class);
     }
+
+
+    public function tpAssignation()
+    {
+        return $this->hasOne(Assignment::class)->where("teach_tp",true);
+    }
+
+    public function tdAssignation()
+    {
+        return $this->hasOne(Assignment::class)->where("teach_td",true);
+    }
+
+    public function cmAssignation()
+    {
+        return $this->hasOne(Assignment::class)->where("teach_cm",true);
+    }
+
     
 }
 ////////////////////

@@ -78,6 +78,11 @@ Route::prefix('coordonnateur')->group(function () {
 //////coordonateur: gestion des modules/////////////
 
 
+Route::get('chef/modules_vacantes', [chefModulesController::class, 'vacantesList']);
+// Route::post('chef/modules_vacantes/affecter/{id}',[chefModulesController::class,'affecter']); 
+// Route::get('chef/professeur_profile/{id}',[ChefProfessorController::class,'professeur_profile']);
+// Route::post('chef/professeur_profile/{id}',[ChefProfessorController::class,'edit']);
+// Route::post('chef/professeurs/affecter', [ChefProfessorController::class,'affecter']);
 
 
 Route::middleware(['auth'])
@@ -234,41 +239,47 @@ Route::get('/mohssine', function () {
 //////professor//////////////////////////////////////////
 
 Route::middleware(['auth'])
-    ->group(function () {
+    ->group(
+        function () {
 
-        //notes:upload ,cancel,get
-        Route::get('/upload-notes', [NoteController::class, 'showUploadForm'])
-            ->name('notes_upload_page');
-
-        Route::post('/upload-notes', [NoteController::class, 'upload'])
-            ->name('notes.upload');
-
-        Route::patch('/upload-notes/{Note}/cancel', [NoteController::class, 'cancel'])
-            ->name('notes.cancel');
+            // 1 Affichage de la liste des unité(s) d'enseignement disponibles pour l'année suivante.
+            Route::get('/availableModules', [ModuleController::class, 'availableModules'])->name('availableModules');
 
 
 
-        //les module asssure pour le prof/vacataire
-        Route::get('/mesModules', [GroupeController::class, 'mesModules'])
-            ->name('mesModules');
-        // Route::get('/mesModules', [ProfessorController::class, 'mesModules'])->name('professor.mesModules');
+            //exprimer le souhaite ppour les modules disponibles
+            Route::post('/exprime-shouaite/{module}', [requestsController::class, 'store'])->name('professor.souhaiteModule');
+            Route::get('/my-requests', [ProfessorController::class, 'myRequests'])->name('professor.myRequests');
+            Route::patch('/requests/{prof_request}/cancel', [requestsController::class, 'cancelRequest'])
+                ->name('professor.cancelRequest');
 
 
 
-        //modules available pour l'anne suioant
-        Route::get('/availableModules', [GroupeController::class, 'availableModules'])->name('availableModules');
+
+            //notes:upload ,cancel,get
+            Route::get('/upload-notes', [NoteController::class, 'showUploadForm'])
+                ->name('notes_upload_page');
+
+            Route::post('/upload-notes', [NoteController::class, 'upload'])
+                ->name('notes.upload');
+
+            Route::patch('/upload-notes/{Note}/cancel', [NoteController::class, 'cancel'])
+                ->name('notes.cancel');
 
 
 
-        //voir list des requsest 
-        Route::get('/requests', [ProfessorController::class, 'myRequests'])->name('professor.myRequests');
+            //les module asssure pour le prof/vacataire
+            Route::get('/mesModules', [ProfessorController::class, 'mesModules'])
+                ->name('mesModules');
+            // Route::get('/mesModules', [ProfessorController::class, 'mesModules'])->name('professor.mesModules');
 
 
-        //exprimmer les shouaite
-        Route::post('/wish', [ProfessorController::class, 'expressWish'])->name('professor.souhaiteModule');
-    });
 
 
+
+
+        }
+    );
 
 
 Route::prefix('professor')->group(function () {
@@ -280,9 +291,6 @@ Route::prefix('professor')->group(function () {
 
 
     //cancel request
-
-    Route::delete('/requests/{prof_request}/cancel', [ProfessorController::class, 'cancelRequest'])
-        ->name('professor.request.cancel');
 
     //////notes::
     // Route::post('/upload-notes', [NoteController::class, 'processUpload'])->name('professor.notes.process');
@@ -561,16 +569,16 @@ Route::get('etudiant-profile/{id}', [adminProfileController::class, 'studentprof
 
 
 //chef department
-Route::get('chef/demandes',[requestsController::class,'index']); 
-Route::patch('chef/demandes/{id}',[requestsController::class,'accept']); 
-Route::delete('chef/demandes/{id}',[requestsController::class,'decline']); 
- Route::get('chef/professeurs',[ChefProfessorController::class,'index']);
- Route::delete('chef/professeurs/remove/{id}',[ChefProfessorController::class,'removeModule']);
-  Route::get('chef/filieres',[cheffiliereController::class,'index']);
-Route::PATCH('chef/filieres/modifier/{id}',[cheffiliereController::class,'modify']); 
-Route::get('chef/modules',[chefModulesController::class,'index']); 
-Route::get('chef/modules_vacantes',[chefModulesController::class,'vacantesList']); 
-Route::post('chef/modules_vacantes/affecter/{id}',[chefModulesController::class,'affecter']); 
-Route::get('chef/professeur_profile/{id}',[ChefProfessorController::class,'professeur_profile']);
-Route::post('chef/professeur_profile/{id}',[ChefProfessorController::class,'edit']);
-Route::post('chef/professeurs/affecter', [ChefProfessorController::class,'affecter']);
+Route::get('chef/demandes', [requestsController::class, 'index']);
+Route::patch('chef/demandes/{id}', [requestsController::class, 'accept']);
+Route::delete('chef/demandes/{id}', [requestsController::class, 'decline']);
+Route::get('chef/professeurs', [ChefProfessorController::class, 'index']);
+Route::delete('chef/professeurs/remove/{id}', [ChefProfessorController::class, 'removeModule']);
+Route::get('chef/filieres', [cheffiliereController::class, 'index']);
+Route::PATCH('chef/filieres/modifier/{id}', [cheffiliereController::class, 'modify']);
+Route::get('chef/modules', [chefModulesController::class, 'index']);
+Route::get('chef/modules_vacantes', [chefModulesController::class, 'vacantesList']);
+Route::post('chef/modules_vacantes/affecter/{id}', [chefModulesController::class, 'affecter']);
+Route::get('chef/professeur_profile/{id}', [ChefProfessorController::class, 'professeur_profile']);
+Route::post('chef/professeur_profile/{id}', [ChefProfessorController::class, 'edit']);
+Route::post('chef/professeurs/affecter', [ChefProfessorController::class, 'affecter']);

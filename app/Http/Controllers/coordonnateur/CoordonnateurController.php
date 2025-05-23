@@ -47,7 +47,7 @@ class CoordonnateurController extends Controller
 
 
         $professorsMin = User::where('departement', $departmentName)->latest()->take(3)->get();
-        $module_requests = prof_request::where('type', 'module')->where('status', 'pending')->latest()->take(3)->get();
+        $module_requests = prof_request::where('status', 'pending')->latest()->take(3)->get();
 
         // Get user logs this week
         $logs = user_log::whereBetween('created_at', [
@@ -146,6 +146,7 @@ class CoordonnateurController extends Controller
         return back()->with('success', 'Configuration des groupes enregistrée!');
     }
 
+    
     ////////////////page des gestion des groupes////////
     //     public function groupes()
     // {

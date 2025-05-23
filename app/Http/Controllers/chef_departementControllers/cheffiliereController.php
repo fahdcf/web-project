@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\prof_request;
 
 use App\Models\Departement;
-use App\Models\filiere;
+use App\Models\Filiere;
 
  use App\Models\admin_action;
 class cheffiliereController extends Controller
@@ -23,7 +23,7 @@ class cheffiliereController extends Controller
             })->get();
             
         $departementID=auth()->user()->manage->id;
-         $filieres= filiere::where('department_id',$departementID)->get();
+         $filieres= Filiere::where('department_id',$departementID)->get();
       
         return view('chef_departement.filieres',['professors'=>$professors,'filieres'=>$filieres]);
     }
