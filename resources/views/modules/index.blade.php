@@ -50,30 +50,87 @@
                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                 }
 
-                .btn-outline-primary {
-                    border-color: #4723d9;
-                    color: #4723d9;
+                .btn-success {
+                    background-color: #28a745;
+                    border-color: #28a745;
                     font-size: 0.9rem;
                     padding: 8px 16px;
                     border-radius: 6px;
                     font-weight: 500;
                     transition: all 0.2s;
-                    /* white-space: nowrap; */
                 }
 
-                .btn-outline-primary:hover {
-                    background-color: #4723d9;
-                    color: white;
+                .btn-success:hover {
+                    background-color: white;
+                    color: #28a745;
+                    border-color: #28a745;
                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                 }
 
-                .btn-outline-primary:hover .btn-text-prof {
-                    color: white;
+                .btn-danger {
+                    background-color: #e74c3c;
+                    border-color: #e74c3c;
+                    font-size: 0.9rem;
+                    padding: 8px 16px;
+                    border-radius: 6px;
+                    font-weight: 500;
+                    transition: all 0.2s;
                 }
 
-                .btn-text-emploi,
-                .btn-text-prof {
-                    display: inline;
+                .btn-danger:hover {
+                    background-color: white;
+                    color: #e74c3c;
+                    border-color: #e74c3c;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                }
+
+                .dropdown-menu {
+                    border-radius: 6px;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                }
+
+                .dropdown-item:hover {
+                    background-color: #f8f9fa;
+                    color: #4723d9;
+                }
+
+                .modal-content {
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                }
+
+                .modal-header {
+                    border-bottom: 1px solid #e0e0e0;
+                }
+
+                .modal-footer {
+                    border-top: 1px solid #e0e0e0;
+                }
+
+                .form-control:focus {
+                    border-color: #4723d9;
+                    box-shadow: 0 0 0 2px rgba(71, 35, 217, 0.2);
+                }
+
+                .header-grid {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 1rem;
+                    align-items: center;
+                    justify-content: space-between;
+                }
+
+                @media (max-width: 992px) {
+                    .header-grid {
+                        flex-direction: column;
+                        align-items: stretch;
+                    }
+
+                    .header-title {
+                        text-align: center;
+                        margin-bottom: 1rem;
+                        text-decoration: underline;
+                    }
                 }
 
                 @media (max-width: 768px) {
@@ -83,102 +140,62 @@
 
                     .header-title {
                         font-size: 1.5rem;
-                        margin-bottom: 15px;
-                        text-align: center;
                     }
 
-                    .form-select,
-                    .btn-outline-primary {
+                    .header-grid > * {
                         width: 100%;
-                        margin-bottom: 10px;
                     }
 
-                    .btn-outline-primary {
-                        white-space: normal;
+                    .btn-primary, .btn-success {
+                        width: 100%;
                         text-align: center;
-                        padding: 10px 16px;
                     }
-
-                }
-
-                /* Improved grid layout */
-                .header-grid {
-                    display: grid;
-                    grid-template-columns: 1fr auto auto;
-                    gap: 1rem;
-                    align-items: center;
-                }
-
-                @media (max-width: 992px) {
-                    .header-grid {
-                        grid-template-columns: 1fr auto;
-                    }
-
-                    .header-title {
-                        grid-column: 1 / -1;
-                        text-align: center;
-                        margin-bottom: 10px;
-                        text-decoration: underline;
-                    }
-                }
-
-                @media (max-width: 768px) {
-                    .header-grid {
-                        grid-template-columns: 1fr;
-                        gap: 0.75rem;
-                    }
-
-                    .btn-outline-primary {
-                        white-space: normal;
-                        text-align: center;
-                        padding: 10px 16px;
-                        line-height: 1.3;
-                        /* Add this for better line spacing */
-                    }
-
-                    .btn-text-emploi,
-                    .btn-text-prof {
-                        display: inline;
-                        /* Change from 'block' to 'inline' */
-                        margin-bottom: 0;
-                        /* Remove bottom margin */
-                    }
-
-                    .btn-text-emploi:after {
-                        content: " ";
-                        /* Add space after "Emploi des" */
-                    }
-
                 }
             </style>
 
             <div class="header-grid mt">
                 <div class="d-flex align-items-center gap-3">
-                    <i class="fas fa-book-open fa-2x " style="color: #330bcf;"></i>
+                    <i class="fas fa-book-open fa-2x" style="color: #330bcf;"></i>
                     <h3 style="color: #330bcf; font-weight: 500;">Gestion des Unités d'Enseignement</h3>
                 </div>
 
-                <a href="{{ route('coordonnateur.modules.create') }}"
-                    class="btn btn-primary rounded fw-semibold my-2 me-2">
-                    <i class="fas fa-plus-circle"></i>
-                    Nouvelle UE
-                </a>
-
-
+                <div class="d-flex gap-2 flex-wrap">
+                    <a href="{{ route('coordonnateur.modules.create') }}"
+                        class="btn btn-primary rounded fw-semibold">
+                        <i class="fas fa-plus-circle"></i> Nouvelle UE
+                    </a>
+                    <div class="dropdown">
+                        <button class="btn btn-success rounded fw-semibold dropdown-toggle" type="button"
+                            id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-file-export"></i> Exporter
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                            @for ($i = 1; $i <= 6; $i++)
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('coordonnateur.modules.index') }}?export=semester&semester={{ $i }}">
+                                        {{ $i == 1 ? '1er' : $i . 'ème' }} Semestre
+                                    </a>
+                                </li>
+                            @endfor
+                        </ul>
+                    </div>
+                    <div>
+                        <button class="btn btn-success rounded fw-semibold" type="button"
+                            id="importDropdown" data-bs-toggle="modal" data-bs-target="#importModal">
+                            <i class="fas fa-file-import"></i> Importer
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
-
-
+        <!-- Filters Section -->
         <div class="header-container mb-4">
-            <div class="row g-3 ">
-                <!-- semester Filter Dropdown -->
+            <div class="row g-3">
                 <div class="col-md-6 col-lg-3 filter-dropdown">
-
-                    <label for="semester" class="form-label small fw-bold text-muted">Semester</label>
+                    <label for="semester" class="form-label small fw-bold text-muted">Semestre</label>
                     <select id="semester" class="form-select border border-primary text-primary"
-                        style="font-weight: 500;"
-                        onchange="window.location.href='{{ route('coordonnateur.modules.index') }}?semester=' + this.value">
+                        style="font-weight: 500;" onchange="applyFilters()">
                         <option value="all" {{ request('semester') == 'all' ? 'selected' : '' }}>Tous</option>
                         @for ($i = 1; $i <= 6; $i++)
                             <option value="{{ $i }}" {{ request('semester') == $i ? 'selected' : '' }}>
@@ -188,43 +205,86 @@
                     </select>
                 </div>
 
-                <!-- Status Filter Dropdown -->
                 <div class="col-md-6 col-lg-3 filter-dropdown">
                     <label for="status" class="form-label small fw-bold text-muted">Statut</label>
                     <select id="status" class="form-select border border-primary text-primary"
-                        style="font-weight: 500;"
-                        onchange="window.location.href='{{ route('coordonnateur.modules.index') }}?status=' + this.value">
+                        style="font-weight: 500;" onchange="applyFilters()">
                         <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>Tous</option>
                         <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>
-                            Active
+                            Actif
                         </option>
                         <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>
-                            Inactive
+                            Inactif
                         </option>
                     </select>
                 </div>
 
-
-                <!-- Barre de Recherche -->
                 <div class="col-md-6 col-lg-6 search-bar">
                     <label for="moduleSearch" class="form-label small fw-bold text-muted">Recherche</label>
                     <div class="input-group">
                         <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search"></i></span>
-                        <input type="text" class="form-control border-start-0 " id="moduleSearch"
-                            placeholder="Rechercher par nom / code...">
+                        <input type="text" class="form-control border-start-0" id="moduleSearch"
+                            placeholder="Rechercher par nom ou code...">
                     </div>
                 </div>
             </div>
         </div>
 
-        <style>
+        <!-- Import Modal -->
+        <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="importModalLabel">Importer des Unités d'Enseignement</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ route('coordonnateur.modules.import') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="file" class="form-label">Sélectionner un fichier CSV</label>
+                                <input type="file" class="form-control" id="file" name="file" accept=".csv" required>
+                                <small class="text-muted">Format attendu : Nom, Code, Type, Heures CM, Heures TD, Heures TP, Semestre, Statut, Crédit, Évaluation, Description, Responsable</small>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-success">Importer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
+        <!-- Delete Confirmation Modal -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Confirmer la suppression</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Êtes-vous sûr de vouloir supprimer cette unité d'enseignement ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <form id="deleteForm" action="" method="POST" style="display: inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Supprimer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        </style>
+        <!-- Module Grid -->
         <div class="header-container mb-4">
             <div class="module-grid">
-                @foreach ($modules as $module)
-                    <div class="module-card">
+                @forelse ($modules as $module)
+                    <div class="module-card" data-semester="{{ $module->semester }}"
+                        data-status="{{ $module->status }}">
                         <div class="module-header">
                             <div class="module-title-container">
                                 <h3 class="module-name">{{ $module->name }}</h3>
@@ -247,26 +307,36 @@
                         </div>
 
                         <div class="module-details">
-                            <!-- Professor -->
+                            <!-- Crédit -->
+                            <div class="detail-item">
+                                <i class="bi bi-award-fill detail-icon"></i>
+                                <div>
+                                    <span class="detail-label">Crédit</span>
+                                    <span class="detail-value">{{ $module->credit ?? 'N/A' }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Évaluation -->
+                            <div class="detail-item">
+                                <i class="bi bi-clipboard-check detail-icon"></i>
+                                <div>
+                                    <span class="detail-label">Évaluation</span>
+                                    <span class="detail-value">{{ $module->evaluation ?? 'N/A' }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Responsable -->
                             <div class="detail-item">
                                 <i class="bi bi-person-fill detail-icon"></i>
                                 <div>
-                                    <span class="detail-label">Enseignants vacants</span>
-                                    <div class="vacant-roles pt-2">
-                                        @if (!$module->ProfCours || !$module->ProfTd || !$module->ProfTp)
-                                            @if (!$module->ProfCours)
-                                                <span class="vacant-role">Cours</span>
-                                            @endif
-                                            @if (!$module->ProfTd)
-                                                <span class="vacant-role">TD</span>
-                                            @endif
-                                            @if (!$module->ProfTp)
-                                                <span class="vacant-role">TP</span>
-                                            @endif
+                                    <span class="detail-label">Responsable</span>
+                                    <span class="detail-value">
+                                        @if ($module->responsable)
+                                            {{ $module->responsable->firstname }} {{ $module->responsable->lastname }}
                                         @else
-                                            <span class="vacant-role success">Tous les enseignants assignés</span>
+                                            Non assigné
                                         @endif
-                                    </div>
+                                    </span>
                                 </div>
                             </div>
 
@@ -279,16 +349,15 @@
                                 </div>
                             </div>
 
-                            <!-- Semester & Status -->
+                            <!-- Semestre & Status -->
                             <div class="detail-item">
                                 <i class="bi bi-calendar-week detail-icon"></i>
                                 <div>
-                                    <span class="detail-label">Semester</span>
+                                    <span class="detail-label">Semestre</span>
                                     <span class="detail-value">
-                                        {{ $module->semester == 1 ? '1er Semestre' : '2ème Semestre' }}
-                                        <span
-                                            class="badge {{ $module->status == 'active' ? 'bg-success' : 'bg-warning' }} ms-2">
-                                            {{ $module->status }}
+                                        {{ $module->semester == 1 ? '1er Semestre' : ($module->semester ? $module->semester . 'ème Semestre' : 'N/A') }}
+                                        <span class="badge {{ $module->status == 'active' ? 'bg-success' : 'bg-warning' }} ms-2">
+                                            {{ $module->status == 'active' ? 'Actif' : 'Inactif' }}
                                         </span>
                                     </span>
                                 </div>
@@ -305,127 +374,36 @@
                         </div>
 
                         <div class="module-actions">
-                                <button class="view-btn"
-                                    onclick="showPopup({{ $module->id }}, '{{ $module->name }}')">
-                                    <i class="bi bi-eye-fill"></i> Voir plus
-                                </button>
-                                <form action="{{ route('coordonnateur.modules.destroy', $module) }}" method="POST"
-                                    style="display: inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="remove-btn"
-                                        onclick="return confirm('Supprimer ce module ?')">
-                                        <i class="bi bi-trash-fill"></i> Supprimer
-                                    </button>
-                                </form>
-                            </div>
+                            <a href="{{ route('coordonnateur.modules.show', $module) }}"
+                                class="view-btn">
+                                <i class="bi bi-eye-fill"></i> Voir plus
+                            </a>
+                            <button class="remove-btn" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                onclick="setDeleteFormAction('{{ route('coordonnateur.modules.destroy', $module) }}')">
+                                <i class="bi bi-trash-fill"></i> Supprimer
+                            </button>
+                        </div>
                     </div>
-                @endforeach
+                @empty
+                    <div class="empty-state">
+                        <i class="bi bi-journal-x"></i>
+                        <p>Aucune unité d'enseignement trouvée.</p>
+                    </div>
+                @endforelse
             </div>
-
-
-            <!-- Popup Template -->
-            @foreach ($modules as $module)
-                <div id="popupfor{{ $module->id }}" class="overlay">
-                    <div class="popup bg-white rounded-3 p-4 shadow-lg" style="max-width: 600px;">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="text-primary fw-bold mb-0">Détails du module</h5>
-                            <button type="button" class="btn-close"
-                                onclick="closePopup({{ $module->id }})"></button>
-                        </div>
-
-                        <div class="module-details">
-                            <div class="d-flex align-items-center mb-4">
-                                <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
-                                    <i class="bi bi-book fs-4" style="color: white !important;"></i>
-                                </div>
-                                <h4 class="mb-0 fw-bold" id="moduleName{{ $module->id }}">{{ $module->name }}</h4>
-                            </div>
-
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="bg-light p-3 rounded">
-                                        <small class="text-muted d-block">ID du module</small>
-                                        <span class="fw-semibold">{{ $module->id }}</span>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="bg-light p-3 rounded">
-                                        <small class="text-muted d-block">Type</small>
-                                        <span class="fw-semibold">{{ $module->type }}</span>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="bg-light p-3 rounded">
-                                        <small class="text-muted d-block">Crédit</small>
-                                        <span class="fw-semibold">{{ $module->credit }}</span>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="bg-light p-3 rounded">
-                                        <small class="text-muted d-block">Évaluation</small>
-                                        <span class="fw-semibold">{{ $module->evaluation }}</span>
-                                    </div>
-                                </div>
-
-                                @if ($module->description)
-                                    <div class="col-12">
-                                        <div class="bg-light p-3 rounded">
-                                            <small class="text-muted d-block">Description</small>
-                                            <p class="mb-0">{{ $module->description }}</p>
-                                        </div>
-                                    </div>
-                                @endif
-
-                                <div class="col-12">
-                                    <div class="bg-light p-3 rounded">
-                                        <small class="text-muted d-block">Responsable</small>
-                                        <span class="fw-semibold">
-                                            @if ($module->responsable)
-                                                {{ $module->responsable->firstname }}
-                                                {{ $module->responsable->lastname }}
-                                            @else
-                                                Non associé
-                                            @endif
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div class="col-12">
-                                    <div class="bg-light p-3 rounded">
-                                        <small class="text-muted d-block">Date de création</small>
-                                        <span class="fw-semibold">{{ $module->created_at->format('d/m/Y') }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="text-end mt-4">
-                            <button type="button" class="btn btn-primary px-4"
-                                onclick="closePopup({{ $module->id }})">Fermer</button>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
 
             <style>
                 :root {
                     --primary: #4723d9;
                 }
 
-
                 body {
                     background-color: #f8f9fa;
                 }
 
-                /* Modules Grid with Scroll */
-
                 .module-grid {
                     display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
                     gap: 20px;
                     padding: 10px;
                 }
@@ -439,8 +417,6 @@
                     border: 1px solid #4723d91e;
                     display: flex;
                     flex-direction: column;
-                    /* min-width: 300px; */
-                    /* margin: 2px; */
                 }
 
                 .module-card:hover {
@@ -553,20 +529,27 @@
                     gap: 10px;
                 }
 
-                .view-btn {
+                .view-btn, .remove-btn {
                     background: none;
-                    border: 1px solid #4723d9;
-                    color: #4723d9;
                     font-size: 0.9rem;
                     cursor: pointer;
                     display: flex;
                     align-items: center;
                     gap: 6px;
-                    padding: 6px 12px;
+                    padding: 8px 12px;
                     border-radius: 6px;
                     transition: all 0.2s ease;
                     flex: 1;
                     justify-content: center;
+                    text-decoration: none;
+                    border: 1px solid;
+                    line-height: 1.5;
+                    height: 38px; /* Fixed height for consistency */
+                }
+
+                .view-btn {
+                    border-color: #4723d9;
+                    color: #4723d9;
                 }
 
                 .view-btn:hover {
@@ -574,27 +557,15 @@
                 }
 
                 .remove-btn {
-                    background: none;
-                    border: 1px solid #e74c3c;
+                    border-color: #e74c3c;
                     color: #e74c3c;
-                    font-size: 0.9rem;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 6px 12px;
-                    border-radius: 6px;
-                    transition: all 0.2s ease;
-                    flex: 1;
-                    justify-content: center;
                 }
 
                 .remove-btn:hover {
                     background: rgba(231, 76, 60, 0.1);
                 }
 
-                .view-btn i,
-                .remove-btn i {
+                .view-btn i, .remove-btn i {
                     font-size: 0.95rem;
                 }
 
@@ -604,113 +575,104 @@
                     padding: 0.25em 0.6em;
                 }
 
-                .overlay {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background-color: rgba(0, 0, 0, 0.5);
-                    display: none;
-                    justify-content: center;
+                .empty-state {
+                    display: flex;
+                    flex-direction: column;
                     align-items: center;
-                    z-index: 1050;
-                    backdrop-filter: blur(4px);
+                    justify-content: center;
+                    padding: 40px 20px;
+                    text-align: center;
+                    color: #6c757d;
+                    font-size: 1.1rem;
                 }
-
-                .popup {
-                    max-width: 90%;
-                    animation: fadeIn 0.3s;
-                }
-
-                @keyframes fadeIn {
-                    from {
-                        opacity: 0;
-                        transform: translateY(20px);
-                    }
-
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-
-
-                @media (max-width: 768px) {
-                    .popup {
-                        max-width: 95%;
-                        margin: 1rem;
-                    }
-                }
-
-
-                /* Style pour les nouveaux éléments */
 
                 .search-bar {
                     min-width: 250px;
                     flex-grow: 1;
                 }
 
-
-                /* Responsive */
                 @media (max-width: 768px) {
                     .search-bar {
                         min-width: 100%;
                         order: -1;
                     }
 
-                    .dropdown {
-                        width: 48%;
+                    .module-grid {
+                        grid-template-columns: 1fr;
+                    }
+
+                    .module-card {
+                        min-width: 100%;
+                    }
+
+                    .module-workload {
+                        flex-direction: column;
+                        gap: 8px;
+                    }
+
+                    .module-details {
+                        grid-template-columns: 1fr;
+                    }
+
+                    .module-actions {
+                        flex-direction: column;
+                        gap: 8px;
+                    }
+
+                    .view-btn, .remove-btn {
+                        width: 100%;
                     }
                 }
 
+                @media (max-width: 576px) {
+                    .row.g-3 {
+                        flex-direction: column;
+                    }
 
-             
+                    .filter-dropdown, .search-bar {
+                        width: 100%;
+                    }
+                }
             </style>
 
-
             <script>
-                // Existing popup functions
-                function showPopup(moduleId, moduleName) {
-                    document.getElementById('moduleName' + moduleId).innerText = moduleName;
-                    document.getElementById("popupfor" + moduleId).style.display = "flex";
-                    document.body.style.overflow = 'hidden';
-                }
-
-                function closePopup(moduleId) {
-                    document.getElementById("popupfor" + moduleId).style.display = "none";
-                    document.body.style.overflow = 'auto';
-                }
-
-
-                // Filtrage 
                 let searchFilter = '';
+                let semesterFilter = document.getElementById('semester').value;
+                let statusFilter = document.getElementById('status').value;
 
-                // Recherche par nom/code
-                document.getElementById('moduleSearch').addEventListener('input', function() {
+                document.getElementById('moduleSearch').addEventListener('input', function () {
                     searchFilter = this.value.toLowerCase();
                     applyFilters();
                 });
 
                 function applyFilters() {
+                    semesterFilter = document.getElementById('semester').value;
+                    statusFilter = document.getElementById('status').value;
+
                     const moduleCards = document.querySelectorAll('.module-card');
 
                     moduleCards.forEach(card => {
                         const moduleName = card.querySelector('.module-name').textContent.toLowerCase();
                         const moduleCode = card.querySelector('.module-hours-badge').textContent.toLowerCase();
+                        const semester = card.getAttribute('data-semester') || '';
+                        const status = card.getAttribute('data-status') || '';
 
-                        // Apply search filter
                         const searchMatch = searchFilter === '' ||
                             moduleName.includes(searchFilter) ||
                             moduleCode.includes(searchFilter);
+                        const semesterMatch = semesterFilter === 'all' || semester === semesterFilter;
+                        const statusMatch = statusFilter === 'all' || status === statusFilter;
 
-                        // Show or hide based on filter
-                        if (searchMatch) {
-                            card.style.display = 'block';
-                        } else {
-                            card.style.display = 'none';
-                        }
+                        card.style.display = searchMatch && semesterMatch && statusMatch ? 'block' : 'none';
                     });
                 }
+
+                function setDeleteFormAction(action) {
+                    document.getElementById('deleteForm').action = action;
+                }
+
+                applyFilters();
             </script>
+        </div>
+    </div>
 </x-coordonnateur_layout>

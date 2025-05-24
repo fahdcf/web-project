@@ -1,634 +1,785 @@
 <x-coordonnateur_layout>
 
-    <style>
-        .accordion {
-            background-color: white;
-            box-shadow: 1px 1px 10px 2px #33333314;
+<style>
+    /* Main Container */
+    .professor-container {
+        padding: 2rem;
+        min-height: 80vh;
+    }
+    
+    /* Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    .page-title {
+        color: #4723d9;
+        font-weight: 600;
+        font-size: 1.8rem;
+        margin: 0;
+    }
+    
+    /* Filter Section */
+    .filter-section {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+    
+    .filter-header {
+        padding: 1rem 1.5rem;
+        background: #f8f9fa;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .filter-header h5 {
+        margin: 0;
+        font-weight: 500;
+        color: #333;
+    }
+    
+    .filter-header i {
+        transition: transform 0.3s ease;
+    }
+    
+    .filter-header.collapsed i {
+        transform: rotate(180deg);
+    }
+    
+    .filter-body {
+        padding: 1.5rem;
+    }
+   
+  
+    
+    .filter-group {
+        margin-bottom: 0;
+    }
+    
+    .filter-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #555;
+    }
+    
+    .filter-input {
+        width: 100%;
+        padding: 0.6rem 1rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+    
+    .filter-input:focus {
+        border-color: #4723d9;
+        box-shadow: 0 0 0 3px rgba(71, 35, 217, 0.1);
+        outline: none;
+    }
+    
+    .apply-btn {
+        background-color: #4723d9;
+        color: white;
+        border: none;
+        padding: 0.7rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s;
+        align-self: flex-end;
+        grid-column: -1;
+    }
+    
+    .apply-btn:hover {
+        background-color: #3a1cb3;
+        transform: translateY(-2px);
+    }
+    
+    /* Table Section */
+    .table-section {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+        max-height: 70vh;
+        scrollbar-width: thin;
+        scrollbar-color: #ccc transparent;
+    }
+    
+    .table-responsive::-webkit-scrollbar {
+        height: 6px;
+        width: 6px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-thumb {
+        background-color: #aaa;
+        border-radius: 10px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    .table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 1100px;
+    }
+    
+    .table thead th {
+        background-color: #4723d9;
+        color: white;
+        padding: 1rem;
+        font-weight: 500;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    .table tbody tr {
+        transition: all 0.2s;
+    }
+    
+    .table tbody tr:hover {
+        background-color: #f9f9ff !important;
+        transform: translateX(4px);
+    }
+    
+    .table td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #f0f0f0;
+        color: #555;
+        font-weight: 400;
+    }
+    
+    /* Professor Card Elements */
+    .professor-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #eee;
+        transition: all 0.3s;
+    }
+    
+    .professor-avatar:hover {
+        transform: scale(1.1);
+        border-color: #4723d9;
+    }
+    
+    .professor-name {
+        font-weight: 500;
+        color: #333;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    
+    .status-active {
+        background-color: #e6f7ee;
+        color: #28a745;
+    }
+    
+    .status-inactive {
+        background-color: #fde8e8;
+        color: #dc3545;
+    }
+    
+    /* Hours Progress Bar */
+    .hours-container {
+        min-width: 150px;
+    }
+    
+    .hours-label {
+        font-size: 0.8rem;
+        margin-bottom: 0.25rem;
+        color: #666;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .hours-progress {
+        height: 8px;
+        background-color: #f0f0f0;
+        border-radius: 4px;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .hours-filled {
+        height: 100%;
+        border-radius: 4px;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+    
+    .hours-min-marker {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 3px;
+        background-color: #ff6b6b;
+    }
+    
+    .hours-max-marker {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 3px;
+        background-color: #4723d9;
+    }
+    
+    /* Action Buttons */
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+    }
+    
+    .view-btn {
+        background-color: #4723d9;
+        color: white;
+    }
+    
+    .view-btn:hover {
+        background-color: #3a1cb3;
+        transform: rotate(5deg);
+    }
+    
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        padding: 1.5rem;
+    }
+    
+    .page-btn {
+        padding: 0.5rem 1rem;
+        margin: 0 0.5rem;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        background: white;
+        color: #333;
+        transition: all 0.3s;
+    }
+    
+    .page-btn:hover {
+        border-color: #4723d9;
+        color: #4723d9;
+    }
+    
+    .page-btn.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    .page-btn.active {
+        background-color: #4723d9;
+        color: white;
+        border-color: #4723d9;
+    }
+    
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: #666;
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .filter-row {
+            grid-template-columns: 1fr;
         }
-
-        .accordion-button {
-            color: #333;
-            box-shadow: none;
-            transition: background-color 0.3s ease;
-            border: none;
-            border-radius: 5px;
-            background-color: transparent;
+        
+        .apply-btn {
+            grid-column: auto;
         }
+    }
+</style>
 
-        .accordion-button:hover,
-        .accordion-button:focus {
-            border: none;
-            outline: none;
-            box-shadow: none;
-            background-color: transparent;
-            color: #333;
-        }
-
-        .accordion-button:not(.collapsed) {
-            background-color: transparent;
-            border: none;
-            outline: none;
-            box-shadow: none;
-        }
-
-        .accordion-body {
-            padding: 1rem;
-            font-size: 0.95rem;
-            color: #555;
-        }
-
-        #collapsefilters {
-            border: none;
-        }
-
-        .pagehead button {
-            border: none;
-            background: none;
-        }
-
-        .pagehead input:focus {
-            outline: none;
-        }
-
-        select.form-select:focus {
-            box-shadow: none !important;
-        }
-
-        .accordion-body button {
-            margin-top: 32px;
-            border: 1px solid #4723d9;
-            border-radius: 4px;
-            background-color: #4723d9;
-            color: white;
-            width: 100%;
-            font-weight: 500;
-            height: 37px;
-            transition: 0.3s;
-        }
-
-        .accordion-body button:hover {
-            background-color: white;
-            color: #4723d9;
-        }
-
-        .table-container {
-            background-color: white;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            overflow-y: hidden;
-            overflow-x: auto;
-            max-height: 80vh;
-            scrollbar-width: thin;
-            scrollbar-color: #ccc transparent;
-            box-shadow: 1px 1px 10px 2px #33333314;
-        }
-
-        table {
-            min-width: 1100px;
-        }
-
-        td {
-            font-size: 14px;
-            color: #585858;
-            font-weight: 500;
-            text-align: center !important;
-            vertical-align: middle !important;
-        }
-
-        .table-hover tbody tr:hover {
-            background-color: rgba(248, 248, 252, 0.006) !important;
-            cursor: pointer;
-        }
-
-        .table-container::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
-        }
-
-        .table-container::-webkit-scrollbar-thumb {
-            background-color: #aaa;
-            border-radius: 10px;
-        }
-
-        .table-container::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        th {
-            text-align: center;
-            border-bottom: 1px solid #3737375a !important;
-            border-top: none !important;
-            color: rgb(80, 79, 79);
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        table thead {
-            box-shadow: 0 7px 5px -6px rgba(0, 0, 0, 0.1);
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .popup {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            width: 400px;
-        }
-
-        .popup button {
-            padding: 10px 20px;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
-
-    <div class="container-fluid p-0 pt-5">
-
-        <x-global_alert />
-
-        <div class="header-container mb-4">
-            <style>
-                .header-container {
-                    background: white;
-                    border-radius: 8px;
-                    padding: 20px;
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                }
-
-                .header-title {
-                    color: #4723d9;
-                    font-weight: 600;
-                    font-size: 1.75rem;
-                    margin: 0;
-                }
-
-                .form-select {
-                    border-color: #e0e0e0;
-                    font-size: 0.9rem;
-                    padding: 8px 12px;
-                    border-radius: 6px;
-                    background-color: #f8f9fa;
-                    transition: border-color 0.2s;
-                }
-
-                .form-select:focus {
-                    border-color: #4723d9;
-                    box-shadow: 0 0 0 2px rgba(71, 35, 217, 0.2);
-                    outline: none;
-                }
-
-                /* .btn-primary {
-                    background-color: #4723d9;
-                    border-color: #4723d9;
-                    font-size: 0.9rem;
-                    padding: 8px 16px;
-                    border-radius: 6px;
-                    font-weight: 500;
-                    transition: all 0.2s;
-                } */
-
-                .btn-primary:hover {
-                    background-color: white;
-                    color: #4723d9;
-                    border-color: #4723d9;
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                }
-
-                .btn-outline-primary {
-                    border-color: #4723d9;
-                    color: #4723d9;
-                    font-size: 0.9rem;
-                    padding: 8px 16px;
-                    border-radius: 6px;
-                    font-weight: 500;
-                    transition: all 0.2s;
-                    white-space: nowrap;
-                }
-
-                .btn-outline-primary:hover {
-                    background-color: #4723d9;
-                    color: white;
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                }
-
-                .btn-outline-primary:hover .btn-text-prof {
-                    color: white;
-                }
-
-                .btn-text-emploi,
-                .btn-text-prof {
-                    display: inline;
-                }
-
-                @media (max-width: 768px) {
-                    .header-container {
-                        padding: 15px;
-                    }
-
-                    .header-title {
-                        font-size: 1.5rem;
-                        margin-bottom: 15px;
-                        text-align: center;
-                    }
-
-                    .form-select,
-                    .btn-outline-primary {
-                        width: 100%;
-                        margin-bottom: 10px;
-                    }
-
-                    .btn-outline-primary {
-                        white-space: normal;
-                        text-align: center;
-                        padding: 10px 16px;
-                    }
-
-                    .btn-text-emploi,
-                    .btn-text-prof {
-                        display: block;
-                    }
-
-                    .btn-text-emploi {
-                        margin-bottom: 2px;
-                    }
-                }
-
-                /* Improved grid layout */
-                .header-grid {
-                    display: grid;
-                    grid-template-columns: 1fr auto auto;
-                    gap: 1rem;
-                    align-items: center;
-                }
-
-                @media (max-width: 992px) {
-                    .header-grid {
-                        grid-template-columns: 1fr auto;
-                    }
-
-                    .header-title {
-                        grid-column: 1 / -1;
-                        text-align: center;
-                        margin-bottom: 10px;
-                        text-decoration: underline;
-                    }
-                }
-
-                @media (max-width: 768px) {
-                    .header-grid {
-                        grid-template-columns: 1fr;
-                        gap: 0.75rem;
-                    }
-
-                    .btn-outline-primary {
-                        white-space: normal;
-                        text-align: center;
-                        padding: 10px 16px;
-                        line-height: 1.3;
-                        /* Add this for better line spacing */
-                    }
-
-                    .btn-text-emploi,
-                    .btn-text-prof {
-                        display: inline;
-                        /* Change from 'block' to 'inline' */
-                        margin-bottom: 0;
-                        /* Remove bottom margin */
-                    }
-
-                    .btn-text-emploi:after {
-                        content: " ";
-                        /* Add space after "Emploi des" */
-                    }
-
-                }
-
-                .btn-primary {
-                    background-color: #4723d9;
-                    border-color: #4723d9;
-                    font-size: 0.9rem;
-                    padding: 8px 16px;
-                    border-radius: 6px;
-                    font-weight: 500;
-                    transition: all 0.2s;
-                    display: inline-flex;
-                    /* Changed from default */
-                    align-items: center;
-                    /* Vertically center items */
-                    gap: 8px;
-                    /* Space between icon and text */
-                }
-
-                .btn-primary i {
-                    font-size: 1em;
-                    /* Match icon size with text */
-                    line-height: 1;
-                    /* Fix vertical alignment */
-                }
-            </style>
-
-            <div class="header-grid mt">
-                <div class="d-flex align-items-center gap-3">
-                    <h3 style="color: #330bcf; font-weight: 500;">Gestion des vacataires du filiere :</h3>
-                </div>
-
-                <a href="{{ route('coordonnateur.vacataires.create') }}"
-                    class="btn btn-primary rounded fw-semibold my-2 me-2">
-                    <i class="bx bx-user-plus nav_icon"></i>
-                    Ajouter un vacataire
-                </a>
-            </div>
-
+<div class="professor-container">
+    <div class="page-header">
+        <h1 class="page-title">Professors Directory</h1>
+        <!-- export button -->
+ <button onclick="exportStyledExcel()" class="btn btn-outline-success " >
+    <i class="bi bi-file-excel"></i> Export
+</button>
+    </div>
+    
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="true">
+            <h5>Filters</h5>
+            <i class="bi bi-chevron-down"></i>
         </div>
-
-
-        <div class="header-container mb-4">
-            <div class="row g-3">
-                <div class="col-md-6 col-lg-6">
-                    <label for="search" class="form-label small fw-bold text-muted">Recherche</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-transparent"><i class="bi bi-search"></i></span>
-                        <input type="text" id="search" name="search" class="form-control border-start-0"
-                            placeholder="Nom, ID ou email" value="{{ request('search') }}">
+        
+        <div class="collapse" id="filterCollapse">
+            <div class="filter-body ">
+                    <div class="filter-row row g-2">
+                        <!-- Search -->
+                        <div class="col-12 col-md-4 col-lg-4 filter-group">
+                            <label for="search" class="filter-label">Search</label>
+                            <input type="text" id="search" name="search" class="filter-input py-2" placeholder="Name, ID or email">
+                        </div>
+                        
+                        <!-- Status Filter -->
+                        <div class="col-12 col-md-4 col-lg-2 filter-group">
+                            <label for="statusFilter" class="filter-label">Status</label>
+                            <select class="filter-input" id="statusFilter" name="status">
+                                <option value="">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Hours Filter -->
+                        <div class=" col-12 col-md-4 col-lg-2 filter-group">
+                            <label for="hoursFilter" class="filter-label">Workload Status</label>
+                            <select class="filter-input" id="hoursFilter" name="hours_status">
+                                <option value="">All Workloads</option>
+                                <option value="under">Below Minimum</option>
+                                <option value="adequate">Adequate</option>
+                                <option value="over">Above Maximum</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Rows Per Page -->
+                        <div class=" col-12 col-md-4 col-lg-2 filter-group mb-4 mb-md-0">
+                            <label for="rowsPerPage" class="filter-label">Rows per page</label>
+                            <select id="rowsPerPage" name="rows" class="filter-input">
+                                <option value="all">Show All</option>
+                                <option value="5">5</option>
+                                <option value="15">15</option>
+                                <option value="30">30</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                        
+                        <button  type="button" id="resetFilters" class="apply-btn col-12 col-md-4 col-lg-2  py-2 " style="background-color: #6c757d;">Reset</button>
                     </div>
-                </div>
-
-                <!-- Status Filter Dropdown -->
-                <div class="col-md-6 col-lg-3 filter-dropdown">
-                    <label for="statusFilter" class="form-label small fw-bold text-muted">Statut</label>
-                    <select id="statusFilter" class="form-select border border-primary text-primary"
-                        style=" font-weight: 500;"
-                        onchange="window.location.href='{{ route('coordonnateur.vacataires.index') }}?status=' + this.value">
-                        <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>
-                            Tous</option>
-                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
-                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive
-                        </option>
-                    </select>
-                </div>
-
-
-                <div class="col-md-6 col-lg-3 filter-dropdown">
-                    <label for="rowsFilter" class="form-label small fw-bold text-muted">Affichage</label>
-                    <select id="rowsFilter" class="form-select border border-primary text-primary"
-                        style=" font-weight: 500;"
-                        onchange="window.location.href='{{ route('coordonnateur.vacataires.index') }}?rows=' + this.value">
-                        <option value="5" {{ request('rows') == '5' ? 'selected' : '' }}>5
-                            lignes</option>
-                        <option value="15" {{ request('rows') == '15' ? 'selected' : '' }}>
-                            15
-                            lignes</option>
-                        <option value="30" {{ request('rows') == '30' ? 'selected' : '' }}>
-                            30
-                            lignes</option>
-                        <option value="100" {{ request('rows') == '100' ? 'selected' : '' }}>100
-                            lignes</option>
-                    </select>
-                </div>
-            </div>
-
-        </div>
-       
-
-        <style>
-            /* Custom styling for better appearance */
-            .filter-dropdown select {
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-
-            .filter-dropdown select:hover {
-                border-color: #4723d9 !important;
-                box-shadow: 0 0 0 2px rgba(71, 35, 217, 0.1);
-            }
-
-            .search-bar .input-group {
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-            }
-
-            .search-bar .form-control:focus {
-                box-shadow: none;
-                border-color: #ced4da;
-            }
-
-            .search-bar .input-group-text {
-                transition: all 0.3s ease;
-            }
-
-            /* Responsive adjustments */
-            @media (max-width: 768px) {
-                .d-flex.flex-wrap {
-                    gap: 12px !important;
-                }
-
-                .filter-dropdown select,
-                .search-bar {
-                    width: 100% !important;
-                    max-width: 100% !important;
-                }
-            }
-        </style>
-
-        <div class="table-container mt-4 mb-5 flex-column">
-            <div class="table-responsive p-3 ">
-                <table class="table bg-white  table-hover">
-                    <thead>
-                        <tr class="text-light">
-                            <th>ID</th>
-                            <th>Photo</th>
-                            <th>Nom complet</th>
-                            <th>État</th>
-                            <th>Email</th>
-                            <th>Date de création</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @foreach ($vacataires as $vacataire)
-                            <tr>
-                                <td>{{ $vacataire->id }}</td>
-                                <td>
-                                    <a href="{{ route('coordonnateur.vacataires.show', $vacataire->id) }}">
-                                        @if ($vacataire->userDetails && $vacataire->userDetails->profile_img)
-                                            <img style="height: 40px;width: 40px;object-fit:cover;border-radius:50%;"
-                                                src="{{ asset('storage/' . $vacataire->userDetails->profile_img) }}">
-                                        @else
-                                            <img style="height: 40px;width: 40px;object-fit:cover;border-radius:50%;"
-                                                src="{{ asset('storage/images/default_profile_img.png') }}">
-                                        @endif
-                                    </a>
-                                </td>
-                                <td>
-                                    <div class="d-flex flex-column">
-                                        <span class="fw-semibold">{{ $vacataire->lastname }}
-                                            {{ $vacataire->firstname }}</span>
-                                        <small class="text-muted">Vacataire</small>
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    @if ($vacataire->user_details)
-                                        <span
-                                            class="status-indicator status-{{ $vacataire->user_details->status == 'active' ? 'active' : 'inactive' }}">
-                                            {{ $vacataire->user_details->status == 'active' ? 'Actif' : 'Inactif' }}
-                                        </span>
-                                    @else
-                                        <span class="status-undefined">-</span>
-                                    @endif
-
-
-                                    <style>
-                                        /* Status indicator styling */
-                                        .status-indicator {
-                                            display: inline-block;
-                                            padding: 4px 8px;
-                                            border-radius: 12px;
-                                            font-size: 0.85rem;
-                                            font-weight: 500;
-                                        }
-
-                                        .status-active {
-                                            background-color: #e6f7ee;
-                                            color: #0a7b4c;
-                                        }
-
-                                        .status-inactive {
-                                            background-color: #feeceb;
-                                            color: #d92d20;
-                                        }
-
-                                        .status-undefined {
-                                            color: #6c757d;
-                                        }
-
-                                        /* Action buttons styling */
-                                        .action-btn {
-                                            padding: 0.25rem 0.5rem;
-                                            font-size: 0.875rem;
-                                            border-radius: 4px;
-                                            display: inline-flex;
-                                            align-items: center;
-                                            gap: 4px;
-                                        }
-
-                                        .btn-create {
-                                            background-color: #4723d9;
-                                            color: white;
-                                        }
-
-                                        .btn-create:hover {
-                                            background-color: #3a1cb3;
-                                        }
-                                    </style>
-
-
-                                </td>
-                                <td>
-                                    <a href="mailto:{{ $vacataire->email }}"
-                                        class="text-primary">{{ $vacataire->email }}</a>
-                                </td>
-                                <td class="text-center">{{ $vacataire->created_at->format('Y-m-d') }}</td>
-                                <td>
-                                    <div class="d-flex justify-content-center align-items-center gap-2">
-                                        <a href="{{ route('assign', $vacataire->id) }}"
-                                            class="btn btn-sm btn-primary" title="Assigner UE">
-                                            <i class="bi bi-journal-plus"></i>
-                                        </a>
-                                        <a href="{{ route('coordonnateur.vacataires.edit', $vacataire->id) }}"
-                                            class="btn btn-sm" style="background-color:#4723d9;color: #ffffff;">
-                                            <i class="bi bi-pencil-square"></i>
-
-                                        </a>
-                                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#deleteVacataireModal{{ $vacataire->id }}"
-                                            title="Supprimer"><i class="bi bi-trash3"></i>
-                                        </button>
-
-
-                                        <div class="modal fade" id="deleteVacataireModal{{ $vacataire->id }}"
-                                            tabindex="-1" aria-labelledby="deleteVacataireModalLabel"
-                                            aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="deleteVacataireModalLabel">
-                                                            Confirmation de suppression</h5>
-                                                        <button type="button" class="btn-close"
-                                                            data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>Voulez-vous supprimer le vacataire
-                                                            <strong>{{ $vacataire->lastname }}
-                                                                {{ $vacataire->firstname }}</strong>
-                                                            définitivement?
-                                                        </p>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary btn-sm"
-                                                            data-bs-dismiss="modal">Fermer</button>
-                                                        <form
-                                                            action="{{ route('coordonnateur.vacataires.destroy', $vacataire->id) }}"
-                                                            method="POST" style="display: inline;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit"
-                                                                class="btn btn-danger btn-sm">Supprimer</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-            {{--  --}}
-
-            {{-- pagination --}}
-            <div class="d-flex justify-content-center my-4">
-                @if ($vacataires->onFirstPage())
-                    <span class="btn btn-secondary mx-1 disabled">Précédent</span>
-                @else
-                    <a href="{{ $vacataires->previousPageUrl() }}&{{ http_build_query(request()->except('page')) }}"
-                        class="btn mx-1" style="background-color:#4723d9;color:white;">
-                        Précédent
-                    </a>
-                @endif
-
-                @if ($vacataires->hasMorePages())
-                    <a href="{{ $vacataires->nextPageUrl() }}&{{ http_build_query(request()->except('page')) }}"
-                        class="btn mx-1" style="background-color:#4723d9;color:white;">
-                        Suivant
-                    </a>
-                @else
-                    <span class="btn btn-secondary mx-1 disabled">Suivant</span>
-                @endif
             </div>
         </div>
-
-
     </div>
 
-</x-coordonnateur_layout>
+    
+    <!-- Table Section -->
+    <div class="table-section">
+        <div class="table-responsive">
+            <table class="table" id="exportTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Photo</th>
+                        <th>Workload</th>
+                        <th>Professor</th>
+                        <th>Status</th>
+                        <th>Email</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="professorsTableBody">
+                    @foreach ($vacataires as $vacataire)
+                    <tr class="professor-row" 
+                        data-id="{{ $vacataire['id'] }}"
+                        data-name="{{ strtolower($vacataire->lastname . ' ' . $vacataire->firstname) }}"
+                        data-email="{{ strtolower($vacataire['email']) }}"
+                        data-status="{{ $vacataire->user_details ? $vacataire->user_details->status : '' }}"
+                        data-hours="{{ $vacataire->user_details ? $vacataire->user_details->actuelle_hours : 0 }}"
+                        data-min-hours="{{ $vacataire->user_details ? $vacataire->user_details->min_hours : 0 }}"
+                        data-max-hours="{{ $vacataire->user_details ? $vacataire->user_details->max_hours : 0 }}">
+                        <td>#{{ $vacataire['id'] }}</td>
+                        
+                        <td>
+                            <a href="{{url('profile/'. $vacataire->id)}}">
+                                @if ($vacataire->user_details)
+                                    @if ($vacataire->user_details->profile_img!=null)
+                                        <img class="professor-avatar" src="{{asset('storage/' . $vacataire->user_details->profile_img)}}">
+                                    @else
+                                        <img class="professor-avatar" src="{{asset('storage/images/default_profile_img.png')}}">
+                                    @endif
+                                @else
+                                    <img class="professor-avatar" src="{{asset('storage/images/default_profile_img.png')}}">
+                                @endif
+                            </a>
+                        </td>
+                        
+                        <td class="hours-container">
+                        
+
+                            @php
+                                $min = $vacataire->user_details->min_hours ?? 0;
+                                $max = $vacataire->user_details->max_hours ?? 0;
+                                $current = $vacataire->hours ?? 0;
+                                
+                                $current_percent = $max > 0 ? round(($current / $max) * 100) : 0;
+                                $min_percent = $max > 0 ? round(($min / $max) * 100) : 0;
+                                
+                                // Determine color based on workload status
+                                if ($current < $min) {
+                                    $color = '#ff6b6b'; // Red for under minimum
+                                } elseif ($current > $max) {
+                                    $color = '#ff922b'; // Orange for over maximum
+                                } else {
+                                    $color = '#51cf66'; // Green for adequate
+                                }
+                            @endphp
+                            
+                            <div class="hours-label">
+                                <span>{{ $current }}h</span>
+                                <span>Min: {{ $min }}h / Max: {{ $max }}h</span>
+                            </div>
+                            
+                            <div class="hours-progress">
+                                <div class="hours-filled" style="width: {{ $current_percent }}%; background-color: {{ $color }};"></div>
+                                <div class="hours-min-marker" style="left: {{ $min_percent }}%;"></div>
+                                <div class="hours-max-marker" style="left: 100%;"></div>
+                            </div>
+                        </td>
+                        
+                        <td class="professor-name">{{ $vacataire->lastname }} {{ $vacataire->firstname }}</td>
+                        
+                        <td>
+                            @if ($vacataire->user_details)
+                                <span class="status-badge status-{{ $vacataire->user_details->status }}">
+                                    {{ ucfirst($vacataire->user_details->status) }}
+                                </span>
+                            @else
+                                <span class="status-badge">Unknown</span>
+                            @endif
+                        </td>
+                        
+                        <td>{{ $vacataire['email'] }}</td>
+                        
+                        <td>{{ $vacataire->created_at->format('Y-m-d') }}</td>
+                        
+                        <td class="p-0">
+                            <div class="d-flex justify-content-center gap-3">
+
+                                <a href="{{route('coordonnateur.vacataire.profile',$vacataire->id)}}" class="action-btn view-btn" title="View Profile">
+                                    <i class="bi bi-file-earmark-plus"></i>
+                                    
+                                </a>
+                                
+                                <a href="{{url('profile/'. $vacataire->id)}}" class="action-btn view-btn" title="View Profile">
+                            <i class="bi bi-person-square"></i>
+
+                        </a>
+                     </div>
+
+
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination will be handled client-side -->
+        <div id="paginationControls" class="pagination">
+            <!-- Will be populated by JavaScript -->
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+<script>
+function exportStyledExcel() {
+    const table = document.getElementById("exportTable");
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Professors");
+
+    // Extract headers
+    const headers = [];
+    const headerRow = table.rows[0];
+    for (let i = 0; i < headerRow.cells.length; i++) {
+        if (i !== 1 && i !== headerRow.cells.length - 1) { // skip Photo and Actions
+            headers.push(headerRow.cells[i].innerText);
+        }
+    }
+    worksheet.addRow(headers);
+
+    // Style header
+    worksheet.getRow(1).eachCell(cell => {
+        cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: '4F81BD' } // Blue
+        };
+        cell.alignment = { horizontal: 'center' };
+    });
+
+    // Data rows
+    for (let i = 1; i < table.rows.length; i++) {
+        const row = table.rows[i];
+        const rowData = [];
+        for (let j = 0; j < row.cells.length; j++) {
+            if (j !== 1 && j !== row.cells.length - 1) { // skip Photo and Actions
+                rowData.push(row.cells[j].innerText);
+            }
+        }
+        const newRow = worksheet.addRow(rowData);
+
+        // Apply conditional color to "Status" column (assuming it's 4th after removing Photo)
+        const status = newRow.getCell(4);
+        if (status.value === "Active") {
+            status.font = { color: { argb: 'FF00AA00' } }; // Green
+        } else if (status.value === "Inactive") {
+            status.font = { color: { argb: 'FFAA0000' } }; // Red
+        }
+        status.alignment = { horizontal: 'center' };
+    }
+
+    // Set column widths
+    worksheet.columns = [
+        { width: 10 }, // ID
+        { width: 25 }, // Workload
+        { width: 20 }, // Professor
+        { width: 15 }, // Status
+        { width: 30 }, // Email
+        { width: 15 }  // Created
+    ];
+
+    // Export the file
+    workbook.xlsx.writeBuffer().then((buffer) => {
+        const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        saveAs(blob, "Professors_Styled.xlsx");
+    });
+}
+
+
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Cache DOM elements
+    const searchInput = document.getElementById('search');
+    const statusFilter = document.getElementById('statusFilter');
+    const hoursFilter = document.getElementById('hoursFilter');
+    const rowsPerPage = document.getElementById('rowsPerPage');
+    const resetBtn = document.getElementById('resetFilters');
+    const tableBody = document.getElementById('professorsTableBody');
+    const paginationControls = document.getElementById('paginationControls');
+    const professorRows = document.querySelectorAll('.professor-row');
+    
+    // Current pagination state
+    let currentPage = 1;
+    let rowsPerPageValue = parseInt(rowsPerPage.value) || professorRows.length;
+    
+    // Initialize
+    updatePaginationControls();
+    filterProfessors();
+    
+    // Event listeners for filters
+    searchInput.addEventListener('input', function() {
+        currentPage = 1;
+        filterProfessors();
+    });
+    
+    statusFilter.addEventListener('change', function() {
+        currentPage = 1;
+        filterProfessors();
+    });
+    
+    hoursFilter.addEventListener('change', function() {
+        currentPage = 1;
+        filterProfessors();
+    });
+    
+    rowsPerPage.addEventListener('change', function() {
+        currentPage = 1;
+        rowsPerPageValue = this.value === 'all' ? professorRows.length : parseInt(this.value);
+        filterProfessors();
+        updatePaginationControls();
+    });
+    
+    resetBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        statusFilter.value = '';
+        hoursFilter.value = '';
+        rowsPerPage.value = 'all';
+        currentPage = 1;
+        rowsPerPageValue = professorRows.length;
+        filterProfessors();
+        updatePaginationControls();
+    });
+    
+    // Filter professors based on criteria
+    function filterProfessors() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const statusValue = statusFilter.value;
+        const hoursValue = hoursFilter.value;
+        
+        let visibleCount = 0;
+        
+        professorRows.forEach(row => {
+            const name = row.dataset.name;
+            const email = row.dataset.email;
+            const id = row.dataset.id;
+            const status = row.dataset.status;
+            const currentHours = parseFloat(row.dataset.hours);
+            const minHours = parseFloat(row.dataset.minHours);
+            const maxHours = parseFloat(row.dataset.maxHours);
+            
+            // Check search term
+            const matchesSearch = searchTerm === '' || 
+                name.includes(searchTerm) || 
+                email.includes(searchTerm) || 
+                id.includes(searchTerm);
+            
+            // Check status
+            const matchesStatus = statusValue === '' || status === statusValue;
+            
+            // Check hours
+            let matchesHours = true;
+            if (hoursValue === 'under') {
+                matchesHours = currentHours < minHours;
+            } else if (hoursValue === 'adequate') {
+                matchesHours = currentHours >= minHours && currentHours <= maxHours;
+            } else if (hoursValue === 'over') {
+                matchesHours = currentHours > maxHours;
+            }
+            
+            // Show/hide row based on filters
+            if (matchesSearch && matchesStatus && matchesHours) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        // Update pagination
+        updatePaginationControls(visibleCount);
+        showPage(currentPage);
+    }
+    
+    // Update pagination controls
+    function updatePaginationControls(totalRows = professorRows.length) {
+        if (rowsPerPageValue === 'all' || rowsPerPageValue >= totalRows) {
+            paginationControls.style.display = 'none';
+            return;
+        }
+        
+        paginationControls.style.display = 'flex';
+        const pageCount = Math.ceil(totalRows / rowsPerPageValue);
+        
+        let paginationHTML = '';
+        
+        // Previous button
+        if (currentPage > 1) {
+            paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage - 1})">Previous</button>`;
+        } else {
+            paginationHTML += `<button class="page-btn disabled">Previous</button>`;
+        }
+        
+        // Page numbers
+        for (let i = 1; i <= pageCount; i++) {
+            if (i === currentPage) {
+                paginationHTML += `<button class="page-btn active">${i}</button>`;
+            } else {
+                paginationHTML += `<button class="page-btn" onclick="changePage(${i})">${i}</button>`;
+            }
+        }
+        
+        // Next button
+        if (currentPage < pageCount) {
+            paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage + 1})">Next</button>`;
+        } else {
+            paginationHTML += `<button class="page-btn disabled">Next</button>`;
+        }
+        
+        paginationControls.innerHTML = paginationHTML;
+    }
+    
+    // Show specific page of results
+    function showPage(page) {
+        const visibleRows = Array.from(professorRows).filter(row => row.style.display !== 'none');
+        
+        if (rowsPerPageValue === 'all') {
+            visibleRows.forEach(row => row.style.display = '');
+            return;
+        }
+        
+        const startIdx = (page - 1) * rowsPerPageValue;
+        const endIdx = startIdx + rowsPerPageValue;
+        
+        visibleRows.forEach((row, index) => {
+            if (index >= startIdx && index < endIdx) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+    
+    // Change page (exposed to global scope for button onclick)
+    window.changePage = function(page) {
+        currentPage = page;
+        filterProfessors();
+    };
+    
+    // Initialize workload colors
+    document.querySelectorAll('.hours-filled').forEach(bar => {
+        const percent = parseInt(bar.style.width);
+        const minMarker = bar.parentElement.querySelector('.hours-min-marker');
+        const minPercent = parseInt(minMarker.style.left);
+        
+        if (percent < minPercent) {
+            bar.style.backgroundColor = '#ff6b6b'; // Under minimum
+        } else if (percent > 95) {
+            bar.style.backgroundColor = '#ff922b'; // Approaching or over max
+        } else {
+            bar.style.backgroundColor = '#51cf66'; // Adequate
+        }
+    });
+});
+</script>
+
+
+
+<script>
+    function showPopup(professorId, professorName) {
+        document.getElementById('professorName').innerText=professorName;
+        var professorIdInput = document.getElementById('professor_id');
+        professorIdInput.value=professorId;
+        var form = document.getElementById('popupForm');
+        form.action = "{{ url('/professors') }}/" + professorId;
+        
+        document.getElementById("overlay").style.display = "flex";
+    }
+
+    function closePopup(){
+        document.getElementById("overlay").style.display = "none";
+    }
+</script>
+
+</x-chef_layout>

@@ -14,12 +14,12 @@ class Module extends Model
 
     protected $guarded = [];
 
-     public function assignment()
+    public function assignment()
     {
         return $this->hasMany(Assignment::class);
     }
 
-    
+
 
     // Relation avec le professeur responsable
     public function professor()
@@ -37,7 +37,7 @@ class Module extends Model
         return $this->belongsTo(User::class, 'responsable_id'); // A module belongs to a professor
     }
 
-   
+
 
 
     // Relation avec la filière
@@ -47,64 +47,57 @@ class Module extends Model
         return $this->belongsTo(Filiere::class); // A module belongs to a filiere
     }
 
-    public function getProfCoursAttribute(){
-        
+    public function getProfCoursAttribute()
+    {
 
-        $assaigns=Assignment::where('module_id',$this->id)->where('teach_cm',1)->first();
 
-       
+        $assaigns = Assignment::where('module_id', $this->id)->where('teach_cm', 1)->first();
 
-        if($assaigns){
 
-           $prof=User::findOrFail($assaigns->prof_id);
-           return $prof;
 
-        }
-                else return null;
+        if ($assaigns) {
 
+            $prof = User::findOrFail($assaigns->prof_id);
+            return $prof;
+        } else return null;
     }
 
-     public function getProfTpAttribute(){
-        
+    public function getProfTpAttribute()
+    {
 
-        $assaigns=Assignment::where('module_id',$this->id)->where('teach_tp',1)->first();
 
-       
+        $assaigns = Assignment::where('module_id', $this->id)->where('teach_tp', 1)->first();
 
-        if($assaigns){
 
-           $prof=User::findOrFail($assaigns->prof_id);
-           return $prof;
 
-        }
+        if ($assaigns) {
 
-                else return null;
-
+            $prof = User::findOrFail($assaigns->prof_id);
+            return $prof;
+        } else return null;
     }
 
 
-     public function getProfTdAttribute(){
-        
+    public function getProfTdAttribute()
+    {
 
-        $assaigns=Assignment::where('module_id',$this->id)->where('teach_td',1)->first();
 
-       
+        $assaigns = Assignment::where('module_id', $this->id)->where('teach_td', 1)->first();
 
-        if($assaigns){
 
-           $prof=User::findOrFail($assaigns->prof_id);
-           return $prof;
 
-        }
+        if ($assaigns) {
 
-        else return null;
+            $prof = User::findOrFail($assaigns->prof_id);
+            return $prof;
+        } else return null;
     }
 
-    
+
     // Calcul du volume horaire total
     public function volume_horaire()
     {
-        
+
         return $this->cm_hours + $this->td_hours + $this->tp_hours;
     }
 
@@ -160,19 +153,32 @@ class Module extends Model
 
     public function tpAssignation()
     {
-        return $this->hasOne(Assignment::class)->where("teach_tp",true);
+        return $this->hasOne(Assignment::class)->where("teach_tp", true);
     }
 
     public function tdAssignation()
     {
-        return $this->hasOne(Assignment::class)->where("teach_td",true);
+        return $this->hasOne(Assignment::class)->where("teach_td", true);
     }
 
     public function cmAssignation()
     {
-        return $this->hasOne(Assignment::class)->where("teach_cm",true);
+        return $this->hasOne(Assignment::class)->where("teach_cm", true);
     }
 
-    
+
+
+    public function ProfCours()
+    {
+        return $this->belongsTo(User::class, 'prof_cours_id');
+    }
+    public function ProfTd()
+    {
+        return $this->belongsTo(User::class, 'prof_td_id');
+    }
+    public function ProfTp()
+    {
+        return $this->belongsTo(User::class, 'prof_tp_id');
+    }
 }
 ////////////////////

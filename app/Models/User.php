@@ -72,7 +72,7 @@ class User extends Authenticatable
 
         $assaigns=Assignment::where('prof_id',$this->id)->get();
 
-        $modules = Module::where('professor_id', $this->id)->get();
+        // $modules = Module::where('professor_id', $this->id)->get();
 
         $hours=0;
         if($assaigns){

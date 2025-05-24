@@ -26,18 +26,12 @@
 </a>
 
 <!-- Validations / Affectations -->
-<a href="#" class="nav_link {{ request()->is('coordonnateur/lkadflkadlfaj') ? 'active' : '' }} ">
+<a href="{{ route('coordonnateur.assignments') }}" class="nav_link {{ request()->is('coordonnateur/assignments') ? 'active' : '' }} ">
     <i class="bx bx-check-circle nav_icon"></i>
     <span class="nav_name">Affectations Validées</span>
 </a>
 
 
-<!-- Modules Vacants -->
-<a href="{{ url('/chef/modules_vacantes') }}"
-    class="nav_link {{ request()->is('coordonnateur/modules_vacantes') ? 'active' : '' }} ">
-    <i class="bx bx-error nav_icon"></i>
-    <span class="nav_name">Modules Vacants</span>
-</a>
 
 
 
@@ -48,11 +42,6 @@
     <span class="nav_name">Historique</span>
 </a>
 
-<!-- Import / Export -->
-<a href="#" class="nav_link {{ request()->is('coordonnateur/lkadflkadlfaj') ? 'active' : '' }} ">
-    <i class="bx bx-upload nav_icon"></i>
-    <span class="nav_name">Import / Export</span>
-</a>
 {{-- </div> --}}
 </div>
 

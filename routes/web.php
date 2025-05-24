@@ -70,12 +70,24 @@ use function PHPUnit\Framework\returnArgument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-/////////Coordonnateur//////////////////////////////////////////////////////
+///Coordonnateur//////////////////////////////////////////////////////
 Route::prefix('coordonnateur')->group(function () {
     Route::get('/', [CoordonnateurController::class, 'dashboard'])->name('coordonnateur.dashboard');
 });
 
-//////coordonateur: gestion des modules/////////////
+
+
+////////// Gestion des assignations///////////// 
+Route::get('/coordonnateur/assignments', [CoordonnateurController::class, 'affectations'])
+    ->name('coordonnateur.assignments')
+    ->middleware('auth');
+Route::post('/assignations', [ModuleController::class, 'addAssignation'])
+    ->name('coordonnateur.modules.add-assignation');
+Route::put('/assignations/{vacataire}', [ModuleController::class, 'updateAssignation'])
+    ->name('coordonnateur.modules.update-assignation');
+Route::delete('/assignations/{Assignment}', [ModuleController::class, 'removeAssignation'])
+    ->name('coordonnateur.modules.remove-assignation');
+
 
 
 Route::get('chef/modules_vacantes', [chefModulesController::class, 'vacantesList']);
@@ -94,39 +106,46 @@ Route::middleware(['auth'])
         Route::post('/', [ModuleController::class, 'store'])->name('coordonnateur.modules.store');
 
         Route::get('/{module}/edit', [ModuleController::class, 'edit'])->name('coordonnateur.modules.edit');
-        Route::put('/{module}', [ModuleController::class, 'update'])->name('coordonnateur.modules.update');
 
-        Route::get('/{module}', [ModuleController::class, 'show'])->name('coordonnateur.modules.show');
         Route::delete('/{module}', [ModuleController::class, 'destroy'])->name('coordonnateur.modules.destroy');
 
-        Route::post('/search', [ModuleController::class, 'search'])->name('coordonnateur.modules.search');
-        Route::post('/filter', [ModuleController::class, 'filter'])->name('coordonnateur.modules.filter');
 
-        //Assignation: 
-        Route::get('/assign-vacataire', [ModuleController::class, 'create'])->name('coordonnateur.modules.assign-vacataire');
-
-        Route::get('coordonnateur/modules/{module}/assigner', [ModuleController::class, 'showAssignationPage'])
-            ->name('coordonnateur.modules.assigner');
-        Route::post('coordonnateur/modules/{module}/assigner', [ModuleController::class, 'processAssignation'])
-            ->name('coordonnateur.modules.assigner.process');
+        Route::get('/{module}', [ModuleController::class, 'show'])->name('coordonnateur.modules.show');
+        Route::put('/{module}', [ModuleController::class, 'update'])->name('coordonnateur.modules.update');
 
 
-        Route::middleware(['auth'])->prefix('coordonnateur/modules/{module}')->group(function () {
-            // Mise à jour des heures
-            Route::put('/update-hours', [ModuleController::class, 'updateHours'])
-                ->name('coordonnateur.modules.update-hours');
 
-            // Gestion des assignations///////////// 
-            Route::post('/assignations', [ModuleController::class, 'addAssignation'])
-                ->name('coordonnateur.modules.add-assignation');
-
-            Route::put('/assignations/{vacataire}', [ModuleController::class, 'updateAssignation'])
-                ->name('coordonnateur.modules.update-assignation');
-
-            Route::delete('/assignations/{vacataire}', [ModuleController::class, 'removeAssignation'])
-                ->name('coordonnateur.modules.remove-assignation');
-        });
+        //import
+        Route::post('/modules/import', [ModuleController::class, 'import'])->name('coordonnateur.modules.import');
     });
+
+
+//import/export
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+Route::get('/assign-vacataire', [ModuleController::class, 'create'])->name('coordonnateur.modules.assign-vacataire');
+
+Route::get('coordonnateur/modules/{module}/assigner', [ModuleController::class, 'showAssignationPage'])
+    ->name('coordonnateur.modules.assigner');
+Route::post('coordonnateur/modules/{module}/assigner', [ModuleController::class, 'processAssignation'])
+    ->name('coordonnateur.modules.assigner.process');
+
+
+
+
+Route::middleware(['auth'])->prefix('coordonnateur/modules/{module}')->group(function () {
+    // Mise à jour des heures
+    Route::put('/update-hours', [ModuleController::class, 'updateHours'])
+        ->name('coordonnateur.modules.update-hours');
+});
 
 
 
@@ -167,9 +186,23 @@ Route::middleware(['auth'])
             ->name('assign');
         Route::post('/{vacataire}/assign', [VacataireController::class, 'storeAssign'])
             ->name('store-assign');
+
+
+
+
+        //Assignations des module a un vacataire:////////////////////////////////////////
+
+        Route::get('profile/{user}', [CoordonnateurController::class, 'vacataire_profile'])->name('coordonnateur.vacataire.profile');
+
+        Route::post('profile/{user}', [CoordonnateurController::class, 'editHours']);
+
+        Route::post('coorodonnateur/modules_vacantes/affecter/{user}', [CoordonnateurController::class, 'affecterModules']);
+
+
+
+
+        Route::post('chef/professeurs/affecter', [CoordonnateurController::class, 'affecter']);
     });
-
-
 
 
 
