@@ -142,13 +142,50 @@
                         font-size: 1.5rem;
                     }
 
-                    .header-grid > * {
+                    .header-grid>* {
                         width: 100%;
                     }
 
-                    .btn-primary, .btn-success {
+                    .btn-primary,
+                    .btn-success {
                         width: 100%;
                         text-align: center;
+                    }
+                }
+
+
+                .modal-content {
+                    max-width: 90%;
+                    animation: fadeIn 0.3s;
+                }
+
+                @keyframes fadeIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                .form-control[type="file"] {
+                    border-color: #e0e0e0;
+                    font-size: 0.9rem;
+                    padding: 8px 12px;
+                }
+
+                .form-control[type="file"]:focus {
+                    border-color: #4723d9;
+                    box-shadow: 0 0 0 2px rgba(71, 35, 217, 0.2);
+                }
+
+                @media (max-width: 768px) {
+                    .modal-content {
+                        max-width: 95%;
+                        margin: 1rem;
                     }
                 }
             </style>
@@ -158,10 +195,8 @@
                     <i class="fas fa-book-open fa-2x" style="color: #330bcf;"></i>
                     <h3 style="color: #330bcf; font-weight: 500;">Gestion des Unités d'Enseignement</h3>
                 </div>
-
                 <div class="d-flex gap-2 flex-wrap">
-                    <a href="{{ route('coordonnateur.modules.create') }}"
-                        class="btn btn-primary rounded fw-semibold">
+                    <a href="{{ route('coordonnateur.modules.create') }}" class="btn btn-primary rounded fw-semibold">
                         <i class="fas fa-plus-circle"></i> Nouvelle UE
                     </a>
                     <div class="dropdown">
@@ -170,9 +205,16 @@
                             <i class="fas fa-file-export"></i> Exporter
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                            <li>
+                                <a class="dropdown-item"
+                                    href="{{ route('coordonnateur.modules.export', ['semester' => 'all']) }}">
+                                    Tous les Semestres
+                                </a>
+                            </li>
                             @for ($i = 1; $i <= 6; $i++)
                                 <li>
-                                    <a class="dropdown-item" href="{{ route('coordonnateur.modules.index') }}?export=semester&semester={{ $i }}">
+                                    <a class="dropdown-item"
+                                        href="{{ route('coordonnateur.modules.export', ['semester' => $i]) }}">
                                         {{ $i == 1 ? '1er' : $i . 'ème' }} Semestre
                                     </a>
                                 </li>
@@ -180,13 +222,60 @@
                         </ul>
                     </div>
                     <div>
-                        <button class="btn btn-success rounded fw-semibold" type="button"
-                            id="importDropdown" data-bs-toggle="modal" data-bs-target="#importModal">
+                        <button class="btn btn-success rounded fw-semibold" type="button" id="importDropdown"
+                            data-bs-toggle="modal" data-bs-target="#importModal">
                             <i class="fas fa-file-import"></i> Importer
                         </button>
                     </div>
                 </div>
             </div>
+
+            <!-- Add at the bottom of the Blade file, outside any other containers -->
+            <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content bg-white rounded-3 p-4 shadow-lg">
+                        <div class="modal-header border-0">
+                            <h5 class="modal-title text-primary fw-bold" id="importModalLabel">
+                                <i class="fas fa-file-import me-2"></i> Importer des Unités d'Enseignement
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Fermer"></button>
+                        </div>
+                        <form action="{{ route('coordonnateur.modules.import') }}" method="POST"
+                            enctype="multipart/form-data" id="importForm">
+                            @csrf
+                            <div class="modal-body">
+                                @error('excel_file')
+                                    <div class="alert alert-danger">{{ $message }}</div>
+                                @enderror
+                                <div class="mb-3">
+                                    <label for="excelFile" class="form-label small fw-medium">Fichier Excel
+                                        (.xlsx)</label>
+                                    <input type="file" class="form-control rounded-3" id="excelFile"
+                                        name="excel_file" accept=".xlsx, .xls" required
+                                        aria-describedby="excelFileHelp">
+                                    <small id="excelFileHelp" class="form-text text-muted">
+                                        Téléchargez un fichier Excel avec les colonnes : Nom, Code, Semestre,
+                                        Responsable ID.
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="modal-footer border-0">
+                                <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                                    data-bs-dismiss="modal" aria-label="Annuler">
+                                    Annuler
+                                </button>
+                                <button type="submit" class="btn btn-primary rounded-pill px-4 fw-medium"
+                                    aria-label="Importer le fichier">
+                                    <i class="fas fa-upload me-2"></i> Importer
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- Filters Section -->
@@ -231,20 +320,25 @@
         </div>
 
         <!-- Import Modal -->
-        <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+        <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="importModalLabel">Importer des Unités d'Enseignement</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
                     </div>
-                    <form action="{{ route('coordonnateur.modules.import') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('coordonnateur.modules.import') }}" method="POST"
+                        enctype="multipart/form-data">
                         @csrf
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label for="file" class="form-label">Sélectionner un fichier CSV</label>
-                                <input type="file" class="form-control" id="file" name="file" accept=".csv" required>
-                                <small class="text-muted">Format attendu : Nom, Code, Type, Heures CM, Heures TD, Heures TP, Semestre, Statut, Crédit, Évaluation, Description, Responsable</small>
+                                <input type="file" class="form-control" id="file" name="file"
+                                    accept=".csv" required>
+                                <small class="text-muted">Format attendu : Nom, Code, Type, Heures CM, Heures TD,
+                                    Heures TP, Semestre, Statut, Crédit, Évaluation, Description, Responsable</small>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -257,12 +351,14 @@
         </div>
 
         <!-- Delete Confirmation Modal -->
-        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="deleteModalLabel">Confirmer la suppression</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         Êtes-vous sûr de vouloir supprimer cette unité d'enseignement ?
@@ -356,7 +452,8 @@
                                     <span class="detail-label">Semestre</span>
                                     <span class="detail-value">
                                         {{ $module->semester == 1 ? '1er Semestre' : ($module->semester ? $module->semester . 'ème Semestre' : 'N/A') }}
-                                        <span class="badge {{ $module->status == 'active' ? 'bg-success' : 'bg-warning' }} ms-2">
+                                        <span
+                                            class="badge {{ $module->status == 'active' ? 'bg-success' : 'bg-warning' }} ms-2">
                                             {{ $module->status == 'active' ? 'Actif' : 'Inactif' }}
                                         </span>
                                     </span>
@@ -374,8 +471,7 @@
                         </div>
 
                         <div class="module-actions">
-                            <a href="{{ route('coordonnateur.modules.show', $module) }}"
-                                class="view-btn">
+                            <a href="{{ route('coordonnateur.modules.show', $module) }}" class="view-btn">
                                 <i class="bi bi-eye-fill"></i> Voir plus
                             </a>
                             <button class="remove-btn" data-bs-toggle="modal" data-bs-target="#deleteModal"
@@ -529,7 +625,8 @@
                     gap: 10px;
                 }
 
-                .view-btn, .remove-btn {
+                .view-btn,
+                .remove-btn {
                     background: none;
                     font-size: 0.9rem;
                     cursor: pointer;
@@ -544,7 +641,8 @@
                     text-decoration: none;
                     border: 1px solid;
                     line-height: 1.5;
-                    height: 38px; /* Fixed height for consistency */
+                    height: 38px;
+                    /* Fixed height for consistency */
                 }
 
                 .view-btn {
@@ -565,7 +663,8 @@
                     background: rgba(231, 76, 60, 0.1);
                 }
 
-                .view-btn i, .remove-btn i {
+                .view-btn i,
+                .remove-btn i {
                     font-size: 0.95rem;
                 }
 
@@ -619,7 +718,8 @@
                         gap: 8px;
                     }
 
-                    .view-btn, .remove-btn {
+                    .view-btn,
+                    .remove-btn {
                         width: 100%;
                     }
                 }
@@ -629,7 +729,8 @@
                         flex-direction: column;
                     }
 
-                    .filter-dropdown, .search-bar {
+                    .filter-dropdown,
+                    .search-bar {
                         width: 100%;
                     }
                 }
@@ -640,7 +741,7 @@
                 let semesterFilter = document.getElementById('semester').value;
                 let statusFilter = document.getElementById('status').value;
 
-                document.getElementById('moduleSearch').addEventListener('input', function () {
+                document.getElementById('moduleSearch').addEventListener('input', function() {
                     searchFilter = this.value.toLowerCase();
                     applyFilters();
                 });

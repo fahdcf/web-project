@@ -5,6 +5,12 @@
         $layout = 'components.admin_layout';
     } elseif (auth()->user()->role->ischef) {
         $layout = 'components.chef_layout';
+    }elseif (auth()->user()->role->iscoordonnateur) {
+     $layout = 'components.chef_layout';
+    } elseif (auth()->user()->role->isprof) {
+        $layout = 'components.chef_layout';
+    }elseif (auth()->user()->role->isvocataire) {
+        $layout = 'components.chef_layout';
     }
     else{
                 $layout = 'components.layout';

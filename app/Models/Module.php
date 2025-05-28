@@ -18,14 +18,7 @@ class Module extends Model
     {
         return $this->hasMany(Assignment::class);
     }
-
-
-
-    // Relation avec le professeur responsable
-    public function professor()
-    {
-        return $this->belongsTo(User::class, 'professor_id'); // A module belongs to a professor
-    }
+    
 
     public function users()
     {
@@ -106,21 +99,6 @@ class Module extends Model
         return $this->hasMany(Seance::class);
     }
 
-    /////////////////////////////////////////////////
-    // public function groupes()
-    // {
-    //     return $this->hasMany(Groupe::class,); // A module has many groupes 
-    // }
-
-    // public function tdGroups(): HasMany
-    // {
-    //     return $this->groupes()->where('type', 'TD');
-    // }
-
-    // public function tpGroups(): HasMany
-    // {
-    //     return $this->groupes()->where('type', 'TP');
-    // }
 
     ///////////////////////////////
     public function requests()
@@ -128,14 +106,6 @@ class Module extends Model
         return $this->hasMany(prof_request::class, 'target_id')->where('type', 'module');;
     }
     ////////
-
-
-    public function notes()
-    {
-        return $this->hasMany(Note::class);
-    }
-
-
 
     public function students()
     {

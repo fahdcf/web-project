@@ -8,20 +8,18 @@
     }
     
     /* Header */
-    .page-header {
-        display: flex;
-        justify-content: space-between;
+    .header-grid {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 1rem;
         align-items: center;
         margin-bottom: 2rem;
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
-    
-    .page-title {
-        color: #4723d9;
-        font-weight: 600;
-        font-size: 1.8rem;
-        margin: 0;
-    }
-    
+
     /* Filter Section */
     .filter-section {
         background: white;
@@ -57,8 +55,6 @@
     .filter-body {
         padding: 1.5rem;
     }
-   
-  
     
     .filter-group {
         margin-bottom: 0;
@@ -100,6 +96,68 @@
     .apply-btn:hover {
         background-color: #3a1cb3;
         transform: translateY(-2px);
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background-color: #4723d9;
+        border-color: #4723d9;
+        font-size: 0.9rem;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+        background-color: white;
+        color: #4723d9;
+        border-color: #4723d9;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+        font-size: 0.9rem;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .btn-success:hover {
+        background-color: white;
+        color: #28a745;
+        border-color: #28a745;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        font-size: 0.9rem;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .btn-danger:hover {
+        background-color: white;
+        color: #dc3545;
+        border-color: #dc3545;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .dropdown-menu {
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+        color: #4723d9;
     }
     
     /* Table Section */
@@ -268,6 +326,16 @@
         background-color: #3a1cb3;
         transform: rotate(5deg);
     }
+
+    .delete-btn {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .delete-btn:hover {
+        background-color: #c82333;
+        transform: rotate(5deg);
+    }
     
     /* Pagination */
     .pagination {
@@ -318,91 +386,98 @@
         .apply-btn {
             grid-column: auto;
         }
+
+        .header-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .header-grid .d-flex.gap-2 {
+            justify-content: center;
+        }
     }
 </style>
 
 <div class="professor-container">
-    <div class="page-header">
-        <h1 class="page-title">Professors Directory</h1>
-        <!-- export button -->
- <button onclick="exportStyledExcel()" class="btn btn-outline-success " >
-    <i class="bi bi-file-excel"></i> Export
-</button>
+    <div class="header-grid">
+        <div class="d-flex align-items-center gap-3">
+            <i class="fas fa-user-graduate fa-2x" style="color: #330bcf;"></i>
+            <h3 style="color: #330bcf; font-weight: 500;">Gestion des Vacataires</h3>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="{{ route('coordonnateur.vacataires.create') }}"
+                class="btn btn-primary rounded fw-semibold">
+                <i class="fas fa-plus-circle"></i> Ajouter un compte vacataire
+            </a>
+            <div class="dropdown">
+                <button class="btn btn-success rounded fw-semibold dropdown-toggle" type="button"
+                    id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-file-export"></i> Exporter
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                    <li>
+                        <a class="dropdown-item" href="{{ route('coordonnateur.vacataires.export') }}">
+                            Tous les Vacataires
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
     
     <!-- Filter Section -->
     <div class="filter-section">
         <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="true">
-            <h5>Filters</h5>
+            <h5>Filtres</h5>
             <i class="bi bi-chevron-down"></i>
         </div>
         
-        <div class="collapse" id="filterCollapse">
-            <div class="filter-body ">
-                    <div class="filter-row row g-2">
-                        <!-- Search -->
-                        <div class="col-12 col-md-4 col-lg-4 filter-group">
-                            <label for="search" class="filter-label">Search</label>
-                            <input type="text" id="search" name="search" class="filter-input py-2" placeholder="Name, ID or email">
-                        </div>
-                        
-                        <!-- Status Filter -->
-                        <div class="col-12 col-md-4 col-lg-2 filter-group">
-                            <label for="statusFilter" class="filter-label">Status</label>
-                            <select class="filter-input" id="statusFilter" name="status">
-                                <option value="">All Status</option>
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
-                        </div>
-                        
-                        <!-- Hours Filter -->
-                        <div class=" col-12 col-md-4 col-lg-2 filter-group">
-                            <label for="hoursFilter" class="filter-label">Workload Status</label>
-                            <select class="filter-input" id="hoursFilter" name="hours_status">
-                                <option value="">All Workloads</option>
-                                <option value="under">Below Minimum</option>
-                                <option value="adequate">Adequate</option>
-                                <option value="over">Above Maximum</option>
-                            </select>
-                        </div>
-                        
-                        <!-- Rows Per Page -->
-                        <div class=" col-12 col-md-4 col-lg-2 filter-group mb-4 mb-md-0">
-                            <label for="rowsPerPage" class="filter-label">Rows per page</label>
-                            <select id="rowsPerPage" name="rows" class="filter-input">
-                                <option value="all">Show All</option>
-                                <option value="5">5</option>
-                                <option value="15">15</option>
-                                <option value="30">30</option>
-                                <option value="100">100</option>
-                            </select>
-                        </div>
-                        
-                        <button  type="button" id="resetFilters" class="apply-btn col-12 col-md-4 col-lg-2  py-2 " style="background-color: #6c757d;">Reset</button>
+        <div class="collapse show" id="filterCollapse">
+            <div class="filter-body">
+                <div class="filter-row row g-2">
+                    <!-- Search -->
+                    <div class="col-12 col-md-4 col-lg-4 filter-group">
+                        <label for="search" class="filter-label">Recherche</label>
+                        <input type="text" id="search" name="search" class="filter-input py-2" placeholder="Nom, ID ou email">
                     </div>
+                    
+                    <!-- Status Filter -->
+                    <div class="col-12 col-md-4 col-lg-2 filter-group">
+                        <label for="statusFilter" class="filter-label">Statut</label>
+                        <select class="filter-input" id="statusFilter" name="status">
+                            <option value="">Tous les statuts</option>
+                            <option value="active">Actif</option>
+                            <option value="inactive">Inactif</option>
+                        </select>
+                    </div>
+                    
+                   
+                    
+                 
+                    <button type="button" id="resetFilters" class="apply-btn col-12 col-md-4 col-lg-2 py-2" style="background-color: #6c757d;">
+                        Réinitialiser
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    
     <!-- Table Section -->
     <div class="table-section">
         <div class="table-responsive">
-            <table class="table" id="exportTable">
+            <table class="table" id="vacatairesTable">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Photo</th>
-                        <th>Workload</th>
-                        <th>Professor</th>
-                        <th>Status</th>
+                        <th>Charge de travail</th>
+                        <th>Professeur</th>
+                        <th>Statut</th>
                         <th>Email</th>
-                        <th>Created</th>
+                        <th>Créé le</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="professorsTableBody">
+                <tbody id="vacatairesTableBody">
                     @foreach ($vacataires as $vacataire)
                     <tr class="professor-row" 
                         data-id="{{ $vacataire['id'] }}"
@@ -415,22 +490,16 @@
                         <td>#{{ $vacataire['id'] }}</td>
                         
                         <td>
-                            <a href="{{url('profile/'. $vacataire->id)}}">
-                                @if ($vacataire->user_details)
-                                    @if ($vacataire->user_details->profile_img!=null)
-                                        <img class="professor-avatar" src="{{asset('storage/' . $vacataire->user_details->profile_img)}}">
-                                    @else
-                                        <img class="professor-avatar" src="{{asset('storage/images/default_profile_img.png')}}">
-                                    @endif
+                            <a href="{{ url('profile/' . $vacataire->id) }}">
+                                @if ($vacataire->user_details && $vacataire->user_details->profile_img)
+                                    <img class="professor-avatar" src="{{ asset('storage/' . $vacataire->user_details->profile_img) }}">
                                 @else
-                                    <img class="professor-avatar" src="{{asset('storage/images/default_profile_img.png')}}">
+                                    <img class="professor-avatar" src="{{ asset('storage/images/default_profile_img.png') }}">
                                 @endif
                             </a>
                         </td>
                         
                         <td class="hours-container">
-                        
-
                             @php
                                 $min = $vacataire->user_details->min_hours ?? 0;
                                 $max = $vacataire->user_details->max_hours ?? 0;
@@ -439,7 +508,6 @@
                                 $current_percent = $max > 0 ? round(($current / $max) * 100) : 0;
                                 $min_percent = $max > 0 ? round(($min / $max) * 100) : 0;
                                 
-                                // Determine color based on workload status
                                 if ($current < $min) {
                                     $color = '#ff6b6b'; // Red for under minimum
                                 } elseif ($current > $max) {
@@ -469,7 +537,7 @@
                                     {{ ucfirst($vacataire->user_details->status) }}
                                 </span>
                             @else
-                                <span class="status-badge">Unknown</span>
+                                <span class="status-badge">Inconnu</span>
                             @endif
                         </td>
                         
@@ -479,19 +547,21 @@
                         
                         <td class="p-0">
                             <div class="d-flex justify-content-center gap-3">
-
-                                <a href="{{route('coordonnateur.vacataire.profile',$vacataire->id)}}" class="action-btn view-btn" title="View Profile">
+                                <a href="{{ route('coordonnateur.vacataire.assignemts_profile', $vacataire->id) }}" class="action-btn view-btn" title="Voir le profil">
                                     <i class="bi bi-file-earmark-plus"></i>
-                                    
                                 </a>
-                                
-                                <a href="{{url('profile/'. $vacataire->id)}}" class="action-btn view-btn" title="View Profile">
-                            <i class="bi bi-person-square"></i>
-
-                        </a>
-                     </div>
-
-
+                                <a href="{{ url('profile/' . $vacataire->id) }}" class="action-btn view-btn" title="Voir le profil">
+                                    <i class="bi bi-person-square"></i>
+                                </a>
+                                <form action="{{ route('coordonnateur.vacataires.destroy', $vacataire->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="action-btn delete-btn" title="Supprimer"
+                                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce vacataire ?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @endforeach
@@ -499,84 +569,11 @@
             </table>
         </div>
         
-        <!-- Pagination will be handled client-side -->
         <div id="paginationControls" class="pagination">
-            <!-- Will be populated by JavaScript -->
+            <!-- Populated by JavaScript -->
         </div>
     </div>
 </div>
-
-
-<script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-
-<script>
-function exportStyledExcel() {
-    const table = document.getElementById("exportTable");
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Professors");
-
-    // Extract headers
-    const headers = [];
-    const headerRow = table.rows[0];
-    for (let i = 0; i < headerRow.cells.length; i++) {
-        if (i !== 1 && i !== headerRow.cells.length - 1) { // skip Photo and Actions
-            headers.push(headerRow.cells[i].innerText);
-        }
-    }
-    worksheet.addRow(headers);
-
-    // Style header
-    worksheet.getRow(1).eachCell(cell => {
-        cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-        cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: '4F81BD' } // Blue
-        };
-        cell.alignment = { horizontal: 'center' };
-    });
-
-    // Data rows
-    for (let i = 1; i < table.rows.length; i++) {
-        const row = table.rows[i];
-        const rowData = [];
-        for (let j = 0; j < row.cells.length; j++) {
-            if (j !== 1 && j !== row.cells.length - 1) { // skip Photo and Actions
-                rowData.push(row.cells[j].innerText);
-            }
-        }
-        const newRow = worksheet.addRow(rowData);
-
-        // Apply conditional color to "Status" column (assuming it's 4th after removing Photo)
-        const status = newRow.getCell(4);
-        if (status.value === "Active") {
-            status.font = { color: { argb: 'FF00AA00' } }; // Green
-        } else if (status.value === "Inactive") {
-            status.font = { color: { argb: 'FFAA0000' } }; // Red
-        }
-        status.alignment = { horizontal: 'center' };
-    }
-
-    // Set column widths
-    worksheet.columns = [
-        { width: 10 }, // ID
-        { width: 25 }, // Workload
-        { width: 20 }, // Professor
-        { width: 15 }, // Status
-        { width: 30 }, // Email
-        { width: 15 }  // Created
-    ];
-
-    // Export the file
-    workbook.xlsx.writeBuffer().then((buffer) => {
-        const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-        saveAs(blob, "Professors_Styled.xlsx");
-    });
-}
-
-
-</script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -586,38 +583,38 @@ document.addEventListener('DOMContentLoaded', function() {
     const hoursFilter = document.getElementById('hoursFilter');
     const rowsPerPage = document.getElementById('rowsPerPage');
     const resetBtn = document.getElementById('resetFilters');
-    const tableBody = document.getElementById('professorsTableBody');
+    const tableBody = document.getElementById('vacatairesTableBody');
     const paginationControls = document.getElementById('paginationControls');
-    const professorRows = document.querySelectorAll('.professor-row');
+    const vacataireRows = document.querySelectorAll('.professor-row');
     
     // Current pagination state
     let currentPage = 1;
-    let rowsPerPageValue = parseInt(rowsPerPage.value) || professorRows.length;
+    let rowsPerPageValue = parseInt(rowsPerPage.value) || vacataireRows.length;
     
     // Initialize
     updatePaginationControls();
-    filterProfessors();
+    filterVacataires();
     
     // Event listeners for filters
     searchInput.addEventListener('input', function() {
         currentPage = 1;
-        filterProfessors();
+        filterVacataires();
     });
     
     statusFilter.addEventListener('change', function() {
         currentPage = 1;
-        filterProfessors();
+        filterVacataires();
     });
     
     hoursFilter.addEventListener('change', function() {
         currentPage = 1;
-        filterProfessors();
+        filterVacataires();
     });
     
     rowsPerPage.addEventListener('change', function() {
         currentPage = 1;
-        rowsPerPageValue = this.value === 'all' ? professorRows.length : parseInt(this.value);
-        filterProfessors();
+        rowsPerPageValue = this.value === 'all' ? vacataireRows.length : parseInt(this.value);
+        filterVacataires();
         updatePaginationControls();
     });
     
@@ -627,20 +624,20 @@ document.addEventListener('DOMContentLoaded', function() {
         hoursFilter.value = '';
         rowsPerPage.value = 'all';
         currentPage = 1;
-        rowsPerPageValue = professorRows.length;
-        filterProfessors();
+        rowsPerPageValue = vacataireRows.length;
+        filterVacataires();
         updatePaginationControls();
     });
     
-    // Filter professors based on criteria
-    function filterProfessors() {
+    // Filter vacataires based on criteria
+    function filterVacataires() {
         const searchTerm = searchInput.value.toLowerCase();
         const statusValue = statusFilter.value;
         const hoursValue = hoursFilter.value;
         
         let visibleCount = 0;
         
-        professorRows.forEach(row => {
+        vacataireRows.forEach(row => {
             const name = row.dataset.name;
             const email = row.dataset.email;
             const id = row.dataset.id;
@@ -683,7 +680,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Update pagination controls
-    function updatePaginationControls(totalRows = professorRows.length) {
+    function updatePaginationControls(totalRows = vacataireRows.length) {
         if (rowsPerPageValue === 'all' || rowsPerPageValue >= totalRows) {
             paginationControls.style.display = 'none';
             return;
@@ -696,9 +693,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Previous button
         if (currentPage > 1) {
-            paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage - 1})">Previous</button>`;
+            paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage - 1})">Précédent</button>`;
         } else {
-            paginationHTML += `<button class="page-btn disabled">Previous</button>`;
+            paginationHTML += `<button class="page-btn disabled">Précédent</button>`;
         }
         
         // Page numbers
@@ -712,9 +709,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Next button
         if (currentPage < pageCount) {
-            paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage + 1})">Next</button>`;
+            paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage + 1})">Suivant</button>`;
         } else {
-            paginationHTML += `<button class="page-btn disabled">Next</button>`;
+            paginationHTML += `<button class="page-btn disabled">Suivant</button>`;
         }
         
         paginationControls.innerHTML = paginationHTML;
@@ -722,7 +719,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Show specific page of results
     function showPage(page) {
-        const visibleRows = Array.from(professorRows).filter(row => row.style.display !== 'none');
+        const visibleRows = Array.from(vacataireRows).filter(row => row.style.display !== 'none');
         
         if (rowsPerPageValue === 'all') {
             visibleRows.forEach(row => row.style.display = '');
@@ -741,10 +738,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Change page (exposed to global scope for button onclick)
+    // Change page
     window.changePage = function(page) {
         currentPage = page;
-        filterProfessors();
+        filterVacataires();
     };
     
     // Initialize workload colors
@@ -764,22 +761,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-
-
-<script>
-    function showPopup(professorId, professorName) {
-        document.getElementById('professorName').innerText=professorName;
-        var professorIdInput = document.getElementById('professor_id');
-        professorIdInput.value=professorId;
-        var form = document.getElementById('popupForm');
-        form.action = "{{ url('/professors') }}/" + professorId;
-        
-        document.getElementById("overlay").style.display = "flex";
-    }
-
-    function closePopup(){
-        document.getElementById("overlay").style.display = "none";
-    }
-</script>
-
-</x-chef_layout>
+</x-coordonnateur_layout>

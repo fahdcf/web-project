@@ -16,20 +16,14 @@ class Assignment extends Model
         'teach_cm',
         'teach_tp',
         'teach_td',
-        'start_date', // Optional: Start date of the assignment
-        'end_date',   // Optional: End date of the assignment
+        'academic_year',
+
+
+        // 'start_date', // Optional: Start date of the assignment
+        // 'end_date',   // Optional: End date of the assignment
 
     ];
 
-    // public function module()
-    // {
-    //     return $this->belongsTo(Module::class);
-    // }
-
-    // public function user()
-    // {
-    //     return $this->belongsTo(User::class);
-    // }
 
     public function user()
     {

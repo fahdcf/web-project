@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers\coordonnateur;
 
+use App\export\ModulesExport;
 use App\Http\Controllers\Controller;
+use App\Imports\ModulesImport;
 use App\Models\Assignment;
 use App\Models\Departement;
 use App\Models\Filiere;
 use App\Models\Module;
 use App\Models\User;
-use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ModuleController extends Controller
 {
@@ -25,26 +28,6 @@ class ModuleController extends Controller
         $modules = Module::with(['filiere', 'responsable'])
             ->where('filiere_id', $filiere_id)
             ->get();
-
-        if ($request->has('export') && $request->input('export') === 'semester' && $request->has('semester')) {
-            $semester = $request->input('semester');
-            $exportQuery = Module::with(['filiere', 'responsable'])
-                ->where('filiere_id', $filiere_id);
-            if ($semester !== 'all') {
-                $exportQuery->where('semester', $semester);
-            }
-
-            $filiere = Filiere::find($filiere_id);
-            $filename = "modules_filiere_" . ($filiere ? str_replace(' ', '_', strtolower($filiere->name)) : 'unknown') . "_semestre_{$semester}.csv";
-
-            $modulesExport = $exportQuery->get();
-            $csvData = $this->generateCsv($modulesExport);
-
-            return Response::make($csvData, 200, [
-                'Content-Type' => 'text/csv',
-                'Content-Disposition' => "attachment; filename=\"$filename\"",
-            ]);
-        }
 
         return view('modules.index', compact('modules'));
     }
@@ -86,130 +69,51 @@ class ModuleController extends Controller
         return redirect()->route('coordonnateur.modules.show', $module)->with('success', 'Module mis à jour avec succès.');
     }
 
-    // Existing import method
+
+    public function export(Request $request)
+    {
+        $semester = $request->query('semester');
+        $user = Auth::user();
+        $filiere = Filiere::where('coordonnateur_id', $user->id)->firstOrFail();
+
+        $query = Module::where('filiere_id', $filiere->id)
+            ->with(['responsable']);
+
+        if ($semester !== 'all') {
+            $query->where('semester', $semester);
+        }
+
+        $modules = $query->orderBy('semester')->get();
+
+        $filename = 'unites_enseignement_' . ($semester === 'all' ? 'all_semesters' : 'S' . $semester) . '_' . now()->format('Ymd_His') . '.xlsx';
+
+        return Excel::download(new ModulesExport($modules), $filename);
+
+    }
+
     public function import(Request $request)
     {
-        if (!auth()->user()->isCoordonnateur()) {
-            abort(403, 'Unauthorized: You are not a coordinator.');
-        }
+        $user = Auth::user();
+        $filiere = Filiere::where('coordonnateur_id', $user->id)->firstOrFail();
 
-        $request->validate([
-            'file' => 'required|mimes:csv,txt|max:2048',
+        $validator = Validator::make($request->all(), [
+            'excel_file' => 'required|file|mimes:xlsx,xls|max:2048',
         ]);
 
-        $file = $request->file('file');
-        $filiere_id = auth()->user()->filiere_id;
-
-        $handle = fopen($file->getRealPath(), 'r');
-        $header = fgetcsv($handle);
-
-        while ($row = fgetcsv($handle)) {
-            $data = array_combine($header, $row);
-
-            $validator = Validator::make($data, [
-                'Nom' => 'required|string|max:255',
-                'Code' => 'required|string|max:50|unique:modules,code,' . ($data['ID'] ?? null),
-                'Type' => 'required|string|in:complet,partiel',
-                'Heures CM' => 'nullable|numeric|min:0',
-                'Heures TD' => 'nullable|numeric|min:0',
-                'Heures TP' => 'nullable|numeric|min:0',
-                'Semestre' => 'required|integer|between:1,6',
-                'Statut' => 'required|in:Actif,Inactif',
-                'Crédit' => 'nullable|integer|min:0',
-                'Évaluation' => 'nullable|string|max:255',
-                'Description' => 'nullable|string',
-            ]);
-
-            if ($validator->fails()) {
-                continue;
-            }
-
-            $module = Module::updateOrCreate(
-                ['code' => $data['Code'], 'filiere_id' => $filiere_id],
-                [
-                    'name' => $data['Nom'],
-                    'type' => $data['Type'],
-                    'cm_hours' => $data['Heures CM'] ?? 0,
-                    'td_hours' => $data['Heures TD'] ?? 0,
-                    'tp_hours' => $data['Heures TP'] ?? 0,
-                    'semester' => $data['Semestre'],
-                    'status' => strtolower($data['Statut'] == 'Actif' ? 'active' : 'inactive'),
-                    'credit' => $data['Crédit'] ?? null,
-                    'evaluation' => $data['Évaluation'] ?? null,
-                    'description' => $data['Description'] ?? null,
-                    'filiere_id' => $filiere_id,
-                ]
-            );
-
-            if (!empty($data['Responsable'])) {
-                $responsable = User::whereRaw("CONCAT(firstname, ' ', lastname) = ?", [$data['Responsable']])->first();
-                if ($responsable) $module->responsable_id = $responsable->id;
-                $module->save();
-            }
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        fclose($handle);
-
-        return redirect()->route('coordonnateur.modules.index')->with('success', 'Modules importés avec succès.');
-    }
-
-    private function generateCsv($modules)
-    {
-        $headers = [
-            'ID',
-            'Nom',
-            'Code',
-            'Type',
-            'Heures CM',
-            'Heures TD',
-            'Heures TP',
-            'Filière',
-            'Semestre',
-            'Statut',
-            'Crédit',
-            'Évaluation',
-            'Description',
-            'Responsable',
-            'Créé le'
-        ];
-
-        $rows = $modules->map(function ($module) {
-            return [
-                $module->id,
-                $module->name,
-                $module->code,
-                $module->type,
-                $module->cm_hours,
-                $module->td_hours,
-                $module->tp_hours,
-                $module->filiere ? $module->filiere->name : 'N/A',
-                $module->semester == 1 ? '1er Semestre' : ($module->semester ? $module->semester . 'ème Semestre' : 'N/A'),
-                $module->status == 'active' ? 'Actif' : 'Inactif',
-                $module->credit,
-                $module->evaluation,
-                $module->description ?? 'N/A',
-                $module->responsable ? $module->responsable->firstname . ' ' . $module->responsable->lastname : 'Non assigné',
-                $module->created_at->format('d/m/Y'),
-            ];
-        });
-
-        $output = chr(0xEF) . chr(0xBB) . chr(0xBF);
-        $output .= implode(',', array_map('self::escapeCsvField', $headers)) . "\n";
-        foreach ($rows as $row) {
-            $output .= implode(',', array_map('self::escapeCsvField', $row)) . "\n";
+        try {
+            Excel::import(new ModulesImport($filiere->id), $request->file('excel_file'));
+            return redirect()->route('coordonnateur.modules.index')
+                ->with('success', 'Unités d\'enseignement importées avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Erreur lors de l\'importation : ' . $e->getMessage());
         }
-
-        return $output;
     }
 
-    private static function escapeCsvField($field)
-    {
-        if (is_null($field)) {
-            return '';
-        }
-        $field = str_replace('"', '""', $field);
-        return '"' . $field . '"';
-    }
+
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public function showConfirmDelete(Module $module)

@@ -13,7 +13,7 @@
 </a>
 
 <!-- Groupes TD / TP -->
-<a href="{{ route('coordonnateur.groupes.index') }}"
+<a href="{{ route('coordonnateur.groupes.current_semester') }}"
     class="nav_link {{ request()->is('coordonnateur/groupes') ? 'active' : '' }} ">
     <i class="bx bx-group nav_icon"></i>
     <span class="nav_name">Groupes TD / TP</span>

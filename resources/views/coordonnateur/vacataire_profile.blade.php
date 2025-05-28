@@ -58,7 +58,7 @@
 
             <!-- Basic Information Tab -->
             <div id="basic-info" class="tab-content">
-                <form action="{{ route('coordonnateur.vacataire.profile', $user->id) }}" method="post">
+                <form action="{{ route('coordonnateur.vacataire.assignemts_profile', $user->id) }}" method="post">
                     @csrf
 
                     <div class="info-grid">
