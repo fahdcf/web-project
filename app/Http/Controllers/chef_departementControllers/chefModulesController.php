@@ -25,7 +25,7 @@ class chefModulesController extends Controller
 
         $filieres=Filiere::where('department_id',auth()->user()->manage->id)->get();
         
-$modules = Module::whereNot('professor_id', null)->whereIn('filiere_id', $FilieretargetIDs)
+$modules = Module::whereIn('filiere_id', $FilieretargetIDs)
     ->where(function ($query) {
         $query->whereHas('assignment', function ($q) {
             $q->where('teach_tp', 1);
