@@ -534,6 +534,10 @@
                                 onclick="showPopup({{ $module->id }}, '{{ $module->name }}')">
                                 <i class="bi bi-eye-fill"></i> Voir plus
                             </button>
+                             <button class="remove-btn" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                onclick="setDeleteFormAction('{{ route('coordonnateur.modules.destroy', $module) }}')">
+                                <i class="bi bi-trash-fill"></i> Supprimer
+                            </button>
 
 
                         </div>

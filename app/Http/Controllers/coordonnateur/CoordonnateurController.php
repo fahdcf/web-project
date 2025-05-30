@@ -24,7 +24,7 @@ class CoordonnateurController extends Controller
 
     public function affectations(Request $request)
     {
-       if (!auth()->user()->isCoordonnateur()) {
+        if (!auth()->user()->isCoordonnateur()) {
             abort(403, 'Unauthorized: You are not a coordinator.');
         }
 
@@ -148,21 +148,16 @@ class CoordonnateurController extends Controller
         return View('coordonnateur.dashboard', ['tasks' => $tasks, 'studentCount' => $studentCount, 'professorCount' => $professorCount, 'chefHistory' => $chefHistory, 'professorsMin' => $professorsMin, 'loginCounts' => $loginCounts, 'module_requests' => $module_requests]);
     }
 
-
+    ////////////////////////////////////////////////////////////////
     public function vacataire_profile(User $user)
     {
-        $modules = Module::all();
+        // dd(auth()->user()->manage->id);
+
         $assignement = Assignment::where('prof_id', $user->id)->get();
-
-        $filieres = filiere::where('department_id', auth()->user()->manage->id)->get();
-
-        $FilieretargetIDs = Filiere::where('department_id', auth()->user()->manage->id)
-            ->pluck('id'); // Plucks all the IDs into a collection
-
-
 
         $available_modules = Module::with(['filiere', 'responsable', 'assignments'])
             ->where('status', 'active')
+            ->where('filiere_id', auth()->user()->manage->id)
             ->where(function ($query) {
                 // Modules sans aucune assignation
                 $query->doesntHave('assignments')
@@ -175,12 +170,10 @@ class CoordonnateurController extends Controller
             })
             ->get();
 
-
-
         return view('coordonnateur.vacataire_profile', ['user' => $user, 'available_modules' => $available_modules, 'assignement' => $assignement]);
     }
 
-    public function editHours(User $vacataire)
+    public function editHours(User $user)
     {
         if (auth()->user()->role->iscoordonnateur) {
 
@@ -190,10 +183,10 @@ class CoordonnateurController extends Controller
 
             ]);
 
-            $userDetails = $vacataire->user_details;
+            $userDetails = $user->user_details;
 
             if (!$userDetails) {
-                $userDetails = user_detail::create(['user_id' => $vacataire->id]);
+                $userDetails = user_detail::create(['user_id' => $user->id]);
             }
 
             if (request('min_hours') && $userDetails->min_hours !== request('min_hours')) {
@@ -218,7 +211,7 @@ class CoordonnateurController extends Controller
             return redirect()->back();
         }
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'hours modifiee avec succès.');;
     }
 
     public function removeModule(Assignment $assign)
@@ -240,7 +233,7 @@ class CoordonnateurController extends Controller
 
         // chef_action::create($chefActionDetails);
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'assignation du module supprimé avec succès.');
     }
 
 
@@ -251,13 +244,13 @@ class CoordonnateurController extends Controller
         $i = 0;
 
         foreach (request('modules') as $assaign) {
+            // dd($assaign);
             $id = $assaign['module_id'];
             $module = Module::findOrFail($id);
 
             if ($assaign['prof_id']) {
 
-                $prof = user::findOrFail($assaign['prof_id']);
-                $module->professor_id = $assaign['prof_id'];
+                $prof = user::findOrFail($assaign['prof_id']); //find the vacatiaire
 
                 $module->status = "active";
 
@@ -268,23 +261,28 @@ class CoordonnateurController extends Controller
                 ];
 
                 $hours = 0;
-
-
                 if ($assaign['cm'] == "cm") {
-
-
                     $newAssign['teach_cm'] = 1;
                     $hours = $hours + $module->cm_hours;
                 }
 
                 if ($assaign['tp'] == "tp") {
                     $newAssign['teach_tp'] = 1;
-                    $hours = $hours + $module->tp_hours;
+
+                    $coff = 1;
+                    if ($module->nbr_groupes_tp > 1) $coff = $module->nbr_groupes_tp;
+
+
+                    $hours = $hours + $module->tp_hours * $coff;
                 }
 
                 if ($assaign['td'] == "td") {
                     $newAssign['teach_td'] = 1;
-                    $hours = $hours + $module->td_hours;
+
+                    $coff = 1;
+                    if ($module->nbr_groupes_td > 1) $coff = $module->nbr_groupes_td;
+
+                    $hours = $hours + $module->td_hours * $coff;
                 }
 
 
@@ -313,9 +311,9 @@ class CoordonnateurController extends Controller
 
 
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'assignation effectuee avec succès.');;
     }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////
 
 
 }

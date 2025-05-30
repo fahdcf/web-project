@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\coordonnateur;
 
-use App\export\ModulesExport;
+use App\Exports\ModulesExport;
 use App\Http\Controllers\Controller;
 use App\Imports\ModulesImport;
 use App\Models\Assignment;
@@ -12,9 +12,11 @@ use App\Models\Module;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ModuleController extends Controller
 {
@@ -34,92 +36,107 @@ class ModuleController extends Controller
 
     public function show(Module $module)
     {
-        if (!auth()->user()->isCoordonnateur() || $module->filiere_id !== auth()->user()->manage->id) {
-            abort(403, 'Unauthorized.');
-        }
-
         // $responsables = User::where('filiere_id', auth()->user()->filiere_id)->get();
         $responsables = User::get();
         return view('modules.show', compact('module', 'responsables'));
     }
 
+    // public function update(Request $request, Module $module)
+    // {
+    //     $validated = $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'type' => 'required|in:complet,partiel',
+    //         'cm_hours' => 'nullable|numeric|min:0',
+    //         'td_hours' => 'nullable|numeric|min:0',
+    //         'tp_hours' => 'nullable|numeric|min:0',
+    //         'semester' => 'required|integer|between:1,6',
+    //         'status' => 'required|in:active,inactive',
+    //         'credit' => 'nullable|integer|min:0',
+    //         'evaluation' => 'nullable|string|max:255',
+    //         'description' => 'nullable|string',
+    //         'responsable_id' => 'nullable|exists:users,id',
+    //     ]);
+
+    //     $module->update($validated);
+
+    //     return redirect()->route('coordonnateur.modules.show', $module)->with('success', 'Module mis à jour avec succès.');
+    // }
+
+
     public function update(Request $request, Module $module)
     {
-        if (!auth()->user()->isCoordonnateur() || $module->filiere_id !== auth()->user()->filiere_id) {
-            abort(403, 'Unauthorized.');
+        // Validation rules
+        $rules = [
+            'type' => 'required|in:complet,element',
+            'name' => 'required|string|max:255',
+            'specialty' => 'nullable|string|max:255',
+            'semester' => 'required|integer|min:1|max:6',
+            'credits' => 'required|integer|min:1',
+            'evaluation' => 'required|integer|min:1|max:10',
+            'description' => 'nullable|string',
+            'cm_hours' => 'required|integer|min:0',
+            'td_hours' => 'required|integer|min:0',
+            'tp_hours' => 'required|integer|min:0',
+            'autre_hours' => 'required|integer|min:0',
+            'responsable_id' => 'nullable|exists:users,id',
+            'status' => 'required|in:active,inactive',
+        ];
+
+        // Conditionally add 'parent_id' validation if type is 'element'
+        if ($request->input('type') === 'element') {
+            $rules['parent_id'] = 'required|exists:modules,id';
+
+            // Additional validation to prevent circular references
+            $rules['parent_id'] .= '|not_in:' . $module->id;
         }
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'required|string|max:50|unique:modules,code,' . $module->id,
-            'type' => 'required|in:complet,partiel',
-            'cm_hours' => 'nullable|numeric|min:0',
-            'td_hours' => 'nullable|numeric|min:0',
-            'tp_hours' => 'nullable|numeric|min:0',
-            'semester' => 'required|integer|between:1,6',
-            'status' => 'required|in:active,inactive',
-            'credit' => 'nullable|integer|min:0',
-            'evaluation' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'responsable_id' => 'nullable|exists:users,id',
-        ]);
+        $validated = $request->validate($rules);
 
+        // Handle type change validation
+        if ($module->type === 'complet' && $validated['type'] === 'element') {
+            // Check if this module has any child elements
+            if ($module->children()->exists()) {
+                return back()
+                    ->withErrors(['type' => 'Cannot change to element type because this module has child elements.'])
+                    ->withInput();
+            }
+        }
+
+        // Handle parent module changes
+        if ($validated['type'] === 'element') {
+            $parent = Module::find($validated['parent_id']);
+
+            // Check if parent module exists and is not the same as current module
+            if (!$parent || $parent->id === $module->id) {
+                return back()
+                    ->withErrors(['parent_id' => 'Invalid parent module selection.'])
+                    ->withInput();
+            }
+
+            // If changing parent, update the code
+            if ($module->parent_id !== $validated['parent_id']) {
+                $newCode = $parent->code . '-' . (Module::where('parent_id', $validated['parent_id'])->count() + 1);
+                $validated['code'] = $newCode;
+            }
+        } else {
+            // If changing from element to complet, generate a new code
+            if ($module->type === 'element') {
+                $validated['code'] = "M" . $validated['semester'] . "-" . $module->id;
+            }
+
+            $validated['parent_id'] = null;
+        }
+
+        // Update the module
         $module->update($validated);
 
-        return redirect()->route('coordonnateur.modules.show', $module)->with('success', 'Module mis à jour avec succès.');
-    }
-
-
-    public function export(Request $request)
-    {
-        $semester = $request->query('semester');
-        $user = Auth::user();
-        $filiere = Filiere::where('coordonnateur_id', $user->id)->firstOrFail();
-
-        $query = Module::where('filiere_id', $filiere->id)
-            ->with(['responsable']);
-
-        if ($semester !== 'all') {
-            $query->where('semester', $semester);
-        }
-
-        $modules = $query->orderBy('semester')->get();
-
-        $filename = 'unites_enseignement_' . ($semester === 'all' ? 'all_semesters' : 'S' . $semester) . '_' . now()->format('Ymd_His') . '.xlsx';
-
-        return Excel::download(new ModulesExport($modules), $filename);
-
-    }
-
-    public function import(Request $request)
-    {
-        $user = Auth::user();
-        $filiere = Filiere::where('coordonnateur_id', $user->id)->firstOrFail();
-
-        $validator = Validator::make($request->all(), [
-            'excel_file' => 'required|file|mimes:xlsx,xls|max:2048',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        try {
-            Excel::import(new ModulesImport($filiere->id), $request->file('excel_file'));
-            return redirect()->route('coordonnateur.modules.index')
-                ->with('success', 'Unités d\'enseignement importées avec succès.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Erreur lors de l\'importation : ' . $e->getMessage());
-        }
+        return redirect()
+            ->route('coordonnateur.modules.index')
+            ->with('success', 'UE mise à jour avec succès!');
     }
 
 
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public function showConfirmDelete(Module $module)
-    {
-        return view('modules.confirm-delete', compact('module'));
-    }
     public function create()
     {
         //cpas bonne pour le chef deparemtent
@@ -212,6 +229,104 @@ class ModuleController extends Controller
 
         return view('modules.edit', compact('module', 'filiere', 'professeurs', 'parentModules', 'anneeUniversitaire'));
     }
+
+
+    public function export(Request $request)
+    {
+        $semester = $request->query('semester');
+        $user = Auth::user();
+        $filiere = Filiere::where('coordonnateur_id', $user->id)->firstOrFail();
+
+        $query = Module::where('filiere_id', $filiere->id);
+
+        if ($semester !== 'all') {
+            $query->where('semester', $semester);
+        }
+
+        $modules = $query->orderBy('semester')->get();
+
+        if ($modules->isEmpty()) {
+            return redirect()->back()->with('error', 'Aucun module trouvé pour l\'exportation.');
+        }
+
+        $filename = 'modules_' . ($semester === 'all' ? 'tous_semestres' : 'S' . $semester) . '_' . now()->format('Ymd_His') . '.xlsx';
+
+        return Excel::download(new ModulesExport($modules), $filename);
+    }
+
+   
+
+    public function import(Request $request)
+    {
+        $user = Auth::user();
+        $filiere = Filiere::where('coordonnateur_id', $user->id)->firstOrFail();
+
+        $validator = Validator::make($request->all(), [
+            'excel_file' => 'required|file|mimes:xlsx,xls|max:2048',
+        ], [
+            'excel_file.required' => 'Veuillez sélectionner un fichier Excel.',
+            'excel_file.mimes' => 'Le fichier doit être au format .xlsx ou .xls.',
+            'excel_file.max' => 'Le fichier ne doit pas dépasser 2 Mo.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        try {
+            // Load the Excel file
+            $file = $request->file('excel_file');
+            $spreadsheet = IOFactory::load($file->getRealPath());
+            $sheet = $spreadsheet->getActiveSheet();
+            $highestColumn = $sheet->getHighestColumn();
+            $rawHeaders = $sheet->rangeToArray("A1:{$highestColumn}1", null, true, true, false)[0];
+
+            // Clean and normalize headers
+            $normalizedHeaders = array_map(function ($header) {
+                // Remove BOM, trim, lowercase, replace spaces with underscores
+                $header = preg_replace('/^[\x{FEFF}]+/u', '', trim($header ?? ''));
+                return strtolower(preg_replace('/\s+/', '_', $header));
+            }, $rawHeaders);
+
+            // Remove empty headers
+            $normalizedHeaders = array_filter($normalizedHeaders, fn($v) => $v !== '');
+
+            // Remove duplicates, keeping first occurrence
+            $uniqueHeaders = [];
+            foreach ($normalizedHeaders as $header) {
+                if (!in_array($header, $uniqueHeaders)) {
+                    $uniqueHeaders[] = $header;
+                }
+            }
+
+            // Required headers
+            $requiredHeaders = ['id', 'name', 'semester', 'description', 'cm_hours', 'td_hours', 'tp_hours', 'credits', 'evaluation', 'type'];
+            $missingHeaders = array_diff($requiredHeaders, $uniqueHeaders);
+
+            if (!empty($missingHeaders)) {
+                return redirect()->back()->with('error', 'Colonnes requises manquantes : ' . implode(', ', $missingHeaders));
+            }
+
+            Excel::import(new ModulesImport($filiere->id), $file);
+            return redirect()->route('coordonnateur.modules.index')
+                ->with('success', 'Unités d\'enseignement importées avec succès.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $errors = [];
+            foreach ($failures as $failure) {
+                $errors[] = "Ligne {$failure->row()} : " . implode(', ', $failure->errors());
+            }
+            return redirect()->back()->with('error', implode('; ', $errors));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Échec de l\'importation : ' . $e->getMessage());
+        }
+    }
+
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 
     // public function update(Request $request, Module $module)

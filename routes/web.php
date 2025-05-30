@@ -173,9 +173,9 @@ Route::middleware(['auth'])
     ->prefix('coordonnateur/vacataires')
     ->group(function () {
         //Assignations des module a un vacataire:////////////////////////////////////////
-        Route::get('profile/{user}', [CoordonnateurController::class, 'vacataire_profile'])->name('coordonnateur.vacataire.assignemts_profile');
-        Route::post('profile/{user}', [CoordonnateurController::class, 'editHours']);
-        Route::post('coorodonnateur/modules_vacantes/affecter/{user}', [CoordonnateurController::class, 'affecterModules']);
+        Route::get('/profile/{user}', [CoordonnateurController::class, 'vacataire_profile'])->name('coordonnateur.vacataire.assignemts_profile');
+        Route::post('/profile/{user}', [CoordonnateurController::class, 'editHours'])->name('coordonnateur.vacataire.editHours');
+        Route::post('/affecter-modules', [CoordonnateurController::class, 'affecterModules'])->name('coordonnateur.vacataire.affecterModules');;
 
 
 

@@ -202,12 +202,103 @@
             </div>
         @endif
 
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
-            <h3 style="color: #330bcf; font-weight: 500;">Modifier l'Emploi du Temps - S{{ $emploi->semester }}</h3>
-            <a href="{{ route('emploi.index') }}" class="btn btn-outline-secondary rounded fw-semibold my-2">
-                <i class="bi bi-arrow-left me-2"></i> Retour
-            </a>
+
+
+
+
+
+
+        <div class="header-container mb-4">
+            <style>
+                .header-container {
+                    background: white;
+                    border-radius: 8px;
+                    padding: 20px;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                }
+
+                .header-title {
+                    color: #4723d9;
+                    font-weight: 600;
+                    font-size: 1.75rem;
+                    margin: 0;
+                }
+
+      
+                @media (max-width: 768px) {
+                    .header-container {
+                        padding: 15px;
+                    }
+
+                    .header-title {
+                        font-size: 1.5rem;
+                        margin-bottom: 15px;
+                        text-align: center;
+                    }
+
+                    .form-select,
+                    .btn-outline-primary {
+                        width: 100%;
+                        margin-bottom: 10px;
+                    }
+
+                    .btn-outline-primary {
+                        white-space: normal;
+                        text-align: center;
+                        padding: 10px 16px;
+                    }
+
+                    .btn-text-emploi,
+                    .btn-text-prof {
+                        display: block;
+                    }
+
+                    .btn-text-emploi {
+                        margin-bottom: 2px;
+                    }
+                }
+
+                /* Improved grid layout */
+                .header-grid {
+                    display: grid;
+                    grid-template-columns: 1fr auto auto;
+                    gap: 1rem;
+                    align-items: center;
+                }
+
+                @media (max-width: 992px) {
+                    .header-grid {
+                        grid-template-columns: 1fr auto;
+                    }
+
+                    .header-title {
+                        grid-column: 1 / -1;
+                        text-align: center;
+                        margin-bottom: 10px;
+                        text-decoration: underline;
+                    }
+                }
+
+                @media (max-width: 768px) {
+                    .header-grid {
+                        grid-template-columns: 1fr;
+                        gap: 0.75rem;
+                    }
+
+
+                }
+            </style>
+
+            <div class="header-grid">
+                <h3 class="header-title">Modifier l'Emploi du Temps - S{{ $emploi->semester }}</h3>
+
+        
+            </div>
         </div>
+
+
+
+
 
         <form id="emploiForm" action="{{ route('emploi.update', $emploi->id) }}" method="POST">
             @csrf

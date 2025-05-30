@@ -3,7 +3,11 @@
         <x-global_alert />
         <div class="profile-container">
 
-            <h1 class="profile-name text-center pb-2">{{ $user->firstname }} {{ $user->lastname }}</h1>
+            <h1 class="profile-name text-center pb-2">{{ $user->firstname }} {{ $user->lastname }}
+                 <br><small style="font-size: 14px;" class="mt-0 pt-0 ">(vacataire)</small>
+            </h1>
+           
+            
 
 
             @php
@@ -254,7 +258,7 @@
 
                 </div>
 
-                <form id="assign-modules-form" method="POST" action="{{ url('/chef/professeurs/affecter') }}">
+                <form id="assign-modules-form" method="POST" action="{{ route('coordonnateur.vacataire.affecterModules') }}">
                     @csrf
                     <div class="drop-area " ondragover="allowDrop(event)" ondrop="dropModule(event)">
 

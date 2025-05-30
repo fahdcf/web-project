@@ -2,6 +2,20 @@
     <div class="container-fluid px-4 py-5">
         <x-global_alert />
 
+
+        <!-- Deadline Banner -->
+        @if (Route::is('coordonnateur.groupes.next_semester') && $deadline)
+            <div
+                class="alert alert-{{ $deadline->deadline_date->diffInDays(now()) <= 3 ? 'danger' : 'warning' }} alert-dismissible mb-4">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                Deadline: Configure TD/TP groups by {{ $deadline->deadline_date->format('Y-m-d') }}
+                ({{ $deadline->deadline_date->diffInDays(now()) }} days left)
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+
+
         <!-- Header Section -->
         <div class="header-container mb-4">
             <div class="header-grid">
@@ -16,7 +30,12 @@
                                 <i class="fas fa-calendar-alt me-1"></i> {{ $semesterData['academic_year'] }}
                             </span>
                             <span class="badge bg-light text-primary border border-primary rounded-pill px-3 py-2">
-                                <i class="fas fa-clock me-1"></i> Prochain Semestre:
+                                @if (Route::currentRouteName() === 'coordonnateur.groupes.current_semester')
+                                    <i class="fas fa-clock me-1"></i> Semestre Actuelle:
+                                @else
+                                    <i class="fas fa-clock me-1"></i> Prochain Semestre:
+                                @endif
+
                                 {{ $semesterData['semester_type'] }}
                             </span>
                         </div>
@@ -54,7 +73,7 @@
                     </select>
                 </div>
 
-                
+
                 <div class="col-md-4 col-lg-6 search-bar">
                     <label for="moduleSearch" class="form-label small fw-bold text-muted">Recherche</label>
                     <div class="input-group">
@@ -145,7 +164,7 @@
                                                 <i class="bi bi-person-fill detail-icon"></i>
                                                 <div>
                                                     <span class="detail-label">Responsable</span>
-                                                    <span class="detail-value">
+                                                    <span class=" semesterValue">
                                                         {{ $module->responsable ? $module->responsable->fullname : 'Non assigné' }}
                                                     </span>
                                                 </div>
@@ -154,7 +173,7 @@
                                                 <i class="bi bi-calendar-week detail-icon"></i>
                                                 <div>
                                                     <span class="detail-label">Semestre</span>
-                                                    <span class="detail-value">
+                                                    <span class="detail-value semesterValue">
                                                         @if ($module->semester == 1)
                                                             1er Semestre
                                                         @else
@@ -163,29 +182,7 @@
                                                     </span>
                                                 </div>
                                             </div>
-                                            @if ($module->nbr_groupes_td > 0)
-                                                <div class="detail-item">
-                                                    <i class="bi bi-people-fill detail-icon"
-                                                        style="color: #3498db;"></i>
-                                                    <div>
-                                                        <span class="detail-label">Prof. TD</span>
-                                                        <span class="detail-value">
-                                                            {!! $module->profTd ? $module->profTd->fullname : '<span style="color: #e74c3c">Non assigné</span>' !!}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                            @if ($module->nbr_groupes_tp > 0)
-                                                <div class="detail-item">
-                                                    <i class="bi bi-flask detail-icon" style="color: #2ecc71;"></i>
-                                                    <div>
-                                                        <span class="detail-label">Prof. TP</span>
-                                                        <span class="detail-value">
-                                                            {!! $module->profTp ? $module->profTp->fullname : '<span style="color: #e74c3c">Non assigné</span>' !!}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            @endif
+
                                             <div class="detail-item">
                                                 <i class="bi bi-grid detail-icon"></i>
                                                 <div>
@@ -280,7 +277,7 @@
 
                             <div class="alert alert-light border mb-4 rounded-3">
                                 <i class="fas fa-info-circle me-2 text-primary"></i>
-                                Configuration pour tous les modules du Semestre <strong
+                                Appliquer a tous les modules du Semestre <strong
                                     class="semester-display">SX</strong>
                             </div>
 
@@ -340,8 +337,7 @@
                 <div class="modal-content bg-white rounded-3 p-4 shadow-lg">
                     <div class="modal-header border-0">
                         <h5 class="modal-title text-primary fw-bold" id="configModuleModalLabel">
-                            <i class="fas fa-cog me-2"></i> <span id="moduleConfigTitle">Configuration du
-                                module</span>
+                            <i class="fas fa-cog me-2"></i> <span id="moduleConfigTitle">module: </span>
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                             aria-label="Fermer"></button>
@@ -559,7 +555,7 @@
                 letter-spacing: 0.5px;
             }
 
-            .detail-value {
+            . semesterValue {
                 display: block;
                 font-size: 0.95rem;
                 font-weight: 500;
@@ -757,123 +753,92 @@
                 background-color: #f8f9fa;
                 color: #4723d9;
             }
-
-
-
-            
         </style>
 
+        <!-- Update the JavaScript -->
         <script>
-            function prepareModal(button) {
-                const semester = button.getAttribute('data-semester');
-                document.getElementById('semesterInput').value = semester;
-                document.querySelectorAll(
-                    '#configNbGroupesGeneralModal .semester-display, #configNbGroupesGeneralModal .semester-display-btn'
-                ).forEach(el => el.textContent = semester);
-            }
-
             function loadModuleConfig(button) {
-                document.getElementById('moduleConfigTitle').textContent = `
-            Configuration: $ {
-                button.dataset.moduleName
-            }
-            `;
+                const moduleName = button.dataset.moduleName;
+                document.getElementById('moduleConfigTitle').textContent = `Configuration: ${moduleName}`;
                 document.getElementById('configModuleId').value = button.dataset.moduleId;
                 document.getElementById('tdCountInput').value = button.dataset.tdCount || 0;
                 document.getElementById('tpCountInput').value = button.dataset.tpCount || 0;
             }
 
-            function scrollModules(button, direction) {
-                const container = button.closest('.position-relative').querySelector('.d-flex');
-                const scrollAmount = 320;
-                container.scrollTo({
-                    left: direction === 'left' ? container.scrollLeft - scrollAmount : container.scrollLeft +
-                        scrollAmount,
-                    behavior: 'smooth'
-                });
-            }
-
             document.addEventListener('DOMContentLoaded', function() {
-                const scrollContainers = document.querySelectorAll('.modules-scroll-container .d-flex');
-                scrollContainers.forEach(container => {
-                    checkScrollButtons(container);
-                    container.addEventListener('scroll', () => checkScrollButtons(container));
-                });
+                // Initialize search functionality
+                const moduleSearch = document.getElementById('moduleSearch');
+                const semesterFilter = document.getElementById('semesterFilter');
 
-                function checkScrollButtons(container) {
-                    const parent = container.closest('.position-relative');
-                    const leftBtn = parent.querySelector('.scroll-left');
-                    const rightBtn = parent.querySelector('.scroll-right');
-                    if (!leftBtn || !rightBtn) return;
-                    leftBtn.disabled = container.scrollLeft <= 10;
-                    rightBtn.disabled = container.scrollLeft + container.clientWidth >= container.scrollWidth - 10;
-                }
+                moduleSearch.addEventListener('input', filterModules);
+                semesterFilter.addEventListener('change', filterModules);
 
-                // Debug form submission
-                document.getElementById('globalConfigForm').addEventListener('submit', function(e) {
-                    console.log('Global form submitted:', new FormData(this));
-                });
+                function filterModules() {
+                    const searchTerm = moduleSearch.value.toLowerCase();
+                    const selectedSemester = semesterFilter.value;
 
-                document.getElementById('moduleConfigForm').addEventListener('submit', function(e) {
-                    console.log('Module form submitted:', new FormData(this));
-                });
-            });
+                    let hasVisibleModules = false;
 
-            document.addEventListener('DOMContentLoaded', function() {
-    let searchFilter = '';
-    let semesterFilter = document.getElementById('semesterFilter').value;
+                    document.querySelectorAll('.module-card-container').forEach(card => {
+                        const moduleName = card.querySelector('.module-name').textContent.toLowerCase();
+                        const moduleCode = card.querySelector('.module-hours-badge').textContent.toLowerCase();
+                        const semester = card.closest('.header-container').querySelector('.year-badge span')
+                            .textContent.replace('S', '');
 
-    // Pass modules data to JavaScript
-    const modulesData = @json($modules);
+                        // Check if matches search term and semester filter
+                        const matchesSearch = searchTerm === '' ||
+                            moduleName.includes(searchTerm) ||
+                            moduleCode.includes(searchTerm);
+                        const matchesSemester = selectedSemester === 'all' || semester === selectedSemester;
 
-    // Search filter
-    document.getElementById('moduleSearch').addEventListener('input', function() {
-        searchFilter = this.value.toLowerCase();
-        applyFilters();
-    });
+                        if (matchesSearch && matchesSemester) {
+                            card.style.display = 'block';
+                            hasVisibleModules = true;
 
-    // Semester filter
-    document.getElementById('semesterFilter').addEventListener('change', function() {
-        semesterFilter = this.value;
-        applyFilters();
-    });
-
-    function applyFilters() {
-        const moduleCards = document.querySelectorAll('.module-card-container');
-        moduleCards.forEach(card => {
-            const moduleName = card.querySelector('.module-name').textContent.toLowerCase();
-            const moduleCode = card.querySelector('.module-hours-badge').textContent.toLowerCase();
-            const moduleSemester = card.dataset.semester;
-
-            const searchMatch = searchFilter === '' ||
-                moduleName.includes(searchFilter) ||
-                moduleCode.includes(searchFilter);
-            const semesterMatch = semesterFilter === 'all' || moduleSemester === semesterFilter;
-
-            card.style.display = searchMatch && semesterMatch ? 'block' : 'none';
-        });
-
-        // Show/hide semester sections
-        const semesterSections = document.querySelectorAll('.header-container[data-semester]');
-        semesterSections.forEach(section => {
-            const semester = section.dataset.semester;
-            const hasVisibleModules = Array.from(section.querySelectorAll('.module-card-container'))
-                .some(card => card.style.display !== 'none');
-            section.style.display = semesterFilter === 'all' || semester === semesterFilter && hasVisibleModules ? 'block' : 'none';
-        });
-    }
-
-    // Add data-semester to module cards and semester sections
-    Object.keys(modulesData).forEach(semester => {
-        const section = document.querySelector(`.header - container[data - semester = "${semester}"] `);
-                if (section) {
-                    section.dataset.semester = semester;
-                    const cards = section.querySelectorAll('.module-card-container');
-                    cards.forEach(card => {
-                        card.dataset.semester = semester;
+                            // Highlight search term in module name
+                            if (searchTerm) {
+                                const nameElement = card.querySelector('.module-name');
+                                const originalText = nameElement.textContent;
+                                const highlightedText = originalText.replace(
+                                    new RegExp(searchTerm, 'gi'),
+                                    match => `<span class="search-highlight">${match}</span>`
+                                );
+                                nameElement.innerHTML = highlightedText;
+                            }
+                        } else {
+                            card.style.display = 'none';
+                        }
                     });
+
+                    // Show/hide semester sections based on visibility
+                    document.querySelectorAll('.header-container').forEach(section => {
+                        const semester = section.querySelector('.year-badge span').textContent.replace('S', '');
+                        const hasVisibleCards = [...section.querySelectorAll('.module-card-container')]
+                            .some(card => card.style.display !== 'none');
+
+                        if (selectedSemester === 'all' || semester === selectedSemester) {
+                            section.style.display = hasVisibleCards ? 'block' : 'none';
+                        } else {
+                            section.style.display = 'none';
+                        }
+                    });
+
+                    // Add no results message if needed
+                    const noResults = document.getElementById('no-results-message');
+                    if (!hasVisibleModules) {
+                        if (!noResults) {
+                            const message = document.createElement('div');
+                            message.id = 'no-results-message';
+                            message.className = 'no-results';
+                            message.textContent = 'Aucun module trouvé avec ces critères de recherche';
+                            document.querySelector('.container-fluid').appendChild(message);
+                        }
+                    } else if (noResults) {
+                        noResults.remove();
+                    }
                 }
+
+                // Rest of your existing JavaScript...
             });
-        });
         </script>
 </x-coordonnateur_layout>

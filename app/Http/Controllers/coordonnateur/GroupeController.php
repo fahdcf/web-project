@@ -5,8 +5,9 @@ namespace App\Http\Controllers\coordonnateur;
 use App\export\GroupesExport;
 use App\Http\Controllers\Controller;
 use App\Models\Assignment;
-use App\Models\Filiere;
+use App\Models\Deadline;
 
+use App\Models\Filiere;
 use App\Models\Group;
 use App\Models\Groupe;
 use App\Models\Module;
@@ -78,6 +79,9 @@ class GroupeController extends Controller
 
 
     //////////////////////////////////////////////////////////////////////////////////
+    //pages
+    
+
     public function next_semester(Request $request)
     {
 
@@ -93,14 +97,27 @@ class GroupeController extends Controller
 
         $modules = $query->get()->groupBy('semester')->sortKeys();
 
+
+        $deadline = Deadline::where('type', 'groupes_configuration')
+            ->where(fn($q) => $q->where('filiere_id', $filiere->id)->orWhereNull('filiere_id'))
+            ->first();
+        $progress = $this->calculateProgress($modules, $filiere->id);
+
+
         return view('groupes.semester_groupes', compact(
+            'deadline',
+            'progress',
+
+            
             'filiere',
             'semesterData',
             'modules'
         ));
     }
 
-    public function current_semester(Request $request)
+    public function current_semester(Request 
+    
+    $request)
     {
         $filiere = Auth::user()->manage;
         $semesterData = $this->currentSemesterInfo();
@@ -120,8 +137,6 @@ class GroupeController extends Controller
             'modules'
         ));
     }
-
-
 
 
     public function save(Request $request)
@@ -184,7 +199,7 @@ class GroupeController extends Controller
 
 
 
- public function export(Request $request)
+    public function export(Request $request)
     {
         $semester = $request->query('semester', 'all');
         $user = Auth::user();
@@ -204,4 +219,31 @@ class GroupeController extends Controller
         return Excel::download(new GroupesExport($modules), $filename);
     }
 
+
+
+
+    protected function calculateProgress($modules, $filiereId)
+    {
+        $total = 0;
+        $configured = 0;
+        foreach ($modules as $semesterModules) {
+            $total += $semesterModules->count();
+            $configured += $semesterModules->filter(fn($module) => 
+                $module->nbr_groupes_td > 0 || $module->nbr_groupes_tp > 0)->count();
+        }
+        return ['configured' => $configured, 'total' => $total];
+    }
+
+    protected function applyDefaults($filiereId)
+    {
+        $modules = Module::where('filiere_id', $filiereId)->get();
+        foreach ($modules as $module) {
+            if ($module->nbr_groupes_td == 0 && $module->nbr_groupes_tp == 0) {
+                $module->update([
+                    'nbr_groupes_td' => $module->nbr_groupes_td ?? 0,
+                    'nbr_groupes_tp' => $module->nbr_groupes_tp ?? 0,
+                ]);
+            }
+        }
+    }
 }

@@ -17,14 +17,15 @@
             </div>
         @endif
 
-
-           <div class="header-container mb-4 mt-3">
+        <!-- Header Section -->
+        <div class="header-container mb-4 mt-3">
             <style>
                 .header-container {
                     background: white;
-                    border-radius: 8px;
-                    padding: 20px;
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                    border-radius: 12px;
+                    padding: 24px;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+                    border: 1px solid #e9ecef;
                 }
 
                 .header-title {
@@ -32,162 +33,57 @@
                     font-weight: 600;
                     font-size: 1.75rem;
                     margin: 0;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
                 }
 
-                .form-select {
-                    border-color: #e0e0e0;
-                    font-size: 0.9rem;
-                    padding: 8px 12px;
-                    border-radius: 6px;
-                    background-color: #f8f9fa;
-                    transition: border-color 0.2s;
+                .header-title i {
+                    font-size: 1.5rem;
                 }
 
-                .form-select:focus {
-                    border-color: #4723d9;
-                    box-shadow: 0 0 0 2px rgba(71, 35, 217, 0.2);
-                    outline: none;
-                }
-
-                .btn-primary {
-                    background-color: #4723d9;
-                    border-color: #4723d9;
-                    font-size: 0.9rem;
-                    padding: 8px 16px;
-                    border-radius: 6px;
-                    font-weight: 500;
-                    transition: all 0.2s;
-                }
-
-                .btn-primary:hover {
-                    background-color: white;
-                    color: #4723d9;
-                    border-color: #4723d9;
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                }
-
-                .btn-outline-primary {
-                    border-color: #4723d9;
-                    color: #4723d9;
-                    font-size: 0.9rem;
-                    padding: 8px 16px;
-                    border-radius: 6px;
-                    font-weight: 500;
-                    transition: all 0.2s;
-                    /* white-space: nowrap; */
-                }
-
-                .btn-outline-primary:hover {
-                    background-color: #4723d9;
-                    color: white;
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                }
-
-                .btn-outline-primary:hover .btn-text-prof {
-                    color: white;
-                }
-
-                .btn-text-emploi,
-                .btn-text-prof {
-                    display: inline;
+                .header-actions {
+                    display: flex;
+                    gap: 12px;
+                    align-items: center;
                 }
 
                 @media (max-width: 768px) {
                     .header-container {
-                        padding: 15px;
+                        padding: 16px;
                     }
-
+                    
                     .header-title {
                         font-size: 1.5rem;
-                        margin-bottom: 15px;
-                        text-align: center;
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 8px;
                     }
-
-                    .form-select,
-                    .btn-outline-primary {
+                    
+                    .header-actions {
+                        flex-direction: column;
                         width: 100%;
-                        margin-bottom: 10px;
+                        gap: 8px;
                     }
-
-                    .btn-outline-primary {
-                        white-space: normal;
-                        text-align: center;
-                        padding: 10px 16px;
-                    }
-
-                }
-
-                /* Improved grid layout */
-                .header-grid {
-                    display: grid;
-                    grid-template-columns: 1fr auto auto;
-                    gap: 1rem;
-                    align-items: center;
-                }
-
-                @media (max-width: 992px) {
-                    .header-grid {
-                        grid-template-columns: 1fr auto;
-                    }
-
-                    .header-title {
-                        grid-column: 1 / -1;
-                        text-align: center;
-                        margin-bottom: 10px;
-                        text-decoration: underline;
-                    }
-                }
-
-                @media (max-width: 768px) {
-                    .header-grid {
-                        grid-template-columns: 1fr;
-                        gap: 0.75rem;
-                    }
-
-                    .btn-outline-primary {
-                        white-space: normal;
-                        text-align: center;
-                        padding: 10px 16px;
-                        line-height: 1.3;
-                        /* Add this for better line spacing */
-                    }
-
-                    .btn-text-emploi,
-                    .btn-text-prof {
-                        display: inline;
-                        /* Change from 'block' to 'inline' */
-                        margin-bottom: 0;
-                        /* Remove bottom margin */
-                    }
-
-                    .btn-text-emploi:after {
-                        content: " ";
-                        /* Add space after "Emploi des" */
-                    }
-
                 }
             </style>
 
-            <div class="header-grid mt-">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                 <div class="d-flex align-items-center gap-3">
-                    <i class="fas fa-book-open fa-2x " style="color: #330bcf;"></i>
-                    <h3 style="color: #330bcf; font-weight: 500;">Modifier: {{ $module->name }}</h3>
-
+                    <i class="fas fa-book-open fa-lg" style="color: #4723d9;"></i>
+                    <h1 class="header-title">Modifier: {{ $module->name }}</h1>
                 </div>
 
-                <a href="{{ route('coordonnateur.modules.index') }}"
-                class="btn btn-outline-secondary ms-2">
-                    <i class="fas fa-arrow-left me-1"></i> Annuler
-                </a>
-
-
+                <div class="header-actions">
+                    <a href="{{ route('coordonnateur.modules.index') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i> Retour
+                    </a>
+                </div>
             </div>
         </div>
 
-        
-
         <!-- Form Card -->
-        <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+        <div class="card border-0 shadow-sm rounded-3 overflow-hidden mb-5">
             <form action="{{ route('coordonnateur.modules.update', $module->id) }}" method="POST">
                 @csrf
                 @method('PUT')
@@ -196,13 +92,14 @@
                     <!-- Informations essentielles -->
                     <div class="mb-5">
                         <div class="section-header mb-4">
+                            <i class="fas fa-info-circle me-2 text-primary"></i>
                             <h5 class="mb-0">Informations essentielles</h5>
                         </div>
                         
-                        <div class="row g-3">
+                        <div class="row g-4">
                             <div class="col-md-4">
                                 <label for="type" class="form-label">Type UE <span class="text-danger">*</span></label>
-                                <select name="type" id="type" class="form-select form-select-lg" required>
+                                <select name="type" id="type" class="form-select" required>
                                     <option value="">Sélectionner le type</option>
                                     <option value="complet" {{ old('type', $module->type) == 'complet' ? 'selected' : '' }}>Complet</option>
                                     <option value="element" {{ old('type', $module->type) == 'element' ? 'selected' : '' }}>Élément</option>
@@ -211,14 +108,14 @@
 
                             <div class="col-md-8">
                                 <label for="name" class="form-label">Nom complet <span class="text-danger">*</span></label>
-                                <input type="text" name="name" id="name" class="form-control form-control-lg" 
+                                <input type="text" name="name" id="name" class="form-control" 
                                        placeholder="Ex: Programmation Web Avancée" required
                                        value="{{ old('name', $module->name) }}">
                             </div>
 
                             <div class="col-md-3">
                                 <label for="specialty" class="form-label">Spécialité <span class="text-danger">*</span></label>
-                                <select name="specialty" id="specialty" class="form-select form-select-lg" required>
+                                <select name="specialty" id="specialty" class="form-select" required>
                                     <option value="">Sélectionner...</option>
                                     @foreach (['Informatique Fondamentale', 'Génie Logiciel', 'Systèmes d\'Information', 'Intelligence Artificielle'] as $spec)
                                         <option value="{{ $spec }}" {{ old('specialty', $module->specialty) == $spec ? 'selected' : '' }}>
@@ -230,7 +127,7 @@
 
                             <div class="col-md-3">
                                 <label for="semester" class="form-label">Semestre <span class="text-danger">*</span></label>
-                                <select name="semester" id="semester" class="form-select form-select-lg" required>
+                                <select name="semester" id="semester" class="form-select" required>
                                     @for ($i = 1; $i <= 6; $i++)
                                         <option value="{{ $i }}" {{ old('semester', $module->semester) == $i ? 'selected' : '' }}>
                                             S{{ $i }}
@@ -241,13 +138,13 @@
 
                             <div class="col-md-3">
                                 <label for="credits" class="form-label">Crédits ECTS <span class="text-danger">*</span></label>
-                                <input type="number" name="credits" id="credits" class="form-control form-control-lg"
+                                <input type="number" name="credits" id="credits" class="form-control"
                                        value="{{ old('credits', $module->credits) }}" min="1" max="6" required>
                             </div>
 
                             <div class="col-md-3">
                                 <label for="evaluation" class="form-label">Évaluation <span class="text-danger">*</span></label>
-                                <input type="number" name="evaluation" id="evaluation" class="form-control form-control-lg"
+                                <input type="number" name="evaluation" id="evaluation" class="form-control"
                                        value="{{ old('evaluation', $module->evaluation) }}" min="1" max="10" required>
                                 <small class="text-muted">Coefficient d'évaluation (1-10)</small>
                             </div>
@@ -263,13 +160,14 @@
                     <!-- Module Parent -->
                     <div id="parent_module_field" class="mb-5" style="{{ old('type', $module->type) == 'element' ? 'display:block;' : 'display:none;' }}">
                         <div class="section-header mb-4">
+                            <i class="fas fa-sitemap me-2 text-primary"></i>
                             <h5 class="mb-0">Module Parent</h5>
                         </div>
                         
-                        <div class="row g-3">
+                        <div class="row g-4">
                             <div class="col-md-6">
                                 <label for="parent_id" class="form-label">Sélectionner un module parent <span class="text-danger">*</span></label>
-                                <select name="parent_id" id="parent_id" class="form-select form-select-lg">
+                                <select name="parent_id" id="parent_id" class="form-select">
                                     <option value="">Sélectionner un module parent</option>
                                     @foreach ($parentModules as $parentModule)
                                         <option value="{{ $parentModule->id }}" {{ old('parent_id', $module->parent_id) == $parentModule->id ? 'selected' : '' }}>
@@ -279,7 +177,7 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <div class="alert alert-light d-flex align-items-center h-100">
+                                <div class="alert alert-light d-flex align-items-center h-100 mb-0">
                                     <i class="fas fa-info-circle text-primary me-2"></i>
                                     <small class="mb-0">Si vous souhaitez changer le module parent, sélectionnez-en un nouveau.</small>
                                 </div>
@@ -290,38 +188,39 @@
                     <!-- Volume horaire -->
                     <div class="mb-5">
                         <div class="section-header mb-4">
+                            <i class="fas fa-clock me-2 text-primary"></i>
                             <h5 class="mb-0">Volume horaire</h5>
                         </div>
                         
-                        <div class="row g-3">
+                        <div class="row g-4">
                             <div class="col-md-3">
                                 <label for="cm_hours" class="form-label">CM (heures) <span class="text-danger">*</span></label>
-                                <input type="number" name="cm_hours" id="cm_hours" class="form-control form-control-lg"
+                                <input type="number" name="cm_hours" id="cm_hours" class="form-control"
                                        value="{{ old('cm_hours', $module->cm_hours) }}" min="0" required>
                             </div>
 
                             <div class="col-md-3">
                                 <label for="td_hours" class="form-label">TD (heures) <span class="text-danger">*</span></label>
-                                <input type="number" name="td_hours" id="td_hours" class="form-control form-control-lg"
+                                <input type="number" name="td_hours" id="td_hours" class="form-control"
                                        value="{{ old('td_hours', $module->td_hours) }}" min="0" required>
                             </div>
 
                             <div class="col-md-3">
                                 <label for="tp_hours" class="form-label">TP (heures) <span class="text-danger">*</span></label>
-                                <input type="number" name="tp_hours" id="tp_hours" class="form-control form-control-lg"
+                                <input type="number" name="tp_hours" id="tp_hours" class="form-control"
                                        value="{{ old('tp_hours', $module->tp_hours) }}" min="0" required>
                             </div>
 
                             <div class="col-md-3">
                                 <label for="autre_hours" class="form-label">Autre (heures) <span class="text-danger">*</span></label>
-                                <input type="number" name="autre_hours" id="autre_hours" class="form-control form-control-lg"
+                                <input type="number" name="autre_hours" id="autre_hours" class="form-control"
                                        value="{{ old('autre_hours', $module->autre_hours) }}" min="0" required>
                             </div>
 
                             <div class="col-12">
                                 <div class="alert alert-primary py-3">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <div>
+                                        <div class="d-flex align-items-center">
                                             <i class="fas fa-calculator me-2"></i>
                                             <strong>Total heures:</strong>
                                         </div>
@@ -337,61 +236,30 @@
                     <!-- Responsable et Status -->
                     <div class="mb-4">
                         <div class="section-header mb-4">
+                            <i class="fas fa-user-tie me-2 text-primary"></i>
                             <h5 class="mb-0">Responsable du module et Status</h5>
                         </div>
                         
-                        <div class="row g-3">
+                        <div class="row g-4">
                             <div class="col-md-6">
                                 <label for="responsable_id" class="form-label">Sélectionner un responsable <span class="text-danger">*</span></label>
-                                <select name="responsable_id" id="responsable_id" class="form-select form-select-lg">
+                                <select name="responsable_id" id="responsable_id" class="form-select">
                                     <option value="">Sélectionner un professeur responsable</option>
                                     @foreach ($professeurs as $prof)
                                         <option value="{{ $prof->id }}" {{ old('responsable_id', $module->responsable_id) == $prof->id ? 'selected' : '' }}>
                                             {{ $prof->fullname }}
                                         </option>
                                     @endforeach
-                                    <option value="vacataire" {{ old('responsable_id', $module->responsable_id) == 'vacataire' ? 'selected' : '' }}>
-                                        Assigner un vacataire comme responsable
-                                    </option>
                                 </select>
                             </div>
 
                             <div class="col-md-6">
                                 <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
-                                <select name="status" id="status" class="form-select form-select-lg" required>
+                                <select name="status" id="status" class="form-select" required>
                                     <option value="">Sélectionner le status</option>
                                     <option value="active" {{ old('status', $module->status) == 'active' ? 'selected' : '' }}>Active</option>
                                     <option value="inactive" {{ old('status', $module->status) == 'inactive' ? 'selected' : '' }}>Inactive</option>
                                 </select>
-                            </div>
-                        </div>
-
-                        <!-- Vacataire Fields -->
-                        <div id="vacataire_fields" class="mt-4" style="{{ old('responsable_id', $module->responsable_id) == 'vacataire' ? 'display:block;' : 'display:none;' }}">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label for="vacataire_nom" class="form-label">Nom complet du vacataire <span class="text-danger">*</span></label>
-                                    <input type="text" name="vacataire_nom" id="vacataire_nom" class="form-control form-control-lg"
-                                           value="{{ old('vacataire_nom', $module->vacataire_nom) }}">
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label for="vacataire_email" class="form-label">Email du vacataire <span class="text-danger">*</span></label>
-                                    <input type="email" name="vacataire_email" id="vacataire_email" class="form-control form-control-lg"
-                                           value="{{ old('vacataire_email', $module->vacataire_email) }}">
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label for="vacataire_telephone" class="form-label">Téléphone</label>
-                                    <input type="tel" name="vacataire_telephone" id="vacataire_telephone" class="form-control form-control-lg"
-                                           value="{{ old('vacataire_telephone', $module->vacataire_telephone) }}">
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label for="vacataire_specialite" class="form-label">Spécialité</label>
-                                    <input type="text" name="vacataire_specialite" id="vacataire_specialite" class="form-control form-control-lg"
-                                           value="{{ old('vacataire_specialite', $module->vacataire_specialite) }}">
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -399,12 +267,13 @@
 
                 <!-- Form Footer -->
                 <div class="card-footer bg-light p-4 border-top">
-                    <div class="d-flex justify-content-between">
-                        <a href="{{ route('coordonnateur.modules.index') }}" class="btn btn-lg btn-outline-secondary">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <a href="{{ route('coordonnateur.modules.index') }}" class="btn btn-outline-secondary">
                             <i class="fas fa-times me-2"></i> Annuler
                         </a>
-                        <button type="submit" class="btn btn-lg btn-primary">
-                            <i class="fas fa-save me-2"></i> Enregistrer les modifications
+
+                        <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold">
+                            <i class="fas fa-save me-2"></i> Modifier l'UE
                         </button>
                     </div>
                 </div>
@@ -415,79 +284,72 @@
     <style>
         /* Base Styles */
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: #f8fafc;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8f9fa;
         }
 
         /* Card Styles */
         .card {
             border: none;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
         }
 
         /* Form Elements */
         .form-label {
             font-weight: 500;
-            color: #4a5568;
+            color: #495057;
             margin-bottom: 0.5rem;
+            font-size: 0.9rem;
         }
 
         .form-control, .form-select {
-            border: 1px solid #e2e8f0;
+            border: 1px solid #dee2e6;
             border-radius: 8px;
-            padding: 0.75rem 1rem;
-            font-size: 0.95rem;
+            padding: 0.625rem 1rem;
+            font-size: 0.9rem;
             transition: all 0.2s;
+            background-color: #fff;
         }
 
         .form-control:focus, .form-select:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        .form-control-lg, .form-select-lg {
-            padding: 0.875rem 1.25rem;
-            font-size: 1rem;
+            border-color: #4723d9;
+            box-shadow: 0 0 0 3px rgba(71, 35, 217, 0.1);
         }
 
         /* Buttons */
         .btn {
             border-radius: 8px;
             font-weight: 500;
-            padding: 0.75rem 1.5rem;
+            padding: 0.625rem 1.25rem;
             transition: all 0.2s;
-        }
-
-        .btn-lg {
-            padding: 0.875rem 1.75rem;
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
 
         .btn-primary {
-            background-color: #6366f1;
-            border-color: #6366f1;
+            background-color: #4723d9;
+            border-color: #4723d9;
         }
 
         .btn-primary:hover {
-            background-color: #4f46e5;
-            border-color: #4f46e5;
+            background-color: #3a1cb8;
+            border-color: #3a1cb8;
         }
 
         .btn-outline-secondary {
-            border-color: #e2e8f0;
-            color: #4a5568;
+            border-color: #dee2e6;
+            color: #495057;
         }
 
         .btn-outline-secondary:hover {
-            background-color: #f1f5f9;
-            color: #4a5568;
+            background-color: #f1f3f5;
         }
 
         /* Section Headers */
@@ -495,58 +357,48 @@
             display: flex;
             align-items: center;
             padding-bottom: 0.75rem;
-            border-bottom: 2px solid #e2e8f0;
+            border-bottom: 1px solid #e9ecef;
             margin-bottom: 1.5rem;
         }
 
         .section-header i {
-            color: #6366f1;
-            font-size: 1.25rem;
+            font-size: 1.1rem;
+            margin-right: 0.75rem;
         }
 
         .section-header h5 {
             font-weight: 600;
-            color: #2d3748;
+            color: #343a40;
             margin: 0;
+            font-size: 1.1rem;
         }
 
         /* Alerts */
         .alert {
             border-radius: 8px;
-            padding: 1rem 1.25rem;
+            padding: 1rem;
         }
 
         .alert-light {
-            background-color: #f8fafc;
-            border-color: #f1f5f9;
+            background-color: #f8f9fa;
+            border-color: #e9ecef;
         }
 
         .alert-primary {
-            background-color: #eef2ff;
-            border-color: #e0e7ff;
-            color: #4338ca;
+            background-color: #f0f3ff;
+            border-color: #d9e0ff;
+            color: #343a40;
         }
 
         /* Badges */
         .badge {
             font-weight: 600;
-            padding: 0.5em 1em;
-        }
-
-        /* Icon Circle */
-        .icon-circle {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
+            padding: 0.35em 0.75em;
         }
 
         /* Required Field Indicator */
         .text-danger {
-            color: #ef4444;
+            color: #dc3545;
         }
 
         /* Responsive Adjustments */
@@ -555,13 +407,12 @@
                 padding: 1.5rem;
             }
             
-            .btn {
-                width: 100%;
-                margin-bottom: 0.75rem;
+            .row.g-4 > [class^="col-"] {
+                margin-bottom: 1rem;
             }
             
-            .d-flex.justify-content-between {
-                flex-direction: column;
+            .btn {
+                width: 100%;
             }
         }
     </style>
@@ -571,8 +422,6 @@
             // DOM Elements
             const typeSelect = document.getElementById('type');
             const parentModuleField = document.getElementById('parent_module_field');
-            const responsableSelect = document.getElementById('responsable_id');
-            const vacataireFields = document.getElementById('vacataire_fields');
             const cmHoursInput = document.getElementById('cm_hours');
             const tdHoursInput = document.getElementById('td_hours');
             const tpHoursInput = document.getElementById('tp_hours');
@@ -587,19 +436,6 @@
                 } else {
                     parentModuleField.style.display = 'none';
                     document.getElementById('parent_id').required = false;
-                }
-            }
-
-            // Toggle vacataire fields
-            function toggleVacataireFields() {
-                if (responsableSelect.value === 'vacataire') {
-                    vacataireFields.style.display = 'block';
-                    document.getElementById('vacataire_nom').required = true;
-                    document.getElementById('vacataire_email').required = true;
-                } else {
-                    vacataireFields.style.display = 'none';
-                    document.getElementById('vacataire_nom').required = false;
-                    document.getElementById('vacataire_email').required = false;
                 }
             }
 
@@ -621,16 +457,10 @@
                 toggleTypeSpecificFields();
             }
 
-            if (responsableSelect) {
-                responsableSelect.addEventListener('change', toggleVacataireFields);
-                toggleVacataireFields();
-            }
-
             if (cmHoursInput && tdHoursInput && tpHoursInput && autreHoursInput) {
-                cmHoursInput.addEventListener('input', updateTotalHours);
-                tdHoursInput.addEventListener('input', updateTotalHours);
-                tpHoursInput.addEventListener('input', updateTotalHours);
-                autreHoursInput.addEventListener('input', updateTotalHours);
+                [cmHoursInput, tdHoursInput, tpHoursInput, autreHoursInput].forEach(input => {
+                    input.addEventListener('input', updateTotalHours);
+                });
             }
 
             // Initialize
