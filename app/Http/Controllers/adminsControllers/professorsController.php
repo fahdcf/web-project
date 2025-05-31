@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\user_detail;
 use App\Models\admin_action;
-
+use Illuminate\Support\Str;
 
 use Illuminate\Support\Facades\Auth;
 
@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Redirect;
 use App\Models\Departement;
 use App\Models\Filiere;
 use App\Models\Role;
+use App\Mail\ProfessorAccountCreated;
+use Illuminate\Support\Facades\Mail;
 
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\ProfUnassignedNotification;
@@ -33,8 +35,7 @@ class professorsController extends Controller
 
         $professors = User::WhereHas('role', function ($query) {
             $query->where('isprof', true);
-        })
-        ->simplePaginate(5);
+        })->get();
         
         
         return view('admin.professeurs',['professors' => $professors,'Departements'=>$departments]);
@@ -93,7 +94,6 @@ class professorsController extends Controller
             'firstname'=>'required|string|max:255|min:2',
             'lastname'=>'required|string|max:255|min:2',
             'email' => 'required|email|max:255|unique:users,email',
-            'password'=>'required',
             'status'=>'required',
             'departement' => 'nullable|string|max:255',
             'min_hours' => 'required|numeric',
@@ -107,14 +107,22 @@ class professorsController extends Controller
 
         ]);
 
+         $password= Str::random(8);
+        $firstname=request('firstname');
+            $lastname=request('lastname');
+            $email=request('email');
+   
+   
+       Mail::to($email)->queue(new ProfessorAccountCreated($firstname, $lastname, $password, $email));
 
-        
+
         $userdata=[
-            'firstname'=>request('firstname'),
-            'lastname'=>request('lastname'),
-            'email'=>request('email'),
-            'password'=>password_hash(request('password'), PASSWORD_BCRYPT),
+            'firstname'=>$firstname,
+            'lastname'=>$lastname,
+            'email'=>$email,
+            'password'=>password_hash($password, PASSWORD_BCRYPT),
             'departement'=>request('departement'),
+        
             
     ];
 
@@ -138,7 +146,6 @@ class professorsController extends Controller
         
     ];
 
-    
         if (request()->hasFile('profile_img')) {
             $profileImgPath = request()->file('profile_img')->store('images/profile', 'public');
             $userdetails['profile_img']=$profileImgPath;

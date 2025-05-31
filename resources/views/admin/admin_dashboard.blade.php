@@ -98,6 +98,7 @@ width: 100%;
   border: none;
   background: none;
   color: white;
+  outline: none;
   font-size: 20px;
   padding: 0 8px;
 
@@ -106,6 +107,7 @@ width: 100%;
 
 .tasks-header button:hover{
   background-color:#5029ef;
+  outline: none;
 }
 
 .task-item{
@@ -433,6 +435,8 @@ width: 100%;
             <canvas id="loginChart" style="width: 100%; height: 100%;"></canvas>
           </div>
         </div>
+
+
       </div>
       <div class="">
         <div class="history p-0 " style="background-color:white ">
@@ -578,7 +582,7 @@ width: 100%;
               </div>
               @endforeach
   
-              <a href="#" class="text-center"><p class="pt-2 m-0">Voir tous</p></a>
+              <a href="{{url('/logs')}}" class="text-center"><p class="pt-2 m-0">Voir Plus</p></a>
               
             </div>
           </div>
@@ -589,103 +593,97 @@ width: 100%;
 
 
 
+<div class="tasks-container overflow-hidden shadow-sm mt-4 bg-white" style="border-radius: 15px !important" >
 
-     <div class="tasks p-0 mt-4" style="background-color:white ">
+    <div class="tasks-header d-flex justify-content-between align-items-center px-3 py-2" style="background-color: #4723d9;">
+        <p class="text-white m-0 fw-semibold small">Your tasks:</p>
+        <button id="task-add-button" class="btn btn-sm btn-light rounded-circle p-0 d-flex align-items-center justify-content-center" 
+                style="width:24px;height:24px;" onclick="addtask()">+</button>
+    </div>
 
-                <div style=" border:none; background-color:#4723d9; " class="tasks-header d-flex justify-content-between align-items-center ">
-                    <p style="color: #f1eded; font-size: 15px; font-weight: 600; margin:0">Your tasks:</p>
-                    <button id="task-add-button"  onclick="addtask()">+</button>
+    <div class="task-content p-3 p-md-4">
+        <!-- Add Task Form (hidden by default) -->
+        <div id="task-add" class="mb-3" style="display: none">
+            <form action="{{url('/addtask')}}" method="post" class="d-flex gap-2">
+                @csrf
+                <input id="task-input" name="task" type="text" 
+                       class="  flex-grow-1" 
+                       placeholder="Ajouter une tâche...">
+                <button type="submit " class="btn btn-sm " style="width:40px">+</button>
+            </form>
+        </div>
 
-                </div>
-                <div class="task-content p-3 p-md-4 pt-0">
-
-
-                  <div id="task-add" style="display: none">
-                    <form action="{{url('/addtask')}}" method="post">
-                    @csrf
-                        <input id="task-input" name="task" type="text" placeholder="Ajeuter...">
-                    </form>
-                  </div>
-
-                  @foreach ($tasks as $task)
-                  <div class="task-item mt-3 d-flex justify-content-between align-items-center pb-3">
-                  <div class="d-flex gap-3 align-items-center">
+        <!-- Task List -->
+        @if(count($tasks) > 0)
+            @foreach ($tasks as $task)
+            <div class="task-item d-flex justify-content-between align-items-center py-3 px-2 mb-2 bg-light" style="border-radius:15px !important">
+                <div class="d-flex gap-3 align-items-center">
                     @if ($task['isdone'])
-                    
-                   <i style="color: #21b524" class="bi bi-check-circle-fill"> </i>
-                    
+                    <i class="bi bi-check-circle-fill text-success fs-5"></i>
                     @else
-                    <i style="color: #ff914d" class="bi bi-clock-fill"></i>
-                    
+                    <i class="bi bi-clock-fill text-warning fs-5"></i>
                     @endif
 
                     <div>
-
-                      <p class="task-desc m-0"> {{ $task['description']}}</p>
-                      <p class="task-time m-0"> {{$task->created_at->diffForHumans()}}</p>
-                      
+                        <p class="task-desc m-0 @if($task['isdone']) text-decoration-line-through text-muted @endif">
+                            {{ $task['description']}}
+                        </p>
+                        <p class="task-time m-0 small text-muted">
+                            {{$task->created_at->diffForHumans()}}
+                        </p>
                     </div>
+                </div>
 
-                    </div>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-link text-secondary p-0" 
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
 
-                    <div class="dropdown">
-
-                      <button data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i>
-                      </button>
-
-                      <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="Dropdown" data-bs-display="static">
-                      
-                       
+                    <ul class="dropdown-menu dropdown-menu-end mt-2 shadow-sm">
                         @if ($task->isdone)
                         <li>
-
-                          <form action="{{url("mark-task-aspending/". $task->id)}}" method="post">
-                            @csrf
-
-                            <button type="submit" class="dropdown-item">Marquer en attente</button>
-                          </form>
-
+                            <form action="{{url("mark-task-aspending/". $task->id)}}" method="post">
+                                @csrf
+                                <button type="submit" class="dropdown-item py-2">
+                                    <i class="bi bi-clock me-2"></i>Marquer en attente
+                                </button>
+                            </form>
                         </li>
-                          
                         @else
                         <li>
-
-                          <form action="{{url("mark-task-asdone/". $task->id)}}" method="post">
-                            @csrf
-
-                            <button type="submit" class="dropdown-item">Marquer comme fait</button>
-                          </form>
-
+                            <form action="{{url("mark-task-asdone/". $task->id)}}" method="post">
+                                @csrf
+                                <button type="submit" class="dropdown-item py-2">
+                                    <i class="bi bi-check-circle me-2"></i>Marquer comme fait
+                                </button>
+                            </form>
                         </li>
                         @endif
-                 
-                        <li><hr class="dropdown-divider"></li>
-                       
-
+                        <li><hr class="dropdown-divider m-0"></li>
                         <li>
-
-                          <form action="{{url("delete-task/". $task->id)}}" method="post">
-                            @csrf
-
-                            <button type="submit" class="dropdown-item">Supprimer</button>
-                          </form>
-
+                            <form action="{{url("delete-task/". $task->id)}}" method="post">
+                                @csrf
+                                <button type="submit" class="dropdown-item py-2 text-danger">
+                                    <i class="bi bi-trash me-2"></i>Supprimer
+                                </button>
+                            </form>
                         </li>
-                        
-                       
                     </ul>
-
-
-
-                  </div>
-
-                  </div>
-                  @endforeach
-
-                  <a href="#" class="text-center"><p class="pt-2 m-0">Voir tous</p></a>
-                  
                 </div>
-              </div>
+            </div>
+            @endforeach
+
+           
+        @else
+            <div class="text-center py-4">
+                <i class="bi bi-clipboard2-check fs-1 text-muted"></i>
+                <p class="text-muted mt-2 mb-0">Aucune tâche pour le moment</p>
+                <small class="text-muted">Cliquez sur "+" pour ajouter une tâche</small>
+            </div>
+        @endif
+    </div>
+</div>
 
 
 

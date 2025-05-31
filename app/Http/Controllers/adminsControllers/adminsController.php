@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\user_detail;
 use App\Models\admin_action;
+use Illuminate\Support\Str;
 
 
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
+use App\Mail\AdminAccountCreated;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\AdminAssignedProfessor;
 
 use App\Models\Departement;
 use App\Models\filiere;
@@ -53,7 +57,6 @@ class adminsController extends Controller
             'firstname'=>'required|string|max:255|min:2',
             'lastname'=>'required|string|max:255|min:2',
             'email' => 'required|email|max:255|unique:users,email',
-            'password'=>'required',
             'status'=>'required',
             'min_hours' => 'required|numeric',
             'max_hours' => 'required|numeric',
@@ -68,12 +71,17 @@ class adminsController extends Controller
 
 
         ]);
-        
+           $password= Str::random(8);
+        $firstname=request('firstname');
+            $lastname=request('lastname');
+            $email=request('email');
+   
+   
         $userdata=[
-            'firstname'=>request('firstname'),
-            'lastname'=>request('lastname'),
-            'email'=>request('email'),
-            'password'=>password_hash(request('password'), PASSWORD_BCRYPT),
+            'firstname'=>$firstname,
+            'lastname'=>$lastname,
+            'email'=>$email,
+            'password'=>password_hash($password, PASSWORD_BCRYPT),
             'departement' =>request('departement'),
 
 
@@ -101,6 +109,11 @@ class adminsController extends Controller
             $userdetails['profile_img']=$profileImgPath;
 
         }
+
+        
+   
+
+       Mail::to($email)->queue(new AdminAccountCreated($firstname, $lastname, $email, $password));
 
 
         user_detail::create($userdetails);
@@ -131,8 +144,9 @@ return redirect('admins');
         
         
         if($prof->role){
-            $prof->role->isadmin=1;
-            $prof->save();
+            $role=$prof->role;
+            $role->isadmin=1;
+            $role->save();
         }
     
         else{
@@ -140,6 +154,8 @@ return redirect('admins');
             Role::create(['user_id'=>$prof->id,'isadmin'=>1,'isprof'=>1]);
         }
     
+       Mail::to($prof->email)->queue(new AdminAssignedProfessor($prof->firstname, $prof->lastname));
+
     
         $actionDetails=[
             'admin_id'=>auth()->user()->id,

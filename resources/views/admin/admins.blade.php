@@ -1,477 +1,831 @@
-<x-admin_layout>  
+<x-admin_layout>
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+</head>
 
-      
+<style>
+  /* Main Container */
+  .admin-container {
+    padding: 2rem;
+    min-height: 80vh;
+    font-family: 'Inter', sans-serif;
+    background-color: #f7f7fb;
+  }
 
+  /* Header */
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
 
-    <style>
-    
-    .accordion {
-    
-      background-color: white;
-      box-shadow: 1px 1px 10px 2px #33333314;
-    
-    }
-    
-    .accordion-button {
-      color: #333;
-      box-shadow: none;
-      transition: background-color 0.3s ease;
-      border: none;
-      border-radius: 5px;
-      background-color: transparent;
-    }
-    
-    .accordion-button:hover,
-    .accordion-button:focus {
-      border: none;
-      outline: none;
-      box-shadow: none;
-      background-color: transparent;
-      color: #333;
-    }
-    
-    /* Remove background/border when expanded */
-    .accordion-button:not(.collapsed) {
-      background-color: transparent;
-      border: none;
-      outline: none;
-      box-shadow: none;
-    }
-    
-    
-    
-    .accordion-body {
-     
-      padding: 1rem;
-      font-size: 0.95rem;
-      color: #555;
-    }
-    #collapsefilters{
-        border:none;
-    }
-    
-    .pagehead button{
-    border:none;
-    background:none;
-    }
-    
-    .pagehead input:focus{
-        outline: none;
-    
-    }
-    select.form-select:focus {
-      box-shadow: none !important;
-    }
-    
-    .accordion-body button{
-        margin-top: 32px;
-        border:1px solid #4723d9;
-        border-radius: 4px;
-       
-        background-color:  #4723d9;
-        color: white;
-        width: 100%;
-        font-weight: 500;
-        height: 37px;
-        transition: 0.3s;
-    }
-    .accordion-body button:hover{
-       
-        background-color: white;
-        color: #4723d9;
-    }
-    
-    </style>
-    
-    
-    
-        
-        <div class="container-fluid p-0 pt-5">
-           <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-                
+  .page-title {
+    color: #4723d9;
+    font-weight: 600;
+    font-size: 1.8rem;
+    margin: 0;
+  }
 
-                <h3 style="color: #330bcf; font-weight: 500;">The list of admins</h3>
-                
-                
-                
-                <a type="submit" href="{{url('admins/add')}}"
-                class="btn text-white rounded  fw-semibold my-2"
-                style=" background-color: #4723d9; color:#ebebec !important;vertical-align: middle ;">
-                Ajeuter un admin
-                
-            </a>
-        </div>
-            
-        <div class="pt-5 pb-2">
-            <div class="accordion rounded" id="accordionFilters">
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsefilters" aria-expanded="false" aria-controls="collapsefilters">
-                            Filters
-                        </button>
-                    </h2>
-        
-                    <div id="collapsefilters" class="accordion-collapse collapse" data-bs-parent="#accordionFilters">
-                        <div class="accordion-body">
-        
-    
-                            
-                            <!-- Filter Form -->
-                            <form id="filterForm" action="{{url('/admins')}}" method="post">
-                            @csrf
-                            @method('patch')
-                            
-                                <div class="row mt-3">
-    
-                                    <!-- Search & Row Count Form -->
-                            <div class="col-md-6 col-lg-3 mb-3">
-                                <label for="search" class="form-label">Search</label>
-                                        <input type="text" id="search" name="search" class="form-control" placeholder="Search by name or ID">
-                                    </div>
-    
-    
-                                 
-        
-                                    <div class="col-md-6 col-lg-3 mb-3">
-                                        <label for="departementFilter" class="form-label">Department</label>
-                                            <select class="form-select" id="departement" name="departement" style="color:rgb(126, 124, 140); ">
-                                                   <option value="">All</option>
-                                                @foreach ($Departements as $Departement)
-                                                        <option value="{{ $Departement->name }}">{{ $Departement->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            
-                                    </div>
-        
-                                
-                                    <div class="col-md-6 col-lg-2 mb-3">
-                                        <label for="statusFilter" class="form-label">Status</label>
-                                        <select class="form-select" id="statusFilter" name="status">
-                                            <option value="">All</option>
-                                            <option value="active">Active</option>
-                                            <option value="inactive">Inactive</option>
-                                        </select>
-                                    </div>
-        
-                            
-        
-                                    <div class="col-md-6 col-lg-2 mb-3">
-                                        <label for="rowsPerPage" class="form-label">Rows per page</label>
-                                        <select id="rowsPerPage" name="rows" class="form-select">
-                                            <option value="5">5</option>
-                                            <option value="15">15</option>
-                                            <option value="30">30</option>
-                                            <option value="100">100</option>
-                                            <option value="300">300</option>
-    
-                                        </select>
-                                    </div>
-        
-                                    <div class="col-md-12 col-lg-2 d-flex justify-content-center ">
-                                        <button type="submit" class="btn btn-secondary w-100">Apply</button>
-                                    </div>
-                                </div>
-                            </form>
-        
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-          
-          
-    
-            <div class="table-container mt-4 mb-5 flex-column" >
-                
-                <div class="table-responsive p-3 ">
-                  
-                    <table class="table bg-white  table-hover">
-                        <thead >
-                            <tr class="text-light">
-                                <th>id</th>
-                                <th>Photo</th>
-                                <th>Nom complet</th>
-                                <th>Etat</th>
-                                <th>Email</th>
-                                <th>Date de creation</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($admins as $admin)
-                          <tr>
-                                <td>{{ $admin['id'] }}</td>
-                                
-                                <td>
-                                    <a href="{{url('profile/'. $admin->id)}}">
-                                        @if ($admin->user_details)
-                                        @if ($admin->user_details->profile_img!=null)
-                                        
-                                    
-                                        <img style="height: 40px;width: 40px;object-fit:cover;border-radius:50%;" src="{{asset('storage/' . $admin->user_details->profile_img)}}">
-                                        @else
-                                    <img style="height: 40px;width: 40px;object-fit:cover;border-radius:50%;" src="{{asset('storage/images/default_profile_img.png')}}">
-                                    
-                                    @endif
-                                    
-                                    
-                                    @else
-                                    <img style="width: 35px; border-radius:50%;" src="{{asset('storage/images/default_profile_img.png')}}">
-                                    
-                                    @endif
-                                    
-                                </a>
-                                    
-                                </td>
-                                
-                                <td>{{ $admin->lastname }} {{ $admin->firstname }}</td>
-                              
-                                <td>@if ($admin->user_details)
-    
-                                   <p style="{{$admin->user_details->status=='active' ? 'background-color:#28c76f; color:white;': 'background-color:#ea5455; color:white;'}} padding:2px 5px;border-radius:15px; margin:0;">
-                                       {{$admin->user_details->status}}
-                                    </p>
-                                    
-                                    
-                                    @else
-                                    Null
-                                    @endif
-                                </td>
-                               
-                                <td>{{ $admin['email'] }}</td>
-                            
-                                <td class="text-center">{{ $admin->created_at->format('Y-m-d') }}</td>
-                                
-                                
-                                
-                                <td>
-                                    <div  class="d-flex  justify-content-center align-items-center gap-2" >
-                                        
-                                            <a href="{{url('profile/'. $admin->id)}}" class="btn  btn-sm" style="background-color:#4723d9;color: #ffffff;"><i class="bi bi-pencil-square"></i></a>
-                                        
-                                        
-                                        <button class="btn ml-1 btn-danger btn-sm" data-toggle="modal" data-target="#Modalforid{{$admin['id']}}"><i class="bi bi-trash3"></i>
-                                        </button>
-                                        
-                                        
-                                        <!-- Modal -->
-                                        <div class="modal fade" id="Modalforid{{$admin['id']}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>TVous voulez supprimer la admin <strong>{{$admin['lastname']}}</strong> definitivement?</p>         
-                                                        
-                                                        <form action="{{ url('/admins/' . $admin['id']) }}" method="POST">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn ml-1 btn-secondary btn-sm" data-dismiss="modal">Close</button>
-                                                                <button type="submit" class="btn ml-1 btn-danger btn-sm">Delete</button>
-                                                            </div>
-                                                        </form>      
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </td>
-                            
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                <div class="d-flex justify-content-center my-4 ">
-                    @if ($admins->onFirstPage())
-                        <span class="btn btn-secondary mx-1 disabled">Previous</span>
-                    @else
-                        <a href="{{ $admins->previousPageUrl() }}" class="btn  mx-1" style="background-color:#4723d9;color:white;">Previous</a>
-                    @endif
-                
-                    @if ($admins->hasMorePages())
-                        <a href="{{ $admins->nextPageUrl() }}" class="btn  mx-1" style="background-color:#4723d9;color:white;">Next</a>
-                    @else
-                        <span class="btn btn-secondary mx-1 disabled">Next</span>
-                    @endif
-                </div>
-            </div>
-    
-            </div>
-     
-    
-     
-      <style>
-    
-    .table-container {
-        background-color: white;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        overflow-y:hidden;       
-        overflow-x: auto; 
-        max-height: 80vh;
-        scrollbar-width: thin;  /* Firefox */
-        scrollbar-color: #ccc transparent;
-        box-shadow: 1px 1px 10px 2px #33333314;
-    
-        
-        
-    }
-    table{
-        min-width: 1100px;
-    }
-    
-        td{
-            font-size: 14px;
-            color: #585858;
-            font-weight: 500;
-            text-align: center !important;
-            vertical-align: middle !important; /* Vertically center content */
-    
-        }
-    
-        .table-hover tbody tr:hover {
-        background-color: rgba(248, 248, 252, 0.006) !important; 
-        cursor: pointer; 
-    }
-    
-    /* For WebKit-based browsers (Chrome, Safari, Edge) */
-    .table-container::-webkit-scrollbar {
-        width: 4px;
-        height: 4px;
-    }
-    
-    .table-container::-webkit-scrollbar-thumb {
-        background-color: #aaa;
-        border-radius: 10px;
-    }
-    
-    .table-container::-webkit-scrollbar-track {
-        background: transparent;
-    }
-    
-        
-        th{
-            text-align: center;
-    
-       border-bottom:1px solid #3737375a !important;
-            border-top:none !important;
-            color: rgb(80, 79, 79);
-            color: rgb(80, 79, 79);
-            font-size: 15px;
-            font-weight: 600;
-        }
-         table thead{
-            box-shadow: 0 7px 5px -6px rgba(0, 0, 0, 0.1);
-        }
-       
-           /* Overlay background darkening */
-           .overlay {
-               position: fixed;
-               top: 0;
-               left: 0;
-               width: 100%;
-               height: 100%;
-               background-color: rgba(0, 0, 0, 0.5);
-               display: none;
-               justify-content: center;
-               align-items: center;
-               z-index: 1000;
-           }
-    
-           /* Popup style */
-           .popup {
-               background-color: white;
-               padding: 20px;
-               border-radius: 8px;
-               text-align: center;
-               width: 400px;
-           }
-    
-         
-    
-           .popup button {
-               padding: 10px 20px;
-               color: white;
-               border: none;
-               border-radius: 5px;
-               cursor: pointer;
-           }
-    
-         
-       </style>
-    
-      <!-- Overlay -->
-      <div id="overlay" class="overlay">
-       <div class="popup">
-           <h5 style="color: #202020">Modifier la admin<span id="adminName"></span></h5>
-    
-                                                  
-           <form id="popupForm" action="" method="POST">
-            @csrf
-            @method('PATCH')
-    
-           <input hidden type="text" id="admin_id" name="admin_id"> 
-    
-           <div class="mb-4">
-             <label style="color:#515151; width: 100%; font-weight: 700; text-align: start;" for="name" class=" mt-4 form-label fw-bold">Nom du Département</label>
-             <input type="text" class="form-control rounded-pill" id="name" name="name" placeholder="Ex: Informatique">
-         </div>
-    
-         <!-- Select admin -->
-         <div class="mb-4 d-flex flex-column">
-             <label style=" color:#515151 ;width: 100%; font-weight: 700;text-align: start;" for="admin" class=" form-label fw-bold">Chef de Département</label>
-             <select style="border-color:#3028893b;" class="form-select py-2 rounded-pill" id="admin" name="user_id">
-                 <option value="">-- Sélectionner un admin --</option>
-                 @foreach ($admins as $admin)
-                     <option value="{{ $admin->id }}">{{ $admin->lastname }} {{ $admin->firstname }}</option>
-                 @endforeach
-             </select>
-         </div>
-         
-            
-        
-    
-    
-    
-    <div class="modal-footer">
-          <button type="button" class="btn ml-1 btn-secondary btn-sm" onclick="closePopup()">Close</button>
-           <button type="submit" class="btn ml-1 btn-success btn-sm">Update</button>
-         </div>
-                                                        
-     </form>                          
-    
-       </div>
+  .btn-outline-success {
+    border: 1px solid #28a745;
+    color: #28a745;
+    background-color: transparent;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s;
+  }
+
+  .btn-outline-success:hover {
+    background-color: #28a745;
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  .btn-primary {
+    background-color: #4723d9;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s;
+    text-decoration: none;
+  }
+
+  .btn-primary:hover {
+    background-color: #3a1cb3;
+    transform: translateY(-2px);
+  }
+
+  /* Filter Section */
+  .filter-section {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+
+  .filter-header {
+    padding: 1rem 1.5rem;
+    background: #f8f9fa;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .filter-header h5 {
+    margin: 0;
+    font-weight: 500;
+    color: #333;
+  }
+
+  .filter-header i {
+    transition: transform 0.3s ease;
+  }
+
+  .filter-header.collapsed i {
+    transform: rotate(180deg);
+  }
+
+  .filter-body {
+    padding: 1.5rem;
+  }
+
+  .filter-group {
+    margin-bottom: 0;
+  }
+
+  .filter-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #555;
+  }
+
+  .filter-input {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #333;
+    transition: all 0.3s;
+  }
+
+  .filter-input:focus {
+    border-color: #4723d9;
+    box-shadow: 0 0 0 3px rgba(71, 35, 217, 0.1);
+    outline: none;
+  }
+
+  .apply-btn {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s;
+    align-self: flex-end;
+  }
+
+  .apply-btn:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+  }
+
+  /* Table Section */
+  .table-section {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    overflow: hidden;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+    max-height: 70vh;
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+  }
+
+  .table-responsive::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+  }
+
+  .table-responsive::-webkit-scrollbar-thumb {
+    background-color: #aaa;
+    border-radius: 10px;
+  }
+
+  .table-responsive::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 1100px;
+  }
+
+  .table thead th {
+    background-color: #4723d9;
+    color: white;
+    padding: 1rem;
+    font-weight: 500;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    text-align: center;
+    border-bottom: none;
+  }
+
+  .table tbody tr {
+    transition: all 0.2s;
+  }
+
+  .table tbody tr:hover {
+    background-color: #f9f9ff !important;
+    transform: translateX(4px);
+  }
+
+  .table td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f0f0f0;
+    color: #555;
+    font-weight: 400;
+    text-align: center;
+  }
+
+  /* Admin Card Elements */
+  .admin-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #eee;
+    transition: all 0.3s;
+  }
+
+  .admin-avatar:hover {
+    transform: scale(1.1);
+    border-color: #4723d9;
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .status-active {
+    background-color: #e6f7ee;
+    color: #28a745;
+  }
+
+  .status-inactive {
+    background-color: #fde8e8;
+    color: #dc3545;
+  }
+
+  /* Action Buttons */
+  .action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    border: none;
+  }
+
+  .view-btn {
+    background-color: #4723d9;
+    color: white;
+  }
+
+  .view-btn:hover {
+    background-color: #3a1cb3;
+    transform: rotate(5deg);
+  }
+
+  .delete-btn {
+    background-color: #dc3545;
+    color: white;
+  }
+
+  .delete-btn:hover {
+    background-color: #c82333;
+    transform: rotate(5deg);
+  }
+
+  /* Pagination */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  .page-btn {
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: white;
+    color: #333;
+    transition: all 0.3s;
+  }
+
+  .page-btn:hover {
+    border-color: #4723d9;
+    color: #4723d9;
+  }
+
+  .page-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .page-btn.active {
+    background-color: #4723d9;
+    color: white;
+    border-color: #4723d9;
+  }
+
+  /* Modal */
+  .modal-content {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .modal-header {
+    border-bottom: none;
+    padding: 1.5rem;
+  }
+
+  .modal-title {
+    font-weight: 600;
+    color: #333;
+  }
+
+  .modal-body {
+    padding: 1.5rem;
+    color: #555;
+  }
+
+  .modal-footer {
+    border-top: none;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+
+  .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+  }
+
+  .btn-secondary:hover {
+    background-color: #5a6268;
+  }
+
+  .btn-danger {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+  }
+
+  .btn-danger:hover {
+    background-color: #c82333;
+  }
+
+  /* Overlay */
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  .popup {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 400px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .popup h5 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1.5rem;
+  }
+
+  .popup .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .popup label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 0.5rem;
+    display: block;
+    text-align: left;
+  }
+
+  .popup input,
+  .popup select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #333;
+  }
+
+  .popup input:focus,
+  .popup select:focus {
+    border-color: #4723d9;
+    box-shadow: 0 0 0 3px rgba(71, 35, 217, 0.1);
+    outline: none;
+  }
+
+  .popup .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .popup .btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 500;
+    border: none;
+  }
+</style>
+
+<div class="admin-container">
+  <div class="page-header">
+    <h1 class="page-title">The List of Admins</h1>
+    <div class="d-flex gap-3">
+      <button onclick="exportStyledExcel()" class="btn btn-outline-success">
+        <i class="bi bi-file-excel"></i> Export
+      </button>
+      <a href="{{url('admins/add')}}" class="btn btn-primary">Ajouter un admin</a>
     </div>
-    
-    
-    
-    <script>
-       // Function to show the popup and set the hidden input's value for the user id
-       function showPopup(adminId, adminName) {
-    
-        document.getElementById('adminName').innerText=adminName;
-           var adminIdInput = document.getElementById('admin_id');
-           adminIdInput.value=adminId;
-           var form = document.getElementById('popupForm');
-           form.action = "{{ url('/admins') }}/" + adminId;
-           
-           document.getElementById("overlay").style.display = "flex";
-       }
-    
-       function closePopup(){
-        document.getElementById("overlay").style.display = "none";
-    
-       }
-    </script>
-    
-    </x-admin_layout>
+  </div>
+
+  <!-- Filter Section -->
+  <div class="filter-section">
+    <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="true">
+      <h5>Filters</h5>
+      <i class="bi bi-chevron-down"></i>
+    </div>
+    <div class="collapse show" id="filterCollapse">
+      <div class="filter-body">
+        <div class="filter-row row g-2">
+          <!-- Search -->
+          <div class="col-12 col-md-4 col-lg-4 filter-group">
+            <label for="searchInput" class="filter-label">Search</label>
+            <input type="text" id="searchInput" class="filter-input py-2" placeholder="Name, ID or email">
+          </div>
+          <!-- Department Filter -->
+          <div class="col-12 col-md-4 col-lg-2 filter-group">
+            <label for="departementFilter" class="filter-label">Department</label>
+            <select class="filter-input" id="departementFilter">
+              <option value="">All Departments</option>
+              @foreach ($Departements as $Departement)
+                <option value="{{ $Departement->name }}">{{ $Departement->name }}</option>
+              @endforeach
+            </select>
+          </div>
+          <!-- Status Filter -->
+          <div class="col-12 col-md-4 col-lg-2 filter-group">
+            <label for="statusFilter" class="filter-label">Status</label>
+            <select class="filter-input" id="statusFilter">
+              <option value="">All Status</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+          <!-- Rows Per Page -->
+          <div class="col-12 col-md-4 col-lg-2 filter-group mb-4 mb-md-0">
+            <label for="rowsPerPage" class="filter-label">Rows per page</label>
+            <select id="rowsPerPage" class="filter-input">
+              <option value="all">Show All</option>
+              <option value="5">5</option>
+              <option value="15">15</option>
+              <option value="30">30</option>
+              <option value="100">100</option>
+            </select>
+          </div>
+          <button type="button" id="resetFilters" class="apply-btn col-12 col-md-4 col-lg-2 py-2">Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table Section -->
+  <div class="table-section">
+    <div class="table-responsive">
+      <table class="table" id="exportTable">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>Photo</th>
+            <th>Nom complet</th>
+            <th>Etat</th>
+            <th>Email</th>
+            <th>Date de creation</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="adminsTableBody">
+          @foreach ($admins as $admin)
+            <tr class="admin-row" 
+                data-id="{{ $admin['id'] }}"
+                data-name="{{ strtolower($admin->lastname . ' ' . $admin->firstname) }}"
+                data-email="{{ strtolower($admin['email']) }}"
+                data-status="{{ $admin->user_details ? $admin->user_details->status : '' }}"
+                data-departement="{{ $admin->departement ? $admin->departement : '' }}">
+              <td>{{ $admin['id'] }}</td>
+              <td>
+                <a href="{{url('profile/'. $admin->id)}}">
+                  @if ($admin->user_details)
+                    @if ($admin->user_details->profile_img!=null)
+                      <img class="admin-avatar" src="{{asset('storage/' . $admin->user_details->profile_img)}}">
+                    @else
+                      <img class="admin-avatar" src="{{asset('storage/images/default_profile_img.png')}}">
+                    @endif
+                  @else
+                    <img class="admin-avatar" src="{{asset('storage/images/default_profile_img.png')}}">
+                  @endif
+                </a>
+              </td>
+              <td class="admin-name">{{ $admin->lastname }} {{ $admin->firstname }}</td>
+              <td>
+                @if ($admin->user_details)
+                  <span class="status-badge status-{{ $admin->user_details->status }}">
+                    {{ ucfirst($admin->user_details->status) }}
+                  </span>
+                @else
+                  <span class="status-badge">Null</span>
+                @endif
+              </td>
+              <td>{{ $admin['email'] }}</td>
+              <td>{{ $admin->created_at->format('Y-m-d') }}</td>
+              <td>
+                <div class="d-flex justify-content-center gap-3">
+                  <a href="{{url('profile/'. $admin->id)}}" class="action-btn view-btn" title="Edit Profile">
+                    <i class="bi bi-pencil-square"></i>
+                  </a>
+                  <button class="action-btn delete-btn" data-bs-toggle="modal" data-bs-target="#Modalforid{{$admin['id']}}" title="Delete Admin">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                  <!-- Modal -->
+                  <div class="modal fade" id="Modalforid{{$admin['id']}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">Confirm Deletion</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <p>Vous voulez supprimer l'admin <strong>{{$admin['lastname']}}</strong> définitivement?</p>
+                          <form action="{{ url('/admins/' . $admin['id']) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          @endforeach
+        </tbody>
+      </table>
+    </div>
+    <div id="paginationControls" class="pagination"></div>
+  </div>
+
+  <!-- Overlay -->
+  <div id="overlay" class="overlay">
+    <div class="popup">
+      <h5>Modifier l'admin <span id="adminName"></span></h5>
+      <form id="popupForm" action="" method="POST">
+        @csrf
+        @method('PATCH')
+        <input hidden type="text" id="admin_id" name="admin_id">
+        <div class="form-group">
+          <label for="role">Rôle</label>
+          <input type="text" class="form-control" id="role" name="role" placeholder="Ex: Super Admin">
+        </div>
+        <div class="form-group">
+          <label for="admin">Admin</label>
+          <select class="form-control" id="admin" name="user_id">
+            <option value="">-- Sélectionner un admin --</option>
+            @foreach ($admins as $admin)
+              <option value="{{ $admin->id }}">{{ $admin->lastname }} {{ $admin->firstname }}</option>
+            @endforeach
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closePopup()">Close</button>
+          <button type="submit" class="btn btn-success">Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+// Debounce function to limit filter execution
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+// Filter and pagination logic
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('searchInput');
+  const departementFilter = document.getElementById('departementFilter');
+  const statusFilter = document.getElementById('statusFilter');
+  const rowsPerPage = document.getElementById('rowsPerPage');
+  const resetBtn = document.getElementById('resetFilters');
+  const tableBody = document.getElementById('adminsTableBody');
+  const paginationControls = document.getElementById('paginationControls');
+  const adminRows = document.querySelectorAll('.admin-row');
+
+  let currentPage = 1;
+  let rowsPerPageValue = rowsPerPage.value === 'all' ? adminRows.length : parseInt(rowsPerPage.value);
+
+  updatePaginationControls();
+  filterAdmins();
+
+  searchInput.addEventListener('input', debounce(function() {
+    currentPage = 1;
+    filterAdmins();
+  }, 300));
+
+  departementFilter.addEventListener('change', function() {
+    currentPage = 1;
+    filterAdmins();
+  });
+
+  statusFilter.addEventListener('change', function() {
+    currentPage = 1;
+    filterAdmins();
+  });
+
+  rowsPerPage.addEventListener('change', function() {
+    currentPage = 1;
+    rowsPerPageValue = this.value === 'all' ? adminRows.length : parseInt(this.value);
+    filterAdmins();
+    updatePaginationControls();
+  });
+
+  resetBtn.addEventListener('click', function() {
+    searchInput.value = '';
+    departementFilter.value = '';
+    statusFilter.value = '';
+    rowsPerPage.value = 'all';
+    currentPage = 1;
+    rowsPerPageValue = adminRows.length;
+    filterAdmins();
+    updatePaginationControls();
+  });
+
+  function filterAdmins() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const departementValue = departementFilter.value;
+    const statusValue = statusFilter.value;
+    let visibleCount = 0;
+
+    adminRows.forEach(row => {
+      const id = row.dataset.id;
+      const name = row.dataset.name;
+      const email = row.dataset.email;
+      const status = row.dataset.status;
+      const departement = row.dataset.departement;
+
+      const matchesSearch = !searchTerm || 
+        id.includes(searchTerm) || 
+        name.includes(searchTerm) || 
+        email.includes(searchTerm);
+      const matchesDepartement = !departementValue || departement === departementValue;
+      const matchesStatus = !statusValue || status === statusValue;
+
+      if (matchesSearch && matchesDepartement && matchesStatus) {
+        row.style.display = '';
+        visibleCount++;
+      } else {
+        row.style.display = 'none';
+      }
+    });
+
+    updatePaginationControls(visibleCount);
+    showPage(currentPage);
+  }
+
+  function updatePaginationControls(totalRows = adminRows.length) {
+    if (rowsPerPageValue === 'all' || rowsPerPageValue >= totalRows) {
+      paginationControls.style.display = 'none';
+      return;
+    }
+
+    paginationControls.style.display = 'flex';
+    const pageCount = Math.ceil(totalRows / rowsPerPageValue);
+    let paginationHTML = '';
+
+    if (currentPage > 1) {
+      paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage - 1})">Previous</button>`;
+    } else {
+      paginationHTML += `<button class="page-btn disabled">Previous</button>`;
+    }
+
+    for (let i = 1; i <= pageCount; i++) {
+      paginationHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+    }
+
+    if (currentPage < pageCount) {
+      paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage + 1})">Next</button>`;
+    } else {
+      paginationHTML += `<button class="page-btn disabled">Next</button>`;
+    }
+
+    paginationControls.innerHTML = paginationHTML;
+  }
+
+  function showPage(page) {
+    const visibleRows = Array.from(adminRows).filter(row => row.style.display !== 'none');
+    if (rowsPerPageValue === 'all') {
+      visibleRows.forEach(row => row.style.display = '');
+      return;
+    }
+
+    const startIdx = (page - 1) * rowsPerPageValue;
+    const endIdx = startIdx + rowsPerPageValue;
+
+    visibleRows.forEach((row, index) => {
+      row.style.display = index >= startIdx && index < endIdx ? '' : 'none';
+    });
+  }
+
+  window.changePage = function(page) {
+    currentPage = page;
+    filterAdmins();
+  };
+});
+
+// Excel export
+function exportStyledExcel() {
+  const table = document.getElementById("exportTable");
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet("Admins");
+
+  // Headers
+  const headers = ['ID', 'Nom complet', 'Etat', 'Email', 'Date de creation'];
+  worksheet.addRow(headers);
+
+  // Style header
+  worksheet.getRow(1).eachCell(cell => {
+    cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '4F81BD' }
+    };
+    cell.alignment = { horizontal: 'center' };
+  });
+
+  // Data rows
+  const rows = table.querySelectorAll('tbody tr');
+  rows.forEach(row => {
+    if (row.style.display !== 'none') {
+      const rowData = [
+        row.cells[0].innerText, // ID
+        row.cells[2].innerText, // Nom complet
+        row.cells[3].querySelector('.status-badge')?.innerText || 'Null', // Etat
+        row.cells[4].innerText, // Email
+        row.cells[5].innerText  // Date de creation
+      ];
+      const newRow = worksheet.addRow(rowData);
+      const statusCell = newRow.getCell(3);
+      if (statusCell.value === 'Active') {
+        statusCell.font = { color: { argb: 'FF00AA00' } };
+      } else if (statusCell.value === 'Inactive') {
+        statusCell.font = { color: { argb: 'FFAA0000' } };
+      }
+      statusCell.alignment = { horizontal: 'center' };
+    }
+  });
+
+  // Set column widths
+  worksheet.columns = [
+    { width: 10 }, // ID
+    { width: 20 }, // Nom complet
+    { width: 15 }, // Etat
+    { width: 30 }, // Email
+    { width: 15 }  // Date de creation
+  ];
+
+  // Export
+  workbook.xlsx.writeBuffer().then((buffer) => {
+    const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    saveAs(blob, "Admins_Styled.xlsx");
+  });
+}
+
+// Popup functions
+function showPopup(adminId, adminName) {
+  document.getElementById('adminName').innerText = adminName;
+  document.getElementById('admin_id').value = adminId;
+  document.getElementById('popupForm').action = "{{ url('/admins') }}/" + adminId;
+  document.getElementById('overlay').style.display = 'flex';
+}
+
+function closePopup() {
+  document.getElementById('overlay').style.display = 'none';
+}
+</script>
+</x-admin_layout>

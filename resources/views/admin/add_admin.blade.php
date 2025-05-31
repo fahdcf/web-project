@@ -124,14 +124,6 @@
               @enderror
             </div>
 
-            <!-- professeur password -->
-            <div class="col-md-6 mt-4">
-              <label style="color:#515151; font-weight: 700;" for="password" class="form-label fw-bold">Mot de passe</label>
-              <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Mot de passe">
-              @error('password')
-                <div class="invalid-feedback">{{ $message }}</div>
-              @enderror
-            </div>
 
             <!-- professeur departement -->
             <div class="col-md-6 mt-4">
@@ -177,14 +169,7 @@
               @enderror
             </div>
 
-            <!-- professeur profile -->
-            <div class="col-md-6 mt-4">
-              <label style="color:#515151; font-weight: 700;" for="profile_img" class="form-label fw-bold">Photo de profil</label>
-              <input type="file" class="form-control @error('profile_img') is-invalid @enderror" id="profile_img" name="profile_img">
-              @error('profile_img')
-                <div class="invalid-feedback">{{ $message }}</div>
-              @enderror
-            </div>
+          
 
             <!-- professeur sexe -->
             <div class="col-md-6 mt-4">
@@ -217,6 +202,16 @@
                 <div id="collapsefilters" class="accordion-collapse collapse" data-bs-parent="#accordionFilters">
                   <div class="accordion-body">
                     <div class="row mt-3">
+
+                        <!-- professeur profile -->
+                      <div class="col-md-6 col-lg-4 mt-4">
+                        <label style="color:#515151; font-weight: 700;" for="profile_img" class="form-label fw-bold">Photo de profil</label>
+                        <input type="file" class="form-control @error('profile_img') is-invalid @enderror" id="profile_img" name="profile_img">
+                        @error('profile_img')
+                          <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                      </div>
+
                       <div class="col-md-6 col-lg-4 mb-3">
                         <label style="color:#515151; font-weight: 700;" for="date" class="form-label">Date de Naissance</label>
                         <input type="date" id="date" name="date" class="form-control @error('date') is-invalid @enderror" value="{{ old('date') }}">

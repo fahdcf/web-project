@@ -33,13 +33,22 @@ class ChefProfessorController extends Controller
                     $modules=Module::all();
                     $assignement=Assignment::where('prof_id', $user->id)->get();
                     
-     $filieres=filiere::where('department_id',auth()->user()->manage->id)->get();
                     
             $FilieretargetIDs = Filiere::where('department_id', auth()->user()->manage->id)
         ->pluck('id'); // Plucks all the IDs into a collection
 
         
- $available_modules = Module::where('professor_id', null)->whereIn('filiere_id', $FilieretargetIDs)->get();
+ $available_modules =Module::whereIn('filiere_id', $FilieretargetIDs)
+    ->where(function ($query) {
+        $query->whereDoesntHave('assignment', function ($q) {
+            $q->where('teach_tp', 1);
+        })->orWhereDoesntHave('assignment', function ($q) {
+            $q->where('teach_td', 1);
+        })->orWhereDoesntHave('assignment', function ($q) {
+            $q->where('teach_cm', 1);
+        });
+    })
+    ->get();
        
                  
 

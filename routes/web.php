@@ -7,12 +7,18 @@ use App\Http\Controllers\adminsControllers\etudiantController;
 use App\Http\Controllers\adminsControllers\filiereController;
 use App\Http\Controllers\adminsControllers\pendinguserController;
 use App\Http\Controllers\adminsControllers\professorsController;
+use App\Http\Controllers\adminsControllers\UserLogController;
+use App\Http\Controllers\adminsControllers\AdminActionController;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 use App\Http\Controllers\adminsControllers\profileController;
 
 use App\Http\Controllers\adminsControllers\resetPasswordController;
 use App\Http\Controllers\adminsControllers\signupController;
 use App\Http\Controllers\adminsControllers\tasksController;
+
+use App\Http\Controllers\chef_departementControllers\ChefActionsController;
 use App\Http\Controllers\chef_departementControllers\cheffiliereController;
 use App\Http\Controllers\chef_departementControllers\chefModulesController;
 use App\Http\Controllers\chef_departementControllers\ChefProfessorController;
@@ -47,8 +53,9 @@ use App\Mail\newuserEmail;
 use App\Mail\resetPasswordEmail;
 
 use App\Mail\WelcomeEmail;
-
 use App\Models\Departement;
+
+use App\Models\chef_action;
 use App\Models\filiere;
 
 use Illuminate\Support\Facades\Mail;
@@ -67,7 +74,6 @@ use App\Models\User;
 use App\Models\user_detail;
 use App\Notifications\ProfUnassignedNotification;
 use function PHPUnit\Framework\returnArgument;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 /////////Coordonnateur//////////////////////////////////////////////////////
@@ -571,3 +577,57 @@ Route::post('chef/modules_vacantes/affecter/{id}',[chefModulesController::class,
 Route::get('chef/professeur_profile/{id}',[ChefProfessorController::class,'professeur_profile']);
 Route::post('chef/professeur_profile/{id}',[ChefProfessorController::class,'edit']);
 Route::post('chef/professeurs/affecter', [ChefProfessorController::class,'affecter']);
+
+    Route::get('/logs', [UserLogController::class, 'index'])->name('admin.logs');
+    Route::get('/logs/export', [UserLogController::class, 'export'])->name('admin.logs.export');
+
+Route::get('/admin/actions', [AdminActionController::class, 'index'])
+    ->name('admin.actions');
+
+  Route::get('/chef/actions', function(){
+      $query = chef_action::with('user')->latest();
+
+        // Filters
+        if ($search = request('search')) {
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->whereRaw('LOWER(CONCAT(firstname, " ", lastname)) LIKE ?', ['%' . strtolower($search) . '%']);
+            });
+        }
+
+        if ($action = request('action')) {
+            $query->where('action_type', $action);
+        }
+
+        $startDate = request('start_date') ? Carbon::parse(request('start_date')) : Carbon::now()->startOfWeek();
+        $endDate = request('end_date') ? Carbon::parse(request('end_date')) : Carbon::now()->endOfWeek();
+        $query->whereBetween('created_at', [$startDate, $endDate]);
+
+        // Paginated results
+        $actions = $query->paginate(10);
+
+        // Distinct action types for filter dropdown
+        $actionTypes = chef_action::distinct()->pluck('action_type');
+
+        // Statistics
+        $todayActions = chef_action::whereDate('created_at', Carbon::today())->count();
+        $weekActions = chef_action::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
+        $uniqueChefs = chef_action::distinct('chef_id')->count('chef_id');
+        $mostActiveDay = chef_action::selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->groupBy('date')
+            ->orderBy('count', 'desc')
+            ->first();
+        $mostActiveDay = $mostActiveDay ? Carbon::parse($mostActiveDay->date)->format('Y-m-d') : 'N/A';
+
+        return view('chef_departement.actions', compact(
+            'actions',
+            'actionTypes',
+            'startDate',
+            'endDate',
+            'todayActions',
+            'weekActions',
+            'uniqueChefs',
+            'mostActiveDay'
+        ));
+    }
+
+  )->name('chef.actions');

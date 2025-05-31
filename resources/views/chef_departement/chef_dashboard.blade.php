@@ -904,7 +904,7 @@ width: 100%;
             </div>
             @endforeach
 
-            <a href="#" class="text-center"><p class="pt-2 m-0">Voir tous</p></a>
+            <a href="{{url('/chef/actions')}}" class="text-center"><p class="pt-2 m-0">Voir tous</p></a>
             
           </div>
         </div>

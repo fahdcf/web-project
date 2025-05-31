@@ -4,7 +4,7 @@
  <!-- Header Section -->
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
             <div>
-                <h1 class="display-6 fw-bold  mb-2" style="color: #4723d9">Liste des Modules</h1>
+                <h1 class="display-6 fw-bold  mb-2" style="color: #4723d9">Liste des Filieres</h1>
                 <p class="text-muted mb-0">Explorez tous les modules de la departement {{auth()->user()->manage->name}}</p>
             </div>
             
