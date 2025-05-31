@@ -18,9 +18,7 @@
             <button onclick="exportStyledExcel()" class="btn btn-outline-success">
                 <i class="bi bi-file-excel"></i> Exporter Excel
             </button>
-            <a href="{{ url('admin/actions') }}" class="btn btn-primary fw-medium">
-                <i class="fas fa-list"></i> Voir tous
-            </a>
+           
         </div>
     </div>
 
