@@ -13,21 +13,25 @@ class Assignment extends Model
         'module_id', // Foreign key to modules table
         'prof_id',   // Foreign key to users table (professors or vacataires)
         'hours',
-       'teach_cm',
-       'teach_tp',
-       'teach_td',
-        'start_date', // Optional: Start date of the assignment
-        'end_date',   // Optional: End date of the assignment
-       
+        'teach_cm',
+        'teach_tp',
+        'teach_td',
+        'academic_year',
+
+
+        // 'start_date', // Optional: Start date of the assignment
+        // 'end_date',   // Optional: End date of the assignment
+
     ];
 
-    public function module()
-    {
-        return $this->belongsTo(Module::class);
-    }
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'prof_id', 'id');
+    }
+
+    public function module()
+    {
+        return $this->belongsTo(Module::class, 'module_id', 'id');
     }
 }

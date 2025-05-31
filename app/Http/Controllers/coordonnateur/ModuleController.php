@@ -2,111 +2,141 @@
 
 namespace App\Http\Controllers\coordonnateur;
 
+use App\Exports\ModulesExport;
 use App\Http\Controllers\Controller;
+use App\Imports\ModulesImport;
 use App\Models\Assignment;
+use App\Models\Departement;
 use App\Models\Filiere;
 use App\Models\Module;
 use App\Models\User;
-use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ModuleController extends Controller
 {
-    // Afficher la liste des UE
-
-    public function showConfirmDelete(Module $module)
+    public function index(Request $request)
     {
-        return view('modules.confirm-delete', compact('module'));
+        if (!auth()->user()->isCoordonnateur()) {
+            abort(403, 'Unauthorized: You are not a coordinator.');
+        }
+
+        $filiere_id = auth()->user()->manage->id;
+        $modules = Module::with(['filiere', 'responsable'])
+            ->where('filiere_id', $filiere_id)
+            ->get();
+
+        return view('modules.index', compact('modules'));
     }
 
-    // Afficher la liste des UE
-    public function index()
+    public function show(Module $module)
     {
-        $user = auth()->user();
-
-        $semestersData = [];
-        for ($i = 1; $i <= 6; $i++) {
-            $semestersData["S$i"] = Module::with(['professor', 'filiere'])
-                ->where('filiere_id', $user->manage->id)
-                ->where('semester', $i)
-                // ->where('status', 1)
-                ->orderBy('name')
-                ->get();
-        }
-
-
-
-
-
-        $modules=Module::where('filiere_id', $user->manage->id)->get();
-
-
-        $filiere = $user->manage;
-        $allVacataires = User::whereHas('role', function ($query) {
-            $query->where('isvocataire', true);
-        })->get();
-
-        return view('modules.index', [
-            'filiere' => $filiere,
-            'allVacataires' => $allVacataires,
-            'semesters' => $semestersData,
-            'searchResults' => null,
-            'modules'=>$modules
-        ]);
+        // $responsables = User::where('filiere_id', auth()->user()->filiere_id)->get();
+        $responsables = User::get();
+        return view('modules.show', compact('module', 'responsables'));
     }
 
-    public function search(Request $request)
+    // public function update(Request $request, Module $module)
+    // {
+    //     $validated = $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'type' => 'required|in:complet,partiel',
+    //         'cm_hours' => 'nullable|numeric|min:0',
+    //         'td_hours' => 'nullable|numeric|min:0',
+    //         'tp_hours' => 'nullable|numeric|min:0',
+    //         'semester' => 'required|integer|between:1,6',
+    //         'status' => 'required|in:active,inactive',
+    //         'credit' => 'nullable|integer|min:0',
+    //         'evaluation' => 'nullable|string|max:255',
+    //         'description' => 'nullable|string',
+    //         'responsable_id' => 'nullable|exists:users,id',
+    //     ]);
+
+    //     $module->update($validated);
+
+    //     return redirect()->route('coordonnateur.modules.show', $module)->with('success', 'Module mis à jour avec succès.');
+    // }
+
+
+    public function update(Request $request, Module $module)
     {
-        $user = auth()->user();
-        $filiereId = $user->manage->id;
+        // Validation rules
+        $rules = [
+            'type' => 'required|in:complet,element',
+            'name' => 'required|string|max:255',
+            'specialty' => 'nullable|string|max:255',
+            'semester' => 'required|integer|min:1|max:6',
+            'credits' => 'required|integer|min:1',
+            'evaluation' => 'required|integer|min:1|max:10',
+            'description' => 'nullable|string',
+            'cm_hours' => 'required|integer|min:0',
+            'td_hours' => 'required|integer|min:0',
+            'tp_hours' => 'required|integer|min:0',
+            'autre_hours' => 'required|integer|min:0',
+            'responsable_id' => 'nullable|exists:users,id',
+            'status' => 'required|in:active,inactive',
+        ];
 
-        $filterSemester = $request->input('filterSemester');
-        $filterStatus = $request->input('filterStatus');
-        $searchInput = $request->input('searchInput');
+        // Conditionally add 'parent_id' validation if type is 'element'
+        if ($request->input('type') === 'element') {
+            $rules['parent_id'] = 'required|exists:modules,id';
 
-        $query = Module::with(['professor', 'filiere'])->where('filiere_id', $filiereId);
-
-        if ($filterSemester !== 'all') {
-            $query->where('semester', $filterSemester);
+            // Additional validation to prevent circular references
+            $rules['parent_id'] .= '|not_in:' . $module->id;
         }
 
-        if ($filterStatus !== 'all') {
-            $query->where('status', $filterStatus); // Adaptez vos valeurs de statut
+        $validated = $request->validate($rules);
 
+        // Handle type change validation
+        if ($module->type === 'complet' && $validated['type'] === 'element') {
+            // Check if this module has any child elements
+            if ($module->children()->exists()) {
+                return back()
+                    ->withErrors(['type' => 'Cannot change to element type because this module has child elements.'])
+                    ->withInput();
+            }
         }
 
-        if ($searchInput) {
-            $query->where(function ($q) use ($searchInput) {
-                $q->where('code', 'like', '%' . $searchInput . '%')->orWhere('name', 'like', '%' . $searchInput . '%');
-            });
+        // Handle parent module changes
+        if ($validated['type'] === 'element') {
+            $parent = Module::find($validated['parent_id']);
+
+            // Check if parent module exists and is not the same as current module
+            if (!$parent || $parent->id === $module->id) {
+                return back()
+                    ->withErrors(['parent_id' => 'Invalid parent module selection.'])
+                    ->withInput();
+            }
+
+            // If changing parent, update the code
+            if ($module->parent_id !== $validated['parent_id']) {
+                $newCode = $parent->code . '-' . (Module::where('parent_id', $validated['parent_id'])->count() + 1);
+                $validated['code'] = $newCode;
+            }
+        } else {
+            // If changing from element to complet, generate a new code
+            if ($module->type === 'element') {
+                $validated['code'] = "M" . $validated['semester'] . "-" . $module->id;
+            }
+
+            $validated['parent_id'] = null;
         }
 
-        $searchResults = $query->get();
+        // Update the module
+        $module->update($validated);
 
-        $semestersData = [];
-        for ($i = 1; $i <= 6; $i++) {
-            $semestersData["S$i"] = Module::with(['professor', 'filiere'])
-                ->where('filiere_id', $user->manage->id)
-                ->where('semester', $i)
-                // ->where('status', 1)
-                ->orderBy('name')
-                ->get();
-        }
-
-        $filiere = $user->manage;
-        $vacataires = User::whereHas('role', function ($query) {
-            $query->where('isvocataire', true);
-        })->get();
-
-        return view('modules.index', [
-            'filiere' => $filiere,
-            'vacataires' => $vacataires,
-            'semesters' => $semestersData,
-            'searchResults' => $searchResults, // Afficher les résultats après la recherche
-        ]);
+        return redirect()
+            ->route('coordonnateur.modules.index')
+            ->with('success', 'UE mise à jour avec succès!');
     }
 
-    // Afficher le formulaire de création
+
+
     public function create()
     {
         //cpas bonne pour le chef deparemtent
@@ -190,17 +220,6 @@ class ModuleController extends Controller
     }
 
 
-    public function show($id)
-    {
-        // Récupère le module avec l'ID donné
-        $module = Module::with('professor')->findOrFail($id);
-        // dd($module);
-
-        // $modules=Module::find(3);
-        // dd($modules->status);
-        // Retourne la vue avec les données du module et du professeur
-        return view('modules.show', compact('module'));
-    }
 
     public function edit(Module $module, Filiere $filiere)
     {
@@ -212,71 +231,169 @@ class ModuleController extends Controller
     }
 
 
-    public function update(Request $request, Module $module)
-{
-    // Validation rules (similar to store, but parent_id is conditionally nullable)
-    $rules = [
-        'type' => 'required|in:complet,element',
-        'name' => 'required|string|max:255',
-        'specialty' => 'nullable|string|max:255',
-        'status' => 'required|in:active,inactive',
+    public function export(Request $request)
+    {
+        $semester = $request->query('semester');
+        $user = Auth::user();
+        $filiere = Filiere::where('coordonnateur_id', $user->id)->firstOrFail();
 
-        'semester' => 'required|integer|min:1',
-        'credits' => 'required|integer|min:1',
-        'evaluation' => 'required|integer|min:1',
-        'description' => 'nullable|string',
-        'cm_hours' => 'nullable|integer',
-        'td_hours' => 'nullable|integer',
-        'tp_hours' => 'nullable|integer',
-        'autre_hours' => 'nullable|integer',
-        'responsable_id' => 'nullable|exists:users,id',
-    ];
+        $query = Module::where('filiere_id', $filiere->id);
 
-    // Conditionally add 'parent_id' validation if type is 'element'
-    if ($request->input('type') === 'element') {
-        $rules['parent_id'] = 'required|exists:modules,id|different:' . $module->id;
-    } else {
-        $rules['parent_id'] = 'nullable';
-    }
-
-    $validated = $request->validate($rules);
-
-    // Logic for handling 'element' type update
-    if ($validated['type'] === 'element') {
-        // Find the parent module
-        $parent = Module::find($validated['parent_id']);
-
-        // Check if parent module exists
-        if (!$parent) {
-            return back()->withErrors(['parent_id' => 'Parent module not found.'])->withInput();
+        if ($semester !== 'all') {
+            $query->where('semester', $semester);
         }
 
-        // Generate the code for the element (it might be better to keep the original code if it doesn't change)
-        // Option 1: Keep the existing code
-        // $code = $module->code;
+        $modules = $query->orderBy('semester')->get();
 
-        // Option 2: Regenerate the code based on the new parent (use with caution if the code is used elsewhere)
-        $code = $parent->code . '-' . (Module::where('parent_id', $validated['parent_id'])->where('id', '!=', $module->id)->count() + 1);
-
-        $validated['parent_id'] = $validated['parent_id'];
-        $validated['code'] = $code;
-    }else { // Logic for 'complet' type update
-        // Generate the code for the complete module if the semester changes
-        if ($module->type === 'complet' && $module->semester !== $validated['semester']) {
-            $validated['code'] = "M" . $validated['semester'] . "-" . $module->id;
-        } else {
-            // Keep the existing code if the semester doesn't change and it's a complete module
-            $validated['code'] = $module->code;
+        if ($modules->isEmpty()) {
+            return redirect()->back()->with('error', 'Aucun module trouvé pour l\'exportation.');
         }
-        $validated['parent_id'] = null;
+
+        $filename = 'modules_' . ($semester === 'all' ? 'tous_semestres' : 'S' . $semester) . '_' . now()->format('Ymd_His') . '.xlsx';
+
+        return Excel::download(new ModulesExport($modules), $filename);
+    }
+
+   
+
+    public function import(Request $request)
+    {
+        $user = Auth::user();
+        $filiere = Filiere::where('coordonnateur_id', $user->id)->firstOrFail();
+
+        $validator = Validator::make($request->all(), [
+            'excel_file' => 'required|file|mimes:xlsx,xls|max:2048',
+        ], [
+            'excel_file.required' => 'Veuillez sélectionner un fichier Excel.',
+            'excel_file.mimes' => 'Le fichier doit être au format .xlsx ou .xls.',
+            'excel_file.max' => 'Le fichier ne doit pas dépasser 2 Mo.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        try {
+            // Load the Excel file
+            $file = $request->file('excel_file');
+            $spreadsheet = IOFactory::load($file->getRealPath());
+            $sheet = $spreadsheet->getActiveSheet();
+            $highestColumn = $sheet->getHighestColumn();
+            $rawHeaders = $sheet->rangeToArray("A1:{$highestColumn}1", null, true, true, false)[0];
+
+            // Clean and normalize headers
+            $normalizedHeaders = array_map(function ($header) {
+                // Remove BOM, trim, lowercase, replace spaces with underscores
+                $header = preg_replace('/^[\x{FEFF}]+/u', '', trim($header ?? ''));
+                return strtolower(preg_replace('/\s+/', '_', $header));
+            }, $rawHeaders);
+
+            // Remove empty headers
+            $normalizedHeaders = array_filter($normalizedHeaders, fn($v) => $v !== '');
+
+            // Remove duplicates, keeping first occurrence
+            $uniqueHeaders = [];
+            foreach ($normalizedHeaders as $header) {
+                if (!in_array($header, $uniqueHeaders)) {
+                    $uniqueHeaders[] = $header;
+                }
+            }
+
+            // Required headers
+            $requiredHeaders = ['id', 'name', 'semester', 'description', 'cm_hours', 'td_hours', 'tp_hours', 'credits', 'evaluation', 'type'];
+            $missingHeaders = array_diff($requiredHeaders, $uniqueHeaders);
+
+            if (!empty($missingHeaders)) {
+                return redirect()->back()->with('error', 'Colonnes requises manquantes : ' . implode(', ', $missingHeaders));
+            }
+
+            Excel::import(new ModulesImport($filiere->id), $file);
+            return redirect()->route('coordonnateur.modules.index')
+                ->with('success', 'Unités d\'enseignement importées avec succès.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $errors = [];
+            foreach ($failures as $failure) {
+                $errors[] = "Ligne {$failure->row()} : " . implode(', ', $failure->errors());
+            }
+            return redirect()->back()->with('error', implode('; ', $errors));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Échec de l\'importation : ' . $e->getMessage());
+        }
     }
 
 
-    // Update the module attributes
-    $module->update($validated);
 
-    return redirect()->route('coordonnateur.modules.index')->with('success', 'UE mise à jour avec succès!');
-}
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    // public function update(Request $request, Module $module)
+    // {
+    //     // Validation rules (similar to store, but parent_id is conditionally nullable)
+    //     $rules = [
+    //         'type' => 'required|in:complet,element',
+    //         'name' => 'required|string|max:255',
+    //         'specialty' => 'nullable|string|max:255',
+    //         'status' => 'required|in:active,inactive',
+
+    //         'semester' => 'required|integer|min:1',
+    //         'credits' => 'required|integer|min:1',
+    //         'evaluation' => 'required|integer|min:1',
+    //         'description' => 'nullable|string',
+    //         'cm_hours' => 'nullable|integer',
+    //         'td_hours' => 'nullable|integer',
+    //         'tp_hours' => 'nullable|integer',
+    //         'autre_hours' => 'nullable|integer',
+    //         'responsable_id' => 'nullable|exists:users,id',
+    //     ];
+
+    //     // Conditionally add 'parent_id' validation if type is 'element'
+    //     if ($request->input('type') === 'element') {
+    //         $rules['parent_id'] = 'required|exists:modules,id|different:' . $module->id;
+    //     } else {
+    //         $rules['parent_id'] = 'nullable';
+    //     }
+
+    //     $validated = $request->validate($rules);
+
+    //     // Logic for handling 'element' type update
+    //     if ($validated['type'] === 'element') {
+    //         // Find the parent module
+    //         $parent = Module::find($validated['parent_id']);
+
+    //         // Check if parent module exists
+    //         if (!$parent) {
+    //             return back()->withErrors(['parent_id' => 'Parent module not found.'])->withInput();
+    //         }
+
+    //         // Generate the code for the element (it might be better to keep the original code if it doesn't change)
+    //         // Option 1: Keep the existing code
+    //         // $code = $module->code;
+
+    //         // Option 2: Regenerate the code based on the new parent (use with caution if the code is used elsewhere)
+    //         $code = $parent->code . '-' . (Module::where('parent_id', $validated['parent_id'])->where('id', '!=', $module->id)->count() + 1);
+
+    //         $validated['parent_id'] = $validated['parent_id'];
+    //         $validated['code'] = $code;
+    //     } else { // Logic for 'complet' type update
+    //         // Generate the code for the complete module if the semester changes
+    //         if ($module->type === 'complet' && $module->semester !== $validated['semester']) {
+    //             $validated['code'] = "M" . $validated['semester'] . "-" . $module->id;
+    //         } else {
+    //             // Keep the existing code if the semester doesn't change and it's a complete module
+    //             $validated['code'] = $module->code;
+    //         }
+    //         $validated['parent_id'] = null;
+    //     }
+
+
+    //     // Update the module attributes
+    //     $module->update($validated);
+
+    //     return redirect()->route('coordonnateur.modules.index')->with('success', 'UE mise à jour avec succès!');
+    // }
 
 
     public function destroy(Module $module)
@@ -426,4 +543,58 @@ class ModuleController extends Controller
 
         return back()->with('success', 'Assignation supprimée');
     }
+
+    ////////////////////////////////////////////////////////////////
+
+
+    public function availableModules(Request $request)
+    {
+        $modules = Module::with(['filiere', 'responsable', 'assignments'])
+            ->where('status', 'active')
+            ->where(function ($query) {
+                // Modules sans aucune assignation
+                $query->doesntHave('assignments')
+                    ->orWhereHas('assignments', function ($q) {
+                        // Ou modules avec au moins un type non assigné
+                        $q->where('teach_cm', false)
+                            ->orWhere('teach_td', false)
+                            ->orWhere('teach_tp', false);
+                    });
+            })
+            ->get();
+        // $module = Module::find(1); // Get a single module
+        // dd($module->cmAssignation->teach_cm); // No parentheses needed (Lazy-loaded)
+        return view('modules.availableModules', compact('modules'));
+    }
+
+
+
+    // public function vacantesList()
+    // {
+    //     $FilieretargetIDs = Filiere::all()
+    //         ->pluck('id'); // Plucks all the IDs into a collection
+    //     $filieres = Filiere::get();
+    //     // $filieres = Filiere::where('department_id', auth()->user()->manage->id)->get();
+
+    //     //$modules = Module::where('professor_id', null)->whereIn('filiere_id', $FilieretargetIDs)->get();
+
+    //     $modules = Module::whereIn('filiere_id', $FilieretargetIDs)
+    //         ->where(function ($query) {
+    //             $query->whereDoesntHave('assignment', function ($q) {
+    //                 $q->where('teach_tp', 1);
+    //             })->orWhereDoesntHave('assignment', function ($q) {
+    //                 $q->where('teach_td', 1);
+    //             })->orWhereDoesntHave('assignment', function ($q) {
+    //                 $q->where('teach_cm', 1);
+    //             });
+    //         })
+    //         ->get();
+
+
+    //     // $departmentName = auth()->user()->manage->name;
+    //     // $professors = user::where('departement', $departmentName)->simplePaginate(5);
+
+
+    //     return view('chef_departement.modules_vacantes', ['modules' => $modules, 'filieres' => $filieres]);
+    // }
 }

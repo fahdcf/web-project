@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
- 
+
 
 
 
@@ -378,10 +378,10 @@
 
 </head>
 
- 
-   
-   
-    
+
+
+
+
 
 <body id="body-pd">
 
@@ -553,12 +553,13 @@
                         <span class="nav_name">Profile</span>
                     </a>
 
+                    <a href="{{ url('/login') }}" class="nav_link">
+                        <i class='bx bx-log-out nav_icon'></i>
+                        <span class="nav_name">Deconnexion</span>
+                    </a>
                 </div>
             </div>
-            <a href="{{ url('/login') }}" class="nav_link"> <i class='bx bx-log-out nav_icon'></i> <span
-                    class="nav_name">Deconnexion
 
-                </span> </a>
         </nav>
     </div>
     <!--Container Main start-->

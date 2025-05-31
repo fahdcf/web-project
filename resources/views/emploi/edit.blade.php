@@ -179,16 +179,16 @@
     <div class="container-fluid p-0 pt-4">
 
         @if ($errors->any())
-                <div class="alert alert-danger error-message">
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+            <div class="alert alert-danger error-message">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-            
+
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show">
                 {{ session('success') }}
@@ -202,12 +202,103 @@
             </div>
         @endif
 
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
-            <h3 style="color: #330bcf; font-weight: 500;">Modifier l'Emploi du Temps - S{{ $emploi->semester }}</h3>
-            <a href="{{ route('emploi.index') }}" class="btn btn-outline-secondary rounded fw-semibold my-2">
-                <i class="bi bi-arrow-left me-2"></i> Retour
-            </a>
+
+
+
+
+
+
+        <div class="header-container mb-4">
+            <style>
+                .header-container {
+                    background: white;
+                    border-radius: 8px;
+                    padding: 20px;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                }
+
+                .header-title {
+                    color: #4723d9;
+                    font-weight: 600;
+                    font-size: 1.75rem;
+                    margin: 0;
+                }
+
+      
+                @media (max-width: 768px) {
+                    .header-container {
+                        padding: 15px;
+                    }
+
+                    .header-title {
+                        font-size: 1.5rem;
+                        margin-bottom: 15px;
+                        text-align: center;
+                    }
+
+                    .form-select,
+                    .btn-outline-primary {
+                        width: 100%;
+                        margin-bottom: 10px;
+                    }
+
+                    .btn-outline-primary {
+                        white-space: normal;
+                        text-align: center;
+                        padding: 10px 16px;
+                    }
+
+                    .btn-text-emploi,
+                    .btn-text-prof {
+                        display: block;
+                    }
+
+                    .btn-text-emploi {
+                        margin-bottom: 2px;
+                    }
+                }
+
+                /* Improved grid layout */
+                .header-grid {
+                    display: grid;
+                    grid-template-columns: 1fr auto auto;
+                    gap: 1rem;
+                    align-items: center;
+                }
+
+                @media (max-width: 992px) {
+                    .header-grid {
+                        grid-template-columns: 1fr auto;
+                    }
+
+                    .header-title {
+                        grid-column: 1 / -1;
+                        text-align: center;
+                        margin-bottom: 10px;
+                        text-decoration: underline;
+                    }
+                }
+
+                @media (max-width: 768px) {
+                    .header-grid {
+                        grid-template-columns: 1fr;
+                        gap: 0.75rem;
+                    }
+
+
+                }
+            </style>
+
+            <div class="header-grid">
+                <h3 class="header-title">Modifier l'Emploi du Temps - S{{ $emploi->semester }}</h3>
+
+        
+            </div>
         </div>
+
+
+
+
 
         <form id="emploiForm" action="{{ route('emploi.update', $emploi->id) }}" method="POST">
             @csrf
@@ -230,8 +321,9 @@
                     </div>
                     <div class="mb-4">
                         <div class="form-check">
+                            <input type="hidden" name="is_active" value="0">
                             <input type="checkbox" class="form-check-input" id="is_active" name="is_active"
-                                {{ $emploi->is_active ? 'checked' : '' }}>
+                                value="1" {{ old('is_active', $emploi->is_active ?? false) ? 'checked' : '' }}>
                             <label for="is_active" class="form-check-label small fw-bold text-muted">Actif</label>
                         </div>
                     </div>
@@ -428,7 +520,7 @@
                                 document.getElementById('session_type').value = sessionData.type;
                                 document.getElementById('session_salle').value = sessionData.salle;
                                 document.getElementById('session_groupe').value = sessionData
-                                .groupe;
+                                    .groupe;
                                 document.getElementById('session_duration').value = sessionData
                                     .duration;
                                 document.getElementById('session_day').value = sessionData.jour;
@@ -595,7 +687,7 @@
                 sessions.forEach(session => {
                     const container = document.querySelector(
                         `.sessions[data-day="${session.jour}"][data-time-index="${session.time_index}"]`
-                        );
+                    );
                     if (container) {
                         container.insertAdjacentHTML('beforeend', `
                     <div class="session-card ${session.type.toLowerCase()}" data-session-id="${session.temp_id}">

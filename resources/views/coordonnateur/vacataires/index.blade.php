@@ -1,383 +1,525 @@
 <x-coordonnateur_layout>
 
     <style>
-        .accordion {
-            background-color: white;
-            box-shadow: 1px 1px 10px 2px #33333314;
+        /* Main Container */
+        .vacataire-container {
+            padding: 2rem;
+            min-height: 80vh;
         }
 
-        .accordion-button {
-            color: #333;
-            box-shadow: none;
-            transition: background-color 0.3s ease;
-            border: none;
-            border-radius: 5px;
-            background-color: transparent;
+        /* Header */
+        .header-grid {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .accordion-button:hover,
-        .accordion-button:focus {
-            border: none;
-            outline: none;
-            box-shadow: none;
-            background-color: transparent;
-            color: #333;
+        /* Filter Section */
+        .header-grid.mb-4 {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
-        .accordion-button:not(.collapsed) {
-            background-color: transparent;
-            border: none;
-            outline: none;
-            box-shadow: none;
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #34495e;
         }
 
-        .accordion-body {
-            padding: 1rem;
-            font-size: 0.95rem;
-            color: #555;
+        .form-select,
+        .form-control {
+            border-color: #e0e0e0;
+            border-radius: 6px;
+            transition: border-color 0.2s;
         }
 
-        #collapsefilters {
-            border: none;
+        .form-select:focus,
+        .form-control:focus {
+            border-color: #4723d9;
+            box-shadow: 0 0 0 2px rgba(71, 35, 217, 0.2);
         }
 
-        .pagehead button {
-            border: none;
-            background: none;
+        .input-group-text {
+            border-color: #e0e0e0;
+            background: transparent;
         }
 
-        .pagehead input:focus {
-            outline: none;
-        }
-
-        select.form-select:focus {
-            box-shadow: none !important;
-        }
-
-        .accordion-body button {
-            margin-top: 32px;
-            border: 1px solid #4723d9;
-            border-radius: 4px;
+        /* Buttons */
+        .btn-primary {
             background-color: #4723d9;
-            color: white;
-            width: 100%;
+            border-color: #4723d9;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            border-radius: 6px;
             font-weight: 500;
-            height: 37px;
-            transition: 0.3s;
+            transition: all 0.2s;
         }
 
-        .accordion-body button:hover {
+        .btn-primary:hover {
             background-color: white;
+            color: #4723d9;
+            border-color: #4723d9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-success:hover {
+            background-color: white;
+            color: #28a745;
+            border-color: #28a745;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-danger:hover {
+            background-color: white;
+            color: #dc3545;
+            border-color: #dc3545;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-menu {
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
             color: #4723d9;
         }
 
-        .table-container {
-            background-color: white;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            overflow-y: hidden;
+        /* Table Section */
+        .table-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .table-responsive {
             overflow-x: auto;
-            max-height: 80vh;
             scrollbar-width: thin;
             scrollbar-color: #ccc transparent;
-            box-shadow: 1px 1px 10px 2px #33333314;
         }
 
-        table {
-            min-width: 1100px;
+        .table-responsive::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
         }
 
-        td {
-            font-size: 14px;
-            color: #585858;
-            font-weight: 500;
-            text-align: center !important;
-            vertical-align: middle !important;
-        }
-
-        .table-hover tbody tr:hover {
-            background-color: rgba(248, 248, 252, 0.006) !important;
-            cursor: pointer;
-        }
-
-        .table-container::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
-        }
-
-        .table-container::-webkit-scrollbar-thumb {
+        .table-responsive::-webkit-scrollbar-thumb {
             background-color: #aaa;
             border-radius: 10px;
         }
 
-        .table-container::-webkit-scrollbar-track {
+        .table-responsive::-webkit-scrollbar-track {
             background: transparent;
         }
 
-        th {
-            text-align: center;
-            border-bottom: 1px solid #3737375a !important;
-            border-top: none !important;
-            color: rgb(80, 79, 79);
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        table thead {
-            box-shadow: 0 7px 5px -6px rgba(0, 0, 0, 0.1);
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .table {
             width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 1100px;
         }
 
-        .popup {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            width: 400px;
-        }
-
-        .popup button {
-            padding: 10px 20px;
+        .table thead th {
+            background-color: #4723d9;
             color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            padding: 1rem;
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .table tbody tr {
+            transition: all 0.2s;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f9f9ff !important;
+            transform: translateX(4px);
+        }
+
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #f0f0f0;
+            color: #555;
+            font-weight: 400;
+        }
+
+        /* Professor Card Elements */
+        .professor-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #eee;
+            transition: all 0.3s;
+        }
+
+        .professor-avatar:hover {
+            transform: scale(1.1);
+            border-color: #4723d9;
+        }
+
+        .professor-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: #e6f7ee;
+            color: #28a745;
+        }
+
+        .status-inactive {
+            background-color: #fde8e8;
+            color: #dc3545;
+        }
+
+        /* Hours Progress Bar */
+        .hours-container {
+            min-width: 150px;
+        }
+
+        .hours-label {
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .hours-progress {
+            height: 8px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hours-filled {
+            height: 100%;
+            border-radius: 4px;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .hours-min-marker {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background-color: #ff6b6b;
+        }
+
+        .hours-max-marker {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background-color: #4723d9;
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .view-btn {
+            background-color: #4723d9;
+            color: white;
+        }
+
+        .view-btn:hover {
+            background-color: #3a1cb3;
+            transform: rotate(5deg);
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+            transform: rotate(5deg);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .header-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-grid .d-flex.gap-2 {
+                justify-content: center;
+            }
+
+            .row.g-2 {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 
-    <div class="container-fluid p-0 pt-5">
-
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div class="vacataire-container">
+        <div class="header-grid">
+            <div class="d-flex align-items-center gap-3">
+                <i class="fas fa-user-graduate fa-2x" style="color: #330bcf;"></i>
+                <h3 style="color: #330bcf; font-weight: 500;">Gestion des Vacataires</h3>
             </div>
-        @endif
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-            <h3 style="color: #330bcf; font-weight: 500;">Liste des vacataires</h3>
-            <a type="submit" href="{{ route('coordonnateur.vacataires.create') }}"
-                class="btn text-white rounded  fw-semibold my-2"
-                style=" background-color: #4723d9; color:#ebebec !important;vertical-align: middle ;">
-                Ajouter un vacataire
-            </a>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{{ route('coordonnateur.vacataires.create') }}" class="btn btn-primary rounded fw-semibold">
+                    <i class="fas fa-plus-circle"></i> Ajouter un compte vacataire
+                </a>
+                <div class="dropdown">
+                    <button class="btn btn-success rounded fw-semibold dropdown-toggle" type="button"
+                        id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-file-export"></i> Exporter
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                        <li>
+                            <a class="dropdown-item" href="{{ route('coordonnateur.vacataires.export') }}">
+                                Tous les Vacataires
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
 
+        <!-- Filters Section -->
+        <div class="header-grid mb-4">
+            <div class="row g-2">
+                <div class="col-md-3 col-sm-6 col-lg-3 filter-dropdown">
+                    <label for="status" class="form-label small fw-bold text-muted">Statut</label>
+                    <select id="status" class="form-select border border-primary text-primary"
+                        style="font-weight: 500;">
+                        <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>Tous</option>
+                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>
+                            Actif
+                        </option>
+                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>
+                            Inactif
+                        </option>
+                    </select>
+                </div>
 
-        <div class="pt-5 pb-2">
-            <div class="accordion rounded" id="accordionFilters">
-                <div class="accordion-item border-0">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed shadow-none" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapsefilters" aria-expanded="false" aria-controls="collapsefilters">
-                            <i class="bi bi-funnel-fill me-2"></i> Filtres avancés
-                        </button>
-                    </h2>
-                    <div id="collapsefilters" class="accordion-collapse collapse" data-bs-parent="#accordionFilters">
-                        <div class="accordion-body pt-0">
-                            <form id="filterForm" action="{{ route('coordonnateur.vacataires.index') }}" method="GET">
-                                <div class="row g-3">
-                                    <div class="col-md-6 col-lg-4">
-                                        <label for="search"
-                                            class="form-label small fw-bold text-muted">Recherche</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-transparent"><i
-                                                    class="bi bi-search"></i></span>
-                                            <input type="text" id="search" name="search"
-                                                class="form-control border-start-0" placeholder="Nom, ID ou email"
-                                                value="{{ request('search') }}">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6 col-lg-3">
-                                        <label for="statusFilter"
-                                            class="form-label small fw-bold text-muted">Statut</label>
-                                        <select class="form-select" id="statusFilter" name="status">
-                                            <option value="">Tous les statuts</option>
-                                            <option value="active"
-                                                {{ request('status') == 'active' ? 'selected' : '' }}>Actif</option>
-                                            <option value="inactive"
-                                                {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactif</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-md-6 col-lg-3">
-                                        <label for="rowsPerPage"
-                                            class="form-label small fw-bold text-muted">Affichage</label>
-                                        <select id="rowsPerPage" name="rows" class="form-select">
-                                            <option value="5" {{ request('rows') == '5' ? 'selected' : '' }}>5
-                                                lignes</option>
-                                            <option value="15" {{ request('rows') == '15' ? 'selected' : '' }}>15
-                                                lignes</option>
-                                            <option value="30" {{ request('rows') == '30' ? 'selected' : '' }}>30
-                                                lignes</option>
-                                            <option value="100" {{ request('rows') == '100' ? 'selected' : '' }}>100
-                                                lignes</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-md-6 col-lg-2 d-flex align-items-end">
-                                        <button type="submit" class="btn btn-primary w-100">
-                                            <i class="bi bi-filter-circle me-1"></i> Filtrer
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+                <div class="col-md-6 col-sm-12 col-lg-6 search-bar">
+                    <label for="moduleSearch" class="form-label small fw-bold text-muted">Recherche</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control border-start-0" id="moduleSearch"
+                            placeholder="Rechercher par nom ou email...">
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="table-container mt-4 mb-5 flex-column">
-            <div class="table-responsive p-3 ">
-                <table class="table bg-white  table-hover">
+        <!-- Table Section -->
+        <div class="table-section">
+            <div class="table-responsive">
+                <table class="table" id="vacatairesTable">
                     <thead>
-                        <tr class="text-light">
+                        <tr>
                             <th>ID</th>
                             <th>Photo</th>
-                            <th>Nom complet</th>
-                            <th>État</th>
+                            <th>Charge de travail</th>
+                            <th>Professeur</th>
+                            <th>Statut</th>
                             <th>Email</th>
-                            <th>Date de création</th>
+                            <th>Créé le</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
+                    <tbody id="vacatairesTableBody">
+                        @forelse ($vacataires as $vacataire)
+                            <tr class="professor-row" data-id="{{ $vacataire['id'] }}"
+                                data-name="{{ strtolower($vacataire->lastname . ' ' . $vacataire->firstname) }}"
+                                data-email="{{ strtolower($vacataire['email']) }}"
+                                data-status="{{ $vacataire->user_details ? $vacataire->user_details->status : '' }}">
+                                <td>#{{ $vacataire['id'] }}</td>
 
-                    <tbody>
-                        @foreach ($vacataires as $vacataire)
-                            <tr>
-                                <td>{{ $vacataire->id }}</td>
                                 <td>
-                                    <a href="{{ route('coordonnateur.vacataires.show', $vacataire->id) }}">
-                                        @if ($vacataire->userDetails && $vacataire->userDetails->profile_img)
-                                            <img style="height: 40px;width: 40px;object-fit:cover;border-radius:50%;"
-                                                src="{{ asset('storage/' . $vacataire->userDetails->profile_img) }}">
+                                    <a href="{{ url('profile/' . $vacataire->id) }}">
+                                        @if ($vacataire->user_details && $vacataire->user_details->profile_img)
+                                            <img class="professor-avatar"
+                                                src="{{ asset('storage/' . $vacataire->user_details->profile_img) }}">
                                         @else
-                                            <img style="height: 40px;width: 40px;object-fit:cover;border-radius:50%;"
+                                            <img class="professor-avatar"
                                                 src="{{ asset('storage/images/default_profile_img.png') }}">
                                         @endif
                                     </a>
                                 </td>
-                                <td>
-                                    <div class="d-flex flex-column">
-                                        <span class="fw-semibold">{{ $vacataire->lastname }}
-                                            {{ $vacataire->firstname }}</span>
-                                        <small class="text-muted">Vacataire</small>
+
+                                <td class="hours-container">
+                                    @php
+                                        $min = $vacataire->user_details->min_hours ?? 0;
+                                        $max = $vacataire->user_details->max_hours ?? 0;
+                                        $current = $vacataire->hours ?? 0;
+
+                                        $current_percent = $max > 0 ? round(($current / $max) * 100) : 0;
+                                        $min_percent = $max > 0 ? round(($min / $max) * 100) : 0;
+
+                                        if ($current < $min) {
+                                            $color = '#ff6b6b'; // Rouge pour sous le minimum
+                                        } elseif ($current > $max) {
+                                            $color = '#ff922b'; // Orange pour au-dessus du maximum
+                                        } else {
+                                            $color = '#51cf66'; // Vert pour adéquat
+                                        }
+                                    @endphp
+
+                                    <div class="hours-label">
+                                        <span>{{ $current }}h</span>
+                                        <span>Min: {{ $min }}h / Max: {{ $max }}h</span>
+                                    </div>
+
+                                    <div class="hours-progress">
+                                        <div class="hours-filled"
+                                            style="width: {{ $current_percent }}%; background-color: {{ $color }};">
+                                        </div>
+                                        <div class="hours-min-marker" style="left: {{ $min_percent }}%;"></div>
+                                        <div class="hours-max-marker" style="left: 100%;"></div>
                                     </div>
                                 </td>
-                                <td class="text-center">
-                                    @if ($vacataire->userDetails)
-                                        <span
-                                            class="badge rounded-pill bg-{{ $vacataire->userDetails->status == 'active' ? 'success' : 'danger' }}">
-                                            {{ $vacataire->userDetails->status == 'active' ? 'Actif' : 'Inactif' }}
+
+                                <td class="professor-name">{{ $vacataire->lastname }} {{ $vacataire->firstname }}
+                                </td>
+
+                                <td>
+                                    @if ($vacataire->user_details)
+                                        <span class="status-badge status-{{ $vacataire->user_details->status }}">
+                                            {{ ucfirst($vacataire->user_details->status) }}
                                         </span>
                                     @else
-                                        <span class="badge rounded-pill bg-secondary">N/A</span>
+                                        <span class="status-badge">Inconnu</span>
                                     @endif
                                 </td>
-                                <td>
-                                    <a href="mailto:{{ $vacataire->email }}"
-                                        class="text-primary">{{ $vacataire->email }}</a>
-                                </td>
-                                <td class="text-center">{{ $vacataire->created_at->format('Y-m-d') }}</td>
-                                <td>
-                                    <div class="d-flex justify-content-center align-items-center gap-2">
-                                        <a href="{{ route('assign', $vacataire->id) }}" class="btn btn-sm btn-primary"
-                                            title="Assigner UE">
-                                            <i class="bi bi-journal-plus"></i>
+
+                                <td>{{ $vacataire['email'] }}</td>
+
+                                <td>{{ $vacataire->created_at->format('Y-m-d') }}</td>
+
+                                <td class="p-0">
+                                    <div class="d-flex justify-content-center gap-3">
+                                        <a href="{{ route('coordonnateur.vacataire.assignemts_profile', $vacataire->id) }}"
+                                            class="action-btn view-btn" title="Voir le profil">
+                                            <i class="bi bi-file-earmark-plus"></i>
                                         </a>
-                                        <a href="{{ route('coordonnateur.vacataires.edit', $vacataire->id) }}"
-                                            class="btn btn-sm" style="background-color:#4723d9;color: #ffffff;">
-                                            <i class="bi bi-pencil-square"></i>
-
+                                        <a href="{{ url('profile/' . $vacataire->id) }}" class="action-btn view-btn"
+                                            title="Voir le profil">
+                                            <i class="bi bi-person-square"></i>
                                         </a>
-                                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#deleteVacataireModal{{ $vacataire->id }}"
-                                            title="Supprimer"><i class="bi bi-trash3"></i>
-                                        </button>
-
-
-                                        <div class="modal fade" id="deleteVacataireModal{{ $vacataire->id }}"
-                                            tabindex="-1" aria-labelledby="deleteVacataireModalLabel"
-                                            aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="deleteVacataireModalLabel">
-                                                            Confirmation de suppression</h5>
-                                                        <button type="button" class="btn-close"
-                                                            data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>Voulez-vous supprimer le vacataire
-                                                            <strong>{{ $vacataire->lastname }}
-                                                                {{ $vacataire->firstname }}</strong>
-                                                            définitivement?
-                                                        </p>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary btn-sm"
-                                                            data-bs-dismiss="modal">Fermer</button>
-                                                        <form
-                                                            action="{{ route('coordonnateur.vacataires.destroy', $vacataire->id) }}"
-                                                            method="POST" style="display: inline;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit"
-                                                                class="btn btn-danger btn-sm">Supprimer</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
+                                        <form action="{{ route('coordonnateur.vacataires.destroy', $vacataire->id) }}"
+                                            method="POST" class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="action-btn delete-btn" title="Supprimer"
+                                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce vacataire ?')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <!-- Rien n'est affiché si la liste est vide -->
+                        @endforelse
                     </tbody>
                 </table>
             </div>
-
-            {{--  --}}
-
-            {{-- pagination --}}
-            <div class="d-flex justify-content-center my-4">
-                @if ($vacataires->onFirstPage())
-                    <span class="btn btn-secondary mx-1 disabled">Précédent</span>
-                @else
-                    <a href="{{ $vacataires->previousPageUrl() }}&{{ http_build_query(request()->except('page')) }}"
-                        class="btn mx-1" style="background-color:#4723d9;color:white;">
-                        Précédent
-                    </a>
-                @endif
-
-                @if ($vacataires->hasMorePages())
-                    <a href="{{ $vacataires->nextPageUrl() }}&{{ http_build_query(request()->except('page')) }}"
-                        class="btn mx-1" style="background-color:#4723d9;color:white;">
-                        Suivant
-                    </a>
-                @else
-                    <span class="btn btn-secondary mx-1 disabled">Suivant</span>
-                @endif
-            </div>
         </div>
-
-
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Cache des éléments DOM
+            const searchInput = document.getElementById('moduleSearch');
+            const statusFilter = document.getElementById('status');
+            const vacataireRows = document.querySelectorAll('.professor-row');
+
+            // Initialisation
+            filterVacataires();
+
+            // Écouteurs d'événements
+            searchInput.addEventListener('input', filterVacataires);
+            statusFilter.addEventListener('change', filterVacataires);
+
+            // Fonction de filtrage
+            function filterVacataires() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                const statusValue = statusFilter.value;
+
+                vacataireRows.forEach(row => {
+                    const name = row.dataset.name;
+                    const email = row.dataset.email;
+                    const status = row.dataset.status;
+
+                    // Recherche par nom ou email
+                    const matchesSearch = searchTerm === '' ||
+                        name.includes(searchTerm) ||
+                        email.includes(searchTerm);
+
+                    // Filtrage par statut
+                    const matchesStatus = statusValue === 'all' ||
+                        status === statusValue;
+
+                    // Afficher/masquer la ligne
+                    row.style.display = matchesSearch && matchesStatus ? '' : 'none';
+                });
+            }
+        });
+    </script>
 
 </x-coordonnateur_layout>

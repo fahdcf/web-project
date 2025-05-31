@@ -13,31 +13,25 @@
 </a>
 
 <!-- Groupes TD / TP -->
-<a href="{{ route('coordonnateur.groupes.index') }}"
+<a href="{{ route('coordonnateur.groupes.current_semester') }}"
     class="nav_link {{ request()->is('coordonnateur/groupes') ? 'active' : '' }} ">
     <i class="bx bx-group nav_icon"></i>
     <span class="nav_name">Groupes TD / TP</span>
 </a>
 
 <!-- Emploi du Temps -->
-<a href="#" class="nav_link {{ request()->is('coordonnateur/lkadflkadlfaj') ? 'active' : '' }} ">
+<a href="{{ route('emploi.index') }}" class="nav_link {{ request()->is('coordonnateur/emplois') ? 'active' : '' }} ">
     <i class="bx bx-calendar nav_icon"></i>
     <span class="nav_name">Emploi du Temps</span>
 </a>
 
 <!-- Validations / Affectations -->
-<a href="#" class="nav_link {{ request()->is('coordonnateur/lkadflkadlfaj') ? 'active' : '' }} ">
+<a href="{{ route('coordonnateur.assignments') }}" class="nav_link {{ request()->is('coordonnateur/assignments') ? 'active' : '' }} ">
     <i class="bx bx-check-circle nav_icon"></i>
     <span class="nav_name">Affectations Validées</span>
 </a>
 
 
-<!-- Modules Vacants -->
-<a href="{{ url('/chef/modules_vacantes') }}"
-    class="nav_link {{ request()->is('coordonnateur/modules_vacantes') ? 'active' : '' }} ">
-    <i class="bx bx-error nav_icon"></i>
-    <span class="nav_name">Modules Vacants</span>
-</a>
 
 
 
@@ -48,11 +42,6 @@
     <span class="nav_name">Historique</span>
 </a>
 
-<!-- Import / Export -->
-<a href="#" class="nav_link {{ request()->is('coordonnateur/lkadflkadlfaj') ? 'active' : '' }} ">
-    <i class="bx bx-upload nav_icon"></i>
-    <span class="nav_name">Import / Export</span>
-</a>
 {{-- </div> --}}
 </div>
 

@@ -22,8 +22,8 @@
                     <span class="nav_name">Saisir les notes</span>
                 </a>
 
-
-                <a href="#" class="nav_link  ">
-                    <i class="bx bx-check-circle nav_icon"></i>
-                    <span class="nav_name">Affectations Validées</span>
+                <a href="{{ route('emploi.myTimetable') }}" class="nav_link {{ request()->is('my-timetable') ? 'active' : '' }}">
+                    <i class="fas fa-calendar-alt"></i> {{-- Changed from fa-upload to fa-file-upload --}}
+                    <span class="nav_name">Emploi du Temps</span>
                 </a>
+

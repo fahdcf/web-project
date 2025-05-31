@@ -1,5 +1,4 @@
 <x-coordonnateur_layout>
-    <x-global_alert />
 
 
 
@@ -7,7 +6,7 @@
 
     <style>
         :root {
-            --primary-color: #4361ee;
+            --primary-color: #4723d9;
             --secondary-color: #3f37c9;
             --success-color: #4cc9f0;
             --light-bg: #f8f9fa;
@@ -20,9 +19,10 @@
         }
 
         .upload-card {
+            background: white;
             border: none;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .session-tabs {
@@ -92,7 +92,178 @@
         }
     </style>
 
+
     <div class="container py-5 upload-container">
+
+
+
+        <div class="header-container mb-4">
+            <style>
+                .header-container {
+                    background: white;
+                    border-radius: 8px;
+                    padding: 20px;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                }
+
+                .header-title {
+                    color: #4723d9;
+                    font-weight: 600;
+                    font-size: 1.75rem;
+                    margin: 0;
+                }
+
+                .form-select {
+                    border-color: #e0e0e0;
+                    font-size: 0.9rem;
+                    padding: 8px 12px;
+                    border-radius: 6px;
+                    background-color: #f8f9fa;
+                    transition: border-color 0.2s;
+                }
+
+                .form-select:focus {
+                    border-color: #4723d9;
+                    box-shadow: 0 0 0 2px rgba(71, 35, 217, 0.2);
+                    outline: none;
+                }
+
+                .btn-primary {
+                    background-color: #4723d9;
+                    border-color: #4723d9;
+                    font-size: 0.9rem;
+                    padding: 8px 16px;
+                    border-radius: 6px;
+                    font-weight: 500;
+                    transition: all 0.2s;
+                }
+
+                .btn-primary:hover {
+                    background-color: white;
+                    color: #4723d9;
+                    border-color: #4723d9;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                }
+
+                .btn-outline-primary {
+                    border-color: #4723d9;
+                    color: #4723d9;
+                    font-size: 0.9rem;
+                    padding: 8px 16px;
+                    border-radius: 6px;
+                    font-weight: 500;
+                    transition: all 0.2s;
+                    white-space: nowrap;
+                }
+
+                .btn-outline-primary:hover {
+                    background-color: #4723d9;
+                    color: white;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                }
+
+                .btn-outline-primary:hover .btn-text-prof {
+                    color: white;
+                }
+
+                .btn-text-emploi,
+                .btn-text-prof {
+                    display: inline;
+                }
+
+                @media (max-width: 768px) {
+                    .header-container {
+                        padding: 15px;
+                    }
+
+                    .header-title {
+                        font-size: 1.5rem;
+                        margin-bottom: 15px;
+                        text-align: center;
+                    }
+
+                    .form-select,
+                    .btn-outline-primary {
+                        width: 100%;
+                        margin-bottom: 10px;
+                    }
+
+                    .btn-outline-primary {
+                        white-space: normal;
+                        text-align: center;
+                        padding: 10px 16px;
+                    }
+
+                    .btn-text-emploi,
+                    .btn-text-prof {
+                        display: block;
+                    }
+
+                    .btn-text-emploi {
+                        margin-bottom: 2px;
+                    }
+                }
+
+                /* Improved grid layout */
+                .header-grid {
+                    display: grid;
+                    grid-template-columns: 1fr auto auto;
+                    gap: 1rem;
+                    align-items: center;
+                }
+
+                @media (max-width: 992px) {
+                    .header-grid {
+                        grid-template-columns: 1fr auto;
+                    }
+
+                    .header-title {
+                        grid-column: 1 / -1;
+                        text-align: center;
+                        margin-bottom: 10px;
+                        text-decoration: underline;
+                    }
+                }
+
+                @media (max-width: 768px) {
+                    .header-grid {
+                        grid-template-columns: 1fr;
+                        gap: 0.75rem;
+                    }
+
+                    .btn-outline-primary {
+                        white-space: normal;
+                        text-align: center;
+                        padding: 10px 16px;
+                        line-height: 1.3;
+                        /* Add this for better line spacing */
+                    }
+
+                    .btn-text-emploi,
+                    .btn-text-prof {
+                        display: inline;
+                        /* Change from 'block' to 'inline' */
+                        margin-bottom: 0;
+                        /* Remove bottom margin */
+                    }
+
+                    .btn-text-emploi:after {
+                        content: " ";
+                        /* Add space after "Emploi des" */
+                    }
+
+                }
+            </style>
+
+            <div class="header-grid">
+                <h3 class="header-title">Gestion des Notes :</h3>
+                <a href="{{ asset('templates/modele_notes.xlsx') }}" class="btn btn-primary" download="Modele_Notes.xlsx">
+                    <i class="fas fa-download me-2"></i>Télécharger le Modèle
+                </a>
+            </div>
+        </div>
+
+
         @if ($errors->any())
             <div class="alert alert-danger error-message">
                 <ul class="mb-0">
@@ -103,14 +274,8 @@
             </div>
         @endif
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-semibold mb-0" style="color: var(--primary-color);">Gestion des Notes</h2>
+        <x-global_alert />
 
-            <a href="{{ asset('templates/modele_notes.xlsx') }}" class="btn btn-primary" download="Modele_Notes.xlsx">
-                <i class="fas fa-download me-2"></i>Télécharger le Modèle
-            </a>
-
-        </div>
 
         <div class="upload-card">
             <div class="card-body p-4">
@@ -198,6 +363,9 @@
                 <h5 class="mb-0"><i class="fas fa-history me-2"></i>Historique des Uploads</h5>
             </div>
             <div class="card-body">
+                 <div class="mb-3">
+                    <input type="text" id="historySearch" class="form-control" placeholder="Rechercher par module, session ou date...">
+                </div>
                 @if ($uploads->count() > 0)
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -223,10 +391,9 @@
                                             </span>
                                         </td>
                                         <td>
-                                            {{ $upload->original_name ?? 'Nom inconnu' }}
-                                            <a href="{{ Storage::url($upload->storage_path) }}" target="_blank"
-                                                class="ms-2">
-                                                <i class="fas fa-download"></i>
+                                            <a href="{{ Storage::url($upload->storage_path) }}" target="_blank">
+                                                <i class="fas fa-file-excel text-success me-2"></i>
+                                                {{ $upload->original_name ?? 'Nom inconnu' }}
                                             </a>
                                         </td>
                                         <td>
@@ -437,8 +604,6 @@
         @if (session('error'))
             showModal('error', 'Erreur', '{{ session('error') }}');
         @endif
-
-
-       
     </script>
+
 </x-coordonnateur_layout>

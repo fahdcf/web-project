@@ -4,6 +4,7 @@ namespace App\Http\Controllers\coordonnateur;
 
 use App\Http\Controllers\Controller;
 use App\Models\admin_action;
+use App\Models\Assignment;
 use App\Models\chef_action;
 use App\Models\Filiere;
 use App\Models\Groupe;
@@ -12,6 +13,7 @@ use App\Models\prof_request;
 use App\Models\Student;
 use App\Models\task;
 use App\Models\User;
+use App\Models\user_detail;
 use App\Models\user_log;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -19,19 +21,91 @@ use Illuminate\Http\Request;
 class CoordonnateurController extends Controller
 {
 
-    //  public function index(Request $request)
-    // {
-    //     // $filiere = Filiere::findOrFail($request->input('filiere_id', auth()->user()->filiere_id));
-    //     // $semester = $request->input('semester', 1);
-    //     // $annee = $request->input('annee', date('Y'));
 
-    //     // $modules = Module::where('filiere_id', $filiere->id)
-    //     //     ->where('semester', $semester)
-    //     //     ->withCount(['tdGroups', 'tpGroups'])
-    //     //     ->get();
+    public function affectations(Request $request)
+    {
+        if (!auth()->user()->isCoordonnateur()) {
+            abort(403, 'Unauthorized: You are not a coordinator.');
+        }
 
-    //     return view('coordonnateur.groupes');
-    // }
+        $semester = $request->input('semester', '');
+        $search = $request->input('name-search', '');
+        $selected_prof = $request->input('professor', '');
+
+        $query = Assignment::with(['user.role', 'module.filiere'])
+            ->whereHas('user', function ($q) {
+                $q->whereHas('role', fn($r) => $r->where('isprof', true)->orWhere('isvocataire', true));
+            });
+
+        if ($semester) {
+            $query->whereHas('module', fn($q) => $q->where('semester', $semester));
+        }
+        if ($search) {
+            $query->whereHas('user', fn($q) => $q->whereRaw("CONCAT(firstname, ' ', lastname) LIKE ?", ["%$search%"]));
+        }
+
+        $assignments = $query->get();
+
+        // Module-centric view
+        $modules = $assignments->groupBy('module_id')->map(function ($moduleAssignments) {
+            $module = $moduleAssignments->first()->module;
+            return [
+                'module' => $module,
+                'cm_profs' => $moduleAssignments->where('teach_cm', true)->map(function ($assignment) {
+                    return [
+                        'name' => $assignment->user->fullname,
+                        'role' => $assignment->user->role->isprof ? 'Professor' : 'Vacataire',
+                    ];
+                })->unique('name')->values(),
+                'td_profs' => $moduleAssignments->where('teach_td', true)->map(function ($assignment) {
+                    return [
+                        'name' => $assignment->user->fullname,
+                        'role' => $assignment->user->role->isprof ? 'Professor' : 'Vacataire',
+                    ];
+                })->unique('name')->values(),
+                'tp_profs' => $moduleAssignments->where('teach_tp', true)->map(function ($assignment) {
+                    return [
+                        'name' => $assignment->user->fullname,
+                        'role' => $assignment->user->role->isprof ? 'Professor' : 'Vacataire',
+                    ];
+                })->unique('name')->values(),
+                'total_hours' => $moduleAssignments->sum('hours'),
+            ];
+        })->values();
+
+        // Professor-centric view
+        $professors = $assignments->groupBy('prof_id')->map(function ($profAssignments) {
+            $user = $profAssignments->first()->user;
+            return [
+                'id' => $user->id,
+                'name' => $user->fullname,
+                'role' => $user->role->isprof ? 'Professor' : 'Vacataire',
+                'modules' => $profAssignments->map(function ($assignment) {
+                    return [
+                        'module_name' => $assignment->module->name,
+                        'filiere' => $assignment->module->filiere ? $assignment->module->filiere->name : 'N/A',
+                        'semester' => $assignment->module->semester ?? 'N/A',
+                        'type' => $assignment->module->type,
+                        'cm_hours' => $assignment->teach_cm ? $assignment->module->cm_hours : 0,
+                        'td_hours' => $assignment->teach_td ? $assignment->module->td_hours : 0,
+                        'tp_hours' => $assignment->teach_tp ? $assignment->module->tp_hours : 0,
+                        'teaching_types' => collect([
+                            $assignment->teach_cm ? 'CM' : null,
+                            $assignment->teach_td ? 'TD' : null,
+                            $assignment->teach_tp ? 'TP' : null,
+                        ])->filter()->values(),
+                    ];
+                })->values(),
+            ];
+        })->values();
+
+        // Filter professors for selected professor (if any)
+        $selected_professor = $selected_prof ? $professors->firstWhere('id', $selected_prof) : null;
+
+        $semesters = Module::distinct()->pluck('semester')->filter()->sort()->values();
+
+        return view('coordonnateur.assignments', compact('modules', 'professors', 'semesters', 'selected_professor', 'selected_prof'));
+    }
 
     public function dashboard()
     {
@@ -47,7 +121,7 @@ class CoordonnateurController extends Controller
 
 
         $professorsMin = User::where('departement', $departmentName)->latest()->take(3)->get();
-        $module_requests = prof_request::where('type', 'module')->where('status', 'pending')->latest()->take(3)->get();
+        $module_requests = prof_request::where('status', 'pending')->latest()->take(3)->get();
 
         // Get user logs this week
         $logs = user_log::whereBetween('created_at', [
@@ -74,117 +148,172 @@ class CoordonnateurController extends Controller
         return View('coordonnateur.dashboard', ['tasks' => $tasks, 'studentCount' => $studentCount, 'professorCount' => $professorCount, 'chefHistory' => $chefHistory, 'professorsMin' => $professorsMin, 'loginCounts' => $loginCounts, 'module_requests' => $module_requests]);
     }
 
-
-    public function vacataires()
+    ////////////////////////////////////////////////////////////////
+    public function vacataire_profile(User $user)
     {
-        $user = auth()->user();
+        // dd(auth()->user()->manage->id);
 
-        //list des vacatairee
-        $vacataires = User::whereHas('role', function ($query) {
-            $query->where('isvocataire', true);
-        })->with('user_details')->simplePaginate(10);
+        $assignement = Assignment::where('prof_id', $user->id)->get();
 
+        $available_modules = Module::with(['filiere', 'responsable', 'assignments'])
+            ->where('status', 'active')
+            ->where('filiere_id', auth()->user()->manage->id)
+            ->where(function ($query) {
+                // Modules sans aucune assignation
+                $query->doesntHave('assignments')
+                    ->orWhereHas('assignments', function ($q) {
+                        // Ou modules avec au moins un type non assigné
+                        $q->where('teach_cm', false)
+                            ->orWhere('teach_td', false)
+                            ->orWhere('teach_tp', false);
+                    });
+            })
+            ->get();
 
-        // $modules = Module::where('filiere_id', $user->manage->id)
-        //     ->whereNull('professor_id')
-        //     ->orderBy('name')
-        //     ->get();
-
-        return view('coordonnateur.vacataires.index', compact('vacataires'));
+        return view('coordonnateur.vacataire_profile', ['user' => $user, 'available_modules' => $available_modules, 'assignement' => $assignement]);
     }
 
-    public function createVacataire()
+    public function editHours(User $user)
     {
-        return view('vacataire.create');
+        if (auth()->user()->role->iscoordonnateur) {
+
+            request()->validate([
+                'min_hours' => 'nullable|numeric',
+                'max_hours' => 'nullable|numeric',
+
+            ]);
+
+            $userDetails = $user->user_details;
+
+            if (!$userDetails) {
+                $userDetails = user_detail::create(['user_id' => $user->id]);
+            }
+
+            if (request('min_hours') && $userDetails->min_hours !== request('min_hours')) {
+                $userDetails->min_hours = request('min_hours');
+            }
+            if (request('max_hours') && $userDetails->max_hours !== request('max_hours')) {
+                $userDetails->max_hours = request('max_hours');
+            }
+            $userDetails->save();
+
+            // $chefActionDetails = [
+            //     'chef_id' => auth()->user()->id,
+            //     'action_type' => 'modifier',
+            //     'description' => auth()->user()->firstname . " " . auth()->user()->lastname . " a modifieé la charge horaire du professeur " . $prof->firstname . " " . $prof->lastname,
+            //     'target_table' => 'users',
+            //     'target_id' => $vacataire->id,
+            // ];
+            // chef_action::create($chefActionDetails);
+
+
+
+            return redirect()->back();
+        }
+
+        return redirect()->back()->with('success', 'hours modifiee avec succès.');;
     }
 
-    public function storeVacataire(Request $request)
+    public function removeModule(Assignment $assign)
     {
 
+        $profId = $assign->prof_id;
+        $prof = User::findOrFail($profId);
 
-        // dd($request->all());
-        $validated = $request->validate([
-            'code' => 'required|string|max:20|unique:modules,code',
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'cm_hours' => 'required|integer|min:10',
-            'td_hours' => 'required|integer|min:10',
-            'tp_hours' => 'required|integer|min:10',
-            'semester' => 'required|integer|min:1',
 
-            'specialty' => 'nullable|string|max:255',
-            'credit' => 'required|integer|min:1',
-            'responsable_id' => 'nullable|exists:users,id'
-        ]);
-        // dd($validated);
+        // $chefActionDetails = [
+        //     'chef_id' => auth()->user()->id,
+        //     'action_type' => 'retirer',
+        //     'description' => auth()->user()->firstname . " " . auth()->user()->lastname . " a retireé le module " . $assign->module->name . " de professeur " . $prof->firstname . " " . $prof->lastname,
+        //     'target_table' => 'modules',
+        //     'target_id' => $assign->module->id,
+        // ];
 
-        // Ajoute automatiquement la filière du coordonnateur
-        $attributes = array_merge($validated, [
-            'filiere_id' => auth()->user()->manage->id
-        ]);
+        Assignment::findOrFail($id)->delete();
 
-        Module::create($attributes);
+        // chef_action::create($chefActionDetails);
 
-        return redirect()->route('coordonnateur.modules.index')->with('success', 'UE créée avec succès !');
+        return redirect()->back()->with('success', 'assignation du module supprimé avec succès.');
     }
 
-    public function manageGroups(Request $request)
+
+    public function affecterModules()
     {
-        // Simulation de mise à jour des groupes
-        return back()->with('success', 'Configuration des groupes enregistrée!');
+
+        $tab = [];
+        $i = 0;
+
+        foreach (request('modules') as $assaign) {
+            // dd($assaign);
+            $id = $assaign['module_id'];
+            $module = Module::findOrFail($id);
+
+            if ($assaign['prof_id']) {
+
+                $prof = user::findOrFail($assaign['prof_id']); //find the vacatiaire
+
+                $module->status = "active";
+
+
+                $newAssign = [
+                    'prof_id' => $prof->id,
+                    'module_id' => $module->id,
+                ];
+
+                $hours = 0;
+                if ($assaign['cm'] == "cm") {
+                    $newAssign['teach_cm'] = 1;
+                    $hours = $hours + $module->cm_hours;
+                }
+
+                if ($assaign['tp'] == "tp") {
+                    $newAssign['teach_tp'] = 1;
+
+                    $coff = 1;
+                    if ($module->nbr_groupes_tp > 1) $coff = $module->nbr_groupes_tp;
+
+
+                    $hours = $hours + $module->tp_hours * $coff;
+                }
+
+                if ($assaign['td'] == "td") {
+                    $newAssign['teach_td'] = 1;
+
+                    $coff = 1;
+                    if ($module->nbr_groupes_td > 1) $coff = $module->nbr_groupes_td;
+
+                    $hours = $hours + $module->td_hours * $coff;
+                }
+
+
+                $newAssign['hours'] = $hours;
+
+                $tab[$i] = $newAssign;
+                $i++;
+
+                Assignment::create($newAssign);
+
+                $module->save();
+
+
+                // $chefActionDetails = [
+                //     'chef_id' => auth()->user()->id,
+                //     'action_type' => 'affecter',
+                //     'description' => auth()->user()->firstname . " " . auth()->user()->lastname . " a affecteé le module " . $module->name . " a le professeur " . $prof->firstname . " " . $prof->lastname,
+                //     'target_table' => 'modules',
+                //     'target_id' => $module->id,
+                // ];
+                // chef_action::create($chefActionDetails);
+            }
+        }
+
+
+
+
+
+        return redirect()->back()->with('success', 'assignation effectuee avec succès.');;
     }
-
-    ////////////////page des gestion des groupes////////
-    //     public function groupes()
-    // {
-    //     // Récupérer le module
-    //     // $module = Module::find(2);
-    //     $modules = Module::get();
-
-
-    //     // Récupérer tous les groupes liés à ce module
-    //     $groupes = Groupe::get();
-
-    //     // Calcul des totaux
-    //     $totalGroupes = $groupes->count();
-    //     $totalTD = $groupes->where('type', 'TD')->count();
-    //     $totalTP = $groupes->where('type', 'TP')->count();
-    //     $totalCapacity = $groupes->sum('max_students');
-    //     $totalStudents = $groupes->sum('nbr_student');
-
-    //     // Nombre total de modules actifs (optionnel selon ta logique)
-    //     $totalModules = Module::count();
-
-    //     // Grouper les groupes par module (ici c'est 1 seul module, mais la vue semble attendre une collection groupée)
-    //     $groupesParModule = collect([$modules->name => $groupes]);
-
-    //     // Extraire les années uniques
-    //     $anneesUniques = $groupes->pluck('annee')->unique()->sort()->values();
-
-    //     return view('coordonnateur.groupes', [
-    //         'totalGroupes'     => $totalGroupes,
-    //         'totalTD'          => $totalTD,
-    //         'totalTP'          => $totalTP,
-    //         'totalCapacity'    => $totalCapacity,
-    //         'totalStudents'    => $totalStudents,
-    //         'totalModules'     => $totalModules,
-    //         'groupesParModule' => $groupesParModule,
-    //         'anneesUniques'    => $anneesUniques,
-    //     ]);
-    // }
-
-    // public function groupes()
-    //     {
-
-    //         $filiere=auth()->user()->manage;
-    //         $groupes = Groupe::with('module')->orderBy('annee')->orderBy('module_id')->orderBy('type')->get();
-    //         $groupesParAnnee = $groupes->groupBy('annee')->sortKeysDesc();
-    //         $anneesUniques = $groupes->pluck('annee')->unique()->sortDesc()->values()->toArray();
-    //         $modules = Module::orderBy('name')->paginate(3);
-
-    //         return view('coordonnateur.groupes', compact('groupesParAnnee', 'filiere','anneesUniques', 'modules'));
-    //     }
-
+    ///////////////////////////////////////////////////////////////////////
 
 
 }

@@ -1,46 +1,180 @@
-{{-- hhhh --}}
 <x-coordonnateur_layout>
-    <div class="container-fluid p-0 pt-5">
-        <div class="bg-white rounded p-4" style="box-shadow: 1px 1px 10px 2px #33333314;">
-            <h3 class="fw-bold mb-0" style="color:#3819b2;">Ajouter un Nouveau vacataire</h3>
-            <p class="text-muted mt-2">Remplissez les champs ci-dessous pour créer un compte vacataire</p>
+    <style>
+        /* Header */
+        .header-grid {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Form Container */
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+        }
+
+        /* Form Elements */
+        .form-label {
+            color: #515151;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .form-control,
+        .form-select {
+            border-color: #e0e0e0;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #4723d9;
+            box-shadow: 0 0 0 3px rgba(71, 35, 217, 0.1);
+        }
+
+        .is-invalid {
+            border-color: #dc3545;
+        }
+
+        .invalid-feedback {
+            font-size: 0.8rem;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: #4723d9;
+            border-color: #4723d9;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: white;
+            color: #4723d9;
+            border-color: #4723d9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background-color: white;
+            color: #6c757d;
+            border-color: #6c757d;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Accordion */
+        .accordion-button {
+            color: #333;
+            box-shadow: none;
+            border-radius: 6px;
+            background-color: #f8f9fa;
+            font-weight: 500;
+        }
+
+        .accordion-button:hover,
+        .accordion-button:focus {
+            background-color: #e9ecef;
+            color: #333;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background-color: #e9ecef;
+            color: #4723d9;
+        }
+
+        .accordion-body {
+            padding: 1.5rem;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-grid .d-flex.gap-2 {
+                justify-content: center;
+            }
+
+            .form-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+
+    <div class="container-fluid px-4 py-5">
+        <div class="header-grid">
+            <div class="d-flex align-items-center gap-3">
+                <i class="fas fa-user-graduate fa-2x" style="color: #330bcf;"></i>
+                <h3 style="color: #330bcf; font-weight: 500;">Ajouter un Nouveau Vacataire</h3>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{{ route('coordonnateur.vacataires.index') }}"
+                    class="btn btn-secondary rounded fw-semibold">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <p class="text-muted mb-4">Remplissez les champs ci-dessous pour créer un compte vacataire</p>
             <form action="{{ route('coordonnateur.vacataires.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-
-                <div class="row mt-3">
-                    <div class="col-md-6  mt-4">
-                        <label style="color:#515151; font-weight: 700;" for="firstname"
-                            class="form-label fw-bold">Prénom</label>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="firstname" class="form-label">Prénom</label>
                         <input type="text" class="form-control @error('firstname') is-invalid @enderror"
-                            id="firstname" name="firstname" placeholder="Prénom.." value="{{ old('firstname') }}">
+                            id="firstname" name="firstname" placeholder="Prénom" value="{{ old('firstname') }}">
                         @error('firstname')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <div class="col-md-6  mt-4">
-                        <label style="color:#515151; font-weight: 700;" for="lastname"
-                            class="form-label fw-bold">Nom</label>
+                    <div class="col-md-6">
+                        <label for="lastname" class="form-label">Nom</label>
                         <input type="text" class="form-control @error('lastname') is-invalid @enderror"
-                            id="lastname" name="lastname" placeholder="Nom.." value="{{ old('lastname') }}">
+                            id="lastname" name="lastname" placeholder="Nom" value="{{ old('lastname') }}">
                         @error('lastname')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <div class="col-md-6  mt-4">
-                        <label style="color:#515151; font-weight: 700;" for="email"
-                            class="form-label fw-bold">Email</label>
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control @error('email') is-invalid @enderror" id="email"
-                            name="email" placeholder="Email.." value="{{ old('email') }}">
+                            name="email" placeholder="Email" value="{{ old('email') }}">
                         @error('email')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <div class="col-md-6  mt-4">
-                        <label style="color:#515151; font-weight: 700;" for="password" class="form-label fw-bold">Mot de
-                            passe</label>
+                    <div class="col-md-6">
+                        <label for="password" class="form-label">Mot de passe</label>
                         <input type="password" class="form-control @error('password') is-invalid @enderror"
                             id="password" name="password" placeholder="Mot de passe">
                         @error('password')
@@ -48,55 +182,49 @@
                         @enderror
                     </div>
 
-
-                    <div class="col-md-6  mt-4">
-                        <label style="color:#515151; font-weight: 700;" for="min_hours"
-                            class="form-label fw-bold">Charge horaire minimale</label>
+                    <div class="col-md-6">
+                        <label for="min_hours" class="form-label">Charge horaire minimale</label>
                         <input type="number" class="form-control @error('min_hours') is-invalid @enderror"
-                            id="min_hours" name="min_hours" placeholder="Charge horaire minimale"
+                            id="min_hours" name="min_hours" placeholder="Heures minimales"
                             value="{{ old('min_hours') }}">
                         @error('min_hours')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <div class="col-md-6  mt-4">
-                        <label style="color:#515151; font-weight: 700;" for="max_hours"
-                            class="form-label fw-bold">Charge horaire maximale</label>
+                    <div class="col-md-6">
+                        <label for="max_hours" class="form-label">Charge horaire maximale</label>
                         <input type="number" class="form-control @error('max_hours') is-invalid @enderror"
-                            id="max_hours" name="max_hours" placeholder="Charge horaire maximale"
+                            id="max_hours" name="max_hours" placeholder="Heures maximales"
                             value="{{ old('max_hours') }}">
                         @error('max_hours')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <div class="col-md-6  mt-4">
-                        <label style="color:#515151; font-weight: 700;" for="status"
-                            class="form-label fw-bold">Statut</label>
-                        <select type="text" class="form-select @error('status') is-invalid @enderror" id="status"
+                    <div class="col-md-6">
+                        <label for="status" class="form-label">Statut</label>
+                        <select class="form-select @error('status') is-invalid @enderror" id="status"
                             name="status">
                             <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Actif</option>
-                            <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactif
-                            </option>
+                            <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactif</option>
                         </select>
                         @error('status')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <div class="col-md-6  mt-4">
-                        <label style="color:#515151; font-weight: 700;" for="profile_img"
-                            class="form-label fw-bold">Photo de profil</label>
+                    <div class="col-md-6">
+                        <label for="profile_img" class="form-label">Photo de profil</label>
                         <input type="file" class="form-control @error('profile_img') is-invalid @enderror"
-                            id="profile_img" name="profile_img">
+                            id="profile_img" name="profile_img" accept="image/*">
                         @error('profile_img')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <div class="col-md-6 col-lg-4 mt-3">
-                        <span style="color:#515151; font-weight: 700;">Sexe <span class="text-danger">*</span>:</span>
+                    <div class="col-md-6">
+                        <label class="form-label">Sexe <span class="text-danger">*</span></label>
                         <div class="d-flex gap-4 mt-2">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="sexe" id="sexe_male"
@@ -110,15 +238,14 @@
                             </div>
                         </div>
                         @error('sexe')
-                            <div class="text-danger small mt-1">Veuillez sélectionner un sexe</div>
+                            <div class="text-danger small mt-1">{{ $message }}</div>
                         @enderror
                     </div>
-
                 </div>
 
-                <div class="py-2 pb-4 mt-4">
-                    <div class="accordion rounded" id="accordionFilters">
-                        <div class="accordion-item">
+                <div class="mt-4">
+                    <div class="accordion" id="accordionFilters">
+                        <div class="accordion-item border-0">
                             <h2 class="accordion-header">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                     data-bs-target="#collapsefilters" aria-expanded="false"
@@ -126,64 +253,48 @@
                                     Plus d'informations (optionnel)
                                 </button>
                             </h2>
-
                             <div id="collapsefilters" class="accordion-collapse collapse"
                                 data-bs-parent="#accordionFilters">
                                 <div class="accordion-body">
-                                    <div class="row mt-3">
-                                        <div class="col-md-6 col-lg-4 mt-3">
-                                            <label style="color:#515151; font-weight: 700;" for="date"
-                                                class="form-label">Date de Naissance</label>
-                                            <input type="date" id="date" name="date"
-                                                class="form-control @error('date') is-invalid @enderror"
-                                                value="{{ old('date') }}">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="date" class="form-label">Date de naissance</label>
+                                            <input type="date" class="form-control @error('date') is-invalid @enderror"
+                                                id="date" name="date" value="{{ old('date') }}">
                                             @error('date')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
 
-                                        <div class="col-md-6 col-lg-4 mt-3">
-                                            <label style="color:#515151; font-weight: 700;" for="adresse"
-                                                class="form-label">Adresse</label>
-                                            <input type="text" id="adresse" name="adresse"
-                                                class="form-control @error('adresse') is-invalid @enderror"
-                                                placeholder="Votre adresse.." value="{{ old('adresse') }}">
+                                        <div class="col-md-6">
+                                            <label for="adresse" class="form-label">Adresse</label>
+                                            <input type="text" class="form-control @error('adresse') is-invalid @enderror"
+                                                id="adresse" name="adresse" placeholder="Adresse"
+                                                value="{{ old('adresse') }}">
                                             @error('adresse')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
 
-                                        <div class="col-md-6 col-lg-4 mt-3">
-                                            <label style="color:#515151; font-weight: 700;" for="tele"
-                                                class="form-label">Téléphone</label>
-                                            <input type="number" id="tele" name="tele"
-                                                class="form-control @error('tele') is-invalid @enderror"
-                                                placeholder="Numéro de téléphone.." value="{{ old('tele') }}">
+                                        <div class="col-md-6">
+                                            <label for="tele" class="form-label">Téléphone</label>
+                                            <input type="text" class="form-control @error('tele') is-invalid @enderror"
+                                                id="tele" name="tele" placeholder="Numéro de téléphone"
+                                                value="{{ old('tele') }}">
                                             @error('tele')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
 
-
-
-
-                                        <div class="col-md-6 col-lg-4 mt-3">
-                                            <label style="color:#515151; font-weight: 700;" for="cin"
-                                                class="form-label">CIN</label>
-                                            <input type="text" id="cin" name="cin"
-                                                class="form-control @error('cin') is-invalid @enderror"
-                                                placeholder="Numéro de carte nationale.."
+                                        <div class="col-md-6">
+                                            <label for="cin" class="form-label">CIN</label>
+                                            <input type="text" class="form-control @error('cin') is-invalid @enderror"
+                                                id="cin" name="cin" placeholder="Numéro de carte nationale"
                                                 value="{{ old('cin') }}">
                                             @error('cin')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
-
-
-
-
-
-
                                     </div>
                                 </div>
                             </div>
@@ -191,42 +302,16 @@
                     </div>
                 </div>
 
-                <div class="text-end">
-                    <button type="submit" class="btn text-white  px-4 py-2 fw-semibold shadow-sm"
-                        style="background-color: #4723d9;">
-                        + Créer le compte
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a href="{{ route('coordonnateur.vacataires.index') }}"
+                        class="btn btn-secondary rounded fw-semibold">
+                        Annuler
+                    </a>
+                    <button type="submit" class="btn btn-primary rounded fw-semibold">
+                        <i class="fas fa-plus-circle"></i> Créer le compte
                     </button>
                 </div>
             </form>
-
-            <style>
-                /* Styles pour l'accordéon (informations optionnelles) */
-                .accordion-button {
-                    color: #333;
-                    box-shadow: none;
-                    transition: background-color 0.3s ease;
-                    border-radius: 5px;
-                    background-color: transparent;
-                }
-
-                .accordion-button:hover,
-                .accordion-button:focus {
-                    box-shadow: none;
-                    background-color: transparent;
-                    color: #333;
-                }
-
-                .accordion-button:not(.collapsed) {
-                    background-color: transparent;
-                    box-shadow: none;
-                }
-
-                .accordion-body {
-                    padding: 1rem;
-                    font-size: 0.95rem;
-                    color: #555;
-                }
-            </style>
         </div>
     </div>
 </x-coordonnateur_layout>
