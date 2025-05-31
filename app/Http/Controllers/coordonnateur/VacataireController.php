@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\coordonnateur;
 
-use App\export\VacatairesExport;
+use App\Exports\VacatairesExport;
 use App\Http\Controllers\Controller;
 use App\Models\Assignment;
 use App\Models\Filiere;
@@ -351,7 +351,7 @@ class VacataireController extends Controller
         $user = Auth::user();
         $filiere = Filiere::where('coordonnateur_id', $user->id)->firstOrFail();
         $vacataires = User::whereHas('role', function ($query) {
-            $query->where('isVacataire', true);
+            $query->where('isvocataire', true);
         })->with('user_details')->get();
 
         $filename = 'vacataires_' . now()->format('Ymd_His') . '.xlsx';

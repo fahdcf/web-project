@@ -21,81 +21,34 @@
         }
 
         /* Filter Section */
-        .filter-section {
+        .header-grid.mb-4 {
             background: white;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            margin-bottom: 2rem;
-            overflow: hidden;
         }
 
-        .filter-header {
-            padding: 1rem 1.5rem;
-            background: #f8f9fa;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #34495e;
         }
 
-        .filter-header h5 {
-            margin: 0;
-            font-weight: 500;
-            color: #333;
+        .form-select,
+        .form-control {
+            border-color: #e0e0e0;
+            border-radius: 6px;
+            transition: border-color 0.2s;
         }
 
-        .filter-header i {
-            transition: transform 0.3s ease;
-        }
-
-        .filter-header.collapsed i {
-            transform: rotate(180deg);
-        }
-
-        .filter-body {
-            padding: 1.5rem;
-        }
-
-        .filter-group {
-            margin-bottom: 0;
-        }
-
-        .filter-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #555;
-        }
-
-        .filter-input {
-            width: 100%;
-            padding: 0.6rem 1rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
-
-        .filter-input:focus {
+        .form-select:focus,
+        .form-control:focus {
             border-color: #4723d9;
-            box-shadow: 0 0 0 3px rgba(71, 35, 217, 0.1);
-            outline: none;
+            box-shadow: 0 0 0 2px rgba(71, 35, 217, 0.2);
         }
 
-        .apply-btn {
-            background-color: #4723d9;
-            color: white;
-            border: none;
-            padding: 0.7rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: all 0.3s;
-            align-self: flex-end;
-            grid-column: -1;
-        }
-
-        .apply-btn:hover {
-            background-color: #3a1cb3;
-            transform: translateY(-2px);
+        .input-group-text {
+            border-color: #e0e0e0;
+            background: transparent;
         }
 
         /* Buttons */
@@ -170,7 +123,6 @@
 
         .table-responsive {
             overflow-x: auto;
-            max-height: 70vh;
             scrollbar-width: thin;
             scrollbar-color: #ccc transparent;
         }
@@ -337,39 +289,6 @@
             transform: rotate(5deg);
         }
 
-        /* Pagination */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            padding: 1.5rem;
-        }
-
-        .page-btn {
-            padding: 0.5rem 1rem;
-            margin: 0 0.5rem;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            background: white;
-            color: #333;
-            transition: all 0.3s;
-        }
-
-        .page-btn:hover {
-            border-color: #4723d9;
-            color: #4723d9;
-        }
-
-        .page-btn.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .page-btn.active {
-            background-color: #4723d9;
-            color: white;
-            border-color: #4723d9;
-        }
-
         /* Empty State */
         .empty-state {
             text-align: center;
@@ -379,20 +298,16 @@
 
         /* Responsive Adjustments */
         @media (max-width: 768px) {
-            .filter-row {
-                grid-template-columns: 1fr;
-            }
-
-            .apply-btn {
-                grid-column: auto;
-            }
-
             .header-grid {
                 grid-template-columns: 1fr;
             }
 
             .header-grid .d-flex.gap-2 {
                 justify-content: center;
+            }
+
+            .row.g-2 {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -423,57 +338,13 @@
             </div>
         </div>
 
-        <!-- Filter Section -->
-        <div class="filter-section">
-            <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="true">
-                <h5>Filtres</h5>
-                <i class="bi bi-chevron-down"></i>
-            </div>
-
-            <div class="collapse show" id="filterCollapse">
-                <div class="filter-body">
-                    <div class="filter-row row g-2">
-                        <!-- Search -->
-                        <div class="col-12 col-md-4 col-lg-4 filter-group">
-                            <label for="search" class="filter-label">Recherche</label>
-                            <input type="text" id="search" name="search" class="filter-input py-2"
-                                placeholder="Nom, ID ou email">
-                        </div>
-
-                        <!-- Status Filter -->
-                        <div class="col-12 col-md-4 col-lg-2 filter-group">
-                            <label for="statusFilter" class="filter-label">Statut</label>
-                            <select class="filter-input" id="statusFilter" name="status">
-                                <option value="">Tous les statuts</option>
-                                <option value="active">Actif</option>
-                                <option value="inactive">Inactif</option>
-                            </select>
-                        </div>
-
-
-
-
-                        <button type="button" id="resetFilters" class="apply-btn col-12 col-md-4 col-lg-2 py-2"
-                            style="background-color: #6c757d;">
-                            Réinitialiser
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-
-
         <!-- Filters Section -->
         <div class="header-grid mb-4">
             <div class="row g-2">
-                
-
-                <div class="col-md-3  col-sm-6 col-lg-3 filter-dropdown">
+                <div class="col-md-3 col-sm-6 col-lg-3 filter-dropdown">
                     <label for="status" class="form-label small fw-bold text-muted">Statut</label>
                     <select id="status" class="form-select border border-primary text-primary"
-                        style="font-weight: 500;" onchange="applyFilters()">
+                        style="font-weight: 500;">
                         <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>Tous</option>
                         <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>
                             Actif
@@ -489,13 +360,11 @@
                     <div class="input-group">
                         <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search"></i></span>
                         <input type="text" class="form-control border-start-0" id="moduleSearch"
-                            placeholder="Rechercher par nom ou code...">
+                            placeholder="Rechercher par nom ou email...">
                     </div>
                 </div>
             </div>
         </div>
-
-
 
         <!-- Table Section -->
         <div class="table-section">
@@ -514,14 +383,11 @@
                         </tr>
                     </thead>
                     <tbody id="vacatairesTableBody">
-                        @foreach ($vacataires as $vacataire)
+                        @forelse ($vacataires as $vacataire)
                             <tr class="professor-row" data-id="{{ $vacataire['id'] }}"
                                 data-name="{{ strtolower($vacataire->lastname . ' ' . $vacataire->firstname) }}"
                                 data-email="{{ strtolower($vacataire['email']) }}"
-                                data-status="{{ $vacataire->user_details ? $vacataire->user_details->status : '' }}"
-                                data-hours="{{ $vacataire->user_details ? $vacataire->user_details->actuelle_hours : 0 }}"
-                                data-min-hours="{{ $vacataire->user_details ? $vacataire->user_details->min_hours : 0 }}"
-                                data-max-hours="{{ $vacataire->user_details ? $vacataire->user_details->max_hours : 0 }}">
+                                data-status="{{ $vacataire->user_details ? $vacataire->user_details->status : '' }}">
                                 <td>#{{ $vacataire['id'] }}</td>
 
                                 <td>
@@ -546,11 +412,11 @@
                                         $min_percent = $max > 0 ? round(($min / $max) * 100) : 0;
 
                                         if ($current < $min) {
-                                            $color = '#ff6b6b'; // Red for under minimum
+                                            $color = '#ff6b6b'; // Rouge pour sous le minimum
                                         } elseif ($current > $max) {
-                                            $color = '#ff922b'; // Orange for over maximum
+                                            $color = '#ff922b'; // Orange pour au-dessus du maximum
                                         } else {
-                                            $color = '#51cf66'; // Green for adequate
+                                            $color = '#51cf66'; // Vert pour adéquat
                                         }
                                     @endphp
 
@@ -607,202 +473,52 @@
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <!-- Rien n'est affiché si la liste est vide -->
+                        @endforelse
                     </tbody>
                 </table>
-            </div>
-
-            <div id="paginationControls" class="pagination">
-                <!-- Populated by JavaScript -->
             </div>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Cache DOM elements
-            const searchInput = document.getElementById('search');
-            const statusFilter = document.getElementById('statusFilter');
-            const hoursFilter = document.getElementById('hoursFilter');
-            const rowsPerPage = document.getElementById('rowsPerPage');
-            const resetBtn = document.getElementById('resetFilters');
-            const tableBody = document.getElementById('vacatairesTableBody');
-            const paginationControls = document.getElementById('paginationControls');
+        document.addEventListener('DOMContentLoaded', function () {
+            // Cache des éléments DOM
+            const searchInput = document.getElementById('moduleSearch');
+            const statusFilter = document.getElementById('status');
             const vacataireRows = document.querySelectorAll('.professor-row');
 
-            // Current pagination state
-            let currentPage = 1;
-            let rowsPerPageValue = parseInt(rowsPerPage.value) || vacataireRows.length;
-
-            // Initialize
-            updatePaginationControls();
+            // Initialisation
             filterVacataires();
 
-            // Event listeners for filters
-            searchInput.addEventListener('input', function() {
-                currentPage = 1;
-                filterVacataires();
-            });
+            // Écouteurs d'événements
+            searchInput.addEventListener('input', filterVacataires);
+            statusFilter.addEventListener('change', filterVacataires);
 
-            statusFilter.addEventListener('change', function() {
-                currentPage = 1;
-                filterVacataires();
-            });
-
-            hoursFilter.addEventListener('change', function() {
-                currentPage = 1;
-                filterVacataires();
-            });
-
-            rowsPerPage.addEventListener('change', function() {
-                currentPage = 1;
-                rowsPerPageValue = this.value === 'all' ? vacataireRows.length : parseInt(this.value);
-                filterVacataires();
-                updatePaginationControls();
-            });
-
-            resetBtn.addEventListener('click', function() {
-                searchInput.value = '';
-                statusFilter.value = '';
-                hoursFilter.value = '';
-                rowsPerPage.value = 'all';
-                currentPage = 1;
-                rowsPerPageValue = vacataireRows.length;
-                filterVacataires();
-                updatePaginationControls();
-            });
-
-            // Filter vacataires based on criteria
+            // Fonction de filtrage
             function filterVacataires() {
-                const searchTerm = searchInput.value.toLowerCase();
+                const searchTerm = searchInput.value.toLowerCase().trim();
                 const statusValue = statusFilter.value;
-                const hoursValue = hoursFilter.value;
-
-                let visibleCount = 0;
 
                 vacataireRows.forEach(row => {
                     const name = row.dataset.name;
                     const email = row.dataset.email;
-                    const id = row.dataset.id;
                     const status = row.dataset.status;
-                    const currentHours = parseFloat(row.dataset.hours);
-                    const minHours = parseFloat(row.dataset.minHours);
-                    const maxHours = parseFloat(row.dataset.maxHours);
 
-                    // Check search term
+                    // Recherche par nom ou email
                     const matchesSearch = searchTerm === '' ||
                         name.includes(searchTerm) ||
-                        email.includes(searchTerm) ||
-                        id.includes(searchTerm);
+                        email.includes(searchTerm);
 
-                    // Check status
-                    const matchesStatus = statusValue === '' || status === statusValue;
+                    // Filtrage par statut
+                    const matchesStatus = statusValue === 'all' ||
+                        status === statusValue;
 
-                    // Check hours
-                    let matchesHours = true;
-                    if (hoursValue === 'under') {
-                        matchesHours = currentHours < minHours;
-                    } else if (hoursValue === 'adequate') {
-                        matchesHours = currentHours >= minHours && currentHours <= maxHours;
-                    } else if (hoursValue === 'over') {
-                        matchesHours = currentHours > maxHours;
-                    }
-
-                    // Show/hide row based on filters
-                    if (matchesSearch && matchesStatus && matchesHours) {
-                        row.style.display = '';
-                        visibleCount++;
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-
-                // Update pagination
-                updatePaginationControls(visibleCount);
-                showPage(currentPage);
-            }
-
-            // Update pagination controls
-            function updatePaginationControls(totalRows = vacataireRows.length) {
-                if (rowsPerPageValue === 'all' || rowsPerPageValue >= totalRows) {
-                    paginationControls.style.display = 'none';
-                    return;
-                }
-
-                paginationControls.style.display = 'flex';
-                const pageCount = Math.ceil(totalRows / rowsPerPageValue);
-
-                let paginationHTML = '';
-
-                // Previous button
-                if (currentPage > 1) {
-                    paginationHTML +=
-                        `<button class="page-btn" onclick="changePage(${currentPage - 1})">Précédent</button>`;
-                } else {
-                    paginationHTML += `<button class="page-btn disabled">Précédent</button>`;
-                }
-
-                // Page numbers
-                for (let i = 1; i <= pageCount; i++) {
-                    if (i === currentPage) {
-                        paginationHTML += `<button class="page-btn active">${i}</button>`;
-                    } else {
-                        paginationHTML += `<button class="page-btn" onclick="changePage(${i})">${i}</button>`;
-                    }
-                }
-
-                // Next button
-                if (currentPage < pageCount) {
-                    paginationHTML +=
-                        `<button class="page-btn" onclick="changePage(${currentPage + 1})">Suivant</button>`;
-                } else {
-                    paginationHTML += `<button class="page-btn disabled">Suivant</button>`;
-                }
-
-                paginationControls.innerHTML = paginationHTML;
-            }
-
-            // Show specific page of results
-            function showPage(page) {
-                const visibleRows = Array.from(vacataireRows).filter(row => row.style.display !== 'none');
-
-                if (rowsPerPageValue === 'all') {
-                    visibleRows.forEach(row => row.style.display = '');
-                    return;
-                }
-
-                const startIdx = (page - 1) * rowsPerPageValue;
-                const endIdx = startIdx + rowsPerPageValue;
-
-                visibleRows.forEach((row, index) => {
-                    if (index >= startIdx && index < endIdx) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
+                    // Afficher/masquer la ligne
+                    row.style.display = matchesSearch && matchesStatus ? '' : 'none';
                 });
             }
-
-            // Change page
-            window.changePage = function(page) {
-                currentPage = page;
-                filterVacataires();
-            };
-
-            // Initialize workload colors
-            document.querySelectorAll('.hours-filled').forEach(bar => {
-                const percent = parseInt(bar.style.width);
-                const minMarker = bar.parentElement.querySelector('.hours-min-marker');
-                const minPercent = parseInt(minMarker.style.left);
-
-                if (percent < minPercent) {
-                    bar.style.backgroundColor = '#ff6b6b'; // Under minimum
-                } else if (percent > 95) {
-                    bar.style.backgroundColor = '#ff922b'; // Approaching or over max
-                } else {
-                    bar.style.backgroundColor = '#51cf66'; // Adequate
-                }
-            });
         });
     </script>
 

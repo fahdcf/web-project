@@ -119,8 +119,8 @@ Route::middleware(['auth'])
 
 
 
-//empploi du temps
 
+//empploi du temps
 Route::get('/emplois', [EmploiController::class, 'index'])->name('emploi.index');
 Route::get('/emplois/create', [EmploiController::class, 'create'])->name('emploi.create');
 Route::post('/emplois', [EmploiController::class, 'store'])->name('emploi.store');
@@ -136,39 +136,24 @@ Route::get('/my-timetable/export', [EmploiController::class, 'myTimetableExport'
 
 
 
-// Route::get('chef/modules_vacantes', [chefModulesController::class, 'vacantesList']);
-// Route::post('chef/modules_vacantes/affecter/{id}',[chefModulesController::class,'affecter']); 
-// Route::get('chef/professeur_profile/{id}',[ChefProfessorController::class,'professeur_profile']);
-// Route::post('chef/professeur_profile/{id}',[ChefProfessorController::class,'edit']);
-// Route::post('chef/professeurs/affecter', [ChefProfessorController::class,'affecter']);
 
+// Route::get('/assign-vacataire', [ModuleController::class, 'create'])->name('coordonnateur.modules.assign-vacataire');
 
+// Route::get('coordonnateur/modules/{module}/assigner', [ModuleController::class, 'showAssignationPage'])
+//     ->name('coordonnateur.modules.assigner');
+// Route::post('coordonnateur/modules/{module}/assigner', [ModuleController::class, 'processAssignation'])
+//     ->name('coordonnateur.modules.assigner.process');
 
-
-Route::get('/assign-vacataire', [ModuleController::class, 'create'])->name('coordonnateur.modules.assign-vacataire');
-
-Route::get('coordonnateur/modules/{module}/assigner', [ModuleController::class, 'showAssignationPage'])
-    ->name('coordonnateur.modules.assigner');
-Route::post('coordonnateur/modules/{module}/assigner', [ModuleController::class, 'processAssignation'])
-    ->name('coordonnateur.modules.assigner.process');
-
-
-
-
-Route::middleware(['auth'])->prefix('coordonnateur/modules/{module}')->group(function () {
-    // Mise à jour des heures
-    Route::put('/update-hours', [ModuleController::class, 'updateHours'])
-        ->name('coordonnateur.modules.update-hours');
-});
+// Route::middleware(['auth'])->prefix('coordonnateur/modules/{module}')->group(function () {
+//     // Mise à jour des heures
+//     Route::put('/update-hours', [ModuleController::class, 'updateHours'])
+//         ->name('coordonnateur.modules.update-hours');
+// });
 
 
 
 
 /// gestion des vacataire  /////////////
-
-
-
-
 Route::middleware(['auth'])
     ->prefix('coordonnateur/vacataires')
     ->group(function () {
@@ -194,19 +179,9 @@ Route::middleware(['auth'])
 
         //export liest ldes vacataire
         Route::get('/vacataires/export', [VacataireController::class, 'export'])->name('coordonnateur.vacataires.export');
-
-
-        // Route::post('/filter', [vacataireController::class, 'create'])->name('coordonnateur.vacataires.filter');
-
-
-
-
-
-
-
-
-
         //////////////////////////////////////////
+
+
 
         // Route::post('assing', [vacataireController::class, 'assign'])->name('coordonnateur.vacataires.assign');
         // Route::get('assign.form/{vacataire}', [vacataireController::class, 'assing_modules']);
@@ -215,10 +190,10 @@ Route::middleware(['auth'])
 
         /////////////////////////////////////////////
 
-        Route::get('/{vacataire}/assign', [VacataireController::class, 'showAssignForm'])
-            ->name('assign');
-        Route::post('/{vacataire}/assign', [VacataireController::class, 'storeAssign'])
-            ->name('store-assign');
+        // Route::get('/{vacataire}/assign', [VacataireController::class, 'showAssignForm'])
+        //     ->name('assign');
+        // Route::post('/{vacataire}/assign', [VacataireController::class, 'storeAssign'])
+        //     ->name('store-assign');
     });
 
 
@@ -286,29 +261,6 @@ Route::middleware(['auth'])
 
 Route::prefix('professor')->group(function () {
     Route::get('/dashboard', [ProfessorController::class, 'dashboard'])->name('professor.dashboard');
-
-
-
-
-
-
-    //cancel request
-
-    //////notes::
-    // Route::post('/upload-notes', [NoteController::class, 'processUpload'])->name('professor.notes.process');
-    // Route::get('/download-template', [NoteController::class, 'downloadTemplate'])->name('professor.notes.template');
-
-
-    // ->middleware('auth:coordinator');
-
-
-    //test
-    // Route::get('upload-notes', function () {
-    //     return view('professor.upload_notes');
-    // });
-
-    // Route::get('professor/upload-notes', [GradeController::class, 'showUploadForm'])->name('professor.upload_notes');
-    // Route::post('professor/upload-notes', [GradeController::class, 'upload'])->name('professor.upload_notes.upload');
 });
 
 
