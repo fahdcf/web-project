@@ -43,7 +43,9 @@ use App\Http\Controllers\coordonnateur\VacataireController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\homeController;
 
+
 //FOR CHEF DEPARTEMENT
+use App\Http\Controllers\DeadlineController;
 
 use App\Http\Controllers\loginController;
 use App\Http\Controllers\newuserController;
@@ -578,3 +580,7 @@ Route::get('/admin/actions', [AdminActionController::class, 'index'])
     }
 
   )->name('chef.actions');
+
+
+    Route::get('/deadlines', [DeadlineController::class, 'index'])->name('deadline.index');
+    Route::post('/deadlines', [DeadlineController::class, 'store'])->name('deadline.store');
