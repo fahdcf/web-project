@@ -398,10 +398,10 @@
                         <th>ID</th>
                         <th>Photo</th>
                         <th>Charge horaire</th>
-                        <th>Professor</th>
+                        <th>Professeur</th>
                         <th>Status</th>
                         <th>Email</th>
-                        <th>Created</th>
+                        <th>Créé</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
