@@ -107,7 +107,6 @@ class requestsController extends Controller
     ///////////////////////////
     public function store(Request $request, Module $module)
     {
-        $prof = auth()->user();
         $request->validate([
             'isTp' => 'nullable|in:tp',
             'isTd' => 'nullable|in:td',
@@ -115,7 +114,7 @@ class requestsController extends Controller
         ]);
 
         if ($request['isTp'] == null && $request['isTd'] == null && $request['isCm'] == null) {
-            return back()->with('error', 'demande annulle  choisir au moi un type td/tp/cm');
+            return back()->with('error', $module->name. ': choisir au moi un type td/tp/cm pour ce module');
         }
 
         $attributes = [];
@@ -128,7 +127,7 @@ class requestsController extends Controller
                 ->where('toTeach_td', true)->first();
 
             if ($existing) {
-                return back()->with('error', 'Vous avez déjà une demande en cours pour TD de ce module');
+                return back()->with('error', 'Vous avez déjà une demande en cours pour TD de '. $module->name);
             }
         }
         if ($request['isTp']) {
@@ -141,7 +140,7 @@ class requestsController extends Controller
                 ->where('toTeach_tp', true)->first();
 
             if ($existing) {
-                return back()->with('error', 'Vous avez déjà une demande en cours pour TD de ce module');
+                return back()->with('error', 'Vous avez déjà une demande en cours pour TP de '. $module->name);
             }
         }
         if ($request['isCm']) {
@@ -153,7 +152,7 @@ class requestsController extends Controller
                 ->where('toTeach_cm', true)->first();
 
             if ($existing) {
-                return back()->with('error', 'Vous avez déjà une demande en cours pour TD de ce module');
+                return back()->with('error', 'Vous avez déjà une demande en cours pour CM de '. $module->name);
             }
         }
 

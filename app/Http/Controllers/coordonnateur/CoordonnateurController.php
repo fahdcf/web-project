@@ -11,7 +11,7 @@ use App\Models\Groupe;
 use App\Models\Module;
 use App\Models\prof_request;
 use App\Models\Student;
-use App\Models\task;
+use App\Models\Task;
 use App\Models\User;
 use App\Models\user_detail;
 use App\Models\user_log;

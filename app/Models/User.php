@@ -67,22 +67,21 @@ class User extends Authenticatable
     }
 
 
-    public function gethoursAttribute(){
-        
-
-        $assaigns=Assignment::where('prof_id',$this->id)->get();
+    public function gethoursAttribute()
+    {
 
 
-        $hours=0;
+        $assaigns = Assignment::where('prof_id', $this->id)->get();
 
-        if($assaigns){
+
+        $hours = 0;
+
+        if ($assaigns) {
 
             foreach ($assaigns as  $assaign) {
-                
-                $hours=$hours + $assaign->hours;
-                
-            }
 
+                $hours = $hours + $assaign->hours;
+            }
         }
 
         return $hours;
@@ -96,12 +95,12 @@ class User extends Authenticatable
         return $this->firstname . ' ' . $this->lastname;
     }
 
+    
     public function modules()
     {
-        // Un module peut être enseigné par plusieurs utilisateurs (professeurs et vacataires), et un utilisateur peut enseigner dans plusieurs modules
-        return $this->hasMany(Module::class, 'professor_id');
+        return $this->belongsToMany(Module::class, 'assignments', 'prof_id', 'module_id')
+            ->withPivot('hours', 'teach_cm', 'teach_td', 'teach_tp', 'academic_year');
     }
-
 
     // public function getCoordonatedFiliere()
     // {

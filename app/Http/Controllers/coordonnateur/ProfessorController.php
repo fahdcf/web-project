@@ -18,11 +18,8 @@ class ProfessorController extends Controller
 
     public function myRequests()
     {
-
-        $FilieretargetIDs =  [1,2,3];
-
         // $module_requests = prof_request::whereIn('module_id', $FilieretargetIDs)->get();
-        $module_requests = prof_request::where('prof_id',auth()->user()->id)->get();
+        $module_requests = prof_request::with('prof')->where('prof_id',auth()->user()->id)->get();
 
         return view('professor.mes_requests', [
             'module_requests' => $module_requests,

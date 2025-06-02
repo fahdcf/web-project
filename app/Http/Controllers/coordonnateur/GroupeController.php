@@ -98,15 +98,15 @@ class GroupeController extends Controller
         $modules = $query->get()->groupBy('semester')->sortKeys();
 
 
-        $deadline = Deadline::where('type', 'groupes_configuration')
-            ->where(fn($q) => $q->where('filiere_id', $filiere->id)->orWhereNull('filiere_id'))
-            ->first();
-        $progress = $this->calculateProgress($modules, $filiere->id);
+        // $deadline = Deadline::where('type', 'groupes_configuration')
+        //     ->where(fn($q) => $q->where('filiere_id', $filiere->id)->orWhereNull('filiere_id'))
+        //     ->first();
+        // $progress = $this->calculateProgress($modules, $filiere->id);
 
 
         return view('groupes.semester_groupes', compact(
-            'deadline',
-            'progress',
+            // 'deadline',
+            // 'progress',
 
             
             'filiere',

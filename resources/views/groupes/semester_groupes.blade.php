@@ -3,7 +3,7 @@
         <x-global_alert />
 
 
-        <!-- Deadline Banner -->
+        {{-- <!-- Deadline Banner -->
         @if (Route::is('coordonnateur.groupes.next_semester') && $deadline)
             <div
                 class="alert alert-{{ $deadline->deadline_date->diffInDays(now()) <= 3 ? 'danger' : 'warning' }} alert-dismissible mb-4">
@@ -12,7 +12,7 @@
                 ({{ $deadline->deadline_date->diffInDays(now()) }} days left)
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
-        @endif
+        @endif --}}
 
 
 
@@ -232,6 +232,7 @@
                                                     Modifier
                                                 @endif
                                             </button>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -277,8 +278,7 @@
 
                             <div class="alert alert-light border mb-4 rounded-3">
                                 <i class="fas fa-info-circle me-2 text-primary"></i>
-                                Appliquer a tous les modules du Semestre <strong
-                                    class="semester-display">SX</strong>
+                                Appliquer a tous les modules du Semestre <strong class="semester-display">SX</strong>
                             </div>
 
                             <div class="row g-4">
@@ -401,6 +401,168 @@
                 </div>
             </div>
         </div>
+
+
+        {{-- <!-- Popup Template -->
+        @foreach ($modules as $module)
+            <!-- Details Popup -->
+            <div id="popupfor{{ $module->id }}" class="overlay">
+                <div class="popup bg-white rounded-3 shadow-lg">
+                    <div class="popup-header">
+                        <h5 class=" fw-bold mb-0"><i class="bi bi-book me-2"></i>Détails du module</h5>
+                        <button type="button" class="btn btn-sm btn-outline-light"
+                            onclick="closePopup({{ $module->id }})"> <i class="bi bi-x-lg"></i></button>
+                    </div>
+
+                    <div class="popup-body">
+                        <div class="module-title mb-4">
+                            <h4 class="fw-bold text-dark" id="moduleName{{ $module->id }}">{{ $module->name }}
+                            </h4>
+                            <span class="text-muted fs-6">Module CODE: {{ $module->code }}</span>
+                        </div>
+
+                        <div class="row g-3">
+                            <!-- General Information -->
+                            <div class="col-12">
+                                <div class="card shadow-sm border-0">
+                                    <div class="card-body">
+                                        <h6 class="fw-semibold text-dark mb-3"><i
+                                                class="bi bi-info-circle me-2 text-primary"></i>Informations générales
+                                        </h6>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <div class="detail-item">
+                                                    <span class="detail-label" style="padding-top: 4px">Type :</span>
+                                                    <span class="detail-value ">{{ $module->type }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="detail-item">
+                                                    <span class="detail-label" style="padding-top: 4px">Crédit</span>
+                                                    <span class="detail-value">{{ $module->credit }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="detail-item">
+                                                    <span class="detail-label"
+                                                        style="padding-top: 4px">Évaluation</span>
+                                                    <span class="detail-value">{{ $module->evaluation }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="detail-item">
+                                                    <span class="detail-label" style="padding-top: 4px">Date de
+                                                        création</span>
+                                                    <span
+                                                        class="detail-value">{{ $module->created_at->format('d/m/Y') }}</span>
+                                                </div>
+                                            </div>
+                                            @if ($module->responsable)
+                                                <div class="col-12">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label"
+                                                            style="padding-top: 4px">Responsable</span>
+                                                        <span
+                                                            class="detail-value">{{ $module->responsable->firstname }}
+                                                            {{ $module->responsable->lastname }}</span>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Teaching Roles -->
+                            <div class="col-12">
+                                <div class="card shadow-sm border-0">
+                                    <div class="card-body">
+                                        <h6 class="fw-semibold text-dark mb-3"><i
+                                                class="bi bi-person-fill-gear me-2 text-primary"></i>Enseignants</h6>
+                                        <div class="row g-3">
+                                            <div class="col-md-4 col-6">
+                                                <div class="role-item">
+                                                    <i class="bi bi-journal-text fs-5 text-info"></i>
+                                                    <div>
+                                                        <span class="role-label">Cours</span>
+                                                        <span class="role-value">
+                                                            @if ($module->ProfCours)
+                                                                {{ $module->ProfCours->firstname }}
+                                                                {{ $module->ProfCours->lastname }}
+                                                            @else
+                                                                <span style="color: #e74c3c">Non assigné</span>
+                                                            @endif
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 col-6">
+                                                <div class="role-item">
+                                                    <i class="bi bi-people-fill fs-5 text-warning"></i>
+                                                    <div>
+                                                        <span class="role-label">TD</span>
+                                                        <span class="role-value">
+                                                            @if ($module->ProfTd)
+                                                                {{ $module->ProfTd->firstname }}
+                                                                {{ $module->ProfTd->lastname }}
+                                                            @else
+                                                                <span style="color: #e74c3c">Non assigné</span>
+                                                            @endif
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 col-6">
+                                                <div class="role-item">
+                                                    <i class="bi bi-laptop fs-5 text-success"></i>
+                                                    <div>
+                                                        <span class="role-label">TP</span>
+                                                        <span class="role-value">
+                                                            @if ($module->ProfTp)
+                                                                {{ $module->ProfTp->firstname }}
+                                                                {{ $module->ProfTp->lastname }}
+                                                            @else
+                                                                <span style="color: #e74c3c">Non assigné</span>
+                                                            @endif
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            @if ($module->description)
+                                <div class="col-12">
+                                    <div class="card shadow-sm border-0">
+                                        <div class="card-body">
+                                            <h6 class="fw-semibold text-dark mb-3"><i
+                                                    class="bi bi-text-paragraph me-2 text-primary"></i>Description</h6>
+                                            <p class="mb-0 text-dark">{{ $module->description }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="popup-footer">
+                        <a href="{{ route('coordonnateur.modules.edit', $module) }}"
+                            class="btn btn-success px-4 rounded-pill">
+                            <i class="bi bi-pencil-square me-1"></i> Modifier
+                        </a>
+                        <button type="button" style="background:#4723d9; color: white;"
+                            class="btn btn-primary px-4 rounded-pill" onclick="closePopup({{ $module->id }})">
+                            <i class="bi bi-x-lg me-1"></i>Fermer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        @endforeach --}}
+
+
 
         <style>
             :root {

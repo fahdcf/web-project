@@ -177,18 +177,13 @@
     </style>
 
     <div class="container-fluid p-0 pt-4">
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
+        <x-global_alert />
+
+       @include('components.heading', [
+            'icon' => '<i class="fas fa-calendar-alt fa-2x" style="color: #330bcf;"></i>',
+            'heading' => 'Créer l\'Emploi du Temps du S' . $semester,
+        ])
+
 
         @if ($errors->any())
             <div class="alert alert-danger error-message">
@@ -201,33 +196,17 @@
         @endif
 
 
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
-            <h3 style="color: #330bcf; font-weight: 500;">Créer un Emploi du Temps - S{{ $semester }}</h3>
-            <a href="{{ route('emploi.index') }}" class="btn btn-outline-secondary rounded fw-semibold my-2">
-                <i class="bi bi-arrow-left me-2"></i> Retour
-            </a>
-        </div>
+       
 
         <form id="emploiForm" action="{{ route('emploi.store') }}" method="POST">
             @csrf
             <input type="hidden" name="filiere_id" value="{{ $filiere->id }}">
             <input type="hidden" name="semester" value="{{ $semester }}">
-            <input type="hidden" name="academic_year" value="{{ $academicYear }}">
             <input type="hidden" name="is_active" value="1">
             <div id="sessionsContainer"></div>
 
             <div class="card border-0 shadow rounded-4 mb-4" style="box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
                 <div class="card-body p-4">
-                    <div class="mb-4">
-                        <label for="name" class="form-label small fw-bold text-muted">Nom de l'Emploi du
-                            Temps</label>
-                        <input type="text" class="form-control rounded-3 @error('name') is-invalid @enderror"
-                            id="name" name="name" value="{{ old('name') }}" required>
-                        @error('name')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
                     <div class="table-container">
                         <div class="table-responsive p-3">
                             <table class="table schedule-grid">
@@ -328,8 +307,7 @@
                                     placeholder="Ex: A101">
                             </div>
                             <div class="mb-3">
-                                <label for="session_duration"
-                                    class="form-label small fw-bold text-muted">Durée</label>
+                                <label for="session_duration" class="form-label small fw-bold text-muted">Durée</label>
                                 <select id="session_duration" class="form-select rounded-3">
                                     <option value="2">2 heures</option>
                                     <option value="4">4 heures</option>

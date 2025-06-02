@@ -17,41 +17,22 @@ class EmploiController extends Controller
     {
         $user = Auth::user();
         $filiere = $user->manage;
-        $currentYear = date('Y');
-        $defaultAcademicYear = "$currentYear-" . ($currentYear + 1);
-        $academicYear = $request->query('academic_year', $defaultAcademicYear);
-
         $emplois = Emploi::where('filiere_id', $filiere->id)
-            ->where('academic_year', $academicYear)
             ->get();
-
-        $academicYears = Emploi::where('filiere_id', $filiere->id)
-            ->distinct()
-            ->pluck('academic_year')
-            ->sort()
-            ->toArray();
-
-        if (!in_array($defaultAcademicYear, $academicYears)) {
-            $academicYears[] = $defaultAcademicYear;
-            sort($academicYears);
-        }
-
-        return view('emploi.index', compact('filiere', 'emplois', 'academicYear', 'academicYears'));
+        return view('emploi.index', compact('filiere', 'emplois'));
     }
 
     public function create(Request $request)
     {
         $user = Auth::user();
         $filiere = $user->manage;
-        $currentYear = date('Y');
-        $academicYear = "$currentYear-" . ($currentYear + 1);
         $semester = $request->query('semester', 1);
 
         $modules = Module::where('filiere_id', $filiere->id)
             ->where('semester', $semester)
             ->get();
 
-        return view('emploi.create', compact('filiere', 'academicYear', 'semester', 'modules'));
+        return view('emploi.create', compact('filiere', 'semester', 'modules'));
     }
 
     public function store(Request $request)
@@ -59,8 +40,6 @@ class EmploiController extends Controller
         $validated = $request->validate([
             'filiere_id' => 'required|exists:filieres,id',
             'semester' => 'required|integer|between:1,6',
-            'academic_year' => 'required|string|size:9|regex:/^[0-9]{4}-[0-9]{4}$/',
-            'name' => 'required|string|max:255',
             'is_active' => 'nullable|boolean',
             'seances' => 'nullable|array',
             'seances.*.module_id' => 'required|exists:modules,id',
@@ -74,7 +53,6 @@ class EmploiController extends Controller
 
         $existingEmploi = Emploi::where('filiere_id', $validated['filiere_id'])
             ->where('semester', $validated['semester'])
-            ->where('academic_year', $validated['academic_year'])
             ->first();
 
         if ($existingEmploi) {
@@ -84,13 +62,11 @@ class EmploiController extends Controller
         $emploi = Emploi::create([
             'filiere_id' => $validated['filiere_id'],
             'semester' => $validated['semester'],
-            'academic_year' => $validated['academic_year'],
-            'name' => $validated['name'],
+            'name' => 'emploi_du_temps_f_' . $validated['filiere_id'] . '_S_' . $validated['semester'],
             'is_active' => $validated['is_active'] ?? true,
             'file_path' => null,
         ]);
 
-        Log::info('Seances data in store:', ['seances' => $validated['seances'] ?? [], 'emploi_id' => $emploi->id]);
 
         $successCount = 0;
         $errors = [];
@@ -108,13 +84,11 @@ class EmploiController extends Controller
                         'salle' => $seance['salle'] ?: null,
                         'groupe' => $seance['groupe'] ?: null,
                     ]);
+
                     $successCount++;
                 } catch (\Exception $e) {
                     $errors[] = "Séance $index: Erreur lors de la création - " . $e->getMessage();
-                    Log::error("Failed to create seance at index $index", [
-                        'seance' => $seance,
-                        'error' => $e->getMessage(),
-                    ]);
+                    
                 }
             }
         }
@@ -154,7 +128,6 @@ class EmploiController extends Controller
         $validated = $request->validate([
             'filiere_id' => 'required|exists:filieres,id',
             'semester' => 'required|integer|between:1,6',
-            'academic_year' => 'required|string|size:9|regex:/^[0-9]{4}-[0-9]{4}$/',
             'name' => 'required|string|max:255',
             'is_active' => 'nullable|boolean',
             'seances' => 'nullable|array',

@@ -241,11 +241,13 @@ Route::middleware(['auth'])
 
 
             //notes:upload ,cancel,get
-            Route::get('/upload-notes', [NoteController::class, 'showUploadForm'])
+            Route::get('/upload-notes', [NoteController::class, 'index'])
                 ->name('notes_upload_page');
 
             Route::post('/upload-notes', [NoteController::class, 'upload'])
                 ->name('notes.upload');
+
+            Route::get('/notes/download/{id}', [NoteController::class, 'download'])->name('notes.download');
 
             Route::patch('/upload-notes/{Note}/cancel', [NoteController::class, 'cancel'])
                 ->name('notes.cancel');
@@ -511,28 +513,30 @@ Route::get('etudiant-profile/{id}', [adminProfileController::class, 'studentprof
 
 
 //chef department
-Route::get('chef/demandes',[requestsController::class,'index']); 
-Route::patch('chef/demandes/{id}',[requestsController::class,'accept']); 
-Route::delete('chef/demandes/{id}',[requestsController::class,'decline']); 
- Route::get('chef/professeurs',[ChefProfessorController::class,'index']);
- Route::delete('chef/professeurs/remove/{id}',[ChefProfessorController::class,'removeModule']);
-  Route::get('chef/filieres',[cheffiliereController::class,'index']);
-Route::PATCH('chef/filieres/modifier/{id}',[cheffiliereController::class,'modify']); 
-Route::get('chef/modules',[chefModulesController::class,'index']); 
-Route::get('chef/modules_vacantes',[chefModulesController::class,'vacantesList']); 
-Route::post('chef/modules_vacantes/affecter/{id}',[chefModulesController::class,'affecter']); 
-Route::get('chef/professeur_profile/{id}',[ChefProfessorController::class,'professeur_profile']);
-Route::post('chef/professeur_profile/{id}',[ChefProfessorController::class,'edit']);
-Route::post('chef/professeurs/affecter', [ChefProfessorController::class,'affecter']);
+Route::get('chef/demandes', [requestsController::class, 'index']);
+Route::patch('chef/demandes/{id}', [requestsController::class, 'accept']);
+Route::delete('chef/demandes/{id}', [requestsController::class, 'decline']);
+Route::get('chef/professeurs', [ChefProfessorController::class, 'index']);
+Route::delete('chef/professeurs/remove/{id}', [ChefProfessorController::class, 'removeModule']);
+Route::get('chef/filieres', [cheffiliereController::class, 'index']);
+Route::PATCH('chef/filieres/modifier/{id}', [cheffiliereController::class, 'modify']);
+Route::get('chef/modules', [chefModulesController::class, 'index']);
+Route::get('chef/modules_vacantes', [chefModulesController::class, 'vacantesList']);
+Route::post('chef/modules_vacantes/affecter/{id}', [chefModulesController::class, 'affecter']);
+Route::get('chef/professeur_profile/{id}', [ChefProfessorController::class, 'professeur_profile']);
+Route::post('chef/professeur_profile/{id}', [ChefProfessorController::class, 'edit']);
+Route::post('chef/professeurs/affecter', [ChefProfessorController::class, 'affecter']);
 
-    Route::get('/logs', [UserLogController::class, 'index'])->name('admin.logs');
-    Route::get('/logs/export', [UserLogController::class, 'export'])->name('admin.logs.export');
+Route::get('/logs', [UserLogController::class, 'index'])->name('admin.logs');
+Route::get('/logs/export', [UserLogController::class, 'export'])->name('admin.logs.export');
 
 Route::get('/admin/actions', [AdminActionController::class, 'index'])
     ->name('admin.actions');
 
-  Route::get('/chef/actions', function(){
-      $query = chef_action::with('user')->latest();
+Route::get(
+    '/chef/actions',
+    function () {
+        $query = chef_action::with('user')->latest();
 
         // Filters
         if ($search = request('search')) {
@@ -577,4 +581,4 @@ Route::get('/admin/actions', [AdminActionController::class, 'index'])
         ));
     }
 
-  )->name('chef.actions');
+)->name('chef.actions');
