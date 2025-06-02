@@ -12,20 +12,20 @@
 
 <div class="requests-container pt-5">
     <!-- Header -->
-    <div class="header-grid mt-3 mb-5">
-        <div class="d-flex align-items-center gap-3">
-            <i class="fas fa-clock fa-2x" style="color: #4723d9;"></i>
-            <h2 class="fw-bold" style="color: #1a1a1a;">Gestion des Échéances</h2>
-        </div>
-        <div class="d-flex gap-2 flex-wrap">
-            <button onclick="exportStyledExcel()" class="btn btn-outline-success">
-                <i class="bi bi-file-excel"></i> Exporter Excel
-            </button>
-            <button class="btn btn-primary fw-medium" data-bs-toggle="collapse" data-bs-target="#create-deadline-form" aria-expanded="false" aria-controls="create-deadline-form">
-                <i class="bi bi-plus-circle"></i> Nouvelle Échéance
-            </button>
-        </div>
+   <div class="header-grid mt-3 mb-5">
+    <div class="d-flex align-items-center gap-3">
+        <i class="fas fa-clock fa-2x" style="color: #4723d9;"></i>
+        <h2 class="fw-bold" style="color: #1a1a1a;">Gestion des Échéances</h2>
     </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <button onclick="exportStyledExcel()" class="btn btn-outline-success">
+            <i class="bi bi-file-excel"></i> Exporter Excel
+        </button>
+        <button class="btn btn-primary fw-medium" data-bs-toggle="collapse" data-bs-target="#create-deadline-form" aria-expanded="false" aria-controls="create-deadline-form">
+            <i class="bi bi-plus-circle"></i> Nouvelle Échéance
+        </button>
+    </div>
+</div>
 
     <!-- Success or Error Message -->
     @if (session('success'))

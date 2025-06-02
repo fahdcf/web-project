@@ -8,17 +8,20 @@
     }
     
     /* Header */
+       /* Header */
     .page-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.038);
+
         margin-bottom: 2rem;
     }
-    
+
     .page-title {
         color: #4723d9;
         font-weight: 600;
-        font-size: 1.8rem;
+        font-size: 1.6rem;
         margin: 0;
     }
     
@@ -322,8 +325,8 @@
 </style>
 
 <div class="professor-container">
-    <div class="page-header">
-        <h1 class="page-title">Professors Directory</h1>
+      <div class="page-header bg-white py-3 px-3 rounded">
+        <h3 class="page-title"><i class="bi bi-person-video3 pr-2"></i> Professors Directory</h3>
         <!-- export button -->
  <button onclick="exportStyledExcel()" class="btn btn-outline-success " >
     <i class="bi bi-file-excel"></i> Export

@@ -513,7 +513,7 @@ Route::get('etudiant-profile/{id}', [adminProfileController::class, 'studentprof
 
 
 //chef department
-Route::get('chef/demandes',[requestsController::class,'index']); 
+Route::get('chef/demandes',[requestsController::class,'index'])->name('demandes.list'); 
 Route::patch('chef/demandes/{id}',[requestsController::class,'accept']); 
 Route::delete('chef/demandes/{id}',[requestsController::class,'decline']); 
  Route::get('chef/professeurs',[ChefProfessorController::class,'index']);
