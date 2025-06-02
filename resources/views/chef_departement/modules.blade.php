@@ -2,7 +2,7 @@
     <div class="container-fluid px-4 py-5">
         <!-- Header Section -->
         <div
-            class="d-flex flex-column flex-md-row justify-content-between align-items-center align-items-md-center mb-4 gap-3 bg-white rounded py-3 px-3" >
+            class="d-flex flex-column flex-md-row justify-content-between align-items-center align-items-md-center mb-4 gap-3 bg-white rounded py-3 px-3" style="box-shadow: 0 4px 12px rgba(0, 0, 0, 0.038);" >
             <div>
                 <h3 class="mb-2" style="color: #4723d9 ;margin-bottom: 2rem; font-weight: 600;" ><i class="bi bi-card-checklist pr-2"></i>Liste des Modules</h3>
             </div>

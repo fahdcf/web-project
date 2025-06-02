@@ -36,7 +36,7 @@ class NewRequestsNotification extends Notification
     {
 
             return [
-                'message' => "Le prof {$this->prof->firstname } {$this->prof->lastname } a demander le module {$this->module->name }.",
+                'message' => " Le professeur {$this->prof->firstname } {$this->prof->lastname } a demandé le module {$this->module->name }.",
                 
                 'url' => route('demandes.list'), 
                 
