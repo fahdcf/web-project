@@ -127,7 +127,7 @@
                 'buttons' => [
                     [
                         'route' => route('emploi.my-timetable.export'),
-                        'text' => ' Exporter en HTML',
+                        'text' => ' Exporter mon emploi du temps',
                         'bicon' => '<i class="bi bi-download me-2"></i>',
                         'type' => 'primary',
                     ],
@@ -137,24 +137,18 @@
             @include('components.heading', [
                 'icon' => ' <i class="fas fa-table fa-2x" style="color: #330bcf;"></i>',
                 'heading' => 'Emploi du Temps des Professeurs :',
-                'buttons' => [
-                    [
-                        'route' => route('emploi.my-timetable.export'),
-                        'text' => ' Exporter en HTML',
-                        'bicon' => '<i class="bi bi-download me-2"></i>',
-                        'type' => 'primary',
-                    ],
-                ],
             ])
         @endif
 
 
-        {{-- end heading --}}
+      
 
-
-
-
-
+{{-- 
+        <div class="d-flex justify-content-end mb-3">
+            <a href="{{ route('emploi.my-timetable.export') }}" class="btn btn-primary rounded fw-semibold">
+                <i class="bi bi-download me-2"></i> Exporter mon emploi du temps
+            </a>
+        </div> --}}
 
         <div class="card border-0 shadow rounded-4 mb-4" style="box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
             <div class="card-body p-4">

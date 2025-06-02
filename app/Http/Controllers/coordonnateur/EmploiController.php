@@ -16,6 +16,14 @@ use App\Exports\FiliereTimetableExport;
 
 class EmploiController extends Controller
 {
+
+
+
+
+
+
+
+
     public function index(Request $request)
     {
         $user = Auth::user();

@@ -214,28 +214,10 @@
             </div>
         @endif
 
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-        @if (session('warning'))
-            <div class="alert alert-warning alert-dismissible fade show">
-                {{ session('warning') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-
-        <div class="header-container mb-4">
-            <h3 class="header-title">Modifier l'Emploi du Temps - S{{ $emploi->semester }}</h3>
-        </div>
+       @include('components.heading', [
+            'icon' => '<i class="fas fa-calendar-alt fa-2x" style="color: #330bcf;"></i>',
+            'heading' => 'Modifier l\'Emploi du Temps - S ' . $emploi->semester,
+        ])
 
         <form id="emploiForm" action="{{ route('emploi.update', $emploi->id) }}" method="POST">
             @csrf
