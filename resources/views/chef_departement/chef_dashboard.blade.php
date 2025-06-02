@@ -73,7 +73,12 @@ width: 100%;
 
 
 }
-
+.buttons-wrapper a{
+  color: #4723D9;
+}
+.buttons-wrapper a:hover{
+  text-decoration: none;
+}
 .addbtn{
   background-color: white!important;
   color:#4723d9;
@@ -720,9 +725,9 @@ width: 100%;
 
           <div class="d-flex flex-column justify-content-between col-8">
           <h3 style="font-weight: 500; padding-bottom: 10px;">Welcome <strong>{{auth()->user()->firstname . " " . auth()->user()->lastname}}</strong> to the Dashboard</h3>
-          <p style="font-size: 14px;">Unlock All Premium Songs, no Ads, and more.</p>  
+          <p style="font-size: 14px;">Vous avez {{ count($module_requests) }} demandes de professeurs.</p>  
           
-          <div class="buttons-wrapper d-flex  gap-3"><button class="addbtn">Ajeuter un utilisateur</button> <button class="seebtn">voir tous les utilisateurs</button> </div>
+          <div class="buttons-wrapper d-flex  gap-3"><button class="addbtn"> <a href="{{url('/chef/professeurs')}}"> Liste des professeurs</a></button> <button class="seebtn"><a href="{{url('/chef/demandes')}}" style="color: white;"> Les demandes</a></button> </div>
 
           </div>
 

@@ -2,10 +2,9 @@
     <div class="container-fluid px-4 py-5">
         <!-- Header Section -->
         <div
-            class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+            class="d-flex flex-column flex-md-row justify-content-between align-items-center align-items-md-center mb-4 gap-3 bg-white rounded py-3 px-3" >
             <div>
-                <h1 class="display-6 fw-bold  mb-2" style="color: #4723d9">Liste des Modules</h1>
-                <p class="text-muted mb-0">Explorez tous les modules disponibles par filière</p>
+                <h3 class="mb-2" style="color: #4723d9 ;margin-bottom: 2rem; font-weight: 600;" ><i class="bi bi-card-checklist pr-2"></i>Liste des Modules</h3>
             </div>
 
             <!-- Filière Filter -->

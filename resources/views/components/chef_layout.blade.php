@@ -276,6 +276,9 @@ background-color: white;
     white-space: normal;
 }
 
+
+
+
 /* Optional: add spacing if needed */
 .notification-menu a.dropdown-item {
     font-size: 14px;
@@ -299,7 +302,7 @@ background-color: white;
     <body id="body-pd">
 
      
-        @php
+         @php
             $notifications = Auth::user()->notifications()->latest()->take(5)->get();
             $unreadCount = auth()->user()->unreadNotifications->count();
 
@@ -481,10 +484,16 @@ background-color: white;
                         </a>
 
                                      <a href="{{url('/chef/modules_vacantes')}}" class="nav_link {{request()->is('chef/modules_vacantes') ? 'active' : '' }}"> 
-                              <i class="bi bi-journal-text"></i>
+            <i class="bi bi-journal-x"></i>
 
                             <span class="nav_name">UE vacantes</span> 
                         </a>
+                                                   <a href="{{url('/deadlines')}}" class="nav_link {{request()->is('deadlines') ? 'active' : '' }}"> 
+                              <i class="bi bi-clock-history"></i>
+
+                            <span class="nav_name">Dates limite</span> 
+                        </a> 
+       
                         @endif
                        
 

@@ -74,6 +74,9 @@ class homeController extends Controller
             
             if (Auth()->user()->role->ischef) {
 
+
+
+
                   $studentCount = student::get()->count();
                 $professorCount = User::get()->count();
                 $chefHistory = chef_action::latest()->take(4)->get();

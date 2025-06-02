@@ -43,7 +43,9 @@ use App\Http\Controllers\coordonnateur\VacataireController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\homeController;
 
+
 //FOR CHEF DEPARTEMENT
+use App\Http\Controllers\DeadlineController;
 
 use App\Http\Controllers\loginController;
 use App\Http\Controllers\newuserController;
@@ -510,19 +512,19 @@ Route::get('etudiant-profile/{id}', [adminProfileController::class, 'studentprof
 
 
 //chef department
-Route::get('chef/demandes', [requestsController::class, 'index']);
-Route::patch('chef/demandes/{id}', [requestsController::class, 'accept']);
-Route::delete('chef/demandes/{id}', [requestsController::class, 'decline']);
-Route::get('chef/professeurs', [ChefProfessorController::class, 'index']);
-Route::delete('chef/professeurs/remove/{id}', [ChefProfessorController::class, 'removeModule']);
-Route::get('chef/filieres', [cheffiliereController::class, 'index']);
-Route::PATCH('chef/filieres/modifier/{id}', [cheffiliereController::class, 'modify']);
-Route::get('chef/modules', [chefModulesController::class, 'index']);
-Route::get('chef/modules_vacantes', [chefModulesController::class, 'vacantesList']);
-Route::post('chef/modules_vacantes/affecter/{id}', [chefModulesController::class, 'affecter']);
-Route::get('chef/professeur_profile/{id}', [ChefProfessorController::class, 'professeur_profile']);
-Route::post('chef/professeur_profile/{id}', [ChefProfessorController::class, 'edit']);
-Route::post('chef/professeurs/affecter', [ChefProfessorController::class, 'affecter']);
+Route::get('chef/demandes',[requestsController::class,'index'])->name('demandes.list'); 
+Route::patch('chef/demandes/{id}',[requestsController::class,'accept']); 
+Route::delete('chef/demandes/{id}',[requestsController::class,'decline']); 
+ Route::get('chef/professeurs',[ChefProfessorController::class,'index']);
+ Route::delete('chef/professeurs/remove/{id}',[ChefProfessorController::class,'removeModule']);
+  Route::get('chef/filieres',[cheffiliereController::class,'index']);
+Route::PATCH('chef/filieres/modifier/{id}',[cheffiliereController::class,'modify']); 
+Route::get('chef/modules',[chefModulesController::class,'index']); 
+Route::get('chef/modules_vacantes',[chefModulesController::class,'vacantesList']); 
+Route::post('chef/modules_vacantes/affecter/{id}',[chefModulesController::class,'affecter']); 
+Route::get('chef/professeur_profile/{id}',[ChefProfessorController::class,'professeur_profile']);
+Route::post('chef/professeur_profile/{id}',[ChefProfessorController::class,'edit']);
+Route::post('chef/professeurs/affecter', [ChefProfessorController::class,'affecter']);
 
 Route::get('/logs', [UserLogController::class, 'index'])->name('admin.logs');
 Route::get('/logs/export', [UserLogController::class, 'export'])->name('admin.logs.export');
@@ -578,4 +580,8 @@ Route::get(
         ));
     }
 
-)->name('chef.actions');
+  )->name('chef.actions');
+
+
+    Route::get('/deadlines', [DeadlineController::class, 'index'])->name('deadline.index');
+    Route::post('/deadlines', [DeadlineController::class, 'store'])->name('deadline.store');

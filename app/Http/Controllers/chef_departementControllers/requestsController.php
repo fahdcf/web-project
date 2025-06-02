@@ -12,8 +12,10 @@ use App\Models\Filiere;
 use App\Models\Module;
 use App\Models\prof_request;
 use App\Models\Role;
+use Illuminate\Support\Facades\Notification;
 
 use App\Models\User;
+use App\Notifications\NewRequestsNotification;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver\DateTimeValueResolver;
 
@@ -166,6 +168,16 @@ class requestsController extends Controller
             'toTeach_tp' => $attributes['toTeach_tp'] ?? false,
 
         ]);
+
+        $prof=User::findOrFail(auth()->user()->id);
+        
+
+        $department_id=$module->filiere->department_id;
+        $departement=Departement::findOrFail($department_id);
+        $chefs=User::where('departement',$departement->name)->get();
+
+        Notification::send($chefs, new NewRequestsNotification($prof, $module));
+
 
         return back()->with('success', 'Votre souhait a été enregistré !');
     }

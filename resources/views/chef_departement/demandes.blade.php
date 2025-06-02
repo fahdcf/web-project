@@ -359,7 +359,7 @@
 
 <div class="requests-container">
     <div class="page-header">
-        <h1 class="display-6 fw-bold mb-5" style="color: #4723d9">Requests Management</h1>
+        <h3 class="mb-5 bg-white py-3 px-3 rounded" style="color: #4723d9 ; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.038);margin-bottom: 2rem; font-weight: 600;" >    <i class="bi bi-card-checklist pr-2"></i> Requests Management</h3>
         
         <div class="requests-tabs">
             <button class="tab-btn active" onclick="toggleSection('pending')">
