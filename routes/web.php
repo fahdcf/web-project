@@ -125,9 +125,6 @@ Route::middleware(['auth'])
 
 
 
-
-
-//empploi du temps
 Route::get('/emplois', [EmploiController::class, 'index'])->name('emploi.index');
 Route::get('/emplois/create', [EmploiController::class, 'create'])->name('emploi.create');
 Route::post('/emplois', [EmploiController::class, 'store'])->name('emploi.store');
@@ -138,7 +135,7 @@ Route::get('/emplois/prof', [EmploiController::class, 'prof'])->name('emploi.pro
 Route::get('/my-timetable', [EmploiController::class, 'myTimetable'])->name('emploi.myTimetable');
 
 Route::get('/my-timetable/export', [EmploiController::class, 'myTimetableExport'])->name('emploi.my-timetable.export');
-
+Route::get('/emplois/{emploi}/export', [EmploiController::class, 'exportFiliereTimetable'])->name('emploi.filiere.export');
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 

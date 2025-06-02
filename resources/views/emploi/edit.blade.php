@@ -174,9 +174,35 @@
         .form-label {
             font-size: 13px;
         }
+
+        .header-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-title {
+            color: #4723d9;
+            font-weight: 600;
+            font-size: 1.75rem;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 15px;
+            }
+
+            .header-title {
+                font-size: 1.5rem;
+                text-align: center;
+            }
+        }
     </style>
 
     <div class="container-fluid p-0 pt-4">
+        <x-global_alert />
 
         @if ($errors->any())
             <div class="alert alert-danger error-message">
@@ -187,7 +213,6 @@
                 </ul>
             </div>
         @endif
-
 
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show">
@@ -201,104 +226,16 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
-
-
-
-
-
-
+        @if (session('warning'))
+            <div class="alert alert-warning alert-dismissible fade show">
+                {{ session('warning') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
 
         <div class="header-container mb-4">
-            <style>
-                .header-container {
-                    background: white;
-                    border-radius: 8px;
-                    padding: 20px;
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                }
-
-                .header-title {
-                    color: #4723d9;
-                    font-weight: 600;
-                    font-size: 1.75rem;
-                    margin: 0;
-                }
-
-      
-                @media (max-width: 768px) {
-                    .header-container {
-                        padding: 15px;
-                    }
-
-                    .header-title {
-                        font-size: 1.5rem;
-                        margin-bottom: 15px;
-                        text-align: center;
-                    }
-
-                    .form-select,
-                    .btn-outline-primary {
-                        width: 100%;
-                        margin-bottom: 10px;
-                    }
-
-                    .btn-outline-primary {
-                        white-space: normal;
-                        text-align: center;
-                        padding: 10px 16px;
-                    }
-
-                    .btn-text-emploi,
-                    .btn-text-prof {
-                        display: block;
-                    }
-
-                    .btn-text-emploi {
-                        margin-bottom: 2px;
-                    }
-                }
-
-                /* Improved grid layout */
-                .header-grid {
-                    display: grid;
-                    grid-template-columns: 1fr auto auto;
-                    gap: 1rem;
-                    align-items: center;
-                }
-
-                @media (max-width: 992px) {
-                    .header-grid {
-                        grid-template-columns: 1fr auto;
-                    }
-
-                    .header-title {
-                        grid-column: 1 / -1;
-                        text-align: center;
-                        margin-bottom: 10px;
-                        text-decoration: underline;
-                    }
-                }
-
-                @media (max-width: 768px) {
-                    .header-grid {
-                        grid-template-columns: 1fr;
-                        gap: 0.75rem;
-                    }
-
-
-                }
-            </style>
-
-            <div class="header-grid">
-                <h3 class="header-title">Modifier l'Emploi du Temps - S{{ $emploi->semester }}</h3>
-
-        
-            </div>
+            <h3 class="header-title">Modifier l'Emploi du Temps - S{{ $emploi->semester }}</h3>
         </div>
-
-
-
-
 
         <form id="emploiForm" action="{{ route('emploi.update', $emploi->id) }}" method="POST">
             @csrf
@@ -311,8 +248,7 @@
             <div class="card border-0 shadow rounded-4 mb-4" style="box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
                 <div class="card-body p-4">
                     <div class="mb-4">
-                        <label for="name" class="form-label small fw-bold text-muted">Nom de l'Emploi du
-                            Temps</label>
+                        <label for="name" class="form-label small fw-bold text-muted">Nom de l'Emploi du Temps</label>
                         <input type="text" class="form-control rounded-3 @error('name') is-invalid @enderror"
                             id="name" name="name" value="{{ old('name', $emploi->name) }}" required>
                         @error('name')
@@ -323,7 +259,7 @@
                         <div class="form-check">
                             <input type="hidden" name="is_active" value="0">
                             <input type="checkbox" class="form-check-input" id="is_active" name="is_active"
-                                value="1" {{ old('is_active', $emploi->is_active ?? false) ? 'checked' : '' }}>
+                                value="1" {{ old('is_active', $emploi->is_active) ? 'checked' : '' }}>
                             <label for="is_active" class="form-check-label small fw-bold text-muted">Actif</label>
                         </div>
                     </div>
@@ -343,8 +279,7 @@
                                             ];
                                         @endphp
                                         @foreach ($timeSlots as $slot)
-                                            <th>{{ substr($slot['start'], 0, 5) }}-{{ substr($slot['end'], 0, 5) }}
-                                            </th>
+                                            <th>{{ substr($slot['start'], 0, 5) }}-{{ substr($slot['end'], 0, 5) }}</th>
                                         @endforeach
                                     </tr>
                                 </thead>
@@ -393,8 +328,7 @@
                             <input type="hidden" id="session_day">
                             <input type="hidden" id="session_time_index">
                             <div class="mb-3">
-                                <label for="session_module_id"
-                                    class="form-label small fw-bold text-muted">Module</label>
+                                <label for="session_module_id" class="form-label small fw-bold text-muted">Module</label>
                                 <select id="session_module_id" class="form-select rounded-3" required>
                                     <option value="">Sélectionner</option>
                                     @foreach ($modules as $module)
@@ -428,8 +362,7 @@
                                     placeholder="Ex: A101">
                             </div>
                             <div class="mb-3">
-                                <label for="session_duration"
-                                    class="form-label small fw-bold text-muted">Durée</label>
+                                <label for="session_duration" class="form-label small fw-bold text-muted">Durée</label>
                                 <select id="session_duration" class="form-select rounded-3">
                                     <option value="2">2 heures</option>
                                     <option value="4">4 heures</option>
@@ -454,11 +387,8 @@
         </div>
     </div>
 
-
-
-
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const sessionConfigModal = new bootstrap.Modal(document.getElementById('sessionConfigModal'));
             const cells = document.querySelectorAll('.clickable-cell');
             const sessionForm = document.getElementById('sessionForm');
@@ -466,25 +396,13 @@
             const deleteSessionBtn = document.getElementById('deleteSessionBtn');
             const confirmSessionBtn = document.getElementById('confirmSessionBtn');
             const sessionsContainer = document.getElementById('sessionsContainer');
-            const timeSlots = [{
-                    start: '08:30:00',
-                    end: '10:30:00'
-                },
-                {
-                    start: '10:30:00',
-                    end: '12:30:00'
-                },
-                {
-                    start: '14:30:00',
-                    end: '16:30:00'
-                },
-                {
-                    start: '16:30:00',
-                    end: '18:30:00'
-                }
+            const timeSlots = [
+                { start: '08:30:00', end: '10:30:00' },
+                { start: '10:30:00', end: '12:30:00' },
+                { start: '14:30:00', end: '16:30:00' },
+                { start: '16:30:00', end: '18:30:00' }
             ];
 
-            // Initialize sessions from existing Seance records
             let sessions = [];
             @foreach ($emploi->seances as $seance)
                 sessions.push({
@@ -507,25 +425,20 @@
             renderSessions();
 
             cells.forEach(cell => {
-                cell.addEventListener('click', function(e) {
+                cell.addEventListener('click', function (e) {
                     if (e.target.closest('.session-card') || e.target.closest('.add-session-btn')) {
                         if (e.target.closest('.session-card')) {
                             const sessionId = e.target.closest('.session-card').dataset.sessionId;
                             const sessionData = sessions.find(s => s.temp_id === sessionId);
                             if (sessionData) {
-                                document.getElementById('session_temp_id').value = sessionData
-                                    .temp_id;
-                                document.getElementById('session_module_id').value = sessionData
-                                    .module_id;
+                                document.getElementById('session_temp_id').value = sessionData.temp_id;
+                                document.getElementById('session_module_id').value = sessionData.module_id;
                                 document.getElementById('session_type').value = sessionData.type;
                                 document.getElementById('session_salle').value = sessionData.salle;
-                                document.getElementById('session_groupe').value = sessionData
-                                    .groupe;
-                                document.getElementById('session_duration').value = sessionData
-                                    .duration;
+                                document.getElementById('session_groupe').value = sessionData.groupe;
+                                document.getElementById('session_duration').value = sessionData.duration;
                                 document.getElementById('session_day').value = sessionData.jour;
-                                document.getElementById('session_time_index').value = sessionData
-                                    .time_index;
+                                document.getElementById('session_time_index').value = sessionData.time_index;
                                 deleteSessionBtn.style.display = 'inline-block';
                                 updateGroupeOptions();
                                 sessionConfigModal.show();
@@ -548,7 +461,7 @@
                 });
             });
 
-            confirmSessionBtn.addEventListener('click', function() {
+            confirmSessionBtn.addEventListener('click', function () {
                 const tempId = document.getElementById('session_temp_id').value || `session_${Date.now()}`;
                 const moduleId = document.getElementById('session_module_id').value;
                 const type = document.getElementById('session_type').value;
@@ -568,11 +481,24 @@
                     return;
                 }
 
+                if (duration === '4') {
+                    const conflict = sessions.some(s =>
+                        s.temp_id !== tempId &&
+                        s.jour === day &&
+                        (s.heure_debut === timeSlots[timeIndex].start || s.heure_debut === timeSlots[timeIndex + 1].start) &&
+                        s.salle === salle &&
+                        s.salle
+                    );
+                    if (conflict) {
+                        alert('Conflit de salle détecté dans les plages horaires sélectionnées.');
+                        return;
+                    }
+                }
+
                 const moduleOption = document.getElementById('session_module_id').querySelector(
                     `option[value="${moduleId}"]`);
                 const startTime = timeSlots[timeIndex].start;
-                const endTime = duration === '2' ? timeSlots[timeIndex].end : (timeIndex < 3 ? timeSlots[
-                    timeIndex + 1].end : timeSlots[timeIndex].end);
+                const endTime = duration === '2' ? timeSlots[timeIndex].end : timeSlots[timeIndex + 1].end;
 
                 const sessionData = {
                     temp_id: tempId,
@@ -594,7 +520,6 @@
                 const index = sessions.findIndex(s => s.temp_id === tempId);
                 if (index >= 0) {
                     sessions[index] = sessionData;
-                    // Remove any paired 4-hour session if updating
                     sessions = sessions.filter(s => s.temp_id !== `${tempId}_paired`);
                 } else {
                     sessions.push(sessionData);
@@ -614,26 +539,26 @@
                 sessionConfigModal.hide();
             });
 
-            deleteSessionBtn.addEventListener('click', function() {
+            deleteSessionBtn.addEventListener('click', function () {
                 const tempId = document.getElementById('session_temp_id').value;
                 sessions = sessions.filter(s => s.temp_id !== tempId && s.temp_id !== `${tempId}_paired`);
                 renderSessions();
                 sessionConfigModal.hide();
             });
 
-            emploiForm.addEventListener('submit', function() {
+            emploiForm.addEventListener('submit', function () {
                 sessionsContainer.innerHTML = '';
                 sessions.forEach((session, index) => {
                     const prefix = `seances[${index}]`;
                     sessionsContainer.insertAdjacentHTML('beforeend', `
-                <input type="hidden" name="${prefix}[module_id]" value="${session.module_id}">
-                <input type="hidden" name="${prefix}[type]" value="${session.type}">
-                <input type="hidden" name="${prefix}[jour]" value="${session.jour}">
-                <input type="hidden" name="${prefix}[heure_debut]" value="${session.heure_debut}">
-                <input type="hidden" name="${prefix}[heure_fin]" value="${session.heure_fin}">
-                <input type="hidden" name="${prefix}[salle]" value="${session.salle || ''}">
-                <input type="hidden" name="${prefix}[groupe]" value="${session.groupe || ''}">
-            `);
+                        <input type="hidden" name="${prefix}[module_id]" value="${session.module_id}">
+                        <input type="hidden" name="${prefix}[type]" value="${session.type}">
+                        <input type="hidden" name="${prefix}[jour]" value="${session.jour}">
+                        <input type="hidden" name="${prefix}[heure_debut]" value="${session.heure_debut}">
+                        <input type="hidden" name="${prefix}[heure_fin]" value="${session.heure_fin}">
+                        <input type="hidden" name="${prefix}[salle]" value="${session.salle || ''}">
+                        <input type="hidden" name="${prefix}[groupe]" value="${session.groupe || ''}">
+                    `);
                 });
             });
 
@@ -689,25 +614,34 @@
                         `.sessions[data-day="${session.jour}"][data-time-index="${session.time_index}"]`
                     );
                     if (container) {
+                        const conflict = sessions.some(s =>
+                            s.temp_id !== session.temp_id &&
+                            s.jour === session.jour &&
+                            s.heure_debut === session.heure_debut &&
+                            s.salle === session.salle &&
+                            s.salle
+                        );
+                        const conflictClass = conflict ? 'border-danger' : '';
+
                         container.insertAdjacentHTML('beforeend', `
-                    <div class="session-card ${session.type.toLowerCase()}" data-session-id="${session.temp_id}">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span class="badge bg-${session.type === 'CM' ? 'primary' : (session.type === 'TD' ? 'info' : 'success')} text-white">
-                                ${session.type}
-                            </span>
-                        </div>
-                        <h6 class="session-title">${session.module.name}</h6>
-                        <div class="session-details">
-                            <div>${session.module.code}${session.groupe ? ' - ' + session.groupe : ''}</div>
-                            <div>${session.salle || 'Non défini'}</div>
-                            <div>${session.heure_debut.slice(0, 5)}-${session.heure_fin.slice(0, 5)}</div>
-                        </div>
-                    </div>
-                `);
+                            <div class="session-card ${session.type.toLowerCase()} ${conflictClass}" data-session-id="${session.temp_id}">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="badge bg-${session.type === 'CM' ? 'primary' : (session.type === 'TD' ? 'info' : 'success')} text-white">
+                                        ${session.type}
+                                    </span>
+                                    ${conflict ? '<span class="badge bg-danger">Conflit</span>' : ''}
+                                </div>
+                                <h6 class="session-title">${session.module.name}</h6>
+                                <div class="session-details">
+                                    <div>${session.module.code}${session.groupe ? ' - ' + session.groupe : ''}</div>
+                                    <div>${session.salle || 'Non défini'}</div>
+                                    <div>${session.heure_debut.slice(0, 5)}-${session.heure_fin.slice(0, 5)}</div>
+                                </div>
+                            </div>
+                        `);
                     }
                 });
             }
         });
     </script>
-
 </x-coordonnateur_layout>
