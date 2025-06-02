@@ -49,7 +49,7 @@ class NotesImport implements ToModel, WithHeadingRow, WithValidation
     public function rules(): array
     {
         return [
-            'cne' => ['required', 'string', Rule::exists('students', 'CNE')],
+            'cne' => ['required', 'string'],
             // 'module_id' => ['required', 'integer', Rule::exists('modules', 'id')],
             'note' => ['required', 'numeric', 'between:0,20'],
             'remarque' => ['nullable', 'string', 'max:255'], // Nullable, max length for safety
@@ -60,7 +60,7 @@ class NotesImport implements ToModel, WithHeadingRow, WithValidation
     {
         return [
             'cne.required' => 'La colonne CNE est requise.',
-            'cne.exists' => 'Le CNE :input n\'existe pas dans la liste des étudiants.',
+            // 'cne.exists' => 'Le CNE :input n\'existe pas dans la liste des étudiants.',
             // 'module_id.required' => 'La colonne module_id est requise.',
             // 'module_id.exists' => 'L\'ID du module :input n\'existe pas.',
             'note.required' => 'La colonne note est requise.',

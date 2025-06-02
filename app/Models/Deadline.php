@@ -6,23 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Deadline extends Model
 {
-    
-    protected $fillable = [
-        'type',
-        'deadline_date',
-        'notification_date',
-        'status',
-        'created_by',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'deadline_date' => 'datetime',
         'notification_date' => 'datetime',
     ];
-    
 
-  
-    public function user()
+    public function filiere()
+    {
+        return $this->belongsTo(Filiere::class);
+    }
+
+    public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
     }

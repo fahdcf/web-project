@@ -8,20 +8,17 @@
     }
     
     /* Header */
-       /* Header */
     .page-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.038);
-
         margin-bottom: 2rem;
     }
-
+    
     .page-title {
         color: #4723d9;
         font-weight: 600;
-        font-size: 1.6rem;
+        font-size: 1.8rem;
         margin: 0;
     }
     

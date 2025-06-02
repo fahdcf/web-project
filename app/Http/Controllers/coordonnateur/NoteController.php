@@ -35,63 +35,61 @@ class NoteController extends Controller
         return view('modules.upload_notes', compact('modules', 'uploads'));
     }
 
-public function upload(Request $request)
-{
-    try {
-        $request->validate([
-            'module_id' => 'required|integer|exists:modules,id',
-            'session_type' => 'required|in:normale,rattrapage',
-            'file' => 'required|file|mimes:xlsx,xls|max:2048',
-        ], [
-            'module_id.required' => 'Veuillez sélectionner un module.',
-            'module_id.exists' => 'Le module sélectionné n\'existe pas.',
-            'session_type.required' => 'Veuillez sélectionner un type de session.',
-            'session_type.in' => 'Le type de session doit être "normale" ou "rattrapage".',
-            'file.required' => 'Veuillez sélectionner un fichier.',
-            'file.mimes' => 'Le fichier doit être au format Excel (.xlsx ou .xls).',
-            'file.max' => 'Le fichier ne doit pas dépasser 2 Mo.',
-        ]);
+    public function upload(Request $request)
+    {
+        try {
+            $request->validate([
+                'module_id' => 'required|integer|exists:modules,id',
+                'session_type' => 'required|in:normale,rattrapage',
+                'file' => 'required|file|mimes:xlsx,xls|max:2048',
+            ], [
+                'module_id.required' => 'Veuillez sélectionner un module.',
+                'module_id.exists' => 'Le module sélectionné n\'existe pas.',
+                'session_type.required' => 'Veuillez sélectionner un type de session.',
+                'session_type.in' => 'Le type de session doit être "normale" ou "rattrapage".',
+                'file.required' => 'Veuillez sélectionner un fichier.',
+                'file.mimes' => 'Le fichier doit être au format Excel (.xlsx ou .xls).',
+                'file.max' => 'Le fichier ne doit pas dépasser 2 Mo.',
+            ]);
 
-        $user = auth()->user();
-        if (!$user->role->isprof) {
-            return redirect()->back()->with('error', 'Accès non autorisé.');
-        }
+            $user = auth()->user();
+            $file = $request->file('file');
+            $path = $file->store('grades');
+            $originalName = $file->getClientOriginalName();
 
-        $file = $request->file('file');
-        $path = $file->store('grades');
-        $originalName = $file->getClientOriginalName();
+            $semester = Module::findOrFail($request->module_id)->semester;
 
-        $semester = Module::findOrFail($request->module_id)->semester;
+            $note = Note::create([
+                'module_id' => $request->module_id,
+                'prof_id' => $user->id,
+                'session_type' => $request->session_type,
+                'semester' => $semester,
+                'storage_path' => $path,
+                'original_name' => $originalName,
+                'status' => 'active',
+            ]);
 
-        $note = Note::create([
-            'module_id' => $request->module_id,
-            'prof_id' => $user->id,
-            'session_type' => $request->session_type,
-            'semester' => $semester,
-            'storage_path' => $path,
-            'original_name' => $originalName,
-            'status' => 'active',
-        ]);
+            Excel::import(new NotesImport($user->id, $note->id, $semester, $request->session_type), $file);
 
-        Excel::import(new NotesImport($user->id, $note->id, $semester, $request->session_type), $file);
+            return redirect()->back()->with('success', 'Notes téléchargées avec succès.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $errorMessages = [];
 
-        return redirect()->back()->with('success', 'Notes téléchargées avec succès.');
-    } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-        $failures = $e->failures();
-        $errorMessages = [];
-
-        foreach ($failures as $failure) {
-            $row = $failure->row();
-            foreach ($failure->errors() as $error) {
-                $errorMessages[] = "Ligne $row : $error";
+            foreach ($failures as $failure) {
+                $row = $failure->row();
+                foreach ($failure->errors() as $error) {
+                    $errorMessages[] = "Ligne $row : $error";
+                }
             }
-        }
 
-        return redirect()->back()->with('error', implode('; ', $errorMessages));
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'Erreur lors du téléchargement : ' . $e->getMessage());
+            return redirect()->back()->with('error', implode('; ', $errorMessages));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Erreur lors du téléchargement : ' . $e->getMessage());
+        }
     }
-}
+
+    
     public function download($id)
     {
         $upload = Note::findOrFail($id);
@@ -102,6 +100,8 @@ public function upload(Request $request)
         // Force download with original filename
         return response()->download($path, $upload->original_name);
     }
+
+
     public function cancel($id)
     {
         $note = Note::where('prof_id', auth()->id())->findOrFail($id);

@@ -240,6 +240,28 @@
             ],
         ])
 
+
+        <div class="dropdown">
+            <button class="btn btn-success rounded fw-semibold dropdown-toggle" type="button" id="exportDropdown"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-file-export"></i> Exporter
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+
+                @foreach ($emplois as $emploi)
+                    <li>
+                        <a class="dropdown-item" href="{{ route('emploi.filiere.export', $emploi->id) }}">
+                            Emploi du {{ $emploi->semester == 1 ? '1er' : $emploi->semester . 'ème' }} Semestre
+                        </a>
+
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+
+
+
+
         <!-- Table Section -->
         <div class="table-section">
             <div class="table-responsive">
@@ -268,7 +290,8 @@
                                 </td>
                                 <td>
                                     @if ($emploi)
-                                        <span class="status-badge status-{{ $emploi->is_active ? 'active' : 'inactive' }}">
+                                        <span
+                                            class="status-badge status-{{ $emploi->is_active ? 'active' : 'inactive' }}">
                                             {{ $emploi->is_active ? 'Actif' : 'Inactif' }}
                                         </span>
                                     @else
@@ -279,17 +302,17 @@
                                     <div class="d-flex justify-content-center gap-2">
                                         @if ($emploi)
                                             <a href="{{ route('emploi.edit', $emploi->id) }}"
-                                               class="action-btn view-btn" title="Modifier l'emploi du temps">
+                                                class="action-btn view-btn" title="Modifier l'emploi du temps">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
                                             <button class="action-btn delete-btn" data-bs-toggle="modal"
-                                                    data-bs-target="#deleteEmploiModal{{ $emploi->id }}"
-                                                    title="Supprimer l'emploi du temps">
+                                                data-bs-target="#deleteEmploiModal{{ $emploi->id }}"
+                                                title="Supprimer l'emploi du temps">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         @else
                                             <a href="{{ route('emploi.create', ['semester' => $semester]) }}"
-                                               class="action-btn view-btn" title="Créer un emploi du temps">
+                                                class="action-btn view-btn" title="Créer un emploi du temps">
                                                 <i class="bi bi-plus-circle"></i>
                                             </a>
                                         @endif
@@ -299,7 +322,7 @@
 
                             @if ($emploi)
                                 <div class="modal fade" id="deleteEmploiModal{{ $emploi->id }}" tabindex="-1"
-                                     aria-labelledby="deleteEmploiModalLabel{{ $emploi->id }}" aria-hidden="true">
+                                    aria-labelledby="deleteEmploiModalLabel{{ $emploi->id }}" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -307,7 +330,7 @@
                                                     Confirmer la Suppression
                                                 </h5>
                                                 <button type="button" class="btn-close btn-close-white"
-                                                        data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
                                                 Voulez-vous vraiment supprimer l'emploi du temps
@@ -316,9 +339,9 @@
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Annuler</button>
+                                                    data-bs-dismiss="modal">Annuler</button>
                                                 <form action="{{ route('emploi.destroy', $emploi->id) }}"
-                                                      method="POST" class="d-inline">
+                                                    method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger">Supprimer</button>
