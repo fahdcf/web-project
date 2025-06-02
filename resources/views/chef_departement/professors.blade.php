@@ -326,17 +326,17 @@
 
 <div class="professor-container">
       <div class="page-header bg-white py-3 px-3 rounded">
-        <h3 class="page-title"><i class="bi bi-person-video3 pr-2"></i> Professors Directory</h3>
+        <h3 class="page-title"><i class="bi bi-person-video3 pr-2"></i> Liste des professeurs</h3>
         <!-- export button -->
  <button onclick="exportStyledExcel()" class="btn btn-outline-success " >
-    <i class="bi bi-file-excel"></i> Export
+    <i class="bi bi-file-excel"></i> Exporter
 </button>
     </div>
     
     <!-- Filter Section -->
     <div class="filter-section">
         <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="true">
-            <h5>Filters</h5>
+            <h5>Filtrer</h5>
             <i class="bi bi-chevron-down"></i>
         </div>
         
@@ -345,7 +345,7 @@
                     <div class="filter-row row g-2">
                         <!-- Search -->
                         <div class="col-12 col-md-4 col-lg-4 filter-group">
-                            <label for="search" class="filter-label">Search</label>
+                            <label for="search" class="filter-label">Recherche</label>
                             <input type="text" id="search" name="search" class="filter-input py-2" placeholder="Name, ID or email">
                         </div>
                         
@@ -353,7 +353,7 @@
                         <div class="col-12 col-md-4 col-lg-2 filter-group">
                             <label for="statusFilter" class="filter-label">Status</label>
                             <select class="filter-input" id="statusFilter" name="status">
-                                <option value="">All Status</option>
+                                <option value="">Tous les statuts</option>
                                 <option value="active">Active</option>
                                 <option value="inactive">Inactive</option>
                             </select>
@@ -363,18 +363,18 @@
                         <div class=" col-12 col-md-4 col-lg-2 filter-group">
                             <label for="hoursFilter" class="filter-label">Workload Status</label>
                             <select class="filter-input" id="hoursFilter" name="hours_status">
-                                <option value="">All Workloads</option>
-                                <option value="under">Below Minimum</option>
-                                <option value="adequate">Adequate</option>
-                                <option value="over">Above Maximum</option>
+                                <option value="">Toutes les charges</option>
+                                <option value="under">En dessous du minimum</option>
+                                <option value="adequate">Adéquate</option>
+                                <option value="over">Au-dessus du maximum</option>
                             </select>
                         </div>
                         
                         <!-- Rows Per Page -->
                         <div class=" col-12 col-md-4 col-lg-2 filter-group mb-4 mb-md-0">
-                            <label for="rowsPerPage" class="filter-label">Rows per page</label>
+                            <label for="rowsPerPage" class="filter-label">Lignes par page</label>
                             <select id="rowsPerPage" name="rows" class="filter-input">
-                                <option value="all">Show All</option>
+                                <option value="all">Afficher tout</option>
                                 <option value="5">5</option>
                                 <option value="15">15</option>
                                 <option value="30">30</option>
@@ -382,7 +382,7 @@
                             </select>
                         </div>
                         
-                        <button  type="button" id="resetFilters" class="apply-btn col-12 col-md-4 col-lg-2  py-2 " style="background-color: #6c757d;">Reset</button>
+                        <button  type="button" id="resetFilters" class="apply-btn col-12 col-md-4 col-lg-2  py-2 " style="background-color: #6c757d;">réinitialiser</button>
                     </div>
             </div>
         </div>
@@ -397,7 +397,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Photo</th>
-                        <th>Workload</th>
+                        <th>Charge horaire</th>
                         <th>Professor</th>
                         <th>Status</th>
                         <th>Email</th>

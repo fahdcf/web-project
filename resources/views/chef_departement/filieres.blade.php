@@ -5,7 +5,7 @@
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3 py-3 px-3 rounded" style="color: #4723d9 ; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.038);margin-bottom: 2rem; font-weight: 600; background-color: white;">
             <div>
 
-                <h3 class=" fw-bold  mb-2" style="color: #4723d9 ;margin-bottom: 2rem; font-weight: 600;" >    <i class="bi bi-card-checklist pr-2"></i> Liste des Filieres</h3>
+                <h3 class=" fw-bold  mb-2" style="color: #4723d9 ;margin-bottom: 2rem; font-weight: 600;" > <i class="bi bi-book-half"></i> Liste des Filieres</h3>
             </div>
 
   
