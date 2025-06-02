@@ -1,7 +1,7 @@
 <x-coordonnateur_layout>
     <div class="container-fluid py-5">
         <x-global_alert />
-        <div class="profile-container">
+        <div class="profile-container ">
             <h1 class="profile-name text-center pb-2">Affectations des Modules</h1>
 
             <!-- Filters -->
@@ -325,7 +325,6 @@
             border-radius: 12px;
             padding: 30px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            max-width: 1200px;
             margin: 0 auto;
         }
 

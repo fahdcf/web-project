@@ -43,7 +43,9 @@ use App\Http\Controllers\coordonnateur\VacataireController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\homeController;
 
+
 //FOR CHEF DEPARTEMENT
+use App\Http\Controllers\DeadlineController;
 
 use App\Http\Controllers\loginController;
 use App\Http\Controllers\newuserController;
@@ -238,43 +240,10 @@ Route::prefix('vacataire')->group(function () {
 
 
 
-//////////////////////////////////////////////////////////////////////////////
-// routes/web.php
-
-// // Routes pour le builder d'emploi du temps
-// Route::middleware(['auth'])->name('coordinator.')->group(function () {
-//     Route::get('/schedules/builder', [ScheduleBuilderController::class, 'index'])->name('schedules.builder');
-//     Route::post('/schedules/create', [ScheduleBuilderController::class, 'createSchedule'])->name('schedules.create');
-//     Route::post('/schedules/save-session', [ScheduleBuilderController::class, 'saveSession'])->name('schedules.save-session');
-//     Route::delete('/schedules/delete-session', [ScheduleBuilderController::class, 'deleteSession'])->name('schedules.delete-session');
-// });
-
-/////////////////////
-
-
-// Route::middleware(['auth'])->group(function () {
-// Route::get('/emploi/create', [EmploiController::class, 'create'])->name('emploi.create');
-// Route::post('/emploi', [EmploiController::class, 'store'])->name('emploi.store');
-
-
-// // Routes pour la gestion des emplois du temps
-// Route::middleware(['auth'])->group(function () {
-//     Route::get('/emplois', [EmploiController::class, 'create'])->name('emplois.create');
-//     Route::post('/emplois', [EmploiController::class, 'store'])->name('emplois.store');
-//     Route::get('/api/modules', [EmploiController::class, 'getModules'])->name('api.modules');
-// });
 
 
 
-
-
-
-
-
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Route::get('/', [homeController::class, 'index']);
 
 Route::get('/signup', [signupController::class, 'index']);
@@ -472,19 +441,19 @@ Route::get('etudiant-profile/{id}', [adminProfileController::class, 'studentprof
 
 
 //chef department
-Route::get('chef/demandes', [requestsController::class, 'index']);
-Route::patch('chef/demandes/{id}', [requestsController::class, 'accept']);
-Route::delete('chef/demandes/{id}', [requestsController::class, 'decline']);
-Route::get('chef/professeurs', [ChefProfessorController::class, 'index']);
-Route::delete('chef/professeurs/remove/{id}', [ChefProfessorController::class, 'removeModule']);
-Route::get('chef/filieres', [cheffiliereController::class, 'index']);
-Route::PATCH('chef/filieres/modifier/{id}', [cheffiliereController::class, 'modify']);
-Route::get('chef/modules', [chefModulesController::class, 'index']);
-Route::get('chef/modules_vacantes', [chefModulesController::class, 'vacantesList']);
-Route::post('chef/modules_vacantes/affecter/{id}', [chefModulesController::class, 'affecter']);
-Route::get('chef/professeur_profile/{id}', [ChefProfessorController::class, 'professeur_profile']);
-Route::post('chef/professeur_profile/{id}', [ChefProfessorController::class, 'edit']);
-Route::post('chef/professeurs/affecter', [ChefProfessorController::class, 'affecter']);
+Route::get('chef/demandes',[requestsController::class,'index'])->name('demandes.list'); 
+Route::patch('chef/demandes/{id}',[requestsController::class,'accept']); 
+Route::delete('chef/demandes/{id}',[requestsController::class,'decline']); 
+ Route::get('chef/professeurs',[ChefProfessorController::class,'index']);
+ Route::delete('chef/professeurs/remove/{id}',[ChefProfessorController::class,'removeModule']);
+  Route::get('chef/filieres',[cheffiliereController::class,'index']);
+Route::PATCH('chef/filieres/modifier/{id}',[cheffiliereController::class,'modify']); 
+Route::get('chef/modules',[chefModulesController::class,'index']); 
+Route::get('chef/modules_vacantes',[chefModulesController::class,'vacantesList']); 
+Route::post('chef/modules_vacantes/affecter/{id}',[chefModulesController::class,'affecter']); 
+Route::get('chef/professeur_profile/{id}',[ChefProfessorController::class,'professeur_profile']);
+Route::post('chef/professeur_profile/{id}',[ChefProfessorController::class,'edit']);
+Route::post('chef/professeurs/affecter', [ChefProfessorController::class,'affecter']);
 
 Route::get('/logs', [UserLogController::class, 'index'])->name('admin.logs');
 Route::get('/logs/export', [UserLogController::class, 'export'])->name('admin.logs.export');
@@ -540,4 +509,8 @@ Route::get(
         ));
     }
 
-)->name('chef.actions');
+  )->name('chef.actions');
+
+
+    Route::get('/deadlines', [DeadlineController::class, 'index'])->name('deadline.index');
+    Route::post('/deadlines', [DeadlineController::class, 'store'])->name('deadline.store');

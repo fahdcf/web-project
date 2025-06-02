@@ -6,6 +6,7 @@
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px
         }
 
         .header-title {
@@ -147,7 +148,7 @@
             @isset($icon)
                 {!! $icon !!}
             @endisset
-            <h3 style="color: #330bcf; font-weight: 500;">{{ $heading ?? '' }}</h3>
+            <h3 style="color: #330bcf; font-weight: 600;">{{ $heading ?? '' }}</h3>
         </div>
 
         <div class="d-flex align-items-center gap-2 flex-wrap">

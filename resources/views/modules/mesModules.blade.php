@@ -2,19 +2,27 @@
     <div class="container-fluid px-4 py-5">
         <x-global_alert />
 
-
-        @include('components.heading', [
-            'icon' => ' <i class="fas fa-book-open fa-2x" style="color: #330bcf;"></i>',
-            'heading' => 'Mes Unitee d\'Enseignements :',
-            'buttons' => [
-                [
-                    'route' => route('availableModules'),
-                    'text' => 'voir les UE disponible',
-                    'type' => 'primary',
+        @if (auth()->user()->role->isprof==true)
+            @include('components.heading', [
+                'icon' => ' <i class="fas fa-book-open fa-2x" style="color: #330bcf;"></i>',
+                'heading' => 'Mes Unitee d\'Enseignements :',
+                'buttons' => [
+                    [
+                        'route' => route('availableModules'),
+                        'text' => 'voir les UE disponible',
+                        'type' => 'primary',
+                    ],
+                    // Add more buttons as needed
                 ],
-                // Add more buttons as needed
-            ],
-        ])
+            ])
+        @else
+            @include('components.heading', [
+                'icon' => ' <i class="fas fa-book-open fa-2x" style="color: #330bcf;"></i>',
+                'heading' => 'Mes Unitee d\'Enseignements :',
+                
+            ])
+        @endif
+
 
 
         <div class="header-container mb-4">

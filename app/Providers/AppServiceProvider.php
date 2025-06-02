@@ -21,13 +21,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Define your coordinator gate
+         // Define your coordinator gate
         Gate::define('coord', function (User $user) {
             // Make sure the role relationship exists and is loaded
             return $user->role && $user->role->iscoordonnateur;
         });
 
-        Gate::define('prof', function (User $user) {
+
+         Gate::define('prof', function (User $user) {
             // Make sure the role relationship exists and is loaded
             return $user->role && $user->role->isprof;
         });
