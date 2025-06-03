@@ -221,11 +221,33 @@
             .modal-dialog {
                 margin: 0.5rem;
             }
+
+
+
+        }
+
+        .export-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
         }
     </style>
 
+
     <div class="container-fluid">
         <x-global_alert />
+
+
+        @php
+            $options = [];
+            foreach ($emplois as $emploi) {
+                $options[] = [
+                    'route' => route('emploi.filiere.export', $emploi->id),
+                    'label' =>
+                        'Emploi du ' . ($emploi->semester == 1 ? '1er' : $emploi->semester . 'ème') . ' Semestre',
+                ];
+            }
+        @endphp
 
         @include('components.heading', [
             'icon' => '<i class="fas fa-calendar-alt fa-2x" style="color: #330bcf;"></i>',
@@ -238,26 +260,18 @@
                     'type' => 'primary',
                 ],
             ],
+        
+            'exportData' => [
+                'buttonText' => 'Export',
+                'options' => $options,
+            ],
         ])
 
 
-        <div class="dropdown">
-            <button class="btn btn-success rounded fw-semibold dropdown-toggle" type="button" id="exportDropdown"
-                data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fas fa-file-export"></i> Exporter
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="exportDropdown">
 
-                @foreach ($emplois as $emploi)
-                    <li>
-                        <a class="dropdown-item" href="{{ route('emploi.filiere.export', $emploi->id) }}">
-                            Emploi du {{ $emploi->semester == 1 ? '1er' : $emploi->semester . 'ème' }} Semestre
-                        </a>
 
-                    </li>
-                @endforeach
-            </ul>
-        </div>
+
+
 
 
 
@@ -301,8 +315,8 @@
                                 <td>
                                     <div class="d-flex justify-content-center gap-2">
                                         @if ($emploi)
-                                            <a href="{{ route('emploi.edit', $emploi->id) }}"
-                                                class="action-btn view-btn" title="Modifier l'emploi du temps">
+                                            <a href="{{ route('emploi.edit', $emploi->id) }}" class="action-btn view-btn"
+                                                title="Modifier l'emploi du temps">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
                                             <button class="action-btn delete-btn" data-bs-toggle="modal"

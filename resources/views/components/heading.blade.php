@@ -141,6 +141,72 @@
                 content: " ";
             }
         }
+
+        /* Previous styles remain the same */
+
+        /* Enhanced export dropdown styles */
+        .export-container {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .export-select {
+            border: 1px solid #28a745;
+            color: #28a745;
+            background-color: white;
+            border-radius: 6px;
+            padding: 8px 32px 8px 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2328a745' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .export-select:hover {
+            background-color: rgba(40, 167, 69, 0.05);
+        }
+
+        .export-select:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.25);
+        }
+
+        /* Existing export button styles */
+        .btn-export {
+            background-color: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
+
+        .btn-export:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+        .export-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+
+
+
+        .dropdown-menu {
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+            color: #4723d9;
+        }
     </style>
 
     <div class="header-grid">
@@ -152,6 +218,30 @@
         </div>
 
         <div class="d-flex align-items-center gap-2 flex-wrap">
+            {{-- the importdata is a button entire code --}}
+            @isset($importData)
+                {!! $importData !!}
+            @endisset
+            @isset($exportData)
+                <div class="export-group">
+                    <div class="dropdown">
+                        <button class="btn btn-success rounded fw-semibold dropdown-toggle" type="button"
+                            id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-file-export"></i> {{ $exportData['buttonText'] ?? 'Export' }}
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                            @foreach ($exportData['options'] as $option)
+                                <li>
+                                    <a class="dropdown-item" href="{{ $option['route'] }}">
+                                        {{ $option['label'] }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            @endisset
+
             @isset($buttons)
                 @foreach ($buttons as $button)
                     <a href="{{ $button['route'] }}"
@@ -163,8 +253,140 @@
                     </a>
                 @endforeach
             @endisset
-
-
         </div>
     </div>
 </div>
+<style>
+    .form-select {
+        border-color: #e0e0e0;
+        font-size: 0.9rem;
+        padding: 8px 12px;
+        border-radius: 6px;
+        background-color: #f8f9fa;
+        transition: border-color 0.2s;
+    }
+
+    .form-select:focus {
+        border-color: #4723d9;
+        box-shadow: 0 0 0 2px rgba(71, 35, 217, 0.2);
+        outline: none;
+    }
+
+    .btn-primary {
+        background-color: #4723d9;
+        border-color: #4723d9;
+        font-size: 0.9rem;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+        background-color: white;
+        color: #4723d9;
+        border-color: #4723d9;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+        font-size: 0.9rem;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .btn-success:hover {
+        background-color: white;
+        color: #28a745;
+        border-color: #28a745;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+
+
+    .dropdown-menu {
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+        color: #4723d9;
+    }
+
+    .modal-content {
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .form-control:focus {
+        border-color: #4723d9;
+        box-shadow: 0 0 0 2px rgba(71, 35, 217, 0.2);
+    }
+
+    .header-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    @media (max-width: 992px) {
+        .header-grid {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .header-title {
+            text-align: center;
+            margin-bottom: 1rem;
+            text-decoration: underline;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .header-container {
+            padding: 15px;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+        }
+
+        .header-grid>* {
+            width: 100%;
+        }
+
+        .btn-primary,
+        .btn-success {
+            width: 100%;
+            text-align: center;
+        }
+    }
+
+
+    .modal-content {
+        max-width: 90%;
+        animation: fadeIn 0.3s;
+    }
+
+    @media (max-width: 768px) {
+        .modal-content {
+            max-width: 95%;
+            margin: 1rem;
+        }
+    }
+</style>

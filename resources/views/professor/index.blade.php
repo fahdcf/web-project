@@ -219,14 +219,43 @@
         }
     </style>
 
+
+    {{-- <div class="notifications">
+        <div class="notifications-header">Notifications</div>
+        <div class="notifications-content">
+            @forelse (auth()->user()->unreadNotifications as $notification)
+                <div class="notification-item">
+                    <div>
+                        <p class="notification-desc">{{ $notification->data['message'] }}</p>
+                        <p class="notification-time">Échéance: {{ $notification->data['deadline_date'] }}</p>
+                    </div>
+                    <form action="{{ route('notifications.markAsRead', $notification->id) }}" method="POST">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit"><i class="bi bi-check-circle"></i></button>
+                    </form>
+                </div>
+            @empty
+                <div class="notification-item">
+                    <p class="notification-desc">Aucune nouvelle notification</p>
+                </div>
+            @endforelse
+            <a href="#" class="text-center">Voir toutes les notifications</a>
+        </div>
+    </div> --}}
+
+
+
     <div class="container-fluid p-0 pt-5 d-flex flex-column">
         <div class="page-wrapper w-100 row m-0">
             <section class="main-section col-12 col-md-8 col-lg-9 p-0 pr-md-4">
                 <div class="welcome p-4">
                     <div class="d-flex flex-column justify-content-between col-8">
                         <h3 style="font-weight: 500; padding-bottom: 10px;">Bienvenue
-                            <strong>{{ auth()->user()->firstname . ' ' . auth()->user()->lastname }}</strong></h3>
-                        <p style="font-size: 14px;">Gérez vos cours, saisissez les notes et consultez votre emploi du temps.</p>
+                            <strong>{{ auth()->user()->firstname . ' ' . auth()->user()->lastname }}</strong>
+                        </h3>
+                        <p style="font-size: 14px;">Gérez vos cours, saisissez les notes et consultez votre emploi du
+                            temps.</p>
                         <div class="buttons-wrapper d-flex gap-3">
                             <a href="{{ route('emploi.myTimetable') }}" class="addbtn btn">Voir mon emploi du temps</a>
                             <a href="#" class="seebtn btn">Saisir les notes</a>
@@ -273,7 +302,7 @@
                             <img src="{{ asset('storage/images/schedule_icon.png') }}" alt="Schedule Icon">
                             <div class="d-flex flex-column justify-content-start align-items-start">
                                 <p class="title">Prochains cours</p>
-                                <p class="num">Cette semaine: <strong>{{ $upcomingClasses  }}</strong></p>
+                                <p class="num">Cette semaine: <strong>{{ $upcomingClasses }}</strong></p>
                                 <a href="{{ route('emploi.myTimetable') }}" class="seemore">> Voir Plus</a>
                             </div>
                         </div>
@@ -285,7 +314,8 @@
                     <div class="col-12 col-lg-6 mb-4 p-2">
                         <div class="chart-container p-3 bg-white d-flex flex-column justify-content-start align-items-center"
                             style="height: 350px; width: 100%;">
-                            <h6 class="pt-1 pb-4 m-0 text-center" style="color: #252525">Répartition des notes (Algèbre)</h6>
+                            <h6 class="pt-1 pb-4 m-0 text-center" style="color: #252525">Répartition des notes (Algèbre)
+                            </h6>
                             <canvas id="gradesChart" style="width: 90%; max-height: 250px;"></canvas>
                         </div>
                     </div>
@@ -312,11 +342,15 @@
                                 <div class="d-flex gap-3 align-items-center">
                                     <i style="color: #4723d9" class="bi bi-book-fill"></i>
                                     <div>
-                                        <p class="class-desc m-0"><strong>{{ $seance->module->name }}</strong> - Salle {{ $seance->salle ?? 'Non défini' }}</p>
-                                        <p class="class-time m-0">{{ $seance->jour }}, {{ substr($seance->heure_debut, 0, 5) }} - {{ substr($seance->heure_fin, 0, 5) }}</p>
+                                        <p class="class-desc m-0"><strong>{{ $seance->module->name }}</strong> - Salle
+                                            {{ $seance->salle ?? 'Non défini' }}</p>
+                                        <p class="class-time m-0">{{ $seance->jour }},
+                                            {{ substr($seance->heure_debut, 0, 5) }} -
+                                            {{ substr($seance->heure_fin, 0, 5) }}</p>
                                     </div>
                                 </div>
-                                <a href="{{ route('emploi.myTimetable') }}"><i class="bi bi-arrow-right-circle-fill"></i></a>
+                                <a href="{{ route('emploi.myTimetable') }}"><i
+                                        class="bi bi-arrow-right-circle-fill"></i></a>
                             </div>
                         @empty
                             <div class="class-item mt-3 d-flex justify-content-between align-items-center pb-3">
@@ -327,7 +361,8 @@
                                         <p class="class-time m-0">Aujourd'hui, 10:00 - 12:00</p>
                                     </div>
                                 </div>
-                                <a href="{{ route('emploi.myTimetable') }}"><i class="bi bi-arrow-right-circle-fill"></i></a>
+                                <a href="{{ route('emploi.myTimetable') }}"><i
+                                        class="bi bi-arrow-right-circle-fill"></i></a>
                             </div>
                             <div class="class-item mt-3 d-flex justify-content-between align-items-center pb-3">
                                 <div class="d-flex gap-3 align-items-center">
@@ -337,7 +372,8 @@
                                         <p class="class-time m-0">Aujourd'hui, 14:00 - 16:00</p>
                                     </div>
                                 </div>
-                                <a href="{{ route('emploi.myTimetable') }}"><i class="bi bi-arrow-right-circle-fill"></i></a>
+                                <a href="{{ route('emploi.myTimetable') }}"><i
+                                        class="bi bi-arrow-right-circle-fill"></i></a>
                             </div>
                         @endforelse
                         <a href="{{ route('emploi.myTimetable') }}" class="text-center">
@@ -361,7 +397,8 @@
                                     <i style="color: #4723d9" class="bi bi-book-fill"></i>
                                     <div>
                                         <p class="course-desc m-0">{{ $course->name }}</p>
-                                        <p class="course-time m-0">S{{ $course->semester }} - {{ $course->groupe ?? 'Tous' }}</p>
+                                        <p class="course-time m-0">S{{ $course->semester }} -
+                                            {{ $course->groupe ?? 'Tous' }}</p>
                                     </div>
                                 </div>
                                 <div class="dropdown">
@@ -371,7 +408,9 @@
                                     <ul class="dropdown-menu dropdown-menu-end mt-2">
                                         <li><a class="dropdown-item" href="#">Voir les étudiants</a></li>
                                         <li><a class="dropdown-item" href="#">Saisir les notes</a></li>
-                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
                                         <li><a class="dropdown-item" href="#">Détails</a></li>
                                     </ul>
                                 </div>
@@ -392,7 +431,9 @@
                                     <ul class="dropdown-menu dropdown-menu-end mt-2">
                                         <li><a class="dropdown-item" href="#">Voir les étudiants</a></li>
                                         <li><a class="dropdown-item" href="#">Saisir les notes</a></li>
-                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
                                         <li><a class="dropdown-item" href="#">Détails</a></li>
                                     </ul>
                                 </div>
@@ -412,7 +453,9 @@
                                     <ul class="dropdown-menu dropdown-menu-end mt-2">
                                         <li><a class="dropdown-item" href="#">Voir les étudiants</a></li>
                                         <li><a class="dropdown-item" href="#">Saisir les notes</a></li>
-                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
                                         <li><a class="dropdown-item" href="#">Détails</a></li>
                                     </ul>
                                 </div>

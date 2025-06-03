@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\coordonnateur;
 
 use App\Http\Controllers\Controller;
-use App\Imports\NotesImport;
 use App\Imports\NotesImort;
+use App\Imports\NotesImport;
+use App\Models\Deadline;
 use App\Models\Groupe;
 use App\Models\Module;
 use App\Models\Note;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -32,7 +34,22 @@ class NoteController extends Controller
             ->paginate(10);
 
 
-        return view('modules.upload_notes', compact('modules', 'uploads'));
+
+
+        // Fetch the active 'note' deadline
+        $deadline = Deadline::where('type', 'note')
+            ->where('status', 'active')
+            ->where('deadline_date', '>', Carbon::now())
+            ->first();
+
+        // // Restrict access if no valid deadline exists
+        // if (!$deadline) {
+        //     return redirect()->back()->with('error', 'Aucune échéance active pour la saisie des notes.');
+        // }
+
+
+
+        return view('modules.upload_notes', compact('modules', 'uploads', 'deadline'));
     }
 
     public function upload(Request $request)
@@ -89,7 +106,7 @@ class NoteController extends Controller
         }
     }
 
-    
+
     public function download($id)
     {
         $upload = Note::findOrFail($id);

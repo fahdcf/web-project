@@ -23,98 +23,65 @@ class VacataireController extends Controller
 {
 
 
-    // public function filter()
-    // {
-    //     $query = User::WhereHas('role', function ($query) {
-    //         $query->where('isvocataire', true);
-    //     });
-
-    //     if (request('search')) {
-    //         $search = request('search');
-    //         $query->where(function ($q) use ($search) {
-    //             $q->where('firstname', 'like', "%$search%")
-    //                 ->orWhere('lastname', 'like', "%$search%")
-    //                 ->orWhere('email', 'like', "%$search%");;
-    //         });
-    //     }
 
 
-    //     if (request('status')) {
-    //         $status = request('status');
-    //         $query->whereHas('user_details', function ($q) use ($status) {
-    //             $q->where('status', $status);
-    //         });
-    //     }
+    public function dashboard()
+    {
+        $user = Auth::user();
 
+        // Fetch modules assigned to the vacataire
+        $modules = Module::whereHas('assignments', fn($q) => $q->where('prof_id', $user->id))
+            ->with('assignments')
+            ->get();
 
-    //     $rows = request('rows', 10); // default to 5 if not provided
+        // Initialize schedule data
+        $scheduleData = [
+            'Lundi' => 0,
+            'Mardi' => 0,
+            'Mercredi' => 0,
+            'Jeudi' => 0,
+            'Vendredi' => 0,
+            'Samedi' => 0,
+        ];
 
-    //     $vacataire = $query->with('user_details')->simplePaginate($rows);
+        // Fetch seances for the vacataire
+        $seances = Seance::with('module')
+            ->whereIn('module_id', $modules->pluck('id'))
+            ->whereHas('emploi', fn($q) => $q->where('is_active', true))
+            ->whereIn('jour', array_keys($scheduleData))
+            ->get();
 
-    //     return view('coordonnateur.vacataires.index', compact('$vacataire'));
-    // }
-
-
-
-
-
-public function dashboard()
-{
-    $user = Auth::user();
-
-    // Fetch modules assigned to the vacataire
-    $modules = Module::whereHas('assignments', fn($q) => $q->where('prof_id', $user->id))
-        ->with('assignments')
-        ->get();
-
-    // Initialize schedule data
-    $scheduleData = [
-        'Lundi' => 0,
-        'Mardi' => 0,
-        'Mercredi' => 0,
-        'Jeudi' => 0,
-        'Vendredi' => 0,
-        'Samedi' => 0,
-    ];
-
-    // Fetch seances for the vacataire
-    $seances = Seance::with('module')
-        ->whereIn('module_id', $modules->pluck('id'))
-        ->whereHas('emploi', fn($q) => $q->where('is_active', true))
-        ->whereIn('jour', array_keys($scheduleData))
-        ->get();
-
-    // Calculate hours per day
-    foreach ($seances as $seance) {
-        $day = $seance->jour;
-        if (array_key_exists($day, $scheduleData)) {
-            $duration = (strtotime($seance->heure_fin) - strtotime($seance->heure_debut)) / 3600;
-            $scheduleData[$day] += max($duration, 0); // Prevent negative durations
+        // Calculate hours per day
+        foreach ($seances as $seance) {
+            $day = $seance->jour;
+            if (array_key_exists($day, $scheduleData)) {
+                $duration = (strtotime($seance->heure_fin) - strtotime($seance->heure_debut)) / 3600;
+                $scheduleData[$day] += max($duration, 0); // Prevent negative durations
+            }
         }
+
+        // Convert to array for Chart.js
+        $scheduleData = array_values($scheduleData);
+
+        // Other dashboard data
+        $totalCourses = $modules->count();
+        $pendingGrades = 2; // Replace with grade query
+        $upcomingClasses = Seance::whereIn('module_id', $modules->pluck('id'))
+            ->whereHas('emploi', fn($q) => $q->where('is_active', true))
+            ->whereIn('jour', array_keys($scheduleData))
+            ->count();
+        $courses = $modules;
+        $upcomingSeances = Seance::with('module')
+            ->whereIn('module_id', $modules->pluck('id'))
+            ->whereHas('emploi', fn($q) => $q->where('is_active', true))
+            ->whereIn('jour', array_keys($scheduleData))
+            ->orderByRaw("FIELD(jour, 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi')")
+            ->orderBy('heure_debut')
+            ->take(2)
+            ->get();
+
+        return view('vacataire.dashboard', compact('totalCourses', 'pendingGrades', 'upcomingClasses', 'courses', 'upcomingSeances', 'scheduleData'));
     }
-
-    // Convert to array for Chart.js
-    $scheduleData = array_values($scheduleData);
-
-    // Other dashboard data
-    $totalCourses = $modules->count();
-    $pendingGrades = 2; // Replace with grade query
-    $upcomingClasses = Seance::whereIn('module_id', $modules->pluck('id'))
-        ->whereHas('emploi', fn($q) => $q->where('is_active', true))
-        ->whereIn('jour', array_keys($scheduleData))
-        ->count();
-    $courses = $modules;
-    $upcomingSeances = Seance::with('module')
-        ->whereIn('module_id', $modules->pluck('id'))
-        ->whereHas('emploi', fn($q) => $q->where('is_active', true))
-        ->whereIn('jour', array_keys($scheduleData))
-        ->orderByRaw("FIELD(jour, 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi')")
-        ->orderBy('heure_debut')
-        ->take(2)
-        ->get();
-
-    return view('vacataire.dashboard', compact('totalCourses', 'pendingGrades', 'upcomingClasses', 'courses', 'upcomingSeances', 'scheduleData'));
-}
 
     // public function uploadGrades(Module $module)
     // {
