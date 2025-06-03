@@ -1,10 +1,10 @@
-<a href="{{ route('mesModules') }}" class="nav_link {{ request()->is('professor/mesModules') ? 'active' : '' }}">
+<a href="{{ route('mesModules') }}" class="nav_link {{ request()->is('mesModules') ? 'active' : '' }}">
     <i class="fas fa-book-open"></i>
     <span class="nav_name">Mes Modules</span>
 </a>
 
 
-<a href="{{ route('notes_upload_page') }}" class="nav_link {{ request()->is('professor/upload-notes') ? 'active' : '' }}">
+<a href="{{ route('notes_upload_page') }}" class="nav_link {{ request()->is('upload-notes') ? 'active' : '' }}">
     <i class="fas fa-edit"></i> <!-- Changed to edit icon - more appropriate for "saisir" -->
     <span class="nav_name">Saisir les notes</span>
 </a>

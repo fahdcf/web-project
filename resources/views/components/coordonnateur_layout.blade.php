@@ -1,3 +1,10 @@
+@if(auth()->user()->role->isadmin)
+    @include('components.admin_layout')
+@elseif(auth()->user()->role->ischef)
+    @include('components.chef_layout')
+
+@else
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -486,7 +493,7 @@
                             @endforeach
 
 
-                          
+
 
 
 
@@ -573,12 +580,85 @@
                     @auth
                         @if (auth()->user()->isCoordonnateur())
                             @include('layouts.sidebars.coordonnateur')
-                        @elseif(auth()->user()->role->isprof)
-                            @include('layouts.sidebars.professor')
                         @elseif(auth()->user()->role->isvocataire)
                             @include('layouts.sidebars.vacataire')
+
+
+                            {{-- @elseif(auth()->user()->role->isadmin)
+                            @include('components.admin_layout')
+
+
+                        @elseif(auth()->user()->role->ischef)
+                            @include('components.chef_layout') --}}
+                            {{-- @elseif(auth()->user()->role->isprof)
+                            @include('layouts.sidebars.professor') --}}
                         @endif
                     @endauth
+
+
+
+                    @if (auth()->user()->role->isprof)
+                        <!-- Divider stylé -->
+                        <hr class="sidebar-divider-centered"
+                            style="width: 80%; margin: 1rem auto; border-top: 1px solid rgb(255, 255, 255);" />
+                        <!-- Ou avec une classe personnalisée -->
+                        <style>
+                            .sidebar-divider {
+                                border-top: 1px solid rgba(255, 255, 255, 0.712);
+                                /* ligne claire */
+                                margin: 1rem 0;
+                            }
+
+                            .sidebar-divider-centered {
+                                width: 80%;
+                                margin: 1rem auto;
+                                border-top: 1px solid rgba(255, 255, 255, 0.89);
+                                transition: all 0.3s ease;
+                            }
+
+                            .sidebar.collapsed .sidebar-divider-centered {
+                                width: 40%;
+                                /* smaller width when collapsed */
+                            }
+                        </style>
+                        {{-- devider here to ashow also the other action --}}
+                        <a href="{{ route('mesModules') }}"
+                            class="nav_link {{ request()->is('mesModules') ? 'active' : '' }}">
+                            <i class="fas fa-book"></i>
+                            <!-- Changed from fa-book-open to fa-book (simpler book icon) -->
+                            <span class="nav_name">Mes Modules</span>
+                        </a>
+
+                        <a href="{{ route('professor.myRequests') }}"
+                            class="nav_link {{ request()->is('my-requests') ? 'active' : '' }}">
+                            <i class="fas fa-clipboard-list"></i>
+                            <!-- Changed to clipboard with list - clearer for "demandes" -->
+                            <span class="nav_name">Mes Demandes</span>
+                        </a>
+
+                        <a href="{{ route('availableModules') }}"
+                            class="nav_link {{ request()->is('availableModules') ? 'active' : '' }}">
+                            <i class="fas fa-book-medical"></i>
+                            <!-- Changed to book with plus sign - indicates availability -->
+                            <span class="nav_name">Modules vacantes</span>
+                        </a>
+
+
+
+                        <a href="{{ route('emploi.myTimetable') }}"
+                            class="nav_link {{ request()->is('my-timetable') ? 'active' : '' }}">
+                            <i class="fas fa-table"></i> <!-- Changed to table icon - represents timetable better -->
+                            <span class="nav_name">Emploi du Temps</span>
+                        </a>
+
+                        <a href="{{ route('notes_upload_page') }}"
+                            class="nav_link {{ request()->is('upload-notes') ? 'active' : '' }}">
+                            <i class="fas fa-edit"></i> <!-- Changed to edit icon - more appropriate for "saisir" -->
+                            <span class="nav_name">Saisir les notes</span>
+                        </a>
+                    @endif
+
+
 
 
                     <a href="{{ url('/profile') }}" class="nav_link {{ request()->is('profile') ? 'active' : '' }}">
@@ -598,7 +678,7 @@
 
 
 
-        {{ $slot }}
+    {{ $slot }}
 
     <!--Container Main end-->
 
@@ -660,3 +740,5 @@
 
 
 </html>
+
+@endif

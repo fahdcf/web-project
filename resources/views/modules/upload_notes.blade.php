@@ -8,7 +8,7 @@
 
 
         {{--  --}}
-        <div class="countdown">
+        {{-- <div class="countdown">
             <span class="countdown-title">Temps restant</span>
             <span class="countdown-timer" id="countdown">Chargement...</span>
         </div>
@@ -36,7 +36,7 @@
 
             updateCountdown();
             setInterval(updateCountdown, 1000);
-        </script>
+        </script> --}}
 
         <style>
             .countdown {
