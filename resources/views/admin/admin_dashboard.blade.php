@@ -68,8 +68,13 @@ width: 100%;
   text-wrap: nowrap;
 
 
+}
 
-
+.buttons-wrapper a{
+  color: #4723d9
+}
+.buttons-wrapper a:hover{
+  text-decoration: none;
 }
 
 .addbtn{
@@ -333,10 +338,10 @@ width: 100%;
         <div class="welcome p-4 ">
 
           <div class="d-flex flex-column justify-content-between col-8">
-          <h3 style="font-weight: 500; padding-bottom: 10px;">Welcome <strong>{{auth()->user()->firstname . " " . auth()->user()->lastname}}</strong> to the Dashboard</h3>
-          <p style="font-size: 14px;">Unlock All Premium Songs, no Ads, and more.</p>  
+          <h3 style="font-weight: 500; padding-bottom: 10px;">Bienvenue <strong>{{auth()->user()->firstname . " " . auth()->user()->lastname}}</strong> sur le tableau de bord</h3>
+          <p style="font-size: 14px;"> {{ count($users_logs) }} professeurs connectés aujourd'hui.</p>  
           
-          <div class="buttons-wrapper d-flex  gap-3"><button class="addbtn">Ajeuter un utilisateur</button> <button class="seebtn">voir tous les utilisateurs</button> </div>
+          <div class="buttons-wrapper d-flex  gap-3"><button class="addbtn"><a href="{{url('professeurs')}}">gérer les professeurs</a></button> <button class="seebtn"><a href="{{url('filieres')}}" style="color: white">gérer les Filiéres</a></button> </div>
 
           </div>
 
@@ -353,7 +358,7 @@ width: 100%;
           <div class="d-flex flex-column justify-content-start align-items-start">
             <p class="title">Etudiants</p>
             <p class="num">Total: <strong>{{$studentCount}}</strong></p>
-            <button class="seemore">> Voir Plus</button>
+            <a class="seemore" href="{{url('etudiants')}}"> Voir Plus</a>
 
           </div>
 
@@ -370,7 +375,7 @@ width: 100%;
           <div class="d-flex flex-column justify-content-start align-items-start">
             <p class="title">Professeurs</p>
             <p class="num">Total: <strong>27</strong></p>
-            <button class="seemore">> Voir Plus</button>
+            <a class="seemore" href="{{url('professeurs')}}"> Voir Plus</a>
 
           </div>
 
@@ -387,7 +392,7 @@ width: 100%;
           <div class="d-flex flex-column justify-content-start align-items-start">
             <p class="title">departements</p>
             <p class="num">Total: <strong>4</strong></p>
-            <button class="seemore">> Voir Plus</button>
+            <a class="seemore" href="{{url('departements')}}"> Voir Plus</a>
 
           </div>
 
@@ -404,7 +409,7 @@ width: 100%;
           <div class="d-flex flex-column justify-content-start align-items-start">
             <p class="title">Filieres</p>
             <p class="num">Total: <strong>7</strong></p>
-            <button class="seemore">> Voir Plus</button>
+            <a class="seemore" href="{{url('filieres')}}"> Voir Plus</a>
 
           </div>
 
@@ -520,7 +525,7 @@ width: 100%;
             </div>
             @endforeach
 
-            <a href="#" class="text-center"><p class="pt-2 m-0">Voir tous</p></a>
+            <a href="{{url('/admin/actions')}}" class="text-center"><p class="pt-2 m-0">Voir tous</p></a>
             
           </div>
         </div>

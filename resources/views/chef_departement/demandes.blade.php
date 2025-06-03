@@ -359,17 +359,17 @@
 
 <div class="requests-container">
     <div class="page-header">
-        <h1 class="display-6 fw-bold mb-5" style="color: #4723d9">Requests Management</h1>
+        <h3 class="mb-5 bg-white py-3 px-3 rounded" style="color: #4723d9 ; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.038);margin-bottom: 2rem; font-weight: 600;" >    <i class="bi bi-card-checklist pr-2"></i>Gestion des demandes</h3>
         
         <div class="requests-tabs">
             <button class="tab-btn active" onclick="toggleSection('pending')">
-                <i class="bi bi-hourglass-split"></i> Pending Requests
+                <i class="bi bi-hourglass-split"></i> Demandes en attente
             </button>
             <button class="tab-btn" onclick="toggleSection('approved')">
-                <i class="bi bi-check-circle"></i> Approved Requests
+                <i class="bi bi-check-circle"></i> Demandes approuvées
             </button>
             <button class="tab-btn" onclick="toggleSection('rejected')">
-                <i class="bi bi-x-circle"></i> Rejected Requests
+                <i class="bi bi-x-circle"></i> Demandes rejetées
             </button>
         </div>
     </div>
@@ -378,7 +378,8 @@
     <section id="pending" class="request-section">
         <!-- Pending Requests -->
         <div class="section-header" data-bs-toggle="collapse" data-bs-target="#mpendingRequests" aria-expanded="true">
-            <h3>Pending Requests <span class="badge">{{ $module_requests->where('status', 'pending')->count() }}</span></h3>
+            <h3>Demandes en attente
+ <span class="badge">{{ $module_requests->where('status', 'pending')->count() }}</span></h3>
             <i class='bx bx-chevron-down'></i>
         </div>
         
@@ -389,7 +390,7 @@
                         <tr style="color: #535050; font-weight: 600; font-size: 15px;">
                             <th>Professeur</th>
                             <th>Module</th>
-                            <th>Elements</th>
+                            <th>Éléments</th>
                             <th>Status</th>
                             <th>Date</th>
                             <th class="pAlso">Action</th>
@@ -417,7 +418,7 @@
                                               @endif
                                             
                                             </p>
-                                            <p><span style="background-color: #eaa454; color: white; padding: 5px 6px; border-radius: 15px;">pending</span></p>
+                                            <p><span style="background-color: #eaa454; color: white; padding: 5px 6px; border-radius: 15px;">en attente</span></p>
                                             <p>{{ $module_request->created_at->format('Y-m-d') }}</p>
                                             <div class="pAlso d-flex align-items-center gap-2">
                                                 <input type="number" hidden id="pending_user_id_{{ $module_request['id'] }}" value="{{ $module_request['id'] }}">
@@ -440,13 +441,13 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <p>Vous voulez refuser la demande de <strong>{{ $module_request->prof->firstname }} {{ $module_request->prof->lastname }}</strong> ?</p>
+                                            <p>Voulez-vous refuser la demande de <strong>{{ $module_request->prof->firstname }} {{ $module_request->prof->lastname }}</strong> ?</p>
                                             <form action="{{ url('/chef/demandes/' . $module_request['id']) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <textarea name="rejection_reason" id="rejection_reason" style="resize: none; width: 100%; max-height: 100px; padding: 7px;" placeholder="Enter rejection reason here..."></textarea>
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn ml-1 btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn ml-1 btn-secondary btn-sm" data-dismiss="modal">Fermer</button>
                                                     <button type="submit" class="btn ml-1 btn-danger btn-sm">Refuser</button>
                                                 </div>
                                             </form>
@@ -466,12 +467,12 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <p>Vous voulez accepter la demande de <strong>{{ $module_request->prof->firstname }} {{ $module_request->prof->lastname }}</strong> ?</p>
+                                            <p>Voulez-vous accepter la demande de <strong>{{ $module_request->prof->firstname }} {{ $module_request->prof->lastname }}</strong> ?</p>
                                             <form action="{{ url('/chef/demandes/' . $module_request['id']) }}" method="POST">
                                                 @csrf
                                                 @method('PATCH')
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn ml-1 btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn ml-1 btn-secondary btn-sm" data-dismiss="modal">Fermer</button>
                                                     <button type="submit" class="btn ml-1 btn-sm text-white" style="background-color: #4723d9">Accepter</button>
                                                 </div>
                                             </form>
@@ -482,7 +483,7 @@
                         @empty
                             <tr>
                                 <td colspan="6">
-                                    <div class="empty-state">No pending module requests found</div>
+                                    <div class="empty-state">Il n'y a aucune demande de module en attente</div>
                                 </td>
                             </tr>
                         @endforelse
@@ -495,7 +496,7 @@
     <section id="approved" class="request-section hidden">
         <!-- Approved Requests -->
         <div class="section-header" data-bs-toggle="collapse" data-bs-target="#mapprovedRequests" aria-expanded="true">
-            <h3>Approved Requests <span class="badge">{{ $module_requests->where('status', 'approved')->count() }}</span></h3>
+            <h3>Demandes approuvées <span class="badge">{{ $module_requests->where('status', 'approved')->count() }}</span></h3>
             <i class='bx bx-chevron-down'></i>
         </div>
         
@@ -506,7 +507,7 @@
                         <tr style="color: #535050; font-weight: 600; font-size: 15px;">
                             <th>Professeur</th>
                             <th>Module</th>
-                            <th>Element</th>
+                            <th>Éléments</th>
                             <th>Status</th>
                             <th>Date</th>
                             <th class="pAlso">Action</th>
@@ -521,7 +522,7 @@
                                             <p>{{ $module_request->prof->firstname }} {{ $module_request->prof->lastname }}</p>
                                             <p>{{ $module_request->target->name }}</p>
                                             <p>{{ $module_request->type }}</p>
-                                            <p><span style="background-color: #13ab50; color: white; padding: 5px 6px; border-radius: 15px;">approved</span></p>
+                                            <p><span style="background-color: #13ab50; color: white; padding: 5px 6px; border-radius: 15px;">approuvée</span></p>
                                             <p>{{ $module_request->created_at->format('Y-m-d') }}</p>
                                             <div class="pAlso d-flex align-items-center justify-content-center gap-2">
                                                 <input type="number" hidden id="pending_user_id_{{ $module_request['id'] }}" value="{{ $module_request['id'] }}">
@@ -534,7 +535,7 @@
                         @empty
                             <tr>
                                 <td colspan="6">
-                                    <div class="empty-state">No approved module requests found</div>
+                                    <div class="empty-state">Aucune demande de module approuvée n’a été trouvée.</div>
                                 </td>
                             </tr>
                         @endforelse
@@ -547,7 +548,7 @@
     <section id="rejected" class="request-section hidden">
         <!-- Rejected Requests -->
         <div class="section-header" data-bs-toggle="collapse" data-bs-target="#mrejectedRequests" aria-expanded="true">
-            <h3>Rejected Requests <span class="badge">{{ $module_requests->where('status', 'rejected')->count() }}</span></h3>
+            <h3>Demandes rejetées <span class="badge">{{ $module_requests->where('status', 'rejected')->count() }}</span></h3>
             <i class='bx bx-chevron-down'></i>
         </div>
         
@@ -558,7 +559,7 @@
                         <tr style="color: #535050; font-weight: 600; font-size: 15px;">
                             <th>Professeur</th>
                             <th>Module</th>
-                            <th>Element</th>
+                            <th>Éléments</th>
                             <th>Status</th>
                             <th>Date</th>
                             <th class="pAlso">Action</th>
@@ -573,7 +574,7 @@
                                             <p>{{ $module_request->prof->firstname }} {{ $module_request->prof->lastname }}</p>
                                             <p>{{ $module_request->target->name }}</p>
                                             <p>{{ $module_request->type }}</p>
-                                            <p><span style="background-color: #ea5e54; color: white; padding: 5px 6px; border-radius: 15px;">refusee</span></p>
+                                            <p><span style="background-color: #ea5e54; color: white; padding: 5px 6px; border-radius: 15px;">refusée</span></p>
                                             <p>{{ $module_request->created_at->format('Y-m-d') }}</p>
                                             <div class="pAlso d-flex align-items-center justify-content-center gap-2">
                                                 <input type="number" hidden id="pending_user_id_{{ $module_request['id'] }}" value="{{ $module_request['id'] }}">
@@ -586,7 +587,7 @@
                         @empty
                             <tr>
                                 <td colspan="6">
-                                    <div class="empty-state">No rejected module requests found</div>
+                                    <div class="empty-state">Il n’y a aucune demande de module rejetée.</div>
                                 </td>
                             </tr>
                         @endforelse
@@ -601,7 +602,7 @@
         <div id="popupfor{{ $module_request['id'] }}" class="overlay">
             <div class="popup">
                 <div class="popup-header">
-                    <h5>Request Details</h5>
+                    <h5>Détails de la demande</h5>
                     <button type="button" class="btn-close" onclick="closePopup({{ $module_request['id'] }})"></button>
                 </div>
                 <div class="popup-body">
@@ -621,11 +622,11 @@
                         <span class="detail-label">Status</span>
                         <span class="detail-value">
                             @if ($module_request->status == 'pending')
-                                <span style="background-color: #eaa454; color: white; padding: 5px 6px; border-radius: 15px;">pending</span>
+                                <span style="background-color: #eaa454; color: white; padding: 5px 6px; border-radius: 15px;">en attente</span>
                             @elseif ($module_request->status == 'rejected')
-                                <span style="background-color: #ea5e54; color: white; padding: 5px 6px; border-radius: 15px;">refusee</span>
+                                <span style="background-color: #ea5e54; color: white; padding: 5px 6px; border-radius: 15px;">refusée</span>
                             @elseif ($module_request->status == 'approved')
-                                <span style="background-color: #13ab50; color: white; padding: 5px 6px; border-radius: 15px;">approved</span>
+                                <span style="background-color: #13ab50; color: white; padding: 5px 6px; border-radius: 15px;">approuvée</span>
                             @endif
                         </span>
                     </div>
@@ -635,14 +636,14 @@
                     </div>
                     @if ($module_request->status == 'rejected' && $module_request->rejection_reason)
                         <div class="detail-item">
-                            <span class="detail-label">Rejection Reason</span>
+                            <span class="detail-label">Motif du rejet</span>
                             <span class="detail-value">{{ $module_request->rejection_reason }}</span>
                         </div>
                     @endif
                 </div>
                 <div class="popup-footer">
                     <button type="button" class="btn btn-primary px-4 rounded-pill" onclick="closePopup({{ $module_request['id'] }})">
-                        <i class="bi bi-x-lg me-1"></i>Close
+                        <i class="bi bi-x-lg me-1"></i>Fermer
                     </button>
                 </div>
             </div>

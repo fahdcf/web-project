@@ -3,8 +3,7 @@
        <!-- Header Section -->
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
             <div>
-                <h1 class="display-6 fw-bold mb-2" style="color: #4723d9">Liste des Modules vacantes</h1>
-                <p class="text-muted mb-0">Explorez tous les modules vacantes disponibles par filière</p>
+                <h3 class="mb-2" style="color: #4723d9 ;margin-bottom: 2rem; font-weight: 600;box-shadow: 0 4px 12px rgba(0, 0, 0, 0.038);" ><i class="bi bi-card-checklist pr-2"></i>Liste des Modules Vacantes</h3>
             </div>
             
             <!-- Filière Filter -->

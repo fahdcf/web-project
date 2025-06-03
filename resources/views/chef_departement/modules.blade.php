@@ -2,7 +2,7 @@
     <div class="container-fluid px-4 py-5">
         <!-- Header Section -->
         <div
-            class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+            class="d-flex flex-column flex-md-row justify-content-between align-items-center align-items-md-center mb-4 gap-3 bg-white rounded py-3 px-3" style="box-shadow: 0 4px 12px rgba(0, 0, 0, 0.038);" >
             <div>
                 <h1 class="display-6 fw-bold  mb-2" style="color: #4723d9">Liste des Modules</h1>
                 <p class="text-muted mb-0">Explorez tous les modules disponibles par filière</p>
