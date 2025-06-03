@@ -5,6 +5,64 @@
     <div class="container-fluid px-4 py-5 ">
         <x-global_alert />
 
+
+
+        {{--  --}}
+        <div class="countdown">
+            <span class="countdown-title">Temps restant</span>
+            <span class="countdown-timer" id="countdown">Chargement...</span>
+        </div>
+
+        <script>
+            const deadlineDate = new Date('{{ $deadline->deadline_date->toIso8601String() }}').getTime();
+
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const distance = deadlineDate - now;
+
+                if (distance < 0) {
+                    document.getElementById('countdown').innerHTML = 'Expiré';
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('countdown').innerHTML =
+                    `${days}j ${hours}h ${minutes}m ${seconds}s`;
+            }
+
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        </script>
+
+        <style>
+            .countdown {
+                background: white;
+                border-radius: 0.5rem;
+                padding: 0.75rem;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                margin-bottom: 1rem;
+                display: inline-block;
+            }
+
+            .countdown-title {
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: #4723d9;
+                margin-right: 0.5rem;
+            }
+
+            .countdown-timer {
+                font-size: 1rem;
+                color: #252525;
+                font-weight: 500;
+            }
+        </style>
+        {{--  --}}
         <!-- Error Messages -->
         @if ($errors->any())
             <div class="alert alert-danger error-message" role="alert">

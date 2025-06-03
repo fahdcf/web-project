@@ -6,10 +6,12 @@ use App\Exports\ModulesExport;
 use App\Http\Controllers\Controller;
 use App\Imports\ModulesImport;
 use App\Models\Assignment;
+use App\Models\Deadline;
 use App\Models\Departement;
 use App\Models\Filiere;
 use App\Models\Module;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -568,8 +570,21 @@ class ModuleController extends Controller
                 });
             })
             ->get();
-        return view('modules.availableModules', compact('modules'));
-    }
 
-   
+
+
+
+        // Fetch the active 'ue_selecion' deadline
+        $deadline = Deadline::where('type', 'ue_selecion')
+            ->where('status', 'active')
+            ->where('deadline_date', '>', Carbon::now())
+            ->first();
+
+        // // Restrict access if no valid deadline exists
+        // if (!$deadline) {
+        //     return redirect()->route('professor.dashboard')->with('error', 'Aucune échéance active pour la sélection des UE.');
+        // }
+
+        return view('modules.availableModules', compact('modules', 'deadline'));
+    }
 }

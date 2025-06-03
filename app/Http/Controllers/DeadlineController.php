@@ -32,26 +32,41 @@ class DeadlineController extends Controller
         $deadline = Deadline::create([
             'type' => $validated['type'],
             'deadline_date' => Carbon::parse($validated['deadline_date']),
-            'notification_date' => Carbon::parse($validated['notification_date']),
             'status' => $validated['status'],
-            // 'created_by' => Auth::id(),
-            'created_by' => 1,
+            'notification_date' => Carbon::parse($validated['notification_date']),
+            'created_by' => Auth::id(),
         ]);
 
-        // Fetch all professor users (assuming a 'role' column exists)
-        $professors = User::whereHas('role', function ($query) {
-            $query->where('isprof', true)
-            ->orWhere('isvocataire', true);
-        })->get();
 
-        // Prepare notification message based on deadline type
-        $message = $validated['type'] === 'note'
-            ? 'Une nouvelle échéance a été fixée pour la saisie des notes.'
-            : 'Une nouvelle échéance a été fixée pour la sélection des UE.';
 
-        // Send notification to all professors
-        Notification::send($professors, new DeadlineNotification($message, $deadline));
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        // send notifications to professors and vacataires
+
+
+        //about note to bothe professors and vacataires
+        if ($validated['type'] === 'note') {
+            $professors = User::whereHas('role', function ($query) {
+                $query->where('isprof', true)
+                    ->orWhere('isvocataire', true);
+            })->get();
+
+            $message = 'Une nouvelle échéance a été fixée pour la saisie des notes.';
+            $url = route('notes_upload_page');
+            Notification::send($professors, new DeadlineNotification($message, $deadline, $url));
+
+
+            //about ue_selecion to professors only
+        } else if ($validated['type'] === 'ue_selecion') {
+            $vacataires = User::whereHas('role', function ($query) {
+                $query->where('isvocataire', true);
+            })->get();
+
+            $message = 'Une nouvelle échéance a été fixée pour la sélection des UE.';
+            $url = route('availableModules');
+
+        Notification::send($vacataires, new DeadlineNotification($message, $deadline, $url));
+        }
 
 
         return redirect()->route('deadline.index')->with('success', 'Échéance créée avec succès.');

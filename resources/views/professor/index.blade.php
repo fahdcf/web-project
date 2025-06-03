@@ -220,7 +220,7 @@
     </style>
 
 
-    <div class="notifications">
+    {{-- <div class="notifications">
         <div class="notifications-header">Notifications</div>
         <div class="notifications-content">
             @forelse (auth()->user()->unreadNotifications as $notification)
@@ -242,7 +242,7 @@
             @endforelse
             <a href="#" class="text-center">Voir toutes les notifications</a>
         </div>
-    </div>
+    </div> --}}
 
 
 

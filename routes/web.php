@@ -87,7 +87,6 @@ use Illuminate\Support\Facades\Route;
 // ->delay($deadline->notification_date);
 
 
-Route::patch('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
 /////////Coordonnateur//////////////////////////////////////////////////////
 Route::middleware(['auth', 'can:coord'])
     ->prefix('coordonnateur')->group(function () {

@@ -462,7 +462,7 @@
 
                             <li><a class="dropdown-item text-muted" href="#">No notifications</a></li>
                         @else
-                            {{-- @foreach ($notifications as $notification)
+                            @foreach ($notifications as $notification)
                                 <li>
                                     @if (is_null($notification->read_at))
                                         <a class="dropdown-item"
@@ -483,25 +483,10 @@
                                     @endif
 
                                 </li>
-                            @endforeach --}}
-
-
-                            @foreach (auth()->user()->unreadNotifications as $notification)
-                                <div
-                                    class="notification alert alert-{{ $notification->data['deadline_type'] == 'note' ? 'warning' : 'info' }}">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <strong>{{ $notification->data['message'] }}</strong>
-                                            <div class="mt-1 small text-muted">
-                                                Deadline:
-                                                {{ \Carbon\Carbon::parse($notification->data['deadline_date'])->format('M j, Y H:i') }}
-                                            </div>
-                                        </div>
-                                        <a href="{{ $notification->data['url'] }}"
-                                            class="btn btn-sm btn-outline-primary">View</a>
-                                    </div>
-                                </div>
                             @endforeach
+
+
+                          
 
 
 
