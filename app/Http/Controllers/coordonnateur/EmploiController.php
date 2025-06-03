@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ProfessorTimetableExport;
 use App\Exports\FiliereTimetableExport;
+use App\Models\coord_action;
 
 class EmploiController extends Controller
 {
@@ -85,6 +86,7 @@ class EmploiController extends Controller
             'is_active' => $validated['is_active'] ?? true,
             'file_path' => null,
         ]);
+        coord_action::create(['user_id' => auth()->id(), 'action_type' => 'create', 'target_table' => 'emplois', 'target_id' => $emploi->id, 'description' => "Création de l'emploi: {$emploi->name}"]);
 
         $successCount = 0;
         $errors = [];
@@ -134,12 +136,13 @@ class EmploiController extends Controller
             }
         }
 
+
         $message = "Emploi du temps créé avec succès ! $successCount séance(s) ajoutée(s).";
         if (!empty($errors)) {
             $message .= ' Erreurs: ' . implode('; ', $errors);
             return redirect()->route('emploi.index')->with('warning', $message);
         }
-
+        coord_action::create(['user_id' => auth()->id(), 'action_type' => 'create', 'target_table' => 'seances', 'target_id' => $emploi->semester, 'description' => "Création de séances: {$successCount} pour le emploie:  {$emploi->name}"]);
         return redirect()->route('emploi.index')->with('success', $message);
     }
 
@@ -251,7 +254,7 @@ class EmploiController extends Controller
             $message .= ' Erreurs: ' . implode('; ', $errors);
             return redirect()->route('emploi.index')->with('warning', $message);
         }
-
+        coord_action::create(['user_id' => auth()->id(), 'action_type' => 'update', 'target_table' => 'emplois', 'target_id' => $emploi->id, 'description' => "Mise à jour de séances: {$successCount} pour l'emploi:  {$emploi->name}"]);
         return redirect()->route('emploi.index')->with('success', $message);
     }
 
@@ -262,17 +265,9 @@ class EmploiController extends Controller
             return redirect()->route('emploi.index')->with('error', 'Accès non autorisé.');
         }
 
-        try {
-            Log::info('Deleting emploi:', ['emploi_id' => $emploi->id, 'name' => $emploi->name]);
-            $emploi->delete();
-            return redirect()->route('emploi.index')->with('success', 'Emploi du temps supprimé avec succès.');
-        } catch (\Exception $e) {
-            Log::error('Failed to delete emploi:', [
-                'emploi_id' => $emploi->id,
-                'error' => $e->getMessage(),
-            ]);
-            return redirect()->route('emploi.index')->with('error', 'Erreur lors de la suppression.');
-        }
+        $emploi->delete();
+        coord_action::create(['user_id' => auth()->id(), 'action_type' => 'delete', 'target_table' => 'emplois', 'target_id' => $emploi->id, 'description' => "Suppression de l'emploi: {$emploi->name}"]);
+        return redirect()->route('emploi.index')->with('success', 'Emploi du temps supprimé avec succès.');
     }
 
     public function prof(Request $request)

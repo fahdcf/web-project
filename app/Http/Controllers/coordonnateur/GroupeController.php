@@ -5,6 +5,7 @@ namespace App\Http\Controllers\coordonnateur;
 use App\export\GroupesExport;
 use App\Http\Controllers\Controller;
 use App\Models\Assignment;
+use App\Models\coord_action;
 use App\Models\Deadline;
 
 use App\Models\Filiere;
@@ -115,9 +116,7 @@ class GroupeController extends Controller
         ));
     }
 
-    public function current_semester(Request 
-    
-    $request)
+    public function current_semester(Request $request)
     {
         $filiere = Auth::user()->manage;
         $semesterData = $this->currentSemesterInfo();
@@ -148,9 +147,10 @@ class GroupeController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
+            return redirect()->back()
+            ->with('config_error', 'Veuillez remplir tous les champs correctement.')
+            ->withErrors($validator);
+    }
         $user = Auth::user();
         $filiere = Filiere::where('coordonnateur_id', $user->id)->firstOrFail();
         $semester = $request->input('semester');
@@ -159,10 +159,11 @@ class GroupeController extends Controller
 
         Module::where('filiere_id', $filiere->id)
             ->where('semester', $semester)
-            ->update([
+            ->update([  
                 'nbr_groupes_td' => $nbGroupesTd,
                 'nbr_groupes_tp' => $nbGroupesTp,
             ]);
+            coord_action::create(['user_id' => auth()->id(), 'action_type' => 'mise à jour', 'target_table' => 'modules', 'target_id' => $semester, 'description' => "Mise à jour des groupes pour tout les module de semester: {$semester}"]);
 
         return redirect()->back()
             ->with('success', 'Configuration des groupes pour le semestre S' . $semester . ' enregistrée.');
@@ -192,6 +193,8 @@ class GroupeController extends Controller
             'nbr_groupes_td' => $request->input('nb_groupes_td'),
             'nbr_groupes_tp' => $request->input('nb_groupes_tp'),
         ]);
+            coord_action::create(['user_id' => auth()->id(), 'action_type' => 'mise à jour', 'target_table' => 'modules', 'target_id' => $module->id, 'description' => "Mise à jour des groupes pour le module : {$module->name}"]);
+
 
         return redirect()->back()
             ->with('success', 'Configuration des groupes pour le module ' . $module->name . ' enregistrée.');
