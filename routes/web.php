@@ -80,6 +80,9 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 
 
+// Queue notification job for notification_date
+        // SendDeadlineNotification::dispatch($deadline)
+            // ->delay($deadline->notification_date);
 
 /////////Coordonnateur//////////////////////////////////////////////////////
 Route::middleware(['auth', 'can:coord'])
