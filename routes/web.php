@@ -1,6 +1,7 @@
 <?php
 
 use App\export\GroupesExport;
+use App\Http\Controllers\adminsControllers\AdminActionController;
 use App\Http\Controllers\adminsControllers\adminProfileController;
 use App\Http\Controllers\adminsControllers\adminsController;
 use App\Http\Controllers\adminsControllers\departementController;
@@ -8,29 +9,27 @@ use App\Http\Controllers\adminsControllers\etudiantController;
 use App\Http\Controllers\adminsControllers\filiereController;
 use App\Http\Controllers\adminsControllers\pendinguserController;
 use App\Http\Controllers\adminsControllers\professorsController;
-use App\Http\Controllers\adminsControllers\UserLogController;
-use App\Http\Controllers\adminsControllers\AdminActionController;
-use Carbon\Carbon;
-
 use App\Http\Controllers\adminsControllers\profileController;
-
 use App\Http\Controllers\adminsControllers\resetPasswordController;
-use App\Http\Controllers\adminsControllers\signupController;
-use App\Http\Controllers\adminsControllers\tasksController;
 
+use App\Http\Controllers\adminsControllers\signupController;
+
+use App\Http\Controllers\adminsControllers\tasksController;
+use App\Http\Controllers\adminsControllers\UserLogController;
 use App\Http\Controllers\chef_departementControllers\ChefActionsController;
+
 use App\Http\Controllers\chef_departementControllers\cheffiliereController;
 use App\Http\Controllers\chef_departementControllers\chefModulesController;
 use App\Http\Controllers\chef_departementControllers\ChefProfessorController;
-
 use App\Http\Controllers\chef_departementControllers\requestsController;
 
-
 use App\Http\Controllers\Controller;
+
+
 use App\Http\Controllers\Coordinator\ApiController;
 use App\Http\Controllers\Coordinator\ScheduleController;
-
 use App\Http\Controllers\coordonnateur\CoordonnateurController;
+
 use App\Http\Controllers\coordonnateur\EmploiController;
 use App\Http\Controllers\coordonnateur\GroupeController;
 use App\Http\Controllers\coordonnateur\ModuleController;
@@ -38,17 +37,18 @@ use App\Http\Controllers\coordonnateur\NoteController;
 use App\Http\Controllers\coordonnateur\ProfessorController;
 use App\Http\Controllers\coordonnateur\ScheduleBuilderController;
 use App\Http\Controllers\coordonnateur\ScheduleController as scheduleCoor;
-
 use App\Http\Controllers\coordonnateur\VacataireController;
+
+use App\Http\Controllers\DeadlineController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\homeController;
 
 
 //FOR CHEF DEPARTEMENT
-use App\Http\Controllers\DeadlineController;
-
 use App\Http\Controllers\loginController;
+
 use App\Http\Controllers\newuserController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Professor\ScheduleController as scheduleProf;
 
 use App\Mail\newuserEmail;
@@ -56,9 +56,9 @@ use App\Mail\newuserEmail;
 use App\Mail\resetPasswordEmail;
 
 use App\Mail\WelcomeEmail;
-use App\Models\Departement;
-
 use App\Models\chef_action;
+
+use App\Models\Departement;
 use App\Models\Filiere;
 use App\Models\pending_user;
 use App\Models\Role;
@@ -70,8 +70,9 @@ use App\Models\task;
 use App\Models\User;
 use App\Models\user_detail;
 use App\Notifications\ProfUnassignedNotification;
-use function PHPUnit\Framework\returnArgument;
+use Carbon\Carbon;
 
+use function PHPUnit\Framework\returnArgument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -80,10 +81,13 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 
 
-// Queue notification job for notification_date
-        // SendDeadlineNotification::dispatch($deadline)
-            // ->delay($deadline->notification_date);
 
+// Queue notification job for notification_date
+// SendDeadlineNotification::dispatch($deadline)
+// ->delay($deadline->notification_date);
+
+
+Route::patch('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
 /////////Coordonnateur//////////////////////////////////////////////////////
 Route::middleware(['auth', 'can:coord'])
     ->prefix('coordonnateur')->group(function () {
@@ -444,19 +448,19 @@ Route::get('etudiant-profile/{id}', [adminProfileController::class, 'studentprof
 
 
 //chef department
-Route::get('chef/demandes',[requestsController::class,'index'])->name('demandes.list'); 
-Route::patch('chef/demandes/{id}',[requestsController::class,'accept']); 
-Route::delete('chef/demandes/{id}',[requestsController::class,'decline']); 
- Route::get('chef/professeurs',[ChefProfessorController::class,'index']);
- Route::delete('chef/professeurs/remove/{id}',[ChefProfessorController::class,'removeModule']);
-  Route::get('chef/filieres',[cheffiliereController::class,'index']);
-Route::PATCH('chef/filieres/modifier/{id}',[cheffiliereController::class,'modify']); 
-Route::get('chef/modules',[chefModulesController::class,'index']); 
-Route::get('chef/modules_vacantes',[chefModulesController::class,'vacantesList']); 
-Route::post('chef/modules_vacantes/affecter/{id}',[chefModulesController::class,'affecter']); 
-Route::get('chef/professeur_profile/{id}',[ChefProfessorController::class,'professeur_profile']);
-Route::post('chef/professeur_profile/{id}',[ChefProfessorController::class,'edit']);
-Route::post('chef/professeurs/affecter', [ChefProfessorController::class,'affecter']);
+Route::get('chef/demandes', [requestsController::class, 'index'])->name('demandes.list');
+Route::patch('chef/demandes/{id}', [requestsController::class, 'accept']);
+Route::delete('chef/demandes/{id}', [requestsController::class, 'decline']);
+Route::get('chef/professeurs', [ChefProfessorController::class, 'index']);
+Route::delete('chef/professeurs/remove/{id}', [ChefProfessorController::class, 'removeModule']);
+Route::get('chef/filieres', [cheffiliereController::class, 'index']);
+Route::PATCH('chef/filieres/modifier/{id}', [cheffiliereController::class, 'modify']);
+Route::get('chef/modules', [chefModulesController::class, 'index']);
+Route::get('chef/modules_vacantes', [chefModulesController::class, 'vacantesList']);
+Route::post('chef/modules_vacantes/affecter/{id}', [chefModulesController::class, 'affecter']);
+Route::get('chef/professeur_profile/{id}', [ChefProfessorController::class, 'professeur_profile']);
+Route::post('chef/professeur_profile/{id}', [ChefProfessorController::class, 'edit']);
+Route::post('chef/professeurs/affecter', [ChefProfessorController::class, 'affecter']);
 
 Route::get('/logs', [UserLogController::class, 'index'])->name('admin.logs');
 Route::get('/logs/export', [UserLogController::class, 'export'])->name('admin.logs.export');
@@ -512,8 +516,8 @@ Route::get(
         ));
     }
 
-  )->name('chef.actions');
+)->name('chef.actions');
 
 
-    Route::get('/deadlines', [DeadlineController::class, 'index'])->name('deadline.index');
-    Route::post('/deadlines', [DeadlineController::class, 'store'])->name('deadline.store');
+Route::get('/deadlines', [DeadlineController::class, 'index'])->name('deadline.index');
+Route::post('/deadlines', [DeadlineController::class, 'store'])->name('deadline.store');
