@@ -432,20 +432,20 @@
 </style>
 
 <div class="admin-container">
-  <div class="page-header">
-    <h1 class="page-title">The List of Admins</h1>
+  <div class="page-header pt-3">
+    <h1 class="page-title">Liste des administrateurs</h1>
     <div class="d-flex gap-3">
       <button onclick="exportStyledExcel()" class="btn btn-outline-success">
-        <i class="bi bi-file-excel"></i> Export
+        <i class="bi bi-file-excel"></i> Exporter
       </button>
-      <a href="{{url('admins/add')}}" class="btn btn-primary">Ajouter un admin</a>
+      <a href="{{url('admins/add')}}" class="btn btn-primary">Ajouter un administrateur</a>
     </div>
   </div>
 
   <!-- Filter Section -->
   <div class="filter-section">
     <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="true">
-      <h5>Filters</h5>
+      <h5>Filtres</h5>
       <i class="bi bi-chevron-down"></i>
     </div>
     <div class="collapse show" id="filterCollapse">
@@ -453,14 +453,14 @@
         <div class="filter-row row g-2">
           <!-- Search -->
           <div class="col-12 col-md-4 col-lg-4 filter-group">
-            <label for="searchInput" class="filter-label">Search</label>
-            <input type="text" id="searchInput" class="filter-input py-2" placeholder="Name, ID or email">
+            <label for="searchInput" class="filter-label">Recherche</label>
+            <input type="text" id="searchInput" class="filter-input py-2" placeholder="Nom, ID ou email">
           </div>
           <!-- Department Filter -->
           <div class="col-12 col-md-4 col-lg-2 filter-group">
-            <label for="departementFilter" class="filter-label">Department</label>
+            <label for="departementFilter" class="filter-label">Département</label>
             <select class="filter-input" id="departementFilter">
-              <option value="">All Departments</option>
+              <option value="">Tous les départements</option>
               @foreach ($Departements as $Departement)
                 <option value="{{ $Departement->name }}">{{ $Departement->name }}</option>
               @endforeach
@@ -468,25 +468,25 @@
           </div>
           <!-- Status Filter -->
           <div class="col-12 col-md-4 col-lg-2 filter-group">
-            <label for="statusFilter" class="filter-label">Status</label>
+            <label for="statusFilter" class="filter-label">Statut</label>
             <select class="filter-input" id="statusFilter">
-              <option value="">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
+              <option value="">Tous les statuts</option>
+              <option value="active">Actif</option>
+              <option value="inactive">Inactif</option>
             </select>
           </div>
           <!-- Rows Per Page -->
           <div class="col-12 col-md-4 col-lg-2 filter-group mb-4 mb-md-0">
-            <label for="rowsPerPage" class="filter-label">Rows per page</label>
+            <label for="rowsPerPage" class="filter-label">Lignes par page</label>
             <select id="rowsPerPage" class="filter-input">
-              <option value="all">Show All</option>
+              <option value="all">Tout afficher</option>
               <option value="5">5</option>
               <option value="15">15</option>
               <option value="30">30</option>
               <option value="100">100</option>
             </select>
           </div>
-          <button type="button" id="resetFilters" class="apply-btn col-12 col-md-4 col-lg-2 py-2">Reset</button>
+          <button type="button" id="resetFilters" class="apply-btn col-12 col-md-4 col-lg-2 py-2">Réinitialiser</button>
         </div>
       </div>
     </div>
@@ -498,12 +498,12 @@
       <table class="table" id="exportTable">
         <thead>
           <tr>
-            <th>id</th>
+            <th>ID</th>
             <th>Photo</th>
             <th>Nom complet</th>
-            <th>Etat</th>
+            <th>Statut</th>
             <th>Email</th>
-            <th>Date de creation</th>
+            <th>Date de création</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -533,44 +533,22 @@
               <td>
                 @if ($admin->user_details)
                   <span class="status-badge status-{{ $admin->user_details->status }}">
-                    {{ ucfirst($admin->user_details->status) }}
+                    {{ ucfirst($admin->user_details->status == 'active' ? 'Actif' : 'Inactif') }}
                   </span>
                 @else
-                  <span class="status-badge">Null</span>
+                  <span class="status-badge">Aucun</span>
                 @endif
               </td>
               <td>{{ $admin['email'] }}</td>
               <td>{{ $admin->created_at->format('Y-m-d') }}</td>
               <td>
                 <div class="d-flex justify-content-center gap-3">
-                  <a href="{{url('profile/'. $admin->id)}}" class="action-btn view-btn" title="Edit Profile">
+                  <a href="{{url('profile/'. $admin->id)}}" class="action-btn view-btn" title="Modifier le profil">
                     <i class="bi bi-pencil-square"></i>
                   </a>
-                  <button class="action-btn delete-btn" data-bs-toggle="modal" data-bs-target="#Modalforid{{$admin['id']}}" title="Delete Admin">
+                  <button class="action-btn delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal_{{$admin['id']}}" title="Supprimer l'administrateur">
                     <i class="bi bi-trash3"></i>
                   </button>
-                  <!-- Modal -->
-                  <div class="modal fade" id="Modalforid{{$admin['id']}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title" id="exampleModalLabel">Confirm Deletion</h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                          <p>Vous voulez supprimer l'admin <strong>{{$admin['lastname']}}</strong> définitivement?</p>
-                          <form action="{{ url('/admins/' . $admin['id']) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </div>
-                          </form>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </td>
             </tr>
@@ -578,33 +556,57 @@
         </tbody>
       </table>
     </div>
+    <!-- Modals for Delete Confirmation -->
+    @foreach ($admins as $admin)
+      <div class="modal fade" id="deleteModal_{{$admin['id']}}" tabindex="-1" aria-labelledby="deleteModalLabel_{{$admin['id']}}" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteModalLabel_{{$admin['id']}}">Confirmer la suppression</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Voulez-vous desactiver le compte de l'administrateur <strong>{{$admin['lastname']}}</strong>  ?</p>
+              <form action="{{ url('/admins/' . $admin['id']) }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fermer</button>
+                  <button type="submit" class="btn btn-danger btn-sm">Desactiver</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    @endforeach
     <div id="paginationControls" class="pagination"></div>
   </div>
 
   <!-- Overlay -->
   <div id="overlay" class="overlay">
     <div class="popup">
-      <h5>Modifier l'admin <span id="adminName"></span></h5>
+      <h5>Modifier l'administrateur <span id="adminName"></span></h5>
       <form id="popupForm" action="" method="POST">
         @csrf
         @method('PATCH')
         <input hidden type="text" id="admin_id" name="admin_id">
         <div class="form-group">
           <label for="role">Rôle</label>
-          <input type="text" class="form-control" id="role" name="role" placeholder="Ex: Super Admin">
+          <input type="text" class="form-control" id="role" name="role" placeholder="Ex: Super Administrateur">
         </div>
         <div class="form-group">
-          <label for="admin">Admin</label>
+          <label for="admin">Administrateur</label>
           <select class="form-control" id="admin" name="user_id">
-            <option value="">-- Sélectionner un admin --</option>
+            <option value="">-- Sélectionner un administrateur --</option>
             @foreach ($admins as $admin)
               <option value="{{ $admin->id }}">{{ $admin->lastname }} {{ $admin->firstname }}</option>
             @endforeach
           </select>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="closePopup()">Close</button>
-          <button type="submit" class="btn btn-success">Update</button>
+          <button type="button" class="btn btn-secondary" onclick="closePopup()">Fermer</button>
+          <button type="submit" class="btn btn-success">Mettre à jour</button>
         </div>
       </form>
     </div>
@@ -718,9 +720,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let paginationHTML = '';
 
     if (currentPage > 1) {
-      paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage - 1})">Previous</button>`;
+      paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage - 1})">Précédent</button>`;
     } else {
-      paginationHTML += `<button class="page-btn disabled">Previous</button>`;
+      paginationHTML += `<button class="page-btn disabled">Précédent</button>`;
     }
 
     for (let i = 1; i <= pageCount; i++) {
@@ -728,9 +730,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (currentPage < pageCount) {
-      paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage + 1})">Next</button>`;
+      paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage + 1})">Suivant</button>`;
     } else {
-      paginationHTML += `<button class="page-btn disabled">Next</button>`;
+      paginationHTML += `<button class="page-btn disabled">Suivant</button>`;
     }
 
     paginationControls.innerHTML = paginationHTML;
@@ -761,10 +763,10 @@ document.addEventListener('DOMContentLoaded', function() {
 function exportStyledExcel() {
   const table = document.getElementById("exportTable");
   const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet("Admins");
+  const worksheet = workbook.addWorksheet("Administrateurs");
 
   // Headers
-  const headers = ['ID', 'Nom complet', 'Etat', 'Email', 'Date de creation'];
+  const headers = ['ID', 'Nom complet', 'Statut', 'Email', 'Date de création'];
   worksheet.addRow(headers);
 
   // Style header
@@ -785,15 +787,15 @@ function exportStyledExcel() {
       const rowData = [
         row.cells[0].innerText, // ID
         row.cells[2].innerText, // Nom complet
-        row.cells[3].querySelector('.status-badge')?.innerText || 'Null', // Etat
+        row.cells[3].querySelector('.status-badge')?.innerText || 'Aucun', // Statut
         row.cells[4].innerText, // Email
-        row.cells[5].innerText  // Date de creation
+        row.cells[5].innerText  // Date de création
       ];
       const newRow = worksheet.addRow(rowData);
       const statusCell = newRow.getCell(3);
-      if (statusCell.value === 'Active') {
+      if (statusCell.value === 'Actif') {
         statusCell.font = { color: { argb: 'FF00AA00' } };
-      } else if (statusCell.value === 'Inactive') {
+      } else if (statusCell.value === 'Inactif') {
         statusCell.font = { color: { argb: 'FFAA0000' } };
       }
       statusCell.alignment = { horizontal: 'center' };
@@ -804,15 +806,15 @@ function exportStyledExcel() {
   worksheet.columns = [
     { width: 10 }, // ID
     { width: 20 }, // Nom complet
-    { width: 15 }, // Etat
+    { width: 15 }, // Statut
     { width: 30 }, // Email
-    { width: 15 }  // Date de creation
+    { width: 15 }  // Date de création
   ];
 
   // Export
   workbook.xlsx.writeBuffer().then((buffer) => {
     const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-    saveAs(blob, "Admins_Styled.xlsx");
+    saveAs(blob, "Administrateurs_Styled.xlsx");
   });
 }
 

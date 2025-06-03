@@ -6,154 +6,146 @@
 </head>
 
 <style>
+  .header-container {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
 
-                .header-container {
-                    background: white;
-                    border-radius: 8px;
-                    padding: 20px;
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                }
+  .header-title {
+    color: #4723d9;
+    font-weight: 600;
+    font-size: 1.75rem;
+    margin: 0;
+  }
 
-                .header-title {
-                    color: #4723d9;
-                    font-weight: 600;
-                    font-size: 1.75rem;
-                    margin: 0;
-                }
+  .form-select {
+    border-color: #e0e0e0;
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+    transition: border-color 0.2s;
+  }
 
-                .form-select {
-                    border-color: #e0e0e0;
-                    font-size: 0.9rem;
-                    padding: 8px 12px;
-                    border-radius: 6px;
-                    background-color: #f8f9fa;
-                    transition: border-color 0.2s;
-                }
+  .form-select:focus {
+    border-color: #4723d9;
+    box-shadow: 0 0 0 2px rgba(71, 35, 217, 0.2);
+    outline: none;
+  }
 
-                .form-select:focus {
-                    border-color: #4723d9;
-                    box-shadow: 0 0 0 2px rgba(71, 35, 217, 0.2);
-                    outline: none;
-                }
+  .btn-primary {
+    background-color: #4723d9;
+    border-color: #4723d9;
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
 
-                .btn-primary {
-                    background-color: #4723d9;
-                    border-color: #4723d9;
-                    font-size: 0.9rem;
-                    padding: 8px 16px;
-                    border-radius: 6px;
-                    font-weight: 500;
-                    transition: all 0.2s;
-                }
+  .btn-primary:hover {
+    background-color: white;
+    color: #4723d9;
+    border-color: #4723d9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
-                .btn-primary:hover {
-                    background-color: white;
-                    color: #4723d9;
-                    border-color: #4723d9;
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                }
+  .btn-outline-primary {
+    border-color: #4723d9;
+    color: #4723d9;
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
 
-                .btn-outline-primary {
-                    border-color: #4723d9;
-                    color: #4723d9;
-                    font-size: 0.9rem;
-                    padding: 8px 16px;
-                    border-radius: 6px;
-                    font-weight: 500;
-                    transition: all 0.2s;
-                    /* white-space: nowrap; */
-                }
+  .btn-outline-primary:hover {
+    background-color: #4723d9;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
-                .btn-outline-primary:hover {
-                    background-color: #4723d9;
-                    color: white;
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                }
+  .btn-outline-primary:hover .btn-text-prof {
+    color: white;
+  }
 
-                .btn-outline-primary:hover .btn-text-prof {
-                    color: white;
-                }
+  .btn-text-emploi,
+  .btn-text-prof {
+    display: inline;
+  }
 
-                .btn-text-emploi,
-                .btn-text-prof {
-                    display: inline;
-                }
+  @media (max-width: 768px) {
+    .header-container {
+      padding: 15px;
+    }
 
-                @media (max-width: 768px) {
-                    .header-container {
-                        padding: 15px;
-                    }
+    .header-title {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      text-align: center;
+    }
 
-                    .header-title {
-                        font-size: 1.5rem;
-                        margin-bottom: 15px;
-                        text-align: center;
-                    }
+    .form-select,
+    .btn-outline-primary {
+      width: 100%;
+      margin-bottom: 10px;
+    }
 
-                    .form-select,
-                    .btn-outline-primary {
-                        width: 100%;
-                        margin-bottom: 10px;
-                    }
+    .btn-outline-primary {
+      white-space: normal;
+      text-align: center;
+      padding: 10px 16px;
+    }
+  }
 
-                    .btn-outline-primary {
-                        white-space: normal;
-                        text-align: center;
-                        padding: 10px 16px;
-                    }
+  /* Improved grid layout */
+  .header-grid {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 1rem;
+    align-items: center;
+  }
 
-                }
+  @media (max-width: 992px) {
+    .header-grid {
+      grid-template-columns: 1fr auto;
+    }
 
-                /* Improved grid layout */
-                .header-grid {
-                    display: grid;
-                    grid-template-columns: 1fr auto auto;
-                    gap: 1rem;
-                    align-items: center;
-                }
+    .header-title {
+      grid-column: 1 / -1;
+      text-align: center;
+      margin-bottom: 10px;
+      text-decoration: underline;
+    }
+  }
 
-                @media (max-width: 992px) {
-                    .header-grid {
-                        grid-template-columns: 1fr auto;
-                    }
+  @media (max-width: 768px) {
+    .header-grid {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
 
-                    .header-title {
-                        grid-column: 1 / -1;
-                        text-align: center;
-                        margin-bottom: 10px;
-                        text-decoration: underline;
-                    }
-                }
+    .btn-outline-primary {
+      white-space: normal;
+      text-align: center;
+      padding: 10px 16px;
+      line-height: 1.3;
+    }
 
-                @media (max-width: 768px) {
-                    .header-grid {
-                        grid-template-columns: 1fr;
-                        gap: 0.75rem;
-                    }
+    .btn-text-emploi,
+    .btn-text-prof {
+      display: inline;
+      margin-bottom: 0;
+    }
 
-                    .btn-outline-primary {
-                        white-space: normal;
-                        text-align: center;
-                        padding: 10px 16px;
-                        line-height: 1.3;
-                        /* Add this for better line spacing */
-                    }
+    .btn-text-emploi:after {
+      content: " ";
+    }
+  }
 
-                    .btn-text-emploi,
-                    .btn-text-prof {
-                        display: inline;
-                        /* Change from 'block' to 'inline' */
-                        margin-bottom: 0;
-                        /* Remove bottom margin */
-                    }
-
-                    .btn-text-emploi:after {
-                        content: " ";
-                        /* Add space after "Emploi des" */
-                    }
-
-                }
-           
   /* Main Container */
   .etudiant-container {
     padding: 2rem;
@@ -581,19 +573,19 @@
 
 <div class="etudiant-container">
   <div class="page-header">
-    <h1 class="page-title">The List of Etudiants</h1>
+    <h1 class="page-title">Liste des étudiants</h1>
     <div class="d-flex gap-3">
       <button onclick="exportStyledExcel()" class="btn btn-outline-success">
-        <i class="bi bi-file-excel"></i> Export
+        <i class="bi bi-file-excel"></i> Exporter
       </button>
-      <a href="{{url('etudiants/add')}}" class="btn btn-primary">Ajouter un etudiant</a>
+      <a href="{{url('etudiants/add')}}" class="btn btn-primary">Ajouter un étudiant</a>
     </div>
   </div>
 
   <!-- Filter Section -->
   <div class="filter-section">
     <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="true">
-      <h5>Filters</h5>
+      <h5>Filtres</h5>
       <i class="bi bi-chevron-down"></i>
     </div>
     <div class="collapse show" id="filterCollapse">
@@ -601,14 +593,14 @@
         <div class="filter-row row g-2">
           <!-- Search -->
           <div class="col-12 col-md-4 col-lg-4 filter-group">
-            <label for="searchInput" class="filter-label">Search</label>
-            <input type="text" id="searchInput" class="filter-input py-2" placeholder="Name, ID or email">
+            <label for="searchInput" class="filter-label">Recherche</label>
+            <input type="text" id="searchInput" class="filter-input py-2" placeholder="Nom, ID ou email">
           </div>
           <!-- Filiere Filter -->
           <div class="col-12 col-md-4 col-lg-2 filter-group">
-            <label for="filiereFilter" class="filter-label">Filiere</label>
+            <label for="filiereFilter" class="filter-label">Filière</label>
             <select class="filter-input" id="filiereFilter">
-              <option value="">All Filieres</option>
+              <option value="">Toutes les filières</option>
               @foreach ($filieres as $filiere)
                 <option value="{{ $filiere->name }}">{{ $filiere->name }}</option>
               @endforeach
@@ -616,25 +608,25 @@
           </div>
           <!-- Status Filter -->
           <div class="col-12 col-md-4 col-lg-2 filter-group">
-            <label for="statusFilter" class="filter-label">Status</label>
+            <label for="statusFilter" class="filter-label">Statut</label>
             <select class="filter-input" id="statusFilter">
-              <option value="">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
+              <option value="">Tous les statuts</option>
+              <option value="active">Actif</option>
+              <option value="inactive">Inactif</option>
             </select>
           </div>
           <!-- Rows Per Page -->
           <div class="col-12 col-md-4 col-lg-2 filter-group mb-4 mb-md-0">
-            <label for="rowsPerPage" class="filter-label">Rows per page</label>
+            <label for="rowsPerPage" class="filter-label">Lignes par page</label>
             <select id="rowsPerPage" class="filter-input">
-              <option value="all">Show All</option>
+              <option value="all">Tout afficher</option>
               <option value="5">5</option>
               <option value="15">15</option>
               <option value="30">30</option>
               <option value="100">100</option>
             </select>
           </div>
-          <button type="button" id="resetFilters" class="apply-btn col-12 col-md-4 col-lg-2 py-2">Reset</button>
+          <button type="button" id="resetFilters" class="apply-btn col-12 col-md-4 col-lg-2 py-2">Réinitialiser</button>
         </div>
       </div>
     </div>
@@ -646,13 +638,13 @@
       <table class="table" id="exportTable">
         <thead>
           <tr>
-            <th>id</th>
+            <th>ID</th>
             <th>Photo</th>
             <th>Nom complet</th>
-            <th>Etat</th>
+            <th>Statut</th>
             <th>Email</th>
-            <th>Date de creation</th>
-            <th>Action</th>
+            <th>Date de création</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody id="etudiantsTableBody">
@@ -681,44 +673,22 @@
               <td>
                 @if ($etudiant->user_details)
                   <span class="status-badge status-{{ $etudiant->user_details->status }}">
-                    {{ ucfirst($etudiant->user_details->status) }}
+                    {{ ucfirst($etudiant->user_details->status == 'active' ? 'Actif' : 'Inactif') }}
                   </span>
                 @else
-                  <span class="status-badge">Null</span>
+                  <span class="status-badge">Aucun</span>
                 @endif
               </td>
               <td>{{ $etudiant['email'] }}</td>
               <td>{{ $etudiant->created_at->format('Y-m-d') }}</td>
               <td>
                 <div class="d-flex justify-content-center gap-3">
-                  <a href="{{url('etudiant-profile/'. $etudiant->id)}}" class="action-btn view-btn" title="Edit Profile">
+                  <a href="{{url('etudiant-profile/'. $etudiant->id)}}" class="action-btn view-btn" title="Modifier le profil">
                     <i class="bi bi-pencil-square"></i>
                   </a>
-                  <button class="action-btn delete-btn" data-bs-toggle="modal" data-bs-target="#Modalforid{{$etudiant['id']}}" title="Delete Etudiant">
+                  <button class="action-btn delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal_{{$etudiant['id']}}" title="Supprimer l'étudiant">
                     <i class="bi bi-trash3"></i>
                   </button>
-                  <!-- Modal -->
-                  <div class="modal fade" id="Modalforid{{$etudiant['id']}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title" id="exampleModalLabel">Confirm Deletion</h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                          <p>Vous voulez supprimer l'étudiant <strong>{{$etudiant['lastname']}}</strong> définitivement?</p>
-                          <form action="{{ url('/etudiants/' . $etudiant['id']) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </div>
-                          </form>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </td>
             </tr>
@@ -726,6 +696,30 @@
         </tbody>
       </table>
     </div>
+    <!-- Modals for Delete Confirmation -->
+    @foreach ($etudiants as $etudiant)
+      <div class="modal fade" id="deleteModal_{{$etudiant['id']}}" tabindex="-1" aria-labelledby="deleteModalLabel_{{$etudiant['id']}}" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteModalLabel_{{$etudiant['id']}}">Confirmer la desactivation</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Voulez-vous desactiver le compte l'étudiant <strong>{{$etudiant['lastname']}}</strong>  ?</p>
+              <form action="{{ url('/etudiants/' . $etudiant['id']) }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fermer</button>
+                  <button type="submit" class="btn btn-danger btn-sm">Desactiver</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    @endforeach
     <div id="paginationControls" class="pagination"></div>
   </div>
 
@@ -738,7 +732,7 @@
         @method('PATCH')
         <input hidden type="text" id="etudiant_id" name="etudiant_id">
         <div class="form-group">
-          <label for="name">Nom de la Filière</label>
+          <label for="name">Nom de la filière</label>
           <input type="text" class="form-control" id="name" name="name" placeholder="Ex: Génie Informatique">
         </div>
         <div class="form-group">
@@ -751,8 +745,8 @@
           </select>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="closePopup()">Close</button>
-          <button type="submit" class="btn btn-success">Update</button>
+          <button type="button" class="btn btn-secondary" onclick="closePopup()">Fermer</button>
+          <button type="submit" class="btn btn-success">Mettre à jour</button>
         </div>
       </form>
     </div>
@@ -866,9 +860,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let paginationHTML = '';
 
     if (currentPage > 1) {
-      paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage - 1})">Previous</button>`;
+      paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage - 1})">Précédent</button>`;
     } else {
-      paginationHTML += `<button class="page-btn disabled">Previous</button>`;
+      paginationHTML += `<button class="page-btn disabled">Précédent</button>`;
     }
 
     for (let i = 1; i <= pageCount; i++) {
@@ -876,9 +870,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (currentPage < pageCount) {
-      paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage + 1})">Next</button>`;
+      paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage + 1})">Suivant</button>`;
     } else {
-      paginationHTML += `<button class="page-btn disabled">Next</button>`;
+      paginationHTML += `<button class="page-btn disabled">Suivant</button>`;
     }
 
     paginationControls.innerHTML = paginationHTML;
@@ -909,10 +903,10 @@ document.addEventListener('DOMContentLoaded', function() {
 function exportStyledExcel() {
   const table = document.getElementById("exportTable");
   const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet("Etudiants");
+  const worksheet = workbook.addWorksheet("Étudiants");
 
   // Headers
-  const headers = ['ID', 'Nom complet', 'Etat', 'Email', 'Date de creation'];
+  const headers = ['ID', 'Nom complet', 'Statut', 'Email', 'Date de création'];
   worksheet.addRow(headers);
 
   // Style header
@@ -933,15 +927,15 @@ function exportStyledExcel() {
       const rowData = [
         row.cells[0].innerText, // ID
         row.cells[2].innerText, // Nom complet
-        row.cells[3].querySelector('.status-badge')?.innerText || 'Null', // Etat
+        row.cells[3].querySelector('.status-badge')?.innerText || 'Aucun', // Statut
         row.cells[4].innerText, // Email
-        row.cells[5].innerText  // Date de creation
+        row.cells[5].innerText  // Date de création
       ];
       const newRow = worksheet.addRow(rowData);
       const statusCell = newRow.getCell(3);
-      if (statusCell.value === 'Active') {
+      if (statusCell.value === 'Actif') {
         statusCell.font = { color: { argb: 'FF00AA00' } };
-      } else if (statusCell.value === 'Inactive') {
+      } else if (statusCell.value === 'Inactif') {
         statusCell.font = { color: { argb: 'FFAA0000' } };
       }
       statusCell.alignment = { horizontal: 'center' };
@@ -952,15 +946,15 @@ function exportStyledExcel() {
   worksheet.columns = [
     { width: 10 }, // ID
     { width: 20 }, // Nom complet
-    { width: 15 }, // Etat
+    { width: 15 }, // Statut
     { width: 30 }, // Email
-    { width: 15 }  // Date de creation
+    { width: 15 }  // Date de création
   ];
 
   // Export
   workbook.xlsx.writeBuffer().then((buffer) => {
     const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-    saveAs(blob, "Etudiants_Styled.xlsx");
+    saveAs(blob, "Étudiants_Styled.xlsx");
   });
 }
 
