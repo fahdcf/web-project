@@ -18,7 +18,9 @@ return new class extends Migration
             $table->unsignedTinyInteger('attempts');
             $table->unsignedInteger('reserved_at')->nullable();
             $table->unsignedInteger('available_at');
-            $table->timestamps();
+
+            // Supprime cette ligne :
+            // $table->timestamps();
         });
     }
 

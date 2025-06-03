@@ -8,7 +8,7 @@ use App\Models\prof_request;
 use App\Models\Student;
 
 use App\Models\User;
-use App\Models\task;
+use App\Models\Task;
 use App\Models\Filiere;
 use App\Models\user_log;
 use Illuminate\Support\Facades\Auth;
@@ -43,7 +43,7 @@ class homeController extends Controller
                 $studentCount = Student::get()->count();
                 $professorCount = User::get()->count();
                 $adminsHistory = admin_action::latest()->take(4)->get();
-                $tasks = task::where('user_id', auth()->user()->id)->latest()->take(5)->get();
+                $tasks = Task::where('user_id', auth()->user()->id)->latest()->take(5)->get();
                 $users_logs = user_log::latest()->take(6)->get();
 
 
@@ -74,13 +74,13 @@ class homeController extends Controller
             
             if (Auth()->user()->role->ischef) {
 
-                  $studentCount = student::get()->count();
+                  $studentCount = Student::get()->count();
                 $professorCount = User::get()->count();
                 $chefHistory = chef_action::latest()->take(4)->get();
-                $tasks = task::where('user_id', auth()->user()->id)->latest()->take(5)->get();
+                $tasks = Task::where('user_id', auth()->user()->id)->latest()->take(5)->get();
                   
                 $departmentName =  auth()->user()->manage->name;
-                $professorsMin =user::where('departement',$departmentName)->paginate(15);
+                $professorsMin = User::where('departement',$departmentName)->paginate(15);
 
 
                $professorsMin = User::where('departement',$departmentName)->latest()->take(3)->get();
