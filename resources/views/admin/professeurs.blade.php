@@ -1,3 +1,4 @@
+
 <x-admin_layout>
 <head>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -181,10 +182,10 @@
     background-color: #4723d9;
     color: white;
     padding: 1rem;
-    font-weight: 500;
+    font-weight: bold;
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 2;
     text-align: center;
     border-bottom: none;
   }
@@ -201,14 +202,14 @@
   .table td {
     padding: 1rem;
     vertical-align: middle;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f3f3f0;
     color: #555;
     font-weight: 400;
     text-align: center;
   }
 
   /* Professor Card Elements */
-  .professor-avatar {
+  .professor-img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -217,12 +218,12 @@
     transition: all 0.3s;
   }
 
-  .professor-avatar:hover {
+  .professor-img:hover {
     transform: scale(1.1);
     border-color: #4723d9;
   }
 
-  .status-badge {
+  .status {
     display: inline-block;
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
@@ -432,21 +433,21 @@
   }
 </style>
 
-<div class="professor-container pt-5 ">
-  <div class="page-header">
-    <h1 class="page-title">The List of Professors</h1>
+<div class="professor-container pt-0">
+  <div class="page-header pt-0">
+    <h1 class="page-title">Liste des professeurs</h1>
     <div class="d-flex gap-3">
       <button onclick="exportStyledExcel()" class="btn btn-outline-success">
-        <i class="bi bi-file-excel"></i> Export
+        <i class="bi bi-file-excel"></i> Exporter
       </button>
-      <a href="{{url('professeurs/add')}}" class="btn btn-primary">Ajouter un professeur</a>
+      <a href="{{url('professors/add')}}" class="btn btn-primary">Ajouter un professeur</a>
     </div>
   </div>
 
   <!-- Filter Section -->
   <div class="filter-section">
     <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="true">
-      <h5>Filters</h5>
+      <h5>Filtres</h5>
       <i class="bi bi-chevron-down"></i>
     </div>
     <div class="collapse show" id="filterCollapse">
@@ -454,14 +455,14 @@
         <div class="filter-row row g-2">
           <!-- Search -->
           <div class="col-12 col-md-4 col-lg-4 filter-group">
-            <label for="searchInput" class="filter-label">Search</label>
-            <input type="text" id="searchInput" class="filter-input py-2" placeholder="Name, ID or email">
+            <label for="searchInput" class="filter-label">Recherche</label>
+            <input type="text" id="searchInput" class="filter-input py-2" placeholder="Nom, ID ou email">
           </div>
           <!-- Department Filter -->
           <div class="col-12 col-md-4 col-lg-2 filter-group">
-            <label for="departementFilter" class="filter-label">Department</label>
+            <label for="departementFilter" class="filter-label">Département</label>
             <select class="filter-input" id="departementFilter">
-              <option value="">All Departments</option>
+              <option value="">Tous les départements</option>
               @foreach ($Departements as $Departement)
                 <option value="{{ $Departement->name }}">{{ $Departement->name }}</option>
               @endforeach
@@ -469,25 +470,25 @@
           </div>
           <!-- Status Filter -->
           <div class="col-12 col-md-4 col-lg-2 filter-group">
-            <label for="statusFilter" class="filter-label">Status</label>
+            <label for="statusFilter" class="filter-label">Statut</label>
             <select class="filter-input" id="statusFilter">
-              <option value="">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
+              <option value="">Tous les statuts</option>
+              <option value="active">Actif</option>
+              <option value="inactive">Inactif</option>
             </select>
           </div>
           <!-- Rows Per Page -->
           <div class="col-12 col-md-4 col-lg-2 filter-group mb-4 mb-md-0">
-            <label for="rowsPerPage" class="filter-label">Rows per page</label>
+            <label for="rowsPerPage" class="filter-label">Lignes par page</label>
             <select id="rowsPerPage" class="filter-input">
-              <option value="all">Show All</option>
+              <option value="all">Tout afficher</option>
               <option value="5">5</option>
               <option value="15">15</option>
               <option value="30">30</option>
               <option value="100">100</option>
             </select>
           </div>
-          <button type="button" id="resetFilters" class="apply-btn col-12 col-md-4 col-lg-2 py-2">Reset</button>
+          <button type="button" id="resetFilters" class="apply-btn col-12 col-md-4 col-lg-2 py-2">Réinitialiser</button>
         </div>
       </div>
     </div>
@@ -499,13 +500,13 @@
       <table class="table" id="exportTable">
         <thead>
           <tr>
-            <th>id</th>
+            <th>ID</th>
             <th>Photo</th>
             <th>Nom complet</th>
-            <th>Etat</th>
+            <th>Statut</th>
             <th>Email</th>
-            <th>Date de creation</th>
-            <th>Action</th>
+            <th>Date de création</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody id="professorsTableBody">
@@ -521,57 +522,35 @@
                 <a href="{{url('profile/'. $professor->id)}}">
                   @if ($professor->user_details)
                     @if ($professor->user_details->profile_img!=null)
-                      <img class="professor-avatar" src="{{asset('storage/' . $professor->user_details->profile_img)}}">
+                      <img class="professor-img" src="{{asset('storage/' . $professor->user_details->profile_img)}}">
                     @else
-                      <img class="professor-avatar" src="{{asset('storage/images/default_profile_img.png')}}">
+                      <img class="professor-img" src="{{asset('storage/images/default_profile_img.png')}}">
                     @endif
                   @else
-                    <img class="professor-avatar" src="{{asset('storage/images/default_profile_img.png')}}">
+                    <img class="professor-img" src="{{asset('storage/images/default_profile_img.png')}}">
                   @endif
                 </a>
               </td>
               <td class="professor-name">{{ $professor->lastname }} {{ $professor->firstname }}</td>
               <td>
                 @if ($professor->user_details)
-                  <span class="status-badge status-{{ $professor->user_details->status }}">
-                    {{ ucfirst($professor->user_details->status) }}
+                  <span class="status status-{{ $professor->user_details->status }}">
+                    {{ ucfirst($professor->user_details->status == 'active' ? 'Actif' : 'Inactif') }}
                   </span>
                 @else
-                  <span class="status-badge">Null</span>
+                  <span class="status">Aucun</span>
                 @endif
               </td>
               <td>{{ $professor['email'] }}</td>
               <td>{{ $professor->created_at->format('Y-m-d') }}</td>
               <td>
                 <div class="d-flex justify-content-center gap-3">
-                  <a href="{{url('profile/'. $professor->id)}}" class="action-btn view-btn" title="Edit Profile">
+                  <a href="{{url('profile/'. $professor->id)}}" class="action-btn view-btn" title="Modifier le profil">
                     <i class="bi bi-pencil-square"></i>
                   </a>
-                  <button class="action-btn delete-btn" data-bs-toggle="modal" data-bs-target="#Modalforid{{$professor['id']}}" title="Delete Professor">
+                  <button class="action-btn delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal_{{$professor['id']}}" title="Désactiver le professeur">
                     <i class="bi bi-trash3"></i>
                   </button>
-                  <!-- Modal -->
-                  <div class="modal fade" id="Modalforid{{$professor['id']}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title" id="exampleModalLabel">Confirm Deletion</h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                          <p>Vous voulez supprimer le professeur <strong>{{$professor['lastname']}}</strong> définitivement?</p>
-                          <form action="{{ url('/professors/' . $professor['id']) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </div>
-                          </form>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </td>
             </tr>
@@ -579,6 +558,30 @@
         </tbody>
       </table>
     </div>
+    <!-- Modals for Delete Confirmation -->
+    @foreach ($professors as $professor)
+      <div class="modal fade" id="deleteModal_{{$professor['id']}}" tabindex="-1" aria-labelledby="deleteModalLabel_{{$professor['id']}}" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteModalLabel_{{$professor['id']}}">Confirmer la désactivation</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Voulez-vous désactiver le compte du professeur <strong>{{$professor['lastname']}}</strong> ?</p>
+              <form action="{{ url('/professors/' . $professor['id']) }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fermer</button>
+                  <button type="submit" class="btn btn-danger btn-sm">Désactiver</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    @endforeach
     <div id="paginationControls" class="pagination"></div>
   </div>
 
@@ -591,11 +594,11 @@
         @method('PATCH')
         <input hidden type="text" id="professor_id" name="professor_id">
         <div class="form-group">
-          <label for="name">Nom du Département</label>
+          <label for="name">Nom du département</label>
           <input type="text" class="form-control" id="name" name="name" placeholder="Ex: Informatique">
         </div>
         <div class="form-group">
-          <label for="professor">Chef de Département</label>
+          <label for="professor">Chef de département</label>
           <select class="form-control" id="professor" name="user_id">
             <option value="">-- Sélectionner un professeur --</option>
             @foreach ($professors as $professor)
@@ -604,8 +607,8 @@
           </select>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="closePopup()">Close</button>
-          <button type="submit" class="btn btn-success">Update</button>
+          <button type="button" class="btn btn-secondary" onclick="closePopup()">Fermer</button>
+          <button type="submit" class="btn btn-success">Mettre à jour</button>
         </div>
       </form>
     </div>
@@ -719,9 +722,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let paginationHTML = '';
 
     if (currentPage > 1) {
-      paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage - 1})">Previous</button>`;
+      paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage - 1})">Précédent</button>`;
     } else {
-      paginationHTML += `<button class="page-btn disabled">Previous</button>`;
+      paginationHTML += `<button class="page-btn disabled">Précédent</button>`;
     }
 
     for (let i = 1; i <= pageCount; i++) {
@@ -729,9 +732,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (currentPage < pageCount) {
-      paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage + 1})">Next</button>`;
+      paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage + 1})">Suivant</button>`;
     } else {
-      paginationHTML += `<button class="page-btn disabled">Next</button>`;
+      paginationHTML += `<button class="page-btn disabled">Suivant</button>`;
     }
 
     paginationControls.innerHTML = paginationHTML;
@@ -762,10 +765,10 @@ document.addEventListener('DOMContentLoaded', function() {
 function exportStyledExcel() {
   const table = document.getElementById("exportTable");
   const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet("Professors");
+  const worksheet = workbook.addWorksheet("Professeurs");
 
   // Headers
-  const headers = ['ID', 'Nom complet', 'Etat', 'Email', 'Date de creation'];
+  const headers = ['ID', 'Nom complet', 'Statut', 'Email', 'Date de création'];
   worksheet.addRow(headers);
 
   // Style header
@@ -786,15 +789,15 @@ function exportStyledExcel() {
       const rowData = [
         row.cells[0].innerText, // ID
         row.cells[2].innerText, // Nom complet
-        row.cells[3].querySelector('.status-badge')?.innerText || 'Null', // Etat
+        row.cells[3].querySelector('.status')?.innerText || 'Aucun', // Statut
         row.cells[4].innerText, // Email
-        row.cells[5].innerText  // Date de creation
+        row.cells[5].innerText  // Date de création
       ];
       const newRow = worksheet.addRow(rowData);
       const statusCell = newRow.getCell(3);
-      if (statusCell.value === 'Active') {
+      if (statusCell.value === 'Actif') {
         statusCell.font = { color: { argb: 'FF00AA00' } };
-      } else if (statusCell.value === 'Inactive') {
+      } else if (statusCell.value === 'Inactif') {
         statusCell.font = { color: { argb: 'FFAA0000' } };
       }
       statusCell.alignment = { horizontal: 'center' };
@@ -805,15 +808,15 @@ function exportStyledExcel() {
   worksheet.columns = [
     { width: 10 }, // ID
     { width: 20 }, // Nom complet
-    { width: 15 }, // Etat
+    { width: 15 }, // Statut
     { width: 30 }, // Email
-    { width: 15 }  // Date de creation
+    { width: 15 }  // Date de création
   ];
 
   // Export
   workbook.xlsx.writeBuffer().then((buffer) => {
     const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-    saveAs(blob, "Professors_Styled.xlsx");
+    saveAs(blob, "Professeurs_Styled.xlsx");
   });
 }
 

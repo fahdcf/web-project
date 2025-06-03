@@ -202,6 +202,7 @@
             gap: 1.5rem;
         }
 
+
         .btn-primary,
         .btn-outline-success,
         .btn-outline-primary {
@@ -354,13 +355,7 @@
             font-size: 0.95rem;
         }
 
-        .badge {
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-
+    
         /* Responsive Adjustments */
         @media (max-width: 1200px) {
             .custom-row p {
