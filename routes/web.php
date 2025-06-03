@@ -98,14 +98,7 @@ Route::middleware(['auth', 'can:coord'])
 // Gestion des assignations///////////// 
 Route::middleware(['auth', 'can:coord'])->group(function () {
     Route::get('/assignations', [CoordonnateurController::class, 'affectations'])
-        ->name('coordonnateur.assignments')
-        ->middleware('auth');
-    Route::post('/assignations', [ModuleController::class, 'addAssignation'])
-        ->name('coordonnateur.modules.add-assignation');
-    Route::put('/assignations/{vacataire}', [ModuleController::class, 'updateAssignation'])
-        ->name('coordonnateur.modules.update-assignation');
-    Route::delete('/assignations/{Assignment}', [ModuleController::class, 'removeAssignation'])
-        ->name('coordonnateur.modules.remove-assignation');
+        ->name('coordonnateur.assignments');
 });
 
 
@@ -163,7 +156,21 @@ Route::middleware(['auth', 'can:coord'])
         //Assignations des module a un vacataire:////////////////////////////////////////
         Route::get('/profile/{user}', [CoordonnateurController::class, 'vacataire_profile'])->name('coordonnateur.vacataire.assignemts_profile');
         Route::post('/profile/{user}', [CoordonnateurController::class, 'editHours'])->name('coordonnateur.vacataire.editHours');
-        Route::post('/affecter-modules', [CoordonnateurController::class, 'affecterModules'])->name('coordonnateur.vacataire.affecterModules');;
+        Route::post('/affecter-modules', [CoordonnateurController::class, 'affecterModules'])->name('coordonnateur.vacataire.affecterModules');
+
+        Route::delete('/assignation/{assignation}', [CoordonnateurController::class, 'removeAssignation'])->name('coordonnateur.vacataire.removeAssignation');
+        Route::post('/assignation/affecterModules', [CoordonnateurController::class, 'affecterModules'])->name('coordonnateur.vacataire.affecterModules');
+
+
+
+
+        // Route::post('/assignations', [ModuleController::class, 'addAssignation'])
+        //     ->name('coordonnateur.modules.add-assignation');
+        // Route::put('/assignations/{vacataire}', [ModuleController::class, 'updateAssignation'])
+        //     ->name('coordonnateur.modules.update-assignation');
+        // Route::delete('/assignations/{Assignment}', [ModuleController::class, 'removeAssignation'])
+        //     ->name('coordonnateur.modules.remove-assignation');
+
 
 
 

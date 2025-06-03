@@ -6,6 +6,7 @@ use App\Exports\ModulesExport;
 use App\Http\Controllers\Controller;
 use App\Imports\ModulesImport;
 use App\Models\Assignment;
+use App\Models\coord_action;
 use App\Models\Deadline;
 use App\Models\Departement;
 use App\Models\Filiere;
@@ -131,6 +132,7 @@ class ModuleController extends Controller
 
         // Update the module
         $module->update($validated);
+        coord_action::create(['user_id' => auth()->id(), 'action_type' => 'update', 'target_table' => 'modules', 'target_id' => $module->id, 'description' => "Mise à jour du module: {$module->name}"]);
 
         return redirect()
             ->route('coordonnateur.modules.index')
@@ -202,7 +204,8 @@ class ModuleController extends Controller
                 'code' => $code,
                 'parent_id' => $validated['parent_id'],
             ]);
-            Module::create($attributes);
+            $module = Module::create($attributes);
+            coord_action::create(['user_id' => auth()->id(), 'action_type' => 'create', 'target_table' => 'modules', 'target_id' => $module->id, 'description' => "Création du module: {$module->name}"]);
         } else { // Logic for 'complet' type
             // Generate the code for the complete module
             $code = "M" . $validated['semester'] . "-" . uniqid(); // Using uniqid() for unique ID
@@ -310,6 +313,7 @@ class ModuleController extends Controller
             }
 
             Excel::import(new ModulesImport($filiere->id), $file);
+            coord_action::create(['user_id' => auth()->id(), 'action_type' => 'import', 'target_table' => 'modules', 'description' => 'Importation de modules via fichier.']);
             return redirect()->route('coordonnateur.modules.index')
                 ->with('success', 'Unités d\'enseignement importées avec succès.');
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
@@ -402,6 +406,7 @@ class ModuleController extends Controller
     {
         // Supprimer le module
         $module->delete();
+        coord_action::create(['user_id' => auth()->id(), 'action_type' => 'delete', 'target_table' => 'modules', 'target_id' => $module->id, 'description' => "Suppression du module: {$module->name}"]);
 
         // Rediriger avec un message de succès
         return redirect()->route('coordonnateur.modules.index')->with('success', 'Module supprimé avec succès.');

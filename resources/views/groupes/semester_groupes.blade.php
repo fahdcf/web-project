@@ -13,7 +13,15 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif --}}
-
+        @if ($errors->any())
+            <div class="alert alert-danger error-message">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
 
         <!-- Header Section -->
@@ -232,7 +240,7 @@
                                                     Modifier
                                                 @endif
                                             </button>
-                                            
+
                                         </div>
                                     </div>
                                 </div>
@@ -278,7 +286,8 @@
 
                             <div class="alert alert-light border mb-4 rounded-3">
                                 <i class="fas fa-info-circle me-2 text-primary"></i>
-                                Appliquer a tous les modules du Semestre <strong class="semester-display">SX</strong>
+                                Appliquer a tous les modules du Semestre <strong class="semester-display"
+                                    id="semesterId">S</strong>
                             </div>
 
                             <div class="row g-4">
@@ -926,6 +935,42 @@
                 document.getElementById('tdCountInput').value = button.dataset.tdCount || 0;
                 document.getElementById('tpCountInput').value = button.dataset.tpCount || 0;
             }
+
+            function prepareModal(button) {
+                const semester = button.dataset.semester;
+                document.getElementById('semesterInput').value = semester;
+                document.getElementById('semesterId').textContent = 'S' + semester;
+                document.querySelectorAll('.semester-display-btn').forEach(el => el.textContent = semester);
+
+                // Fetch group counts for the semester (using data from modules)
+                const moduleCards = document.querySelectorAll(`.header-container .year-badge span.text-primary`);
+                let tdTotal = 0,
+                    tpTotal = 0,
+                    count = 0;
+                moduleCards.forEach(card => {
+                    if (card.textContent === `S${semester}`) {
+                        const modules = card.closest('.header-container').querySelectorAll('.module-card-container');
+                        modules.forEach(module => {
+                            tdTotal += parseInt(module.querySelector('.group-box .badge.bg-primary')
+                                .textContent) || 0;
+                            tpTotal += parseInt(module.querySelector('.group-box .badge.bg-success')
+                                .textContent) || 0;
+                            count++;
+                        });
+                    }
+                });
+
+                // Set average or default values
+                document.querySelector('input[name="nb_groupes_td"]').value = count ? Math.round(tdTotal / count) : 0;
+                document.querySelector('input[name="nb_groupes_tp"]').value = count ? Math.round(tpTotal / count) : 0;
+            }
+
+            function loadSemesterConfig(button) {
+                prepareModal(button);
+            }
+
+
+
 
             document.addEventListener('DOMContentLoaded', function() {
                 // Initialize search functionality
