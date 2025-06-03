@@ -1,10 +1,8 @@
 <?php
+/////
 
 namespace App\Http\Controllers\adminsControllers;
 use App\Http\Controllers\Controller;
-
-
-
 
 
 use App\Models\admin_action;
