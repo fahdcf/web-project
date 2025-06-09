@@ -26,13 +26,24 @@ class requestsController extends Controller
         $FilieretargetIDs = Filiere::where('department_id', auth()->user()->manage->id)
             ->pluck('id'); // Plucks all the IDs into a collection
 
-        $module_requests = prof_request::whereIn('module_id', $FilieretargetIDs)->get();
+        
+        $modulesids = Module::whereIn('filiere_id', $FilieretargetIDs)
+            ->pluck('id'); // Plucks all the IDs into a collection
+
+        $module_requests = prof_request::whereIn('module_id', $modulesids)->get();
 
 
         return view('chef_departement.demandes', [
             'module_requests' => $module_requests,
 
         ]);
+
+
+
+
+
+        // $module_requests = prof_request::whereIn('module_id', $FilieretargetIDs)->get();
+
     }
 
     public function decline($id)

@@ -80,7 +80,7 @@ request()->validate([
 
 if(request('prof_id')){
     $prof=user::findOrFail(request('prof_id'));
-    $module->professor_id=request('prof_id');
+    // $module->professor_id=request('prof_id');
     $module->status="active";
     
 

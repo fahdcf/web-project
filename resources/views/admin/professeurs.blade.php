@@ -440,7 +440,7 @@
       <button onclick="exportStyledExcel()" class="btn btn-outline-success">
         <i class="bi bi-file-excel"></i> Exporter
       </button>
-      <a href="{{url('professors/add')}}" class="btn btn-primary">Ajouter un professeur</a>
+      <a href="{{url('professeurs/add')}}" class="btn btn-primary">Ajouter un professeur</a>
     </div>
   </div>
 
@@ -569,7 +569,7 @@
             </div>
             <div class="modal-body">
               <p>Voulez-vous désactiver le compte du professeur <strong>{{$professor['lastname']}}</strong> ?</p>
-              <form action="{{ url('/professors/' . $professor['id']) }}" method="POST">
+              <form action="{{ url('/professeurs/' . $professor['id']) }}" method="POST">
                 @csrf
                 @method('DELETE')
                 <div class="modal-footer">

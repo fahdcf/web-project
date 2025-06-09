@@ -151,7 +151,7 @@
                             <button class="view-btn" onclick="showPopup({{ $module->id }}, '{{ $module->name }}')">
                                 <i class="bi bi-eye-fill"></i> Voir plus
                             </button>
-                            <form action="{{ route('coordonnateur.modules.destroy', $module) }}" method="POST"
+                            {{-- <form action="{{ route('coordonnateur.modules.destroy', $module) }}" method="POST"
                                 style="display: inline;">
                                 @csrf
                                 @method('DELETE')
@@ -159,7 +159,7 @@
                                     onclick="return confirm('Supprimer ce module ?')">
                                     <i class="bi bi-trash-fill"></i> Supprimer
                                 </button>
-                            </form>
+                            </form> --}}
                         </div>
                     </div>
                 @endforeach

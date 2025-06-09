@@ -4,7 +4,7 @@ namespace App\Http\Controllers\adminsControllers;
 use App\Http\Controllers\Controller;
 
 
-use App\Models\student;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\user_detail;
@@ -25,10 +25,12 @@ use App\Models\Role;
 
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\ProfUnassignedNotification;
+use Soap\Sdl;
+
 class etudiantController extends Controller
 {
     public function index(){
-        $etudiants = student::orderBy('created_at', 'desc')
+        $etudiants = Student::orderBy('created_at', 'desc')
         ->simplePaginate(7);
     
         $filieres=Filiere::all();
@@ -123,7 +125,7 @@ public function add(){
 
 ];
 
-$newetudiant=student::create($studentdata);
+$newetudiant=Student::create($studentdata);
 
 
 
@@ -277,7 +279,7 @@ return redirect()->back();
 }
 
 public function profile($id) {
-            $user = student::findOrFail($id);
+            $user = Student::findOrFail($id);
             $filiere_id=$user->filiere_id;
             $filiere=filiere::where('id',$filiere_id)->get()->first();
             $filiere_name=$filiere->name;

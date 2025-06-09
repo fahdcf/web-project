@@ -4,8 +4,8 @@ namespace App\Http\Controllers\adminsControllers;
 
 use App\Http\Controllers\Controller;
 
-use App\Models\filiere;
-use App\Models\student;
+use App\Models\Filiere;
+use App\Models\Student;
 use App\Models\User;
 use App\Models\user_detail;
 use Illuminate\Http\Request;
@@ -145,11 +145,11 @@ class adminProfileController extends Controller
 
     public function studentprofile($id)
     {
-        $student = student::findOrFail($id);
+        $student = Student::findOrFail($id);
         $filiere_id = $student->filiere_id;
-        $filiere = filiere::find($filiere_id);
+        $filiere = Filiere::find($filiere_id);
         $filire_name = $filiere->name;
-        $filieres = filiere::all();
+        $filieres = Filiere::all();
 
 
         return view('admin.admin-student-profile', ['student' => $student, 'filiere_name' => $filire_name, 'filieres' => $filieres]);
@@ -159,7 +159,7 @@ class adminProfileController extends Controller
     {
 
 
-        $student = student::findOrFail($id);
+        $student = Student::findOrFail($id);
 
         // Validate incoming request data (adjust validation as necessary)
         $validated = $request->validate([
@@ -188,7 +188,7 @@ class adminProfileController extends Controller
         }
 
         if ($student->email !== $request->input('email')) {
-            $exists = student::where('email', $request->input('email'))->exists();
+            $exists = Student::where('email', $request->input('email'))->exists();
             if (!$exists) {
 
                 $student->email = $request->input('email');

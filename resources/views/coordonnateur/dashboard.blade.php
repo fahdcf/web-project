@@ -1,429 +1,516 @@
 <x-coordonnateur_layout>
     <style>
+        :root {
+            --primary: #4723d9;
+            --secondary: #e1ecff;
+            --text-dark: #252525;
+            --text-muted: #8a8a8a;
+            --shadow: 0 3px 15px rgba(56, 56, 56, 0.11);
+            --border-radius: 15px;
+        }
+
         * {
             box-sizing: border-box;
         }
 
-        .row div {
-            background: none;
+        .container-fluid {
+            padding: 1.5rem 1rem !important;
         }
 
-        .main-section .welcome {
-            border-radius: 15px;
-            background-color: #4723d9;
+        .welcome {
+            background: linear-gradient(135deg, var(--primary) 70%, transparent 100%), url('{{ asset('storage/images/adminavatar.png') }}') no-repeat right center / 120px auto;
             color: white;
-            padding: 0;
-            box-shadow: 0px 3px 15px 1px #3838381d;
-            background-image: url('{{ asset('storage/images/adminavatar.png') }}');
-            background-repeat: no-repeat;
-            background-position: right center;
-            background-size: 150px auto;
-            padding: 15px;
-            width: 100%;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            min-height: 140px;
         }
 
-        .welcome,
-        .tasks {
-            border-radius: 15px;
-            background-color: white;
-            padding: 15px;
-            box-shadow: 0px 3px 15px 1px #3838381d;
+        .welcome-content {
+            max-width: 60%;
         }
 
-        .tasks {
-            padding: 7px;
-            border-radius: 5px;
-            font-size: 15px;
-            height: auto;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
-            box-shadow: none;
-        }
-
-        .tasks .task-desc {
-            text-wrap: wrap;
-        }
-
-        .tasks .task-time {
-            font-size: 12px;
-            color: #8a8a8a;
-        }
-
-        .btn {
-            background-color: #e1ecff;
-            color: #03346e;
-            font-weight: 600;
-            font-size: 12px;
-            padding: 5px;
-            border-radius: 3px;
-            width: 100%;
-        }
-
-        .buttons-wrapper button {
-            border-radius: 5px;
-            padding: 8px 10px;
+        .welcome h3 {
             font-weight: 500;
-            text-wrap: nowrap;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .buttons-wrapper {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
         }
 
         .addbtn {
-            background-color: white !important;
-            color: #4723d9;
-            border: none;
+            background: white !important;
+            color: var(--primary);
+            border: 1px solid white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: background 0.2s;
+        }
+
+        .addbtn:hover {
+            background: rgba(255, 255, 255, 0.8) !important;
         }
 
         .seebtn {
-            background: none;
-            color: #ffffff;
-            border: 1px solid white;
-        }
-
-        .tasks-header {
-            padding: 10px;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
-        }
-
-        .tasks-header button {
-            border: none;
-            background: none;
+            background: transparent;
             color: white;
-            font-size: 20px;
-            padding: 0 8px;
+            border: 1px solid white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: background 0.2s;
         }
 
-        .tasks-header button:hover {
-            background-color: #5029ef;
-        }
-
-        .task-item {
-            border-bottom: 1px solid #e8e8e8d3;
-            color: #252525;
-        }
-
-        .task-item button {
-            border: none;
-            background: none;
-        }
-
-        #task-input {
-            border-radius: 15px !important;
-        }
-
-        #task-add {
-            border: 1px solid #1777ec;
-            border-radius: 7px;
-            padding: 12px;
+        .seebtn:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .numbers-card {
-            border-radius: 15px;
-            box-shadow: 0px 3px 15px 1px #3838381d;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .numbers-card:hover {
+            transform: translateY(-2px);
         }
 
         .numbers-card img {
-            height: 80px;
-            width: 80px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
+            object-fit: cover;
         }
 
         .numbers-card .title {
-            color: #252525;
+            color: var(--text-dark);
+            font-size: 0.875rem;
+            margin: 0;
+            font-weight: 600;
         }
 
         .numbers-card .num {
-            color: #252525;
-            font-size: 14px;
+            color: var(--text-dark);
+            font-size: 0.875rem;
+            margin: 0.25rem 0;
         }
 
         .numbers-card .seemore {
+            color: var(--primary);
+            font-size: 0.75rem;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .numbers-card .seemore:hover {
+            text-decoration: underline;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+        }
+
+        .chart-container h6 {
+            color: var(--text-dark);
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .chart-container canvas {
+            max-height: 250px;
+            width: 100% !important;
+        }
+
+        .tasks-container, .history-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .tasks-header, .history-header {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tasks-header p, .history-header p {
+            margin: 0;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .tasks-content, .history-content {
+            padding: 1rem;
+        }
+
+        .task-item, .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .task-item:last-child, .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-desc, .history-desc {
+            margin: 0;
+            font-size: 0.875rem;
+            word-break: break-word;
+        }
+
+        .task-time, .history-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        #task-add {
+            border: 1px solid var(--primary);
+            border-radius: 7px;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        #task-input {
             border: none;
-            background: none;
-            font-size: 14px;
-            color: #4723d9;
+            background: #f8f9fa;
+            border-radius: 7px;
+            padding: 0.5rem;
+            font-size: 0.875rem;
         }
 
-        @media (max-width:900px) {
-            .buttons-wrapper button {
-                font-size: small;
-            }
+        #task-add-button {
+            background: white;
+            color: var(--primary);
+            width: 24px;
+            height: 24px;
+            font-size: 1rem;
+            line-height: 1;
         }
 
-        @media (max-width:1400px) {
-            .numbers-card {
-                gap: 8px !important;
-            }
+        .dropdown-menu {
+            border-radius: 7px;
+            box-shadow: var(--shadow);
+            font-size: 0.875rem;
+        }
 
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+        }
+
+        @media (max-width: 1400px) {
             .numbers-card img {
-                height: 50px;
                 width: 50px;
-                border-radius: 50%;
+                height: 50px;
             }
 
-            .numbers-card .title {
-                color: #252525;
-                font-size: 13px;
-            }
-
-            .numbers-card .num {
-                color: #252525;
-                font-size: 14px;
+            .numbers-card .title, .numbers-card .num {
+                font-size: 0.8rem;
             }
 
             .numbers-card .seemore {
-                border: none;
-                background: none;
-                font-size: 11px;
-                color: #4723d9;
+                font-size: 0.7rem;
             }
         }
 
-        @media (max-width:800px) {
+        @media (max-width: 992px) {
+            .welcome {
+                background-size: 100px auto;
+                min-height: 120px;
+            }
+
+            .welcome-content {
+                max-width: 70%;
+            }
+
+            .buttons-wrapper {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .addbtn, .seebtn {
+                width: auto;
+                font-size: 0.8rem;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .welcome {
+                background: var(--primary);
+                background-image: none;
+            }
+
+            .welcome-content {
+                max-width: 100%;
+            }
+
+            .numbers-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 1rem;
+            }
+
             .numbers-card img {
-                height: 60px;
-                width: 60px;
-                border-radius: 50%;
+                width: 40px;
+                height: 40px;
             }
 
-            .numbers-card .title {
-                color: #252525;
-                font-size: 14px;
+            .tasks-header p, .history-header p {
+                font-size: 0.8rem;
             }
 
-            .numbers-card .num {
-                color: #252525;
-                font-size: 14px;
+            .task-desc, .history-desc {
+                font-size: 0.8rem;
             }
 
-            .numbers-card .seemore {
-                border: none;
-                background: none;
-                font-size: 12px;
-                color: #4723d9;
+            .task-time, .history-time {
+                font-size: 0.7rem;
             }
         }
 
-        .shart-container {
-            box-shadow: 0px 3px 15px 1px #3838381d;
-            border-radius: 15px;
-        }
+        @media (max-width: 576px) {
+            .container-fluid {
+                padding: 1rem 0.5rem !important;
+            }
 
-        .history {
-            padding: 7px;
-            border-radius: 5px;
-            font-size: 15px;
-            height: auto;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
-            box-shadow: none;
-        }
+            .welcome h3 {
+                font-size: 1rem;
+            }
 
-        .history-header {
-            padding: 10px;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
-        }
+            .chart-container h6 {
+                font-size: 0.8rem;
+            }
 
-        .history-item {
-            border-bottom: 1px solid #e8e8e8d3;
-            color: #252525;
-        }
-
-        .history-item button {
-            border: none;
-            background: none;
-        }
-
-        .history .history-desc {
-            text-wrap: wrap;
-        }
-
-        .history .history-time {
-            font-size: 12px;
-            color: #8a8a8a;
+            .dropdown-menu {
+                font-size: 0.8rem;
+            }
         }
     </style>
 
-    <div class="container-fluid py-4 px-0 d-flex flex-column">
-        <div class="page-wrapper w-100 row m-0">
-            <section class="main-section col-12 col-md-8 col-lg-9 p-0 pr-md-4">
-                <div class="welcome p-4">
-                    <div class="d-flex flex-column justify-content-between col-8">
-                        <h3 style="font-weight: 500; padding-bottom: 10px;">
-                            {{ auth()->user()->manage->name }}:
-                            <strong>{{ auth()->user()->firstname . ' ' . auth()->user()->lastname }}</strong> to the Dashboard
+    <div class="container-fluid">
+        <div class="row g-3">
+            <!-- Main Section -->
+            <section class="main-section col-12 col-lg-9">
+                <!-- Welcome Section -->
+                <div class="welcome">
+                    <div class="welcome-content">
+                        <h3>
+                            Filiere: {{ auth()->user()->manage->name }}:
+                          <strong>{{ auth()->user()->firstname . ' ' . auth()->user()->lastname }}</strong>
                         </h3>
-                        <div class="buttons-wrapper d-flex gap-3">
-                            <button class="addbtn">Ajouter un utilisateur</button>
-                            <button class="seebtn">Voir tous les utilisateurs</button>
+                        <div class="buttons-wrapper">
+                            <a href="{{ route('coordonnateur.modules.index') }}" class="addbtn">Gérer Modules</a>
+                            <a href="{{ route('coordonnateur.assignments') }}" class="addbtn">Gérer Heures</a>
+                            <a href="{{ route('emploi.index') }}" class="addbtn">Gérer Emplois</a>
+                            {{-- <a href="{{ route('seances.index') }}" class="addbtn">Gérer Séances</a> --}}
+                            <a href="{{ route('coordonnateur.vacataires.index') }}" class="addbtn">Gérer Vacataires</a>
                         </div>
                     </div>
                 </div>
 
-                <div class="numbers row w-100 m-0 mt-4">
-                    <div class="p-2 col-6 col-lg-3">
-                        <div class="numbers-card bg-white d-flex p-2 gap-3 gap-md-4 align-items-center">
-                            <img src="{{ asset('storage/images/1.png') }}" alt="">
-                            <div class="d-flex flex-column justify-content-start align-items-start">
+                <!-- Numbers Cards -->
+                <div class="row g-3 mt-3">
+                    <div class="col-6 col-md-4">
+                        <div class="numbers-card">
+                            <img src="{{ asset('storage/images/1.png') }}" alt="Etudiants">
+                            <div>
                                 <p class="title">Etudiants</p>
                                 <p class="num">Total: <strong>{{ $studentCount }}</strong></p>
-                                <a  href="#" class="seemore">> Voir Plus</a>
+                                <a href="#" class="seemore">> Voir Plus</a>
                             </div>
                         </div>
                     </div>
-                    <div class="p-2 col-6 col-lg-3">
-                        <div class="numbers-card bg-white d-flex p-2 gap-3 gap-md-4 align-items-center">
-                            <img src="{{ asset('storage/images/2.png') }}" alt="">
-                            <div class="d-flex flex-column justify-content-start align-items-start">
+                    <div class="col-6 col-md-4">
+                        <div class="numbers-card">
+                            <img src="{{ asset('storage/images/2.png') }}" alt="Vacataires">
+                            <div>
                                 <p class="title">Vacataires</p>
                                 <p class="num">Total: <strong>{{ $vacataireCount }}</strong></p>
-                                <a  href="{{ route('coordonnateur.vacataires.index') }}" class="seemore">> Voir Plus</a>
+                                <a href="{{ route('coordonnateur.vacataires.index') }}" class="seemore">> Voir Plus</a>
                             </div>
                         </div>
                     </div>
-                    <div class="p-2 col-6 col-lg-3">
-                        <div class="numbers-card bg-white d-flex p-2 gap-3 align-items-center">
-                            <img src="{{ asset('storage/images/2.png') }}" alt="">
-                            <div class="d-flex flex-column justify-content-start align-items-start">
+                    <div class="col-6 col-md-4">
+                        <div class="numbers-card">
+                            <img src="{{ asset('storage/images/3.png') }}" alt="Modules">
+                            <div>
                                 <p class="title">Modules</p>
-                                <p class="num">{{ $moduleCount }}</p>
-                                <a href="{{ route('coordonnateur.modules.index') }}"  class="seemore">>Voir Plus</a>
-
+                                <p class="num">Total: <strong>{{ $moduleCount }}</strong></p>
+                                <a href="{{ route('coordonnateur.modules.index') }}" class="seemore">> Voir Plus</a>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row m-0 mt-3">
-                    <!-- Répartition des Groupes TD/TP/CM Chart -->
-                    <div class="col-12 col-lg-6 mb-4 p-2">
-                        <div class="shart-container p-3 bg-white d-flex flex-column justify-content-start align-items-center" style="height: 350px;">
-                            <h6 class="pt-1 pb-4 m-0 text-center" style="color: #252525">Répartition des Groupes TD/TP/CM</h6>
-                            <canvas id="groupesChart" style="width: 90%; max-height: 250px;"></canvas>
+                <!-- Charts -->
+                <div class="row g-3 mt-3">
+                    <div class="col-12 col-md-6">
+                        <div class="chart-container">
+                            <h6>Répartition des Groupes TD/TP/CM</h6>
+                            <canvas id="groupesChart"></canvas>
                         </div>
                     </div>
-
-                    <!-- Nombre de Séances par Jour Chart -->
-                    <div class="col-12 col-lg-6 mb-4 p-2">
-                        <div class="shart-container p-3 bg-white d-flex flex-column justify-content-start align-items-center" style="height: 350px;">
-                            <h6 class="pt-1 pb-4 text-center" style="color: #252525">Nombre de Séances par Jour</h6>
-                            <canvas id="seancesChart" style="width: 100%; height: 100%;"></canvas>
+                    <div class="col-12 col-md-6">
+                        <div class="chart-container">
+                            <h6>Nombre de Séances par Jour</h6>
+                            <canvas id="seancesChart" ></canvas>
                         </div>
                     </div>
                 </div>
 
-                <div class="">
-                    <div class="history p-0" style="background-color:white">
-                        <div style="border:none; background-color:#4723d9;" class="history-header d-flex justify-content-between align-items-center">
-                            <p style="color: #f1eded; font-size: 15px; font-weight: 600; margin:0">Historique des actions:</p>
-                        </div>
-                        <div class="history-content px-3 px-md-4 pt-0">
-                            @foreach ($coordActions as $History)
-                                <div class="history-item mt-3 d-flex justify-content-between align-items-center pb-3">
-                                    <div class="d-flex gap-3 align-items-center">
-                                        @switch($History['action_type'])
-                                            @case('affecter')
-                                                <i style="color: #21b524" class="bi bi-plus-circle-fill"></i>
-                                            @break
-                                            @case('retirer')
-                                                <i style="color: #ee5951" class="bi bi-trash3-fill"></i>
-                                            @break
-                                            @case('modifier')
-                                                <i style="color:#5e3de3" class="bi bi-pencil-square"></i>
-                                            @break
-                                            @default
-                                                <i style="color:#ff914d" class="bi bi-check-circle-fill"></i>
-                                        @endswitch
-                                        <div>
-                                            <p class="history-desc m-0">{{ $History['description'] }}</p>
-                                            <p class="history-time m-0">{{ $History->created_at->diffForHumans() }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="dropdown">
-                                        <button data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></button>
-                                        <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="Dropdown" data-bs-display="static" style="width: 250px">
-                                            <li><p class="m-0 py-1 pl-3">Date: <strong>{{ $History->created_at }}</strong></p></li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li><p class="m-0 py-1 pl-3">Admin: <strong>{{ $History->user->firstname }} {{ $History->user->lastname }}</strong></p></li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li><p class="m-0 py-1 pl-3">Table: <strong>{{ $History->target_table }}</strong></p></li>
-                                        </ul>
+                <!-- History -->
+                <div class="history-container mt-3">
+                    <div class="history-header">
+                        <p>Historique des actions</p>
+                    </div>
+                    <div class="history-content">
+                        @forelse ($coordActions as $history)
+                            <div class="history-item">
+                                <div class="d-flex gap-2 align-items-center">
+                                    @switch($history['action_type'])
+                                        @case('affecter')
+                                            <i style="color: #21b524" class="bi bi-plus-circle-fill"></i>
+                                        @break
+                                        @case('retirer')
+                                            <i style="color: #ee5951" class="bi bi-trash3-fill"></i>
+                                        @break
+                                        @case('modifier')
+                                            <i style="color: #5e3de3" class="bi bi-pencil-square"></i>
+                                        @break
+                                        @default
+                                            <i style="color: #ff914d" class="bi bi-check-circle-fill"></i>
+                                    @endswitch
+                                    <div>
+                                        <p class="history-desc">{{ $history['description'] }}</p>
+                                        <p class="history-time">{{ $history->created_at->diffForHumans() }}</p>
                                     </div>
                                 </div>
-                            @endforeach
-                            <a href="#" class="text-center"><p class="pt-2 m-0">Voir tous</p></a>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-link text-secondary p-0" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><p class="m-0 px-3 py-1">Date: <strong>{{ $history->created_at }}</strong></p></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><p class="m-0 px-3 py-1">Admin: <strong>{{ $history->user->firstname }} {{ $history->user->lastname }}</strong></p></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><p class="m-0 px-3 py-1">Table: <strong>{{ $history->target_table }}</strong></p></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        @empty
+                            <p class="text-center text-muted">Aucun historique disponible</p>
+                        @endforelse
+                        <div class="text-center mt-2">
+                            <a href="#" class="text-primary text-decoration-none small">Voir tous</a>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section class="side-section col-12 col-md-4 col-lg-3 p-0 pt-4 p-md-0">
-                <div class="tasks-container overflow-hidden shadow-sm mt-4 bg-white" style="border-radius: 15px !important">
-                    <div class="tasks-header d-flex justify-content-between align-items-center px-3 py-2" style="background-color: #4723d9;">
-                        <p class="text-white m-0 fw-semibold small">Vos tâches:</p>
-                        <button id="task-add-button" class="btn btn-sm btn-light rounded-circle p-0 d-flex align-items-center justify-content-center" style="width:24px;height:24px;" onclick="addtask()">+</button>
+            <!-- Side Section -->
+            <section class="side-section col-12 col-lg-3">
+                <div class="tasks-container">
+                    <div class="tasks-header">
+                        <p>Vos tâches</p>
+                        <button id="task-add-button" onclick="addtask()">+</button>
                     </div>
-                    <div class="task-content p-3 p-md-4">
-                        <div id="task-add" class="mb-3" style="display: none">
-                            <form action="{{ url('/addtask') }}" method="post" class="d-flex gap-2">
+                    <div class="tasks-content">
+                        <div id="task-add" style="display: none">
+                            <form action="{{ url('/addtask') }}" method="POST" class="d-flex gap-2">
                                 @csrf
                                 <input id="task-input" name="task" type="text" class="flex-grow-1" placeholder="Ajouter une tâche...">
-                                <button type="submit" class="btn btn-sm" style="width:40px">+</button>
+                                <button type="submit" class="btn btn-sm">+</button>
                             </form>
                         </div>
-                        @if (count($tasks) > 0)
-                            @foreach ($tasks as $task)
-                                <div class="task-item d-flex justify-content-between align-items-center py-3 px-2 mb-2 bg-light" style="border-radius:15px !important">
-                                    <div class="d-flex gap-3 align-items-center">
-                                        @if ($task['isdone'])
-                                            <i class="bi bi-check-circle-fill text-success fs-5"></i>
-                                        @else
-                                            <i class="bi bi-clock-fill text-warning fs-5"></i>
-                                        @endif
-                                        <div>
-                                            <p class="task-desc m-0 @if ($task['isdone']) text-decoration-line-through text-muted @endif">{{ $task['description'] }}</p>
-                                            <p class="task-time m-0 small text-muted">{{ $task->created_at->diffForHumans() }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-link text-secondary p-0" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-three-dots-vertical"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end mt-2 shadow-sm">
-                                            @if ($task->isdone)
-                                                <li>
-                                                    <form action="{{ url('mark-task-aspending/' . $task->id) }}" method="post">
-                                                        @csrf
-                                                        <button type="submit" class="dropdown-item py-2"><i class="bi bi-clock me-2"></i>Marquer en attente</button>
-                                                    </form>
-                                                </li>
-                                            @else
-                                                <li>
-                                                    <form action="{{ url('mark-task-asdone/' . $task->id) }}" method="post">
-                                                        @csrf
-                                                        <button type="submit" class="dropdown-item py-2"><i class="bi bi-check-circle me-2"></i>Marquer comme fait</button>
-                                                    </form>
-                                                </li>
-                                            @endif
-                                            <li><hr class="dropdown-divider m-0"></li>
-                                            <li>
-                                                <form action="{{ url('delete-task/' . $task->id) }}" method="post">
-                                                    @csrf
-                                                    <button type="submit" class="dropdown-item py-2 text-danger"><i class="bi bi-trash me-2"></i>Supprimer</button>
-                                                </form>
-                                            </li>
-                                        </ul>
+                        @forelse ($tasks as $task)
+                            <div class="task-item bg-light" style="border-radius: 10px;">
+                                <div class="d-flex gap-2 align-items-center">
+                                    @if ($task['isdone'])
+                                        <i class="bi bi-check-circle-fill text-success"></i>
+                                    @else
+                                        <i class="bi bi-clock-fill text-warning"></i>
+                                    @endif
+                                    <div>
+                                        <p class="task-desc @if ($task['isdone']) text-decoration-line-through text-muted @endif">{{ $task['description'] }}</p>
+                                        <p class="task-time">{{ $task->created_at->diffForHumans() }}</p>
                                     </div>
                                 </div>
-                            @endforeach
-                            <div class="text-center mt-2">
-                                <a href="#" class="text-primary text-decoration-none small">Voir tous</a>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-link text-secondary p-0" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        @if ($task->isdone)
+                                            <li>
+                                                <form action="{{ url('mark-task-aspending/' . $task->id) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="dropdown-item"><i class="bi bi-clock me-2"></i>Marquer en attente</button>
+                                                </form>
+                                            </li>
+                                        @else
+                                            <li>
+                                                <form action="{{ url('mark-task-asdone/' . $task->id) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Marquer comme fait</button>
+                                                </form>
+                                            </li>
+                                        @endif
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <form action="{{ url('delete-task/' . $task->id) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="dropdown-item text-danger"><i class="bi bi-trash me-2"></i>Supprimer</button>
+                                                </form>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
-                        @else
+                        @empty
                             <div class="text-center py-4">
                                 <i class="bi bi-clipboard2-check fs-1 text-muted"></i>
                                 <p class="text-muted mt-2 mb-0">Aucune tâche pour le moment</p>
                                 <small class="text-muted">Cliquez sur "+" pour ajouter une tâche</small>
+                            </div>
+                        @endforelse
+                        @if ($tasks->count() > 0)
+                            <div class="text-center mt-2">
+                                <a href="#" class="text-primary text-decoration-none small">Voir tous</a>
                             </div>
                         @endif
                     </div>
@@ -447,6 +534,8 @@
                 }]
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: false,
                 cutout: '60%',
                 plugins: {
                     legend: {
@@ -488,6 +577,7 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true,
@@ -499,8 +589,6 @@
                             text: 'Nombre de séances'
                         },
                         grid: {
-                            display: true,
-                            drawBorder: false,
                             color: 'rgba(0,0,0,0.06)'
                         }
                     },
@@ -523,14 +611,14 @@
         });
 
         function addtask() {
-            const taskaddButton = document.getElementById('task-add-button');
-            const taskadd = document.getElementById('task-add');
-            if (taskaddButton.innerHTML == "x") {
-                taskadd.style.display = "none";
-                taskaddButton.innerHTML = "+";
+            const taskAddButton = document.getElementById('task-add-button');
+            const taskAdd = document.getElementById('task-add');
+            if (taskAddButton.innerHTML === 'x') {
+                taskAdd.style.display = 'none';
+                taskAddButton.innerHTML = '+';
             } else {
-                taskaddButton.innerHTML = "x";
-                taskadd.style.display = "block";
+                taskAddButton.innerHTML = 'x';
+                taskAdd.style.display = 'block';
                 document.getElementById('task-input').focus();
             }
         }

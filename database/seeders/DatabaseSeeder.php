@@ -68,37 +68,46 @@ class DatabaseSeeder extends Seeder
     private function createManualUsers(): array
     {
         $users = [
-            [
-                'firstname' => 'Mohssine',
-                'lastname' => 'Echlaihi',
-                'email' => 'mohssine@gmail.com',
-                'departement' => 'GI',
-                'password' => Hash::make('mohssine'),
-                'role' => ['isadmin' => false, 'iscoordonnateur' => false, 'isprof' => true, 'isvocataire' => false],
-            ],
+
             [
                 'firstname' => 'Fahd',
                 'lastname' => 'Chafai',
                 'email' => 'fahdfahd427@gmail.com',
                 'departement' => 'GI',
-                'password' => Hash::make('fahd'),
-                'role' => ['isadmin' => true, 'iscoordonnateur' => false, 'isprof' => true, 'isvocataire' => false],
+                'password' => Hash::make('password'),
+                'role' => ['isadmin' => true, 'iscoordonnateur' => false, 'isprof' => true, 'isvocataire' => false, 'ischef' => false],
             ],
             [
-                'firstname' => 'Imad',
-                'lastname' => 'Badi',
+                'firstname' => 'chef',
+                'lastname' => 'fahd',
+                'email' => 'fahd@gmail.com',
+                'departement' => 'GI',
+                'password' => Hash::make('password'),
+                'role' => ['isadmin' => false, 'iscoordonnateur' => false, 'isprof' => true, 'isvocataire' => false, 'ischef' => true],
+            ],
+            [
+                'firstname' => 'coord',
+                'lastname' => 'ahmed',
                 'email' => 'mohssine888@gmail.com',
                 'departement' => 'GI',
                 'password' => Hash::make('password'),
-                'role' => ['isadmin' => false, 'iscoordonnateur' => true, 'isprof' => true, 'isvocataire' => false],
+                'role' => ['isadmin' => false, 'iscoordonnateur' => true, 'isprof' => true, 'isvocataire' => false, 'ischef' => false],
             ],
             [
                 'firstname' => 'Yahya',
                 'lastname' => 'Azalmat',
                 'email' => 'yahya@gmail.com',
                 'departement' => 'GI',
-                'password' => Hash::make('yahya'),
-                'role' => ['isadmin' => false, 'iscoordonnateur' => false, 'isprof' => false, 'isvocataire' => true],
+                'password' => Hash::make('password'),
+                'role' => ['isadmin' => false, 'iscoordonnateur' => false, 'isprof' => false, 'isvocataire' => true, 'ischef' => false],
+            ],
+            [
+                'firstname' => 'Mohssine',
+                'lastname' => 'Echlaihi',
+                'email' => 'mohssine@gmail.com',
+                'departement' => 'GI',
+                'password' => Hash::make('password'),
+                'role' => ['isadmin' => false, 'iscoordonnateur' => false, 'isprof' => true, 'isvocataire' => false, 'ischef' => false],
             ],
         ];
 
@@ -119,6 +128,8 @@ class DatabaseSeeder extends Seeder
                 'number' => '06' . fake()->numerify('########'),
                 'status' => 'active',
                 'date_of_birth' => fake()->date('Y-m-d', '-30 years'),
+                'min_hours' => fake()->numberBetween(10, 20),
+                'max_hours' => fake()->numberBetween(200, 300),
             ]);
 
             $createdUsers[] = $user;
@@ -129,11 +140,11 @@ class DatabaseSeeder extends Seeder
 
     private function createGiDepartment(): Departement
     {
-        $chef = User::where('email', 'mohssine@gmail.com')->first();
+        $chef = User::where('email', 'fahd@gmail.com')->first();
 
         return Departement::create([
-            'name' => 'GI',
-            'description' => 'Département de Génie Informatique',
+            'name' => 'mathematiques informatique',
+            'description' => 'Département de Mathématiques Informatique',
             'user_id' => $chef->id,
         ]);
     }
@@ -143,7 +154,7 @@ class DatabaseSeeder extends Seeder
         $coordinator = User::where('email', 'mohssine888@gmail.com')->first();
 
         return Filiere::create([
-            'name' => 'GI',
+            'name' => 'genie informatique',
             'description' => 'Filière en Génie Informatique',
             'department_id' => $department->id,
             'coordonnateur_id' => $coordinator->id,
@@ -175,6 +186,8 @@ class DatabaseSeeder extends Seeder
                 'number' => '06' . fake()->numerify('########'),
                 'status' => 'active',
                 'date_of_birth' => fake()->date('Y-m-d', '-25 years'),
+                'min_hours' => fake()->numberBetween(10, 20),
+                'max_hours' => fake()->numberBetween(200, 300),
             ]);
 
             $professors[] = $user;
@@ -415,18 +428,17 @@ class DatabaseSeeder extends Seeder
 
     private function createTasks(array $users): void
     {
-            foreach ($users as $user) {
-                $numTasks = fake()->numberBetween(3, 5);
-                for ($i = 0; $i < $numTasks; $i++) {
-                    Task::create([
-                        'description' => fake()->sentence(),
-                        'isdone' => fake()->boolean(70),
-                        'user_id' => $user->id,
-                    ]);
-                }
+        foreach ($users as $user) {
+            $numTasks = fake()->numberBetween(3, 5);
+            for ($i = 0; $i < $numTasks; $i++) {
+                Task::create([
+                    'description' => fake()->sentence(),
+                    'isdone' => fake()->boolean(70),
+                    'user_id' => $user->id,
+                ]);
             }
-    
         }
+    }
 
     private function createNotesAndStudentModuleNotes(array $modules, array $students, array $manualUsers): void
     {
@@ -465,6 +477,4 @@ class DatabaseSeeder extends Seeder
             }
         }
     }
-
-    
 }

@@ -2,20 +2,20 @@
 
 
                 <a href="{{ route('mesModules') }}"
-                    class="nav_link {{ request()->is('professor/mesModules') ? 'active' : '' }}">
+                    class="nav_link {{ request()->is('mesModules') ? 'active' : '' }}">
                     <i class="fas fa-book"></i> <!-- Changed from fa-book-open to fa-book (simpler book icon) -->
                     <span class="nav_name">Mes Modules</span>
                 </a>
 
                 <a href="{{ route('professor.myRequests') }}"
-                    class="nav_link {{ request()->is('professor/requests') ? 'active' : '' }}">
+                    class="nav_link {{ request()->is('my-requests') ? 'active' : '' }}">
                     <i class="fas fa-clipboard-list"></i>
                     <!-- Changed to clipboard with list - clearer for "demandes" -->
                     <span class="nav_name">Mes Demandes</span>
                 </a>
 
                 <a href="{{ route('availableModules') }}"
-                    class="nav_link {{ request()->is('professor/availableModules') ? 'active' : '' }}">
+                    class="nav_link {{ request()->is('availableModules') ? 'active' : '' }}">
                     <i class="fas fa-book-medical"></i> <!-- Changed to book with plus sign - indicates availability -->
                     <span class="nav_name">Modules vacantes</span>
                 </a>
@@ -29,7 +29,7 @@
                 </a>
 
                 <a href="{{ route('notes_upload_page') }}"
-                    class="nav_link {{ request()->is('professor/upload-notes') ? 'active' : '' }}">
+                    class="nav_link {{ request()->is('upload-notes') ? 'active' : '' }}">
                     <i class="fas fa-edit"></i> <!-- Changed to edit icon - more appropriate for "saisir" -->
                     <span class="nav_name">Saisir les notes</span>
                 </a>
