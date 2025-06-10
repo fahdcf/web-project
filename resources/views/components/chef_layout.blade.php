@@ -101,6 +101,29 @@
         }
 
 
+
+        .hidden {
+            display: none !important;
+        }
+
+
+        .notification-menu {
+            max-width: 350px;
+            width: 350px;
+            box-shadow: 1px 1px 10px 2px #3333332d;
+            overflow-x: hidden;
+            white-space: normal;
+            /* Allows content to wrap */
+            word-wrap: break-word;
+            /* Support older browsers */
+            overflow-wrap: break-word;
+        }
+
+        .notification-menu li {
+            word-break: break-word;
+            white-space: normal;
+        }
+
         .header_toggle {
             color: var(--first-color);
             font-size: 1.5rem;
@@ -386,11 +409,18 @@
             white-space: normal;
             /* Allow line breaks in the <a> */
         }
+
+
+
+
+        /* Optional: add spacing if needed */
+        .notification-menu a.dropdown-item {
+            font-size: 14px;
+            padding: 10px 15px;
+            white-space: normal;
+            /* Allow line breaks in the <a> */
+        }
     </style>
-
-
-
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -602,7 +632,14 @@
 
                             <span class="nav_name">UE vacantes</span>
                         </a>
+                        <a href="{{ url('/deadlines') }}"
+                            class="nav_link {{ request()->is('deadlines') ? 'active' : '' }}">
+                            <i class="bi bi-clock-history"></i>
+
+                            <span class="nav_name">Dates limite</span>
+                        </a>
                     @endif
+
 
 
 
