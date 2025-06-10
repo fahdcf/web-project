@@ -1,3 +1,4 @@
+ .
 @php
     $layout = 'layout'; // default layout
 
