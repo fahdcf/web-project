@@ -6,17 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\admin_action;
 use App\Models\Assignment;
 use App\Models\chef_action;
+use App\Models\coord_action;
 use App\Models\Filiere;
 use App\Models\Groupe;
 use App\Models\Module;
 use App\Models\prof_request;
+use App\Models\Seance;
 use App\Models\Student;
-use App\Models\task;
+use App\Models\Task;
 use App\Models\User;
 use App\Models\user_detail;
 use App\Models\user_log;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CoordonnateurController extends Controller
 {
@@ -110,42 +113,38 @@ class CoordonnateurController extends Controller
     public function dashboard()
     {
 
+        $moduleCount = Module::where('filiere_id', auth()->user()->manage->id)
+            ->where('status', 'active')
+            ->count();
 
-        $studentCount = student::get()->count();
-        $professorCount = User::get()->count();
-        $chefHistory = chef_action::latest()->take(4)->get();
-        $tasks = task::where('user_id', auth()->user()->id)->latest()->take(5)->get();
+        $studentCount = Student::count();//place holder
+        $vacataireCount = User::whereHas('role', fn($q) => $q->where('isvocataire', true))->count();
+        $coordActions = coord_action::where('user_id', auth()->id())->latest()->take(5)->get();
+        $tasks = Task::where('user_id', auth()->user()->id)->latest()->take(5)->get();
 
-        $departmentName =  auth()->user()->manage->name;
-        $professorsMin = user::where('departement', $departmentName)->paginate(15);
+        // Répartition des Groupes TD/TP/CM
+        $tdGroups = Module::sum('nbr_groupes_td');
+        $tpGroups = Module::sum('nbr_groupes_tp');
+        $cmGroups = Seance::where('type', 'CM')
+            ->distinct('module_id')
+            ->count();
+        $groupesData = [$tdGroups, $tpGroups, $cmGroups];
 
+        // Nombre de Séances par Jour
+        $seancesParJourRaw = Seance::select('jour', DB::raw('count(*) as count'))
+            ->groupBy('jour')
+            ->pluck('count', 'jour')
+            ->toArray();
 
-        $professorsMin = User::where('departement', $departmentName)->latest()->take(3)->get();
-        $module_requests = prof_request::where('status', 'pending')->latest()->take(3)->get();
-
-        // Get user logs this week
-        $logs = user_log::whereBetween('created_at', [
-            Carbon::now()->startOfWeek(), // Monday
-            Carbon::now()->endOfWeek(),   // Sunday
-        ])->get();
-
-
-        $logsByDay = $logs->groupBy(function ($log) {
-            return ucfirst(Carbon::parse($log->created_at)->locale('fr')->isoFormat('dddd'));
-        });
-
-        // Prepare counts for each day
-        $days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
-
-        // Build login counts
-        $loginCounts = [];
-        foreach ($days as $day) {
-            $loginCounts[] = isset($logsByDay[$day]) ? $logsByDay[$day]->count() : 0;
-        }
+        // Initialize all days with 0 count
+        $days = ['Lundi' => 0, 'Mardi' => 0, 'Mercredi' => 0, 'Jeudi' => 0, 'Vendredi' => 0, 'Samedi' => 0];
+        // Merge actual counts
+        $seancesParJour = array_merge($days, $seancesParJourRaw);
+        // Extract values in correct order
+        $seancesParJour = array_values(array_intersect_key($seancesParJour, $days));
 
 
-
-        return View('coordonnateur.dashboard', ['tasks' => $tasks, 'studentCount' => $studentCount, 'professorCount' => $professorCount, 'chefHistory' => $chefHistory, 'professorsMin' => $professorsMin, 'loginCounts' => $loginCounts, 'module_requests' => $module_requests]);
+        return view('coordonnateur.dashboard', compact('moduleCount','studentCount', 'vacataireCount', 'coordActions', 'tasks', 'groupesData', 'seancesParJour'));
     }
 
     ////////////////////////////////////////////////////////////////
@@ -214,22 +213,14 @@ class CoordonnateurController extends Controller
         return redirect()->back()->with('success', 'hours modifiee avec succès.');;
     }
 
-    public function removeModule(Assignment $assign)
+    public function removeAssignation(Assignment $assignation)
     {
 
-        $profId = $assign->prof_id;
+        $profId = $assignation->prof_id;
         $prof = User::findOrFail($profId);
 
-
-        // $chefActionDetails = [
-        //     'chef_id' => auth()->user()->id,
-        //     'action_type' => 'retirer',
-        //     'description' => auth()->user()->firstname . " " . auth()->user()->lastname . " a retireé le module " . $assign->module->name . " de professeur " . $prof->firstname . " " . $prof->lastname,
-        //     'target_table' => 'modules',
-        //     'target_id' => $assign->module->id,
-        // ];
-
-        Assignment::findOrFail($id)->delete();
+        $assignation->delete();
+        coord_action::create(['user_id' => auth()->id(), 'action_type' => 'delete', 'target_table' => 'assignments', 'target_id' => $assignation->id, 'description' => "Suppression de l'assignation pour le professeur: {$prof->firstname} {$prof->lastname}"]);
 
         // chef_action::create($chefActionDetails);
 
@@ -291,7 +282,9 @@ class CoordonnateurController extends Controller
                 $tab[$i] = $newAssign;
                 $i++;
 
-                Assignment::create($newAssign);
+                $assignation=Assignment::create($newAssign);
+                coord_action::create(['user_id' => auth()->id(), 'action_type' => 'affecter', 'target_table' => 'assignments', 'target_id' => $assignation->id, 'description' => "Affectation du module pour le professeur: {$prof->firstname} {$prof->lastname}"]);
+
 
                 $module->save();
 

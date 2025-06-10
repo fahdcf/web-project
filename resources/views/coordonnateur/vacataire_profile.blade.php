@@ -205,7 +205,7 @@
                                                     <strong>{{ $assign->module->name }}</strong> de le professeur
                                                     <strong>{{ $user->firstname }} {{ $user->lastname }}</strong> ?
                                                 </p>
-                                                <form action="{{ url('/chef/professeurs/remove/' . $assign->id) }}"
+                                                <form action="{{route('coordonnateur.vacataire.removeAssignation', $assign->id) }}"
                                                     method="POST">
                                                     @csrf
                                                     @method('DELETE')

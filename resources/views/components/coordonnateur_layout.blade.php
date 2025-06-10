@@ -1,3 +1,10 @@
+@if(auth()->user()->role->isadmin)
+    @include('components.admin_layout')
+@elseif(auth()->user()->role->ischef)
+    @include('components.chef_layout')
+
+@else
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,9 +17,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-
-
 
 
     @vite(['resources/css/admin-dashboard.css', 'resources/css/sb-admin-2.css', 'resources/vendor/fontawesome-free/css/all.min.css', 'resources/js/app.js', 'resources/vendor/jquery/jquery.min.js', 'resources/vendor/bootstrap/js/bootstrap.bundle.min.js', 'resources/vendor/jquery-easing/jquery.easing.min.js', 'resources/js/sb-admin-2.min.js', 'resources/vendor/chart.js/Chart.min.js', 'resources/js/demo/chart-area-demo.js', 'resources/js/demo/chart-pie-demo.js'])
@@ -49,7 +53,7 @@
             font-family: var(--body-font);
             font-size: var(--normal-font-size);
             transition: .5s;
-            background-color: #f5f5f5;
+            background-color: #f8f9fa;
         }
 
         .modal-backdrop {
@@ -363,6 +367,32 @@
         .hidden {
             display: none !important;
         }
+
+
+        .notification-menu {
+            max-width: 350px;
+            width: 350px;
+            box-shadow: 1px 1px 10px 2px #3333332d;
+            overflow-x: hidden;
+            white-space: normal;
+            /* Allows content to wrap */
+            word-wrap: break-word;
+            /* Support older browsers */
+            overflow-wrap: break-word;
+        }
+
+        .notification-menu li {
+            word-break: break-word;
+            white-space: normal;
+        }
+
+        /* Optional: add spacing if needed */
+        .notification-menu a.dropdown-item {
+            font-size: 14px;
+            padding: 10px 15px;
+            white-space: normal;
+            /* Allow line breaks in the <a> */
+        }
     </style>
 
 
@@ -373,17 +403,16 @@
 
 
 
-
-
-
 </head>
 
-
-
-
-
-
 <body id="body-pd">
+
+
+    @php
+        $notifications = Auth::user()->notifications()->latest()->take(5)->get();
+        $unreadCount = auth()->user()->unreadNotifications->count();
+
+    @endphp
 
     <header class="header mt-3" id="header">
 
@@ -416,8 +445,63 @@
                 </div>
 
 
-                <div class="notifications-container ml-2" id="notifications-container">
-                    <button id="searchBtn"><i class='bx bx-bell' id="search-icon"></i></button>
+                <!-- Notification Dropdown -->
+                <div class="dropdown ms-2">
+
+
+                    <div class="notifications-container ml-2" id="notifications-container" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <button id="notification"><i class='bx bx-bell'></i>
+                            @if ($unreadCount > 0)
+                                <span class="position-absolute  translate-middle badge rounded-pill bg-danger">
+                                    {{ $unreadCount }}
+                                </span>
+                            @endif
+                        </button>
+                    </div>
+
+                    <ul class="dropdown-menu notification-menu dropdown-menu-end mt-2"
+                        aria-labelledby="notificationDropdown">
+                        <li style="background-color: #4723D9;">
+                            <h6 class="dropdown-header" style="color: white;">Notifications</h6>
+                        </li>
+                        @if (!$notifications)
+
+                            <li><a class="dropdown-item text-muted" href="#">No notifications</a></li>
+                        @else
+                            @foreach ($notifications as $notification)
+                                <li>
+                                    @if (is_null($notification->read_at))
+                                        <a class="dropdown-item"
+                                            style="background-color:#1319c70d ; border-bottom: 1px solid #3333331d;"
+                                            href="{{ route('notifications.read', $notification->id) }}">
+                                            {{ $notification->data['message'] }}
+                                            <br><small
+                                                class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+
+                                        </a>
+                                    @else
+                                        <a class="dropdown-item" style="border-bottom: 1px solid #3333331b;"
+                                            href="{{ route('notifications.read', $notification->id) }}">
+                                            {{ $notification->data['message'] }}
+                                            <br><small
+                                                class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+                                        </a>
+                                    @endif
+
+                                </li>
+                            @endforeach
+
+
+
+
+
+
+                            <li class="text-center pt-1"><a href="#">Voir tous les notifications</a></li>
+
+                        @endif
+
+                    </ul>
                 </div>
 
                 <div class="d-flex flex-column  ml-3">
@@ -429,8 +513,7 @@
                         <p style=" {{ Auth()->user()->user_details->status === 'active' ? 'color: #10a386;' : 'color: #cd4c35;' }} font-weight: 500; font-size: 12px;"
                             class="p-0 m-0 text-end">{{ Auth()->user()->user_details->status }}</p>
                     @else
-                        <p style="color: #cd4c35; font-weight: 500; font-size: 12px;" class="p-0 m-0 text-end">
-                            inactive
+                        <p style="color: #cd4c35; font-weight: 500; font-size: 12px;" class="p-0 m-0 text-end">inactive
                         </p>
                     @endif
 
@@ -490,62 +573,92 @@
                 <div class="nav_list">
                     <!-- sidebar items-->
 
-
-
                     <a href="{{ url('/') }}" class="nav_link {{ request()->is('/') ? 'active' : '' }}">
                         <i class='bx bx-grid-alt nav_icon'></i>
                         <span class="nav_name">Dashboard</span>
                     </a>
+                    @auth
+                        @if (auth()->user()->isCoordonnateur())
+                            @include('layouts.sidebars.coordonnateur')
+                        @elseif(auth()->user()->role->isvocataire)
+                            @include('layouts.sidebars.vacataire')
 
 
-                    @if (optional(auth()->user()->role)->isadmin)
-                        <a href="{{ url('/pending_users') }}"
-                            class="nav_link {{ request()->is('pending_users') ? 'active' : '' }}">
-                            <i class="bi bi-person-exclamation" style="padding-left: 2px; font-size: 18px;"></i>
-                            <span class="nav_name">Pending users</span>
+                            {{-- @elseif(auth()->user()->role->isadmin)
+                            @include('components.admin_layout')
+
+
+                        @elseif(auth()->user()->role->ischef)
+                            @include('components.chef_layout') --}}
+                            {{-- @elseif(auth()->user()->role->isprof)
+                            @include('layouts.sidebars.professor') --}}
+                        @endif
+                    @endauth
+
+
+
+                    @if (auth()->user()->role->isprof)
+                        <!-- Divider stylé -->
+                        <hr class="sidebar-divider-centered"
+                            style="width: 80%; margin: 1rem auto; border-top: 1px solid rgb(255, 255, 255);" />
+                        <!-- Ou avec une classe personnalisée -->
+                        <style>
+                            .sidebar-divider {
+                                border-top: 1px solid rgba(255, 255, 255, 0.712);
+                                /* ligne claire */
+                                margin: 1rem 0;
+                            }
+
+                            .sidebar-divider-centered {
+                                width: 80%;
+                                margin: 1rem auto;
+                                border-top: 1px solid rgba(255, 255, 255, 0.89);
+                                transition: all 0.3s ease;
+                            }
+
+                            .sidebar.collapsed .sidebar-divider-centered {
+                                width: 40%;
+                                /* smaller width when collapsed */
+                            }
+                        </style>
+                        {{-- devider here to ashow also the other action --}}
+                        <a href="{{ route('mesModules') }}"
+                            class="nav_link {{ request()->is('mesModules') ? 'active' : '' }}">
+                            <i class="fas fa-book"></i>
+                            <!-- Changed from fa-book-open to fa-book (simpler book icon) -->
+                            <span class="nav_name">Mes Modules</span>
                         </a>
 
-                        <a href="{{ url('/departements') }}"
-                            class="nav_link {{ request()->is('departements') ? 'active' : '' }}">
-                            <i class='bx bx-buildings nav_icon'></i>
-                            <span class="nav_name">Departements</span>
+                        <a href="{{ route('professor.myRequests') }}"
+                            class="nav_link {{ request()->is('my-requests') ? 'active' : '' }}">
+                            <i class="fas fa-clipboard-list"></i>
+                            <!-- Changed to clipboard with list - clearer for "demandes" -->
+                            <span class="nav_name">Mes Demandes</span>
                         </a>
 
-                        <a href="{{ url('/filieres') }}"
-                            class="nav_link {{ request()->is('filieres') ? 'active' : '' }}">
-                            <i class='bx bx-book-open nav_icon'></i>
-                            <span class="nav_name">Filieres</span>
+                        <a href="{{ route('availableModules') }}"
+                            class="nav_link {{ request()->is('availableModules') ? 'active' : '' }}">
+                            <i class="fas fa-book-medical"></i>
+                            <!-- Changed to book with plus sign - indicates availability -->
+                            <span class="nav_name">Modules vacantes</span>
                         </a>
 
-                        <a href="{{ url('/professeurs') }}"
-                            class="nav_link {{ request()->is('professeurs') ? 'active' : '' }}">
-                            <i class="bi bi-person-video3" style="padding-left: 2px; font-size: 17px;"></i>
-                            <span class="nav_name">Professeurs</span>
+
+
+                        <a href="{{ route('emploi.myTimetable') }}"
+                            class="nav_link {{ request()->is('my-timetable') ? 'active' : '' }}">
+                            <i class="fas fa-table"></i> <!-- Changed to table icon - represents timetable better -->
+                            <span class="nav_name">Emploi du Temps</span>
                         </a>
 
-                        <a href="{{ url('/etudiants') }}"
-                            class="nav_link {{ request()->is('etudiants') ? 'active' : '' }}">
-                            <i class="bi bi-people-fill" style="padding-left: 2px; font-size: 16px;"></i>
-                            <span class="nav_name">Etudiants</span>
-                        </a>
-
-                        <a href="{{ url('/admins') }}"
-                            class="nav_link {{ request()->is('admins') ? 'active' : '' }}">
-                            <i class="bi bi-person-gear" style="padding-left: 2px; font-size: 18px;"></i>
-                            <span class="nav_name">Admins</span>
+                        <a href="{{ route('notes_upload_page') }}"
+                            class="nav_link {{ request()->is('upload-notes') ? 'active' : '' }}">
+                            <i class="fas fa-edit"></i> <!-- Changed to edit icon - more appropriate for "saisir" -->
+                            <span class="nav_name">Saisir les notes</span>
                         </a>
                     @endif
 
 
-                    @auth
-                        @if (auth()->user()->isCoordonnateur())
-                            @include('layouts.sidebars.coordonnateur')
-                        @elseif(auth()->user()->role->isprof)
-                            @include('layouts.sidebars.professor')
-                        @elseif(auth()->user()->role->isvocataire)
-                            @include('layouts.sidebars.vacataire')
-                        @endif
-                    @endauth
 
 
                     <a href="{{ url('/profile') }}" class="nav_link {{ request()->is('profile') ? 'active' : '' }}">
@@ -553,16 +666,16 @@
                         <span class="nav_name">Profile</span>
                     </a>
 
-                    <a href="{{ url('/login') }}" class="nav_link">
-                        <i class='bx bx-log-out nav_icon'></i>
-                        <span class="nav_name">Deconnexion</span>
-                    </a>
+                    <a href="{{ url('/login') }}" class="nav_link"> <i class='bx bx-log-out nav_icon'></i> <span
+                            class="nav_name">Deconnexion
+
+                        </span> </a>
                 </div>
             </div>
-
         </nav>
     </div>
     <!--Container Main start-->
+
 
 
     {{ $slot }}
@@ -627,3 +740,5 @@
 
 
 </html>
+
+@endif

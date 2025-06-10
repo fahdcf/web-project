@@ -2,204 +2,56 @@
     <div class="container-fluid px-4 py-5">
         <x-global_alert />
         <!-- Header Section -->
-        <div class="header-container mb-4">
-            <style>
-                .header-container {
-                    background: white;
-                    border-radius: 8px;
-                    padding: 20px;
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                }
 
+        {{--  --}}
+        @php
+            $options = [];
+            $options[] = [
+                'route' => route('coordonnateur.modules.export', ['semester' => 'all']),
+                'label' => 'Tous les Semestres',
+            ];
+            for ($i = 1; $i <= 6; $i++) {
+                $options[] = [
+                    'route' => route('coordonnateur.modules.export', ['semester' => $i]),
+                    'label' => $i == 1 ? '1er Semestre' : $i . 'ème Semestre',
+                ];
+            }
+        @endphp
 
-
-                .form-select {
-                    border-color: #e0e0e0;
-                    font-size: 0.9rem;
-                    padding: 8px 12px;
-                    border-radius: 6px;
-                    background-color: #f8f9fa;
-                    transition: border-color 0.2s;
-                }
-
-                .form-select:focus {
-                    border-color: #4723d9;
-                    box-shadow: 0 0 0 2px rgba(71, 35, 217, 0.2);
-                    outline: none;
-                }
-
-                .btn-primary {
-                    background-color: #4723d9;
-                    border-color: #4723d9;
-                    font-size: 0.9rem;
-                    padding: 8px 16px;
-                    border-radius: 6px;
-                    font-weight: 500;
-                    transition: all 0.2s;
-                }
-
-                .btn-primary:hover {
-                    background-color: white;
-                    color: #4723d9;
-                    border-color: #4723d9;
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                }
-
-                .btn-success {
-                    background-color: #28a745;
-                    border-color: #28a745;
-                    font-size: 0.9rem;
-                    padding: 8px 16px;
-                    border-radius: 6px;
-                    font-weight: 500;
-                    transition: all 0.2s;
-                }
-
-                .btn-success:hover {
-                    background-color: white;
-                    color: #28a745;
-                    border-color: #28a745;
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                }
-
-
-
-                .dropdown-menu {
-                    border-radius: 6px;
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                }
-
-                .dropdown-item:hover {
-                    background-color: #f8f9fa;
-                    color: #4723d9;
-                }
-
-                .modal-content {
-                    border-radius: 8px;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                }
-
-                .modal-header {
-                    border-bottom: 1px solid #e0e0e0;
-                }
-
-                .modal-footer {
-                    border-top: 1px solid #e0e0e0;
-                }
-
-                .form-control:focus {
-                    border-color: #4723d9;
-                    box-shadow: 0 0 0 2px rgba(71, 35, 217, 0.2);
-                }
-
-                .header-grid {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 1rem;
-                    align-items: center;
-                    justify-content: space-between;
-                }
-
-                @media (max-width: 992px) {
-                    .header-grid {
-                        flex-direction: column;
-                        align-items: stretch;
-                    }
-
-                    .header-title {
-                        text-align: center;
-                        margin-bottom: 1rem;
-                        text-decoration: underline;
-                    }
-                }
-
-                @media (max-width: 768px) {
-                    .header-container {
-                        padding: 15px;
-                    }
-
-                    .header-title {
-                        font-size: 1.5rem;
-                    }
-
-                    .header-grid>* {
-                        width: 100%;
-                    }
-
-                    .btn-primary,
-                    .btn-success {
-                        width: 100%;
-                        text-align: center;
-                    }
-                }
-
-
-                .modal-content {
-                    max-width: 90%;
-                    animation: fadeIn 0.3s;
-                }
-
-                @media (max-width: 768px) {
-                    .modal-content {
-                        max-width: 95%;
-                        margin: 1rem;
-                    }
-                }
-            </style>
-
-            <div class="header-grid mt">
-                <div class="d-flex align-items-center gap-3">
-                    <i class="fas fa-book-open fa-2x" style="color: #330bcf;"></i>
-                    <h3 style="color: #330bcf; font-weight: 500;">Gestion des Unités d'Enseignement</h3>
-                </div>
-                <div class="d-flex  gap-2 flex-wrap  ">
-                    <a href="{{ route('coordonnateur.modules.create') }}" class="btn btn-primary rounded fw-semibold">
-                        <i class="fas fa-plus-circle"></i> Nouvelle UE
-                    </a>
-                    <div class="dropdown">
-                        <button class="btn btn-success rounded fw-semibold dropdown-toggle" type="button"
-                            id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-file-export"></i> Exporter
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="exportDropdown">
-                            <li>
-                                <a class="dropdown-item"
-                                    href="{{ route('coordonnateur.modules.export', ['semester' => 'all']) }}">
-                                    Tous les Semestres
-                                </a>
-                            </li>
-                            @for ($i = 1; $i <= 6; $i++)
-                                <li>
-                                    <a class="dropdown-item"
-                                        href="{{ route('coordonnateur.modules.export', ['semester' => $i]) }}">
-                                        {{ $i == 1 ? '1er' : $i . 'ème' }} Semestre
-                                    </a>
-                                </li>
-                            @endfor
-                        </ul>
-                    </div>
-                    <div>
-                        <button class="btn btn-success rounded fw-semibold" type="button" id="importDropdown"
+        @include('components.heading', [
+            'icon' => '<i class="fas fa-book-open fa-2x" style="color: #330bcf;"></i>',
+            'heading' => 'Gestion des Unités d\'Enseignement',
+            'buttons' => [
+                [
+                    'route' => route('coordonnateur.modules.create'),
+                    'text' => 'Nouvelle UE',
+                    'bicon' => '<i class="fas fa-plus-circle"></i>',
+                    'type' => 'primary',
+                ],
+            ],
+        
+            'exportData' => [
+                'buttonText' => 'Exporter',
+                'options' => $options,
+            ],
+            'importData' => 
+            '<button class="btn btn-success rounded fw-semibold" type="button" id="importDropdown"
                             data-bs-toggle="modal" data-bs-target="#importModal">
                             <i class="fas fa-file-import"></i> Importer
-                        </button>
-                    </div>
-                </div>
-            </div>
+                        </button>'
+        ])
 
-            
-        </div>
+
+        {{--  --}}
         <!-- Add at the bottom of the Blade file, outside any other containers -->
-        <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel"
-            aria-hidden="true">
+        <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content bg-white rounded-3 p-4 shadow-lg">
                     <div class="modal-header border-0">
                         <h5 class="modal-title text-primary fw-bold" id="importModalLabel">
                             <i class="fas fa-file-import me-2"></i> Importer des Unités d'Enseignement
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Fermer"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                     </div>
                     <form action="{{ route('coordonnateur.modules.import') }}" method="POST"
                         enctype="multipart/form-data" id="importForm">
@@ -211,9 +63,8 @@
                             <div class="mb-3">
                                 <label for="excelFile" class="form-label small fw-medium">Fichier Excel
                                     (.xlsx)</label>
-                                <input type="file" class="form-control rounded-3" id="excelFile"
-                                    name="excel_file" accept=".xlsx, .xls" required
-                                    aria-describedby="excelFileHelp">
+                                <input type="file" class="form-control rounded-3" id="excelFile" name="excel_file"
+                                    accept=".xlsx, .xls" required aria-describedby="excelFileHelp">
                                 <small id="excelFileHelp" class="form-text text-muted">
                                     Téléchargez un fichier Excel avec les colonnes : Nom, Code, Semestre,
                                     Responsable ID.
@@ -534,7 +385,7 @@
                                 onclick="showPopup({{ $module->id }}, '{{ $module->name }}')">
                                 <i class="bi bi-eye-fill"></i> Voir plus
                             </button>
-                             <button class="remove-btn" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                            <button class="remove-btn" data-bs-toggle="modal" data-bs-target="#deleteModal"
                                 onclick="setDeleteFormAction('{{ route('coordonnateur.modules.destroy', $module) }}')">
                                 <i class="bi bi-trash-fill"></i> Supprimer
                             </button>

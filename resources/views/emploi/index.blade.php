@@ -1,43 +1,16 @@
 <x-coordonnateur_layout>
-
     <style>
-        /* Main Container */
-        .vacataire-container {
-            padding: 2rem;
+        /* Container */
+        .container-fluid {
+            padding: 1.5rem;
             min-height: 80vh;
         }
 
-        /* Header */
-        .header-grid {
-            display: grid;
-            grid-template-columns: 1fr auto auto;
-            gap: 1rem;
-            align-items: center;
-            margin-bottom: 2rem;
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Filter Section */
+        /* Form Elements */
         .form-label {
             font-size: 0.85rem;
             font-weight: 600;
             color: #34495e;
-        }
-
-        .form-select,
-        .form-control {
-            border-color: #e0e0e0;
-            border-radius: 6px;
-            transition: border-color 0.2s;
-        }
-
-        .form-select:focus,
-        .form-control:focus {
-            border-color: #4723d9;
-            box-shadow: 0 0 0 2px rgba(71, 35, 217, 0.2);
         }
 
         /* Buttons */
@@ -65,14 +38,12 @@
             padding: 8px 16px;
             border-radius: 6px;
             font-weight: 500;
-            transition: all 0.2s;
         }
 
         .btn-success:hover {
             background-color: white;
             color: #28a745;
             border-color: #28a745;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .btn-danger {
@@ -82,24 +53,12 @@
             padding: 8px 16px;
             border-radius: 6px;
             font-weight: 500;
-            transition: all 0.2s;
         }
 
         .btn-danger:hover {
             background-color: white;
             color: #dc3545;
             border-color: #dc3545;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .dropdown-menu {
-            border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .dropdown-item:hover {
-            background-color: #f8f9fa;
-            color: #4723d9;
         }
 
         /* Table Section */
@@ -108,10 +67,10 @@
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             overflow: hidden;
+            margin-top: 1.5rem;
         }
 
         .table-responsive {
-            overflow-x: auto;
             max-height: 70vh;
             scrollbar-width: thin;
             scrollbar-color: #ccc transparent;
@@ -127,15 +86,11 @@
             border-radius: 10px;
         }
 
-        .table-responsive::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
         .table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
-            min-width: 800px;
+            min-width: 600px;
         }
 
         .table thead th {
@@ -146,21 +101,21 @@
             position: sticky;
             top: 0;
             z-index: 10;
+            text-align: center;
         }
 
         .table tbody tr {
-            transition: all 0.2s;
+            transition: background-color 0.2s;
         }
 
         .table tbody tr:hover {
-            background-color: #f9f9ff !important;
-            transform: translateX(4px);
+            background-color: #f9f9ff;
         }
 
         .table td {
             padding: 1rem;
             vertical-align: middle;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid #e0e0e0;
             color: #555;
             font-weight: 400;
             text-align: center;
@@ -168,10 +123,9 @@
 
         /* Status Badges */
         .status-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
+            padding: 0.35rem 0.85rem;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 500;
         }
 
@@ -187,13 +141,14 @@
 
         /* Action Buttons */
         .action-btn {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 8px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s;
+            font-size: 1.1rem;
         }
 
         .view-btn {
@@ -203,7 +158,6 @@
 
         .view-btn:hover {
             background-color: #3a1cb3;
-            transform: rotate(5deg);
         }
 
         .delete-btn {
@@ -213,85 +167,114 @@
 
         .delete-btn:hover {
             background-color: #c82333;
-            transform: rotate(5deg);
         }
 
         /* Modal */
         .modal-content {
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
         }
 
         .modal-header {
             background-color: #4723d9;
             color: white;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            padding: 1rem 1.5rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            font-size: 0.95rem;
         }
 
         .modal-footer {
             border-top: none;
+            padding: 1rem 1.5rem;
         }
 
         /* Alerts */
         .alert {
-            border-radius: 6px;
-            margin-bottom: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
         }
 
-        /* Responsive Adjustments */
+        /* Responsive */
         @media (max-width: 768px) {
-            .header-grid {
-                grid-template-columns: 1fr;
+            .container-fluid {
+                padding: 1rem;
             }
 
-            .header-grid .d-flex.gap-2 {
-                justify-content: center;
+            .action-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 1rem;
             }
 
-            .form-select,
-            .btn-primary,
-            .btn-success {
-                width: 100%;
-                margin-bottom: 10px;
+            .table td,
+            .table th {
+                font-size: 0.9rem;
+                padding: 0.75rem;
             }
+
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+
+
+
+        }
+
+        .export-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
         }
     </style>
 
-    <div class="vacataire-container">
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
 
-        <div class="header-grid">
-            <div class="d-flex align-items-center gap-3">
-                <i class="fas fa-calendar-alt fa-2x" style="color: #330bcf;"></i>
-                <h3 style="color: #330bcf; font-weight: 500;">Emplois du Temps - {{ $filiere->name }}</h3>
-            </div>
-            <div class="d-flex gap-2 flex-wrap">
-                <select class="form-select" onchange="window.location.href=this.value">
-                    <option value="">Toutes les années</option>
-                    @foreach ($academicYears as $year)
-                        <option value="{{ route('emploi.index', ['academic_year' => $year]) }}"
-                            {{ $academicYear == $year ? 'selected' : '' }}>
-                            {{ $year }}
-                        </option>
-                    @endforeach
-                </select>
-                <a href="{{ route('emploi.prof') }}" class="btn btn-primary rounded fw-semibold">
-                    <i class="bi bi-person me-2"></i> Emploi des Profs
-                </a>
-            </div>
-        </div>
+    <div class="container-fluid">
+        <x-global_alert />
+
+
+        @php
+            $options = [];
+            foreach ($emplois as $emploi) {
+                $options[] = [
+                    'route' => route('emploi.filiere.export', $emploi->id),
+                    'label' =>
+                        'Emploi du ' . ($emploi->semester == 1 ? '1er' : $emploi->semester . 'ème') . ' Semestre',
+                ];
+            }
+        @endphp
+
+        @include('components.heading', [
+            'icon' => '<i class="fas fa-calendar-alt fa-2x" style="color: #330bcf;"></i>',
+            'heading' => 'Emplois du Temps - ' . $filiere->name,
+            'buttons' => [
+                [
+                    'route' => route('emploi.prof'),
+                    'text' => 'Emploi des Profs',
+                    'bicon' => '<i class="bi bi-person me-2"></i>',
+                    'type' => 'primary',
+                ],
+            ],
+        
+            'exportData' => [
+                'buttonText' => 'Export',
+                'options' => $options,
+            ],
+        ])
+
+
+
+
+
+
+
+
+
 
         <!-- Table Section -->
         <div class="table-section">
@@ -326,24 +309,24 @@
                                             {{ $emploi->is_active ? 'Actif' : 'Inactif' }}
                                         </span>
                                     @else
-                                        <span class="status-badge">-</span>
+                                        <span class="status-badge text-muted">-</span>
                                     @endif
                                 </td>
-                                <td class="p-0">
-                                    <div class="d-flex justify-content-center gap-3">
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
                                         @if ($emploi)
-                                            <a href="{{ route('emploi.edit', $emploi->id) }}"
-                                                class="action-btn view-btn" title="Modifier">
+                                            <a href="{{ route('emploi.edit', $emploi->id) }}" class="action-btn view-btn"
+                                                title="Modifier l'emploi du temps">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
                                             <button class="action-btn delete-btn" data-bs-toggle="modal"
                                                 data-bs-target="#deleteEmploiModal{{ $emploi->id }}"
-                                                title="Supprimer">
+                                                title="Supprimer l'emploi du temps">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         @else
                                             <a href="{{ route('emploi.create', ['semester' => $semester]) }}"
-                                                class="action-btn view-btn" title="Créer">
+                                                class="action-btn view-btn" title="Créer un emploi du temps">
                                                 <i class="bi bi-plus-circle"></i>
                                             </a>
                                         @endif
@@ -352,27 +335,25 @@
                             </tr>
 
                             @if ($emploi)
-                                <div class="modal fade" id="deleteEmploiModal{{ $emploi->id }}"
-                                    tabindex="-1" aria-labelledby="deleteEmploiModalLabel{{ $emploi->id }}"
-                                    aria-hidden="true">
-                                    <div class="modal-dialog">
+                                <div class="modal fade" id="deleteEmploiModal{{ $emploi->id }}" tabindex="-1"
+                                    aria-labelledby="deleteEmploiModalLabel{{ $emploi->id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title"
-                                                    id="deleteEmploiModalLabel{{ $emploi->id }}">
-                                                    Confirmation de Suppression
+                                                <h5 class="modal-title" id="deleteEmploiModalLabel{{ $emploi->id }}">
+                                                    Confirmer la Suppression
                                                 </h5>
                                                 <button type="button" class="btn-close btn-close-white"
                                                     data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                Voulez-vous supprimer l'emploi du temps
-                                                <strong>{{ $emploi->name }}</strong>
-                                                (S{{ $semester }}) définitivement ?
+                                                Voulez-vous vraiment supprimer l'emploi du temps
+                                                <strong>{{ $emploi->name }}</strong> (S{{ $semester }}) ?
+                                                Cette action est irréversible.
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Fermer</button>
+                                                    data-bs-dismiss="modal">Annuler</button>
                                                 <form action="{{ route('emploi.destroy', $emploi->id) }}"
                                                     method="POST" class="d-inline">
                                                     @csrf
@@ -386,7 +367,9 @@
                             @endif
                         @empty
                             <tr>
-                                <td colspan="4" class="text-center text-muted">Aucun emploi du temps trouvé.</td>
+                                <td colspan="4" class="text-center text-muted py-4">
+                                    Aucun emploi du temps configuré pour cette filière.
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -394,5 +377,4 @@
             </div>
         </div>
     </div>
-
 </x-coordonnateur_layout>

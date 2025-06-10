@@ -177,18 +177,12 @@
     </style>
 
     <div class="container-fluid p-0 pt-4">
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
+        <x-global_alert />
+
+        @include('components.heading', [
+            'icon' => '<i class="fas fa-calendar-alt fa-2x" style="color: #330bcf;"></i>',
+            'heading' => 'Créer l\'Emploi du Temps du S' . $semester,
+        ])
 
         @if ($errors->any())
             <div class="alert alert-danger error-message">
@@ -200,34 +194,15 @@
             </div>
         @endif
 
-
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
-            <h3 style="color: #330bcf; font-weight: 500;">Créer un Emploi du Temps - S{{ $semester }}</h3>
-            <a href="{{ route('emploi.index') }}" class="btn btn-outline-secondary rounded fw-semibold my-2">
-                <i class="bi bi-arrow-left me-2"></i> Retour
-            </a>
-        </div>
-
         <form id="emploiForm" action="{{ route('emploi.store') }}" method="POST">
             @csrf
             <input type="hidden" name="filiere_id" value="{{ $filiere->id }}">
             <input type="hidden" name="semester" value="{{ $semester }}">
-            <input type="hidden" name="academic_year" value="{{ $academicYear }}">
             <input type="hidden" name="is_active" value="1">
             <div id="sessionsContainer"></div>
 
             <div class="card border-0 shadow rounded-4 mb-4" style="box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
                 <div class="card-body p-4">
-                    <div class="mb-4">
-                        <label for="name" class="form-label small fw-bold text-muted">Nom de l'Emploi du
-                            Temps</label>
-                        <input type="text" class="form-control rounded-3 @error('name') is-invalid @enderror"
-                            id="name" name="name" value="{{ old('name') }}" required>
-                        @error('name')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
                     <div class="table-container">
                         <div class="table-responsive p-3">
                             <table class="table schedule-grid">
@@ -328,8 +303,7 @@
                                     placeholder="Ex: A101">
                             </div>
                             <div class="mb-3">
-                                <label for="session_duration"
-                                    class="form-label small fw-bold text-muted">Durée</label>
+                                <label for="session_duration" class="form-label small fw-bold text-muted">Durée</label>
                                 <select id="session_duration" class="form-select rounded-3">
                                     <option value="2">2 heures</option>
                                     <option value="4">4 heures</option>
@@ -353,8 +327,6 @@
             </div>
         </div>
     </div>
-
-
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -392,20 +364,14 @@
                             const sessionId = e.target.closest('.session-card').dataset.sessionId;
                             const sessionData = sessions.find(s => s.temp_id === sessionId);
                             if (sessionData) {
-                                document.getElementById('session_temp_id').value = sessionData
-                                    .temp_id;
-                                document.getElementById('session_module_id').value = sessionData
-                                    .module_id;
+                                document.getElementById('session_temp_id').value = sessionData.temp_id;
+                                document.getElementById('session_module_id').value = sessionData.module_id;
                                 document.getElementById('session_type').value = sessionData.type;
-                                document.getElementById('session_salle').value = sessionData
-                                    .salle || '';
-                                document.getElementById('session_groupe').value = sessionData
-                                    .groupe || '';
-                                document.getElementById('session_duration').value = sessionData
-                                    .duration;
+                                document.getElementById('session_salle').value = sessionData.salle || '';
+                                document.getElementById('session_groupe').value = sessionData.groupe || '';
+                                document.getElementById('session_duration').value = sessionData.duration;
                                 document.getElementById('session_day').value = sessionData.jour;
-                                document.getElementById('session_time_index').value = sessionData
-                                    .time_index;
+                                document.getElementById('session_time_index').value = sessionData.time_index;
                                 deleteSessionBtn.style.display = 'inline-block';
                                 updateGroupeOptions();
                                 sessionConfigModal.show();
@@ -448,11 +414,24 @@
                     return;
                 }
 
+                if (duration === '4') {
+                    const conflict = sessions.some(s => 
+                        s.temp_id !== tempId &&
+                        s.jour === day &&
+                        (s.heure_debut === timeSlots[timeIndex].start || s.heure_debut === timeSlots[timeIndex + 1].start) &&
+                        s.salle === salle &&
+                        s.salle
+                    );
+                    if (conflict) {
+                        alert('Conflit de salle détecté dans les plages horaires sélectionnées.');
+                        return;
+                    }
+                }
+
                 const moduleOption = document.getElementById('session_module_id').querySelector(
                     `option[value="${moduleId}"]`);
                 const startTime = timeSlots[timeIndex].start;
-                const endTime = duration === '2' ? timeSlots[timeIndex].end : (timeIndex < 3 ? timeSlots[
-                    timeIndex + 1].end : timeSlots[timeIndex].end);
+                const endTime = duration === '2' ? timeSlots[timeIndex].end : timeSlots[timeIndex + 1].end;
 
                 const sessionData = {
                     temp_id: tempId,
@@ -474,16 +453,19 @@
                 const index = sessions.findIndex(s => s.temp_id === tempId);
                 if (index >= 0) {
                     sessions[index] = sessionData;
+                    sessions = sessions.filter(s => s.temp_id !== `${tempId}_paired`);
                 } else {
                     sessions.push(sessionData);
-                    if (duration === '4' && timeIndex < 3) {
-                        sessions.push({
-                            ...sessionData,
-                            temp_id: `session_${Date.now() + 1}`,
-                            heure_debut: timeSlots[timeIndex + 1].start,
-                            time_index: timeIndex + 1
-                        });
-                    }
+                }
+
+                if (duration === '4' && timeIndex < 3) {
+                    sessions.push({
+                        ...sessionData,
+                        temp_id: `${tempId}_paired`,
+                        heure_debut: timeSlots[timeIndex + 1].start,
+                        heure_fin: timeSlots[timeIndex + 1].end,
+                        time_index: timeIndex + 1
+                    });
                 }
 
                 renderSessions();
@@ -492,7 +474,7 @@
 
             deleteSessionBtn.addEventListener('click', function() {
                 const tempId = document.getElementById('session_temp_id').value;
-                sessions = sessions.filter(s => s.temp_id !== tempId);
+                sessions = sessions.filter(s => s.temp_id !== tempId && s.temp_id !== `${tempId}_paired`);
                 renderSessions();
                 sessionConfigModal.hide();
             });
@@ -502,14 +484,14 @@
                 sessions.forEach((session, index) => {
                     const prefix = `seances[${index}]`;
                     sessionsContainer.insertAdjacentHTML('beforeend', `
-                <input type="hidden" name="${prefix}[module_id]" value="${session.module_id}">
-                <input type="hidden" name="${prefix}[type]" value="${session.type}">
-                <input type="hidden" name="${prefix}[jour]" value="${session.jour}">
-                <input type="hidden" name="${prefix}[heure_debut]" value="${session.heure_debut}">
-                <input type="hidden" name="${prefix}[heure_fin]" value="${session.heure_fin}">
-                <input type="hidden" name="${prefix}[salle]" value="${session.salle || ''}">
-                <input type="hidden" name="${prefix}[groupe]" value="${session.groupe || ''}">
-            `);
+                        <input type="hidden" name="${prefix}[module_id]" value="${session.module_id}">
+                        <input type="hidden" name="${prefix}[type]" value="${session.type}">
+                        <input type="hidden" name="${prefix}[jour]" value="${session.jour}">
+                        <input type="hidden" name="${prefix}[heure_debut]" value="${session.heure_debut}">
+                        <input type="hidden" name="${prefix}[heure_fin]" value="${session.heure_fin}">
+                        <input type="hidden" name="${prefix}[salle]" value="${session.salle || ''}">
+                        <input type="hidden" name="${prefix}[groupe]" value="${session.groupe || ''}">
+                    `);
                 });
             });
 
@@ -522,7 +504,6 @@
                 const groupeContainer = document.getElementById('groupeContainer');
                 const groupeSelect = document.getElementById('session_groupe');
 
-                // Clear existing options except 'Aucun'
                 while (groupeSelect.options.length > 1) {
                     groupeSelect.remove(1);
                 }
@@ -566,21 +547,31 @@
                         `.sessions[data-day="${session.jour}"][data-time-index="${session.time_index}"]`
                     );
                     if (container) {
+                        const conflict = sessions.some(s => 
+                            s.temp_id !== session.temp_id &&
+                            s.jour === session.jour &&
+                            s.heure_debut === session.heure_debut &&
+                            s.salle === session.salle &&
+                            s.salle
+                        );
+                        const conflictClass = conflict ? 'border-danger' : '';
+
                         container.insertAdjacentHTML('beforeend', `
-                    <div class="session-card ${session.type.toLowerCase()}" data-session-id="${session.temp_id}">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span class="badge bg-${session.type === 'CM' ? 'primary' : (session.type === 'TD' ? 'info' : 'success')} text-white">
-                                ${session.type}
-                            </span>
-                        </div>
-                        <h6 class="session-title">${session.module.name}</h6>
-                        <div class="session-details">
-                            <div>${session.module.code}${session.groupe ? ' - ' + session.groupe : ''}</div>
-                            <div>${session.salle || 'Non défini'}</div>
-                            <div>${session.heure_debut.slice(0, 5)}-${session.heure_fin.slice(0, 5)}</div>
-                        </div>
-                    </div>
-                `);
+                            <div class="session-card ${session.type.toLowerCase()} ${conflictClass}" data-session-id="${session.temp_id}">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="badge bg-${session.type === 'CM' ? 'primary' : (session.type === 'TD' ? 'info' : 'success')} text-white">
+                                        ${session.type}
+                                    </span>
+                                    ${conflict ? '<span class="badge bg-danger">Conflit</span>' : ''}
+                                </div>
+                                <h6 class="session-title">${session.module.name}</h6>
+                                <div class="session-details">
+                                    <div>${session.module.code}${session.groupe ? ' - ' + session.groupe : ''}</div>
+                                    <div>${session.salle || 'Non défini'}</div>
+                                    <div>${session.heure_debut.slice(0, 5)}-${session.heure_fin.slice(0, 5)}</div>
+                                </div>
+                            </div>
+                        `);
                     }
                 });
             }

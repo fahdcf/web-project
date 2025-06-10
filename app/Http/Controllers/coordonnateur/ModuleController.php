@@ -6,10 +6,13 @@ use App\Exports\ModulesExport;
 use App\Http\Controllers\Controller;
 use App\Imports\ModulesImport;
 use App\Models\Assignment;
+use App\Models\coord_action;
+use App\Models\Deadline;
 use App\Models\Departement;
 use App\Models\Filiere;
 use App\Models\Module;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -129,6 +132,7 @@ class ModuleController extends Controller
 
         // Update the module
         $module->update($validated);
+        coord_action::create(['user_id' => auth()->id(), 'action_type' => 'update', 'target_table' => 'modules', 'target_id' => $module->id, 'description' => "Mise à jour du module: {$module->name}"]);
 
         return redirect()
             ->route('coordonnateur.modules.index')
@@ -200,7 +204,8 @@ class ModuleController extends Controller
                 'code' => $code,
                 'parent_id' => $validated['parent_id'],
             ]);
-            Module::create($attributes);
+            $module = Module::create($attributes);
+            coord_action::create(['user_id' => auth()->id(), 'action_type' => 'create', 'target_table' => 'modules', 'target_id' => $module->id, 'description' => "Création du module: {$module->name}"]);
         } else { // Logic for 'complet' type
             // Generate the code for the complete module
             $code = "M" . $validated['semester'] . "-" . uniqid(); // Using uniqid() for unique ID
@@ -254,7 +259,7 @@ class ModuleController extends Controller
         return Excel::download(new ModulesExport($modules), $filename);
     }
 
-   
+
 
     public function import(Request $request)
     {
@@ -308,6 +313,7 @@ class ModuleController extends Controller
             }
 
             Excel::import(new ModulesImport($filiere->id), $file);
+            coord_action::create(['user_id' => auth()->id(), 'action_type' => 'import', 'target_table' => 'modules', 'description' => 'Importation de modules via fichier.']);
             return redirect()->route('coordonnateur.modules.index')
                 ->with('success', 'Unités d\'enseignement importées avec succès.');
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
@@ -400,6 +406,7 @@ class ModuleController extends Controller
     {
         // Supprimer le module
         $module->delete();
+        coord_action::create(['user_id' => auth()->id(), 'action_type' => 'delete', 'target_table' => 'modules', 'target_id' => $module->id, 'description' => "Suppression du module: {$module->name}"]);
 
         // Rediriger avec un message de succès
         return redirect()->route('coordonnateur.modules.index')->with('success', 'Module supprimé avec succès.');
@@ -470,131 +477,119 @@ class ModuleController extends Controller
     //     ]);
     // }
 
-    public function showAssignationPage(Module $module)
-    {
+    // public function showAssignationPage(Module $module)
+    // {
 
-        $availableVacataires = User::whereHas('role', function ($query) {
-            $query->where('isvocataire', true);
-        })->orderBy('lastname')
-            ->get();
+    //     $availableVacataires = User::whereHas('role', function ($query) {
+    //         $query->where('isvocataire', true);
+    //     })->orderBy('lastname')
+    //         ->get();
 
 
-        // $availableVacataires = User::where('role', 'vacataire')
-        //     ->whereDoesntHave('modules', function ($query) use ($module) {
-        //         $query->where('modules.id', $module->id);
-        //     })
-        //     ->orderBy('lastname')
-        //     ->get();
+    //     // $availableVacataires = User::where('role', 'vacataire')
+    //     //     ->whereDoesntHave('modules', function ($query) use ($module) {
+    //     //         $query->where('modules.id', $module->id);
+    //     //     })
+    //     //     ->orderBy('lastname')
+    //     //     ->get();
 
-        return view('modules.assignation', [
-            'module' => $module,
-            'availableVacataires' => $availableVacataires
-        ]);
-    }
+    //     return view('modules.assignation', [
+    //         'module' => $module,
+    //         'availableVacataires' => $availableVacataires
+    //     ]);
+    // }
 
-    public function updateHours(Request $request, Module $module)
-    {
-        $validated = $request->validate([
-            'cm_hours' => 'required|integer|min:0',
-            'td_hours' => 'required|integer|min:0',
-            'tp_hours' => 'required|integer|min:0'
-        ]);
+    // public function updateHours(Request $request, Module $module)
+    // {
+    //     $validated = $request->validate([
+    //         'cm_hours' => 'required|integer|min:0',
+    //         'td_hours' => 'required|integer|min:0',
+    //         'tp_hours' => 'required|integer|min:0'
+    //     ]);
 
-        $module->update($validated);
+    //     $module->update($validated);
 
-        return back()->with('success', 'Charges horaires mises à jour');
-    }
+    //     return back()->with('success', 'Charges horaires mises à jour');
+    // }
 
-    public function addAssignation(Request $request, Module $module)
-    {
-        $validated = $request->validate([
-            'vacataire_id' => 'required|exists:users,id',
-            'role' => 'required|in:CM,TD,TP,Autre',
-            'hours' => 'required|integer|min:1'
-        ]);
+    // public function addAssignation(Request $request, Module $module)
+    // {
+    //     $validated = $request->validate([
+    //         'vacataire_id' => 'required|exists:users,id',
+    //         'role' => 'required|in:CM,TD,TP,Autre',
+    //         'hours' => 'required|integer|min:1'
+    //     ]);
 
-        $module->users()->attach($validated['vacataire_id'], [
-            'role' => $validated['role'],
-            'hours' => $validated['hours']
-        ]);
+    //     $module->users()->attach($validated['vacataire_id'], [
+    //         'role' => $validated['role'],
+    //         'hours' => $validated['hours']
+    //     ]);
 
-        return back()->with('success', 'Assignation ajoutée');
-    }
+    //     return back()->with('success', 'Assignation ajoutée');
+    // }
 
-    public function updateAssignation(Request $request, Module $module, User $vacataire)
-    {
-        $validated = $request->validate([
-            'role' => 'required|in:CM,TD,TP,Autre',
-            'hours' => 'required|integer|min:1'
-        ]);
+    // public function updateAssignation(Request $request, Module $module, User $vacataire)
+    // {
+    //     $validated = $request->validate([
+    //         'role' => 'required|in:CM,TD,TP,Autre',
+    //         'hours' => 'required|integer|min:1'
+    //     ]);
 
-        $module->users()->updateExistingPivot($vacataire->id, [
-            'role' => $validated['role'],
-            'hours' => $validated['hours']
-        ]);
+    //     $module->users()->updateExistingPivot($vacataire->id, [
+    //         'role' => $validated['role'],
+    //         'hours' => $validated['hours']
+    //     ]);
 
-        return back()->with('success', 'Assignation mise à jour');
-    }
+    //     return back()->with('success', 'Assignation mise à jour');
+    // }
 
-    public function removeAssignation(Module $module, User $vacataire)
-    {
+    // public function removeAssignation(Module $module, User $vacataire)
+    // {
 
-        $module->users()->detach($vacataire->id);
+    //     $module->users()->detach($vacataire->id);
 
-        return back()->with('success', 'Assignation supprimée');
-    }
+    //     return back()->with('success', 'Assignation supprimée');
+    // }
 
     ////////////////////////////////////////////////////////////////
 
 
     public function availableModules(Request $request)
     {
+        $department = Departement::where('name', auth()->user()->departement)->first();
+        // dd(auth()->user()->departement->id);
+        // dd($department);
+
+        $FilieretargetIDs = Filiere::where('department_id',  $department->id)
+            ->pluck('id'); // Plucks all the IDs into a collection
+
         $modules = Module::with(['filiere', 'responsable', 'assignments'])
-            ->where('status', 'active')
+            ->whereIn('filiere_id', $FilieretargetIDs)
             ->where(function ($query) {
-                // Modules sans aucune assignation
-                $query->doesntHave('assignments')
-                    ->orWhereHas('assignments', function ($q) {
-                        // Ou modules avec au moins un type non assigné
-                        $q->where('teach_cm', false)
-                            ->orWhere('teach_td', false)
-                            ->orWhere('teach_tp', false);
-                    });
+                $query->whereDoesntHave('assignment', function ($q) {
+                    $q->where('teach_tp', 1);
+                })->orWhereDoesntHave('assignment', function ($q) {
+                    $q->where('teach_td', 1);
+                })->orWhereDoesntHave('assignment', function ($q) {
+                    $q->where('teach_cm', 1);
+                });
             })
             ->get();
-        // $module = Module::find(1); // Get a single module
-        // dd($module->cmAssignation->teach_cm); // No parentheses needed (Lazy-loaded)
-        return view('modules.availableModules', compact('modules'));
+
+
+
+
+        // Fetch the active 'ue_selecion' deadline
+        $deadline = Deadline::where('type', 'ue_selecion')
+            ->where('status', 'active')
+            ->where('deadline_date', '>', Carbon::now())
+            ->first();
+
+        // // Restrict access if no valid deadline exists
+        // if (!$deadline) {
+        //     return redirect()->route('professor.dashboard')->with('error', 'Aucune échéance active pour la sélection des UE.');
+        // }
+
+        return view('modules.availableModules', compact('modules', 'deadline'));
     }
-
-
-
-    // public function vacantesList()
-    // {
-    //     $FilieretargetIDs = Filiere::all()
-    //         ->pluck('id'); // Plucks all the IDs into a collection
-    //     $filieres = Filiere::get();
-    //     // $filieres = Filiere::where('department_id', auth()->user()->manage->id)->get();
-
-    //     //$modules = Module::where('professor_id', null)->whereIn('filiere_id', $FilieretargetIDs)->get();
-
-    //     $modules = Module::whereIn('filiere_id', $FilieretargetIDs)
-    //         ->where(function ($query) {
-    //             $query->whereDoesntHave('assignment', function ($q) {
-    //                 $q->where('teach_tp', 1);
-    //             })->orWhereDoesntHave('assignment', function ($q) {
-    //                 $q->where('teach_td', 1);
-    //             })->orWhereDoesntHave('assignment', function ($q) {
-    //                 $q->where('teach_cm', 1);
-    //             });
-    //         })
-    //         ->get();
-
-
-    //     // $departmentName = auth()->user()->manage->name;
-    //     // $professors = user::where('departement', $departmentName)->simplePaginate(5);
-
-
-    //     return view('chef_departement.modules_vacantes', ['modules' => $modules, 'filieres' => $filieres]);
-    // }
 }

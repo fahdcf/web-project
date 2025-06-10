@@ -115,211 +115,40 @@
     </style>
 
     <div class="container-fluid p-0 pt-4">
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+
+        <x-global_alert />
+
+
+        {{-- heading --}}
+        @if (Route::currentRouteName() === 'emploi.myTimetable')
+            @include('components.heading', [
+                'icon' => ' <i class="fas fa-table fa-2x" style="color: #330bcf;"></i>',
+                'heading' => 'Mon Emploi du Temps :',
+                'buttons' => [
+                    [
+                        'route' => route('emploi.my-timetable.export'),
+                        'text' => ' Exporter mon emploi du temps',
+                        'bicon' => '<i class="bi bi-download me-2"></i>',
+                        'type' => 'primary',
+                    ],
+                ],
+            ])
+        @else
+            @include('components.heading', [
+                'icon' => ' <i class="fas fa-table fa-2x" style="color: #330bcf;"></i>',
+                'heading' => 'Emploi du Temps des Professeurs :',
+            ])
         @endif
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
 
 
+      
 
-
-
-
-
-
-
-
-
-        <div class="header-container mb-4">
-            <style>
-                .header-container {
-                    background: white;
-                    border-radius: 8px;
-                    padding: 20px;
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                }
-
-                .header-title {
-                    color: #4723d9;
-                    font-weight: 600;
-                    font-size: 1.75rem;
-                    margin: 0;
-                }
-
-                .form-select {
-                    border-color: #e0e0e0;
-                    font-size: 0.9rem;
-                    padding: 8px 12px;
-                    border-radius: 6px;
-                    background-color: #f8f9fa;
-                    transition: border-color 0.2s;
-                }
-
-                .form-select:focus {
-                    border-color: #4723d9;
-                    box-shadow: 0 0 0 2px rgba(71, 35, 217, 0.2);
-                    outline: none;
-                }
-
-                .btn-primary {
-                    background-color: #4723d9;
-                    border-color: #4723d9;
-                    font-size: 0.9rem;
-                    padding: 8px 16px;
-                    border-radius: 6px;
-                    font-weight: 500;
-                    transition: all 0.2s;
-                }
-
-                .btn-primary:hover {
-                    background-color: white;
-                    color: #4723d9;
-                    border-color: #4723d9;
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                }
-
-                .btn-outline-primary {
-                    border-color: #4723d9;
-                    color: #4723d9;
-                    font-size: 0.9rem;
-                    padding: 8px 16px;
-                    border-radius: 6px;
-                    font-weight: 500;
-                    transition: all 0.2s;
-                    white-space: nowrap;
-                }
-
-                .btn-outline-primary:hover {
-                    background-color: #4723d9;
-                    color: white;
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                }
-
-                .btn-outline-primary:hover .btn-text-prof {
-                    color: white;
-                }
-
-                .btn-text-emploi,
-                .btn-text-prof {
-                    display: inline;
-                }
-
-                @media (max-width: 768px) {
-                    .header-container {
-                        padding: 15px;
-                    }
-
-                    .header-title {
-                        font-size: 1.5rem;
-                        margin-bottom: 15px;
-                        text-align: center;
-                    }
-
-                    .form-select,
-                    .btn-outline-primary {
-                        width: 100%;
-                        margin-bottom: 10px;
-                    }
-
-                    .btn-outline-primary {
-                        white-space: normal;
-                        text-align: center;
-                        padding: 10px 16px;
-                    }
-
-                    .btn-text-emploi,
-                    .btn-text-prof {
-                        display: block;
-                    }
-
-                    .btn-text-emploi {
-                        margin-bottom: 2px;
-                    }
-                }
-
-                /* Improved grid layout */
-                .header-grid {
-                    display: grid;
-                    grid-template-columns: 1fr auto auto;
-                    gap: 1rem;
-                    align-items: center;
-                }
-
-                @media (max-width: 992px) {
-                    .header-grid {
-                        grid-template-columns: 1fr auto;
-                    }
-
-                    .header-title {
-                        grid-column: 1 / -1;
-                        text-align: center;
-                        margin-bottom: 10px;
-                        text-decoration: underline;
-                    }
-                }
-
-                @media (max-width: 768px) {
-                    .header-grid {
-                        grid-template-columns: 1fr;
-                        gap: 0.75rem;
-                    }
-
-                    .btn-outline-primary {
-                        white-space: normal;
-                        text-align: center;
-                        padding: 10px 16px;
-                        line-height: 1.3;
-                        /* Add this for better line spacing */
-                    }
-
-                    .btn-text-emploi,
-                    .btn-text-prof {
-                        display: inline;
-                        /* Change from 'block' to 'inline' */
-                        margin-bottom: 0;
-                        /* Remove bottom margin */
-                    }
-
-                    .btn-text-emploi:after {
-                        content: " ";
-                        /* Add space after "Emploi des" */
-                    }
-
-                }
-            </style>
-
-            <div class="header-grid mt">
-
-
-                @if (Route::currentRouteName() === 'emploi.myTimetable')
-                    <h3 style="color: #330bcf; font-weight: 500;">Emploi du Temps :</h3>
-                @else
-                    <h3 style="color: #330bcf; font-weight: 500;">Emploi du Temps des Professeurs</h3>
-                @endif
-
-
-
-
-
-                <a href="{{ route('emploi.my-timetable.export') }}"
-                    class="btn btn-primary rounded fw-semibold my-2 me-2">
-                    <i class="bi bi-download me-2"></i> Exporter en HTML
-                </a>
-
-            </div>
-        </div>
-
-
-
-
+{{-- 
+        <div class="d-flex justify-content-end mb-3">
+            <a href="{{ route('emploi.my-timetable.export') }}" class="btn btn-primary rounded fw-semibold">
+                <i class="bi bi-download me-2"></i> Exporter mon emploi du temps
+            </a>
+        </div> --}}
 
         <div class="card border-0 shadow rounded-4 mb-4" style="box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
             <div class="card-body p-4">
@@ -342,9 +171,10 @@
 
                 @if ($prof_id && $seances->isEmpty())
                     @if (Route::currentRouteName() === 'emploi.myTimetable')
-                    Aucune séance trouvée pour vous , (les emploix du temps est pas configuree par les coordonnateur des filieres)
+                        Aucune séance trouvée pour vous , (les emploix du temps est pas configuree par les coordonnateur
+                        des filieres)
                     @else
-                    <p class="text-muted">Aucune séance trouvée pour ce professeur.</p>
+                        <p class="text-muted">Aucune séance trouvée pour ce professeur.</p>
                     @endif
                 @elseif ($prof_id)
                     <div class="table-container">

@@ -8,8 +8,10 @@ use App\Models\Assignment;
 use App\Models\Filiere;
 use App\Models\Module;
 use App\Models\Role;
+use App\Models\Seance;
 use App\Models\User;
 use App\Models\user_detail;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,98 +23,114 @@ class VacataireController extends Controller
 {
 
 
-    // public function filter()
-    // {
-    //     $query = User::WhereHas('role', function ($query) {
-    //         $query->where('isvocataire', true);
-    //     });
-
-    //     if (request('search')) {
-    //         $search = request('search');
-    //         $query->where(function ($q) use ($search) {
-    //             $q->where('firstname', 'like', "%$search%")
-    //                 ->orWhere('lastname', 'like', "%$search%")
-    //                 ->orWhere('email', 'like', "%$search%");;
-    //         });
-    //     }
-
-
-    //     if (request('status')) {
-    //         $status = request('status');
-    //         $query->whereHas('user_details', function ($q) use ($status) {
-    //             $q->where('status', $status);
-    //         });
-    //     }
-
-
-    //     $rows = request('rows', 10); // default to 5 if not provided
-
-    //     $vacataire = $query->with('user_details')->simplePaginate($rows);
-
-    //     return view('coordonnateur.vacataires.index', compact('$vacataire'));
-    // }
-
 
 
     public function dashboard()
     {
-        $vacataireId = Auth::id(); // Get the logged-in vacataire's ID
+        $user = Auth::user();
 
-        $assignments = Assignment::where('user_id', $vacataireId)
-            ->with('module') // Eager load the module to access its details
+        // Fetch modules assigned to the vacataire
+        $modules = Module::whereHas('assignments', fn($q) => $q->where('prof_id', $user->id))
+            ->with('assignments')
             ->get();
 
-        return view('vacataire.index', compact('assignments'));
-    }
+        // Initialize schedule data
+        $scheduleData = [
+            'Lundi' => 0,
+            'Mardi' => 0,
+            'Mercredi' => 0,
+            'Jeudi' => 0,
+            'Vendredi' => 0,
+            'Samedi' => 0,
+        ];
 
-    public function uploadGrades(Module $module)
-    {
-        return view('vacataire.upload-grades', compact('module'));
-    }
+        // Fetch seances for the vacataire
+        $seances = Seance::with('module')
+            ->whereIn('module_id', $modules->pluck('id'))
+            ->whereHas('emploi', fn($q) => $q->where('is_active', true))
+            ->whereIn('jour', array_keys($scheduleData))
+            ->get();
 
-    public function storeGrades(Request $request, Module $module)
-    {
-        $request->validate([
-            'session' => 'required|in:normale,rattrapage',
-            'gradeFile' => 'required|file|mimes:csv|max:2048' // Adjust max size as needed
-        ]);
-
-        // 1. Handle File Upload
-        $file = $request->file('gradeFile');
-        $filename = 'grades_' . $module->id . '_' . $request->session . '_' . time() . '.' . $file->getClientOriginalExtension();
-        $path = $file->storeAs('grades', $filename); // Store in 'grades' directory
-
-        // 2.  Parse CSV and Store Grades (Example - Adjust based on your CSV structure)
-        $filepath = Storage::path($path);
-        $handle = fopen($filepath, 'r');
-        $header = fgetcsv($handle); // Assuming first row is header
-
-        DB::beginTransaction();
-        try {
-            while ($row = fgetcsv($handle)) {
-                $gradeData = array_combine($header, $row);
-
-                //  Example:  Storing in a 'grades' table
-                DB::table('grades')->insert([
-                    'module_id' => $module->id,
-                    'student_id' => $gradeData['student_id'], // Adjust keys to your CSV
-                    'grade' => $gradeData['grade'],
-                    'session' => $request->session,
-                    // ... other fields
-                ]);
+        // Calculate hours per day
+        foreach ($seances as $seance) {
+            $day = $seance->jour;
+            if (array_key_exists($day, $scheduleData)) {
+                $duration = (strtotime($seance->heure_fin) - strtotime($seance->heure_debut)) / 3600;
+                $scheduleData[$day] += max($duration, 0); // Prevent negative durations
             }
-
-            fclose($handle);
-            DB::commit();
-
-            return redirect()->route('vacataire.dashboard')->with('success', 'Grades uploaded successfully!');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            fclose($handle);
-            Storage::delete($path); // Delete the file on error
-            return redirect()->back()->withErrors(['error' => 'Error processing grade file: ' . $e->getMessage()])->withInput();
         }
+
+        // Convert to array for Chart.js
+        $scheduleData = array_values($scheduleData);
+
+        // Other dashboard data
+        $totalCourses = $modules->count();
+        $pendingGrades = 2; // Replace with grade query
+        $upcomingClasses = Seance::whereIn('module_id', $modules->pluck('id'))
+            ->whereHas('emploi', fn($q) => $q->where('is_active', true))
+            ->whereIn('jour', array_keys($scheduleData))
+            ->count();
+        $courses = $modules;
+        $upcomingSeances = Seance::with('module')
+            ->whereIn('module_id', $modules->pluck('id'))
+            ->whereHas('emploi', fn($q) => $q->where('is_active', true))
+            ->whereIn('jour', array_keys($scheduleData))
+            ->orderByRaw("FIELD(jour, 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi')")
+            ->orderBy('heure_debut')
+            ->take(2)
+            ->get();
+
+        return view('vacataire.dashboard', compact('totalCourses', 'pendingGrades', 'upcomingClasses', 'courses', 'upcomingSeances', 'scheduleData'));
     }
+
+    // public function uploadGrades(Module $module)
+    // {
+    //     return view('modules.upload-grades', compact('module'));
+    // }
+
+    // public function storeGrades(Request $request, Module $module)
+    // {
+    //     $request->validate([
+    //         'session' => 'required|in:normale,rattrapage',
+    //         'gradeFile' => 'required|file|mimes:csv|max:2048' // Adjust max size as needed
+    //     ]);
+
+    //     // 1. Handle File Upload
+    //     $file = $request->file('gradeFile');
+    //     $filename = 'grades_' . $module->id . '_' . $request->session . '_' . time() . '.' . $file->getClientOriginalExtension();
+    //     $path = $file->storeAs('grades', $filename); // Store in 'grades' directory
+
+    //     // 2.  Parse CSV and Store Grades (Example - Adjust based on your CSV structure)
+    //     $filepath = Storage::path($path);
+    //     $handle = fopen($filepath, 'r');
+    //     $header = fgetcsv($handle); // Assuming first row is header
+
+    //     DB::beginTransaction();
+    //     try {
+    //         while ($row = fgetcsv($handle)) {
+    //             $gradeData = array_combine($header, $row);
+
+    //             //  Example:  Storing in a 'grades' table
+    //             DB::table('grades')->insert([
+    //                 'module_id' => $module->id,
+    //                 'student_id' => $gradeData['student_id'], // Adjust keys to your CSV
+    //                 'grade' => $gradeData['grade'],
+    //                 'session' => $request->session,
+    //                 // ... other fields
+    //             ]);
+    //         }
+
+    //         fclose($handle);
+    //         DB::commit();
+
+    //         return redirect()->route('vacataire.dashboard')->with('success', 'Grades uploaded successfully!');
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         fclose($handle);
+    //         Storage::delete($path); // Delete the file on error
+    //         return redirect()->back()->withErrors(['error' => 'Error processing grade file: ' . $e->getMessage()])->withInput();
+    //     }
+    // }
 
 
     ///////////////////////////

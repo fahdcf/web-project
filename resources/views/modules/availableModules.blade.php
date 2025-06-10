@@ -4,25 +4,24 @@
 
 
         @if ($errors->any())
-                <div class="alert alert-danger error-message">
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-
-
-        <!-- Header Section -->
-        <div
-            class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
-            <div>
-                <h1 class="display-6 fw-bold mb-2" style="color: #4723d9">Liste des Modules vacantes</h1>
+            <div class="alert alert-danger error-message">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
+        @endif
 
-        </div>
+
+        @include('components.heading', [
+            'icon' => ' <i class="fas fa-book-medical fa-2x" style="color: #330bcf;"></i>',
+            'heading' => 'list des modules disponible :',
+        ])
+
+
+
+       
 
         <!-- Modules Listing -->
         <div class="module-grid-container">

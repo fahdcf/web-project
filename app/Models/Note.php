@@ -11,16 +11,20 @@ class Note extends Model
 
     protected $guarded = [];
 
+    public function professor()
+    {
+        return $this->belongsTo(User::class, 'prof_id');
+    }
+
     public function module()
     {
         return $this->belongsTo(Module::class);
     }
 
-    public function professor()
+    public function studentModuleNotes()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(StudentModuleNote::class, 'note_id');
     }
-
 
       public function filiere()
     {

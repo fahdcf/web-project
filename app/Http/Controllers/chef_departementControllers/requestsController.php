@@ -12,10 +12,8 @@ use App\Models\Filiere;
 use App\Models\Module;
 use App\Models\prof_request;
 use App\Models\Role;
-use Illuminate\Support\Facades\Notification;
 
 use App\Models\User;
-use App\Notifications\NewRequestsNotification;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver\DateTimeValueResolver;
 
@@ -28,13 +26,24 @@ class requestsController extends Controller
         $FilieretargetIDs = Filiere::where('department_id', auth()->user()->manage->id)
             ->pluck('id'); // Plucks all the IDs into a collection
 
-        $module_requests = prof_request::whereIn('module_id', $FilieretargetIDs)->get();
+        
+        $modulesids = Module::whereIn('filiere_id', $FilieretargetIDs)
+            ->pluck('id'); // Plucks all the IDs into a collection
+
+        $module_requests = prof_request::whereIn('module_id', $modulesids)->get();
 
 
         return view('chef_departement.demandes', [
             'module_requests' => $module_requests,
 
         ]);
+
+
+
+
+
+        // $module_requests = prof_request::whereIn('module_id', $FilieretargetIDs)->get();
+
     }
 
     public function decline($id)
@@ -109,7 +118,6 @@ class requestsController extends Controller
     ///////////////////////////
     public function store(Request $request, Module $module)
     {
-        $prof = auth()->user();
         $request->validate([
             'isTp' => 'nullable|in:tp',
             'isTd' => 'nullable|in:td',
@@ -117,7 +125,7 @@ class requestsController extends Controller
         ]);
 
         if ($request['isTp'] == null && $request['isTd'] == null && $request['isCm'] == null) {
-            return back()->with('error', 'demande annulle  choisir au moi un type td/tp/cm');
+            return back()->with('error', $module->name. ': choisir au moi un type td/tp/cm pour ce module');
         }
 
         $attributes = [];
@@ -130,7 +138,7 @@ class requestsController extends Controller
                 ->where('toTeach_td', true)->first();
 
             if ($existing) {
-                return back()->with('error', 'Vous avez déjà une demande en cours pour TD de ce module');
+                return back()->with('error', 'Vous avez déjà une demande en cours pour TD de '. $module->name);
             }
         }
         if ($request['isTp']) {
@@ -143,7 +151,7 @@ class requestsController extends Controller
                 ->where('toTeach_tp', true)->first();
 
             if ($existing) {
-                return back()->with('error', 'Vous avez déjà une demande en cours pour TD de ce module');
+                return back()->with('error', 'Vous avez déjà une demande en cours pour TP de '. $module->name);
             }
         }
         if ($request['isCm']) {
@@ -155,7 +163,7 @@ class requestsController extends Controller
                 ->where('toTeach_cm', true)->first();
 
             if ($existing) {
-                return back()->with('error', 'Vous avez déjà une demande en cours pour TD de ce module');
+                return back()->with('error', 'Vous avez déjà une demande en cours pour CM de '. $module->name);
             }
         }
 
@@ -169,16 +177,6 @@ class requestsController extends Controller
             'toTeach_tp' => $attributes['toTeach_tp'] ?? false,
 
         ]);
-
-        $prof=User::findOrFail(auth()->user()->id);
-        
-
-        $department_id=$module->filiere->department_id;
-        $departement=Departement::findOrFail($department_id);
-        $chefs=User::where('departement',$departement->name)->get();
-
-        Notification::send($chefs, new NewRequestsNotification($prof, $module));
-
 
         return back()->with('success', 'Votre souhait a été enregistré !');
     }
