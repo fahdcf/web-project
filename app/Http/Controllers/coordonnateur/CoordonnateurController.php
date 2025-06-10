@@ -117,17 +117,32 @@ class CoordonnateurController extends Controller
             ->where('status', 'active')
             ->count();
 
-        $studentCount = Student::count();//place holder
+        $studentCount = Student::count(); //place holder
         $vacataireCount = User::whereHas('role', fn($q) => $q->where('isvocataire', true))->count();
         $coordActions = coord_action::where('user_id', auth()->id())->latest()->take(5)->get();
         $tasks = Task::where('user_id', auth()->user()->id)->latest()->take(5)->get();
 
         // Répartition des Groupes TD/TP/CM
-        $tdGroups = Module::sum('nbr_groupes_td');
-        $tpGroups = Module::sum('nbr_groupes_tp');
-        $cmGroups = Seance::where('type', 'CM')
-            ->distinct('module_id')
+        $tdGroups = Module::where('status', true)->sum('nbr_groupes_td');
+        $tpGroups = Module::where('status', true)->sum('nbr_groupes_tp');
+        $cmGroups = Module::where('status', true)->count();
+
+        $totalModules = $moduleCount;
+        $moduleVacantes = Module::where('status', true)
+            ->with(['filiere', 'responsable', 'assignments'])
+            ->where('filiere_id', auth()->user()->manage->id)
+            ->where(function ($query) {
+                $query->whereDoesntHave('assignment', function ($q) {
+                    $q->where('teach_tp', 1);
+                })->orWhereDoesntHave('assignment', function ($q) {
+                    $q->where('teach_td', 1);
+                })->orWhereDoesntHave('assignment', function ($q) {
+                    $q->where('teach_cm', 1);
+                });
+            })
             ->count();
+
+
         $groupesData = [$tdGroups, $tpGroups, $cmGroups];
 
         // Nombre de Séances par Jour
@@ -143,8 +158,17 @@ class CoordonnateurController extends Controller
         // Extract values in correct order
         $seancesParJour = array_values(array_intersect_key($seancesParJour, $days));
 
+        ////////prof elements
+        $upcomingSeances = Seance::with('module')
+            ->whereHas('module.assignments', fn($q) => $q->where('prof_id', auth()->user()->id))
+            ->where('jour', '>=', now())
+            ->orderBy('jour')
+            ->orderBy('heure_debut')
+            ->take(3)
+            ->get();
+        $courses = Module::whereHas('assignments', fn($q) => $q->where('prof_id', auth()->user()->id))->get();
 
-        return view('coordonnateur.dashboard', compact('moduleCount','studentCount', 'vacataireCount', 'coordActions', 'tasks', 'groupesData', 'seancesParJour'));
+        return view('coordonnateur.dashboard', compact('moduleVacantes', 'totalModules','courses', 'upcomingSeances', 'moduleCount', 'studentCount', 'vacataireCount', 'coordActions', 'tasks', 'groupesData', 'seancesParJour'));
     }
 
     ////////////////////////////////////////////////////////////////
@@ -282,7 +306,7 @@ class CoordonnateurController extends Controller
                 $tab[$i] = $newAssign;
                 $i++;
 
-                $assignation=Assignment::create($newAssign);
+                $assignation = Assignment::create($newAssign);
                 coord_action::create(['user_id' => auth()->id(), 'action_type' => 'affecter', 'target_table' => 'assignments', 'target_id' => $assignation->id, 'description' => "Affectation du module pour le professeur: {$prof->firstname} {$prof->lastname}"]);
 
 

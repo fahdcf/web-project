@@ -372,12 +372,17 @@ class DatabaseSeeder extends Seeder
         $typesToSchedule = [];
         if ($assignment->teach_cm) {
             $typesToSchedule[] = ['type' => 'CM', 'count' => 1];
+            $prof=$assignment->user;
         }
         if ($assignment->teach_td) {
             $typesToSchedule[] = ['type' => 'TD', 'count' => $module->nbr_groupes_td > 0 ? $module->nbr_groupes_td : 1];
+            $prof=$assignment->user;
+
         }
         if ($assignment->teach_tp) {
             $typesToSchedule[] = ['type' => 'TP', 'count' => $module->nbr_groupes_tp > 0 ? $module->nbr_groupes_tp : 1];
+            $prof=$assignment->user;
+
         }
 
         foreach ($typesToSchedule as $typeData) {
@@ -389,12 +394,12 @@ class DatabaseSeeder extends Seeder
                     $group = 'TP' . ($i + 1);
                 }
 
-                $this->scheduleSeance($module, $emploi, $typeData['type'], $group, $occupiedSlots);
+                $this->scheduleSeance($prof, $module, $emploi, $typeData['type'], $group, $occupiedSlots);
             }
         }
     }
 
-    private function scheduleSeance(Module $module, Emploi $emploi, string $type, ?string $group, array &$occupiedSlots): void
+    private function scheduleSeance(User $prof, Module $module, Emploi $emploi, string $type, ?string $group, array &$occupiedSlots): void
     {
         $maxRetries = 10;
         $retryCount = 0;
@@ -416,6 +421,7 @@ class DatabaseSeeder extends Seeder
                     'heure_fin' => $timeSlot[1],
                     'salle' => $room,
                     'groupe' => $group,
+                    'prof_id'=>$prof->id
                 ]);
 
                 $occupiedSlots[$emploi->id][] = $slotKey;

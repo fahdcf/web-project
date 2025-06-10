@@ -33,7 +33,7 @@ class EmploiController extends Controller
         return view('emploi.index', compact('filiere', 'emplois'));
     }
 
-    public function create(Request $request)
+     public function create(Request $request)
     {
         $user = Auth::user();
         $filiere = $user->manage;
@@ -41,6 +41,7 @@ class EmploiController extends Controller
 
         $modules = Module::where('filiere_id', $filiere->id)
             ->where('semester', $semester)
+            ->with('tpAssignation', 'tdAssignation', 'cmAssignation')
             ->get();
 
         return view('emploi.create', compact('filiere', 'semester', 'modules'));
@@ -76,20 +77,37 @@ class EmploiController extends Controller
             ->first();
 
         if ($existingEmploi) {
-            return redirect()->route('emploi.index')->with('error', 'Un emploi du temps existe déjà pour ce semestre.');
+            return back()->withInput()->with('error', 'Un emploi du temps existe déjà pour ce semestre.');
         }
+
+
+
+        $month = now()->month;
+        $year = now()->year;
+
+        $academicYear = ($month >= 9)
+            ? $year . '-' . ($year + 1)
+            : ($year - 1) . '-' . $year;
 
         $emploi = Emploi::create([
             'filiere_id' => $validated['filiere_id'],
             'semester' => $validated['semester'],
-            'name' => 'emploi_du_temps_f_' . $validated['filiere_id'] . '_S_' . $validated['semester'],
+            'name' => 'Emploi du Temps S' . $validated['semester'] . " F" . $validated['filiere_id'] . " " . $academicYear,
             'is_active' => $validated['is_active'] ?? true,
             'file_path' => null,
         ]);
-        coord_action::create(['user_id' => auth()->id(), 'action_type' => 'create', 'target_table' => 'emplois', 'target_id' => $emploi->id, 'description' => "Création de l'emploi: {$emploi->name}"]);
+
+        coord_action::create([
+            'user_id' => auth()->id(),
+            'action_type' => 'create',
+            'target_table' => 'emplois',
+            'target_id' => $emploi->id,
+            'description' => "Création de l'emploi: {$emploi->name}"
+        ]);
 
         $successCount = 0;
         $errors = [];
+        $conflictDetails = [];
 
         if (!empty($validated['seances'])) {
             foreach ($validated['seances'] as $index => $seance) {
@@ -98,6 +116,11 @@ class EmploiController extends Controller
                     $duration = (strtotime($seance['heure_fin']) - strtotime($seance['heure_debut'])) / 3600;
                     if ($duration == 4 && $seance['heure_debut'] === '16:30:00') {
                         $errors[] = "Séance $index: Une séance de 4 heures ne peut pas commencer à 16:30.";
+                        $conflictDetails[] = [
+                            'index' => $index,
+                            'message' => "Séance de 4 heures ne peut pas commencer à 16:30",
+                            'seance' => $seance
+                        ];
                         continue;
                     }
 
@@ -105,11 +128,19 @@ class EmploiController extends Controller
                     $conflict = Seance::where('emploi_id', $emploi->id)
                         ->where('jour', $seance['jour'])
                         ->where('heure_debut', $seance['heure_debut'])
-                        ->where('salle', $seance['salle'])
+                        ->where(function ($query) use ($seance) {
+                            $query->where('salle', $seance['salle'])
+                                ->orWhere('module_id', $seance['module_id']);
+                        })
                         ->exists();
 
                     if ($conflict) {
-                        $errors[] = "Séance $index: Conflit de salle pour {$seance['jour']} à {$seance['heure_debut']} dans {$seance['salle']}.";
+                        $errors[] = "Séance $index: Conflit détecté pour {$seance['jour']} à {$seance['heure_debut']}";
+                        $conflictDetails[] = [
+                            'index' => $index,
+                            'message' => "Conflit de salle ou module",
+                            'seance' => $seance
+                        ];
                         continue;
                     }
 
@@ -136,14 +167,23 @@ class EmploiController extends Controller
             }
         }
 
-
-        $message = "Emploi du temps créé avec succès ! $successCount séance(s) ajoutée(s).";
         if (!empty($errors)) {
-            $message .= ' Erreurs: ' . implode('; ', $errors);
-            return redirect()->route('emploi.index')->with('warning', $message);
+            // Store the conflicts in session to display them
+            return back()
+                ->withInput()
+                ->with('conflicts', $conflictDetails)
+                ->with('warning', "Emploi du temps créé mais avec des erreurs: " . implode('; ', $errors));
         }
-        coord_action::create(['user_id' => auth()->id(), 'action_type' => 'create', 'target_table' => 'seances', 'target_id' => $emploi->semester, 'description' => "Création de séances: {$successCount} pour le emploie:  {$emploi->name}"]);
-        return redirect()->route('emploi.index')->with('success', $message);
+
+        coord_action::create([
+            'user_id' => auth()->id(),
+            'action_type' => 'create',
+            'target_table' => 'seances',
+            'target_id' => $emploi->semester,
+            'description' => "Création de séances: {$successCount} pour le emploie: {$emploi->name}"
+        ]);
+
+        return redirect()->route('emploi.index')->with('success', "Emploi du temps créé avec succès ! $successCount séance(s) ajoutée(s).");
     }
 
     public function edit(Emploi $emploi)

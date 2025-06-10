@@ -71,6 +71,7 @@ class ProfessorController extends Controller
 
         $modules = $professor->assignedModules()
             ->with('filiere') // Chargement anticipé de la filière
+            ->where('status', true)
             ->orderBy('semester')
             ->get();
 
