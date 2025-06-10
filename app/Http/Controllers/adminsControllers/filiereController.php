@@ -12,25 +12,24 @@ class filiereController extends Controller
 {
    public function index(){
     
-    $departements=Departement::all();
     $filieres= Filiere::all();
 
-    $professors = User::WhereHas('role', function ($query) {
-        $query->where('isprof', true);
-    })->get();
+     $professors = User::WhereHas('role', function ($query) {
+            $query->where('isprof', true)->where('iscoordonnateur',false);
+        })->get();
+        
 
-    return view('admin.filieres',['filieres'=>$filieres,'professors'=>$professors, 'departements'=>$departements]);
+    return view('admin.filieres',['filieres'=>$filieres,'professors'=>$professors]);
    }
 
    public function showadd(){
     
-    $professors = User::WhereHas('role', function ($query) {
-        $query->where('isprof', true);
-    })->get();    
-    
-    $departements=Departement::all();
+ $professors = User::WhereHas('role', function ($query) {
+            $query->where('isprof', true)->where('iscoordonnateur',false);
+        })->get();
 
-    return view('admin.add_filiere',['professors'=>$professors,'Departements'=>$departements]);
+
+    return view('admin.add_filiere',['professors'=>$professors]);
    }
 
 
@@ -39,10 +38,9 @@ class filiereController extends Controller
     request()->validate([
         'name'=> 'required|max:255|min:2',
         'user_id'=>'required',
-        'departement_id'=>'required'
     ]);
 
-    $newFiliere=['name'=>request('name'), 'department_id'=>request('departement_id'),'coordonnateur_id' =>request(('user_id'))];
+    $newFiliere=['name'=>request('name'), 'department_id'=> 1,'coordonnateur_id' =>request(('user_id'))];
     $createdFiliere=Filiere::create($newFiliere);
 
      $newcoordonnateur=user::findOrFail(request('user_id'));
@@ -82,8 +80,24 @@ class filiereController extends Controller
                 $fil->save();
             }
             else{
+                
+                if($fil->coordonnateur_id){
+
+                    $oldcoor=user::findOrFail($fil->coordonnateur_id);
+                    $role=$oldcoor->role;
+                    $role->iscoordonnateur=0;
+                    $role->save();
+
+                }
+
                 $fil->coordonnateur_id=request('user_id');
+
                 $fil->save();
+
+                $newcoor=user::findOrFail(request('user_id'));
+                $role=$newcoor->role;
+               $role->iscoordonnateur=1;
+                $role->save();
 
             }
 
@@ -97,6 +111,7 @@ class filiereController extends Controller
             $fil->department_id=request('departement_id');
 
                 $fil->save();
+
             }
             else{
                 $fil->department_id=request('departement_id');
@@ -107,17 +122,17 @@ class filiereController extends Controller
                     $role=$oldcoor->role;
                     $role->iscoordonnateur=0;
                     $role->save();
+
                 }
 
                 $fil->coordonnateur_id=request('user_id');
 
                 $fil->save();
 
-                $newcoor=user::findOrFail($fil->coordonnateur_id);
+                $newcoor=user::findOrFail(request('user_id'));
                 $role=$newcoor->role;
                $role->iscoordonnateur=1;
                 $role->save();
-
 
             }
          }

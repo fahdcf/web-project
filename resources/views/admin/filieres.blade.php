@@ -24,19 +24,11 @@
 
   <!-- Search and Filter -->
   <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
-    <div class="search-container">
+    <div class="search-container bg-white">
       <i class="bi bi-search search-icon pl-2"></i>
       <input type="text" id="searchInput" class="form-control search-inputt pl-2" placeholder="Rechercher par nom ou coordonnateur...">
     </div>
-    <div class="filter-group">
-      <label for="departementFilter" class="filter-label">Département</label>
-      <select class="form-select filter-input" id="departementFilter">
-        <option value="">Tous les départements</option>
-        @foreach ($departements as $departement)
-          <option value="{{ $departement->name }}">{{ $departement->name }}</option>
-        @endforeach
-      </select>
-    </div>
+  
   </div>
 
   <!-- Overlay -->
@@ -51,16 +43,7 @@
           <label style="color:#515151; width: 100%; font-weight: 700; text-align: start;" for="name" class="mt-4 form-label fw-bold">Nom du Département</label>
           <input style="color:#202020" type="text" class="form-control rounded" id="name" name="name" placeholder="Ex: Informatique">
         </div>
-        <!-- Select Département -->
-        <div class="mb-4 d-flex flex-column">
-          <label style="color:#515151; width: 100%; font-weight: 700; text-align: start;" for="departement" class="form-label fw-bold">Département</label>
-          <select style="border-color:#3028893b;" class="form-select py-2 rounded" id="departement" name="departement_id">
-            <option value="">-- Sélectionner un département --</option>
-            @foreach ($departements as $departement)
-              <option value="{{ $departement->id }}">{{ $departement->name }}</option>
-            @endforeach
-          </select>
-        </div>
+       
         <!-- Select Professor -->
         <div class="mb-4 d-flex flex-column">
           <label style="color:#515151; width: 100%; font-weight: 700; text-align: start;" for="professor" class="form-label fw-bold">Coordonnateur de filière</label>
@@ -86,7 +69,6 @@
         <thead>
           <tr style="color: #535050; font-weight: 600; font-size: 15px;">
             <th>Name</th>
-            <th>Département</th>
             <th>Coordonnateur de filière</th>
             <th>Date de création</th>
             <th class="pAlso">Action</th>
@@ -103,7 +85,6 @@
                 <div class="custom-row-wrapper" style="width: 100%;">
                   <div class="custom-row d-flex" style="width: 100%;">
                     <p>{{ $filiere->name }}</p>
-                    <p>{{ $filiere->departement->name }}</p>
                     @if ($filiere->coordonnateur)
                       <p>{{ $filiere->coordonnateur->firstname }} {{ $filiere->coordonnateur->lastname }}</p>
                     @else
@@ -491,26 +472,22 @@
     // Search and filter functionality
     document.addEventListener('DOMContentLoaded', function() {
       const searchInput = document.getElementById('searchInput');
-      const departementFilter = document.getElementById('departementFilter');
       const filiereRows = document.querySelectorAll('.filiere-row');
       const filiereTableBody = document.getElementById('filiereTableBody');
 
       function performSearch() {
         const searchTerm = searchInput.value.toLowerCase();
-        const departementValue = departementFilter.value;
         let visibleCount = 0;
 
         filiereRows.forEach(row => {
           const name = row.dataset.name;
           const coordonnateur = row.dataset.coordonnateur;
-          const departement = row.dataset.departement;
 
           const matchesSearch = !searchTerm || 
             name.includes(searchTerm) || 
             coordonnateur.includes(searchTerm);
-          const matchesDepartement = !departementValue || departement === departementValue;
 
-          if (matchesSearch && matchesDepartement) {
+          if (matchesSearch) {
             row.style.display = '';
             visibleCount++;
           } else {

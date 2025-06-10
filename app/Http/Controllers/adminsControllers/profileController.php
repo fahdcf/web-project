@@ -38,7 +38,7 @@ class profileController extends Controller
 
 public function otherprofile($id){
     $user=User::findOrFail($id);
-    $departments=Departement::all();
+    $departments=Departement::whereNot('id',1)->get();
 
     if((optional(auth()->user()->role)->isadmin)){
 

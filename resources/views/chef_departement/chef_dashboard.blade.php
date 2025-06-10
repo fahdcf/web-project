@@ -813,7 +813,7 @@ width: 100%;
             <div class="col-12 col-lg-6 mb-4 p-2">
               <div class=" shart-container p-3 bg-white d-flex flex-column justify-content-start align-items-center" style="height: 350px;">
                 
-                <h6 class="pt-1 pb-4 m-0 text-center" style="color: #252525">Répartition des Etudiants</h6>
+                <h6 class="pt-1 pb-4 m-0 text-center" style="color: #252525">Affectation des heures d’enseignement</h6>
                 <canvas id="genderChart" style="width: 90%; max-height: 250px;"></canvas>
               </div>
             </div>
@@ -823,9 +823,11 @@ width: 100%;
         <div class="col-12 col-lg-6 mb-4 p-2">
           <div class="shart-container p-3 bg-white d-flex flex-column justify-content-start align-items-center" style="height: 350px;">
             <h6 class="pt-1 pb-4  text-center" style="color: #252525">Nombre de connexions par jour</h6>
-            <canvas id="loginChart" style="width: 100%; height: 100%;"></canvas>
+            <canvas id="modulesChart" style="width: 100%; height: 100%;"></canvas>
           </div>
         </div>
+
+
       </div>
       <div class="">
         <div class="history p-0 " style="background-color:white ">
@@ -1204,14 +1206,17 @@ function getShadedColors(data) {
   });
 }
 
-  // Doughnut Chart
-  const genderCtx = document.getElementById('genderChart').getContext('2d');
+ const genderCtx = document.getElementById('genderChart').getContext('2d');
+  const unassigned = {{ $totalUnassignedHours }};
+  const assigned = {{ $totalassignedHours }};
+  const total = unassigned + assigned;
+
   new Chart(genderCtx, {
     type: 'doughnut',
     data: {
-      labels: ['Filles', 'Garçons'],
+      labels: ['Non assignées', 'Assignées'],
       datasets: [{
-        data: [55, 45],
+        data: [unassigned, assigned],
         backgroundColor: ['#a48de8', '#4723d9'],
         borderWidth: 0
       }]
@@ -1221,83 +1226,115 @@ function getShadedColors(data) {
       plugins: {
         legend: {
           position: 'bottom',
-      labels: {
-        usePointStyle: true,
-        pointStyle: 'circle',
-        boxWidth: 10,   // smaller size
-        padding: 15,
-      }
-    },
+          labels: {
+            usePointStyle: true,
+            pointStyle: 'circle',
+            boxWidth: 10,
+            padding: 15,
+            generateLabels: function(chart) {
+              const data = chart.data;
+              return data.labels.map((label, i) => {
+                const value = data.datasets[0].data[i];
+                const color = data.datasets[0].backgroundColor[i];
+                return {
+                  text: `${label}: ${value}h`,
+                  fillStyle: color,
+                  strokeStyle: color,
+                  pointStyle: 'circle',
+                  index: i
+                };
+              });
+            }
+          }
+        },
         tooltip: {
           callbacks: {
             label: function (context) {
               const label = context.label || '';
               const value = context.parsed;
-              const total = context.dataset.data.reduce((a, b) => a + b, 0);
               const percentage = ((value / total) * 100).toFixed(1);
-              return `${label}: ${value} (${percentage}%)`;
+              return `${label}: ${value}h (${percentage}%)`;
             }
           }
         }
       }
-    }
+    },
+    plugins: [{
+      // Custom plugin to show value beside slice
+      id: 'valueOutside',
+      afterDraw: chart => {
+        const { ctx, chartArea: { width, height }, data } = chart;
+        const meta = chart.getDatasetMeta(0);
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillStyle = '#333';
+        meta.data.forEach((element, index) => {
+          const { x, y } = element.tooltipPosition();
+          const value = data.datasets[0].data[index];
+        });
+      }
+    }]
   });
 
     const values = @json($loginCounts);
     console.log(values);
 
-  const loginCtx = document.getElementById('loginChart').getContext('2d');
-  new Chart(loginCtx, {
-    type: 'line',
+  const modulesCtx = document.getElementById('modulesChart').getContext('2d');
+new Chart(modulesCtx, {
+    type: 'bar',
     data: {
-      labels: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
-      datasets: [{
-        label: 'Nombre de connexions',
-        data: values,
-        fill: true,
-        backgroundColor: 'rgba(71,35,217, 0.1)',
-        borderColor: '#4723d9',
-        pointBackgroundColor: 'rgba(71,35,170, 1)',
-        pointBorderColor: '#fff',
-        tension: 0.4, // smooth curve
-      }]
+        labels: ['Modules affectés', 'Modules vacants'],
+        datasets: [{
+            label: 'Nombre de modules',
+            data: [{{$modulesCount}}, {{$modulesvacantesCount}}],
+            backgroundColor: [
+                'rgba(71, 35, 217, 0.8)', // Darker purple for affected modules
+                'rgba(71, 35, 217, 0.4)'  // Lighter purple for vacant modules
+            ],
+            borderColor: [
+                'rgba(71, 35, 217, 1)',
+                'rgba(71, 35, 217, 1)'
+            ],
+            borderWidth: 1,
+            barThickness: 'flex',
+            maxBarThickness: 50
+        }]
     },
     options: {
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            stepSize: 5
-          },
-          title: {
-            display: true,
-            text: 'Connexions'
-          },
-          grid: {
-            display: true,
-            drawBorder: false,
-            color: 'rgba(0,0,0,0.06)'
-          }
+        indexAxis: 'y', // Makes the bars horizontal
+        responsive: true,
+        scales: {
+            x: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Nombre de modules'
+                },
+                grid: {
+                    display: true,
+                    drawBorder: false,
+                    color: 'rgba(0,0,0,0.04)'
+                }
+            },
+            y: {
+                grid: {
+                    display: false
+                }
+            }
         },
-        x: {
-          title: {
-            display: true,
-            text: 'Jours de la semaine'
-          },
-          grid: {
-            display: false
-          }
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return context.parsed.x + ' modules';
+                    }
+                }
+            }
         }
-      },
-      plugins: {
-        legend: {
-          display: false
-        }
-      }
     }
-  });
-
+});
 
       function addtask(){
         const taskaddButton=document.getElementById('task-add-button');

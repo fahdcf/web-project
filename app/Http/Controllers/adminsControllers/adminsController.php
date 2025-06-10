@@ -31,7 +31,7 @@ use App\Notifications\ProfUnassignedNotification;
 class adminsController extends Controller
 {
     public function index(){
-        $departments = Departement::all();
+        $departments = Departement::whereNot('id',1)->get();
         $admins = User::WhereHas('role', function ($query) {
             $query->where('isadmin', true);
         })->paginate(10); 
@@ -41,10 +41,12 @@ class adminsController extends Controller
     }
 
     public function showadd(){
-        $departments = Departement::all();
+        $departments = Departement::whereNot('id',1)->get();
+        
         $professeurs = User::WhereHas('role', function ($query) {
-            $query->where('isprof', true);
+            $query->where('isprof', true)->where('isadmin',false);
         })->get();
+
     
     
         return view('admin.add_admin',['professeurs'=>$professeurs,'Departements' => $departments]);

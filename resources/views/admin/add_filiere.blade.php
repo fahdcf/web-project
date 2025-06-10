@@ -30,20 +30,7 @@
           @enderror
         </div>
 
-        <!-- Select Département -->
-        <div class="mb-4 d-flex flex-column">
-          <label style="color:#515151; font-weight: 700;" for="departement_id" class="form-label fw-bold">Département</label>
-          <select class="form-select py-2 rounded @error('departement_id') is-invalid @enderror" id="departement_id" name="departement_id">
-            <option value="">-- Sélectionner un Département --</option>
-            @foreach ($Departements as $Departement)
-              <option value="{{ $Departement->id }}" {{ old('departement_id') == $Departement->id ? 'selected' : '' }}>{{ $Departement->name }}</option>
-            @endforeach
-          </select>
-          @error('departement_id')
-            <div class="invalid-feedback">{{ $message }}</div>
-          @enderror
-        </div>
-
+        
         <!-- Select Coordonnateur -->
         <div class="mb-4 d-flex flex-column">
           <label style="color:#515151; font-weight: 700;" for="user_id" class="form-label fw-bold">Coordonnateur de Filière</label>

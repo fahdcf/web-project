@@ -11,13 +11,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-
     @vite(['resources/css/admin-dashboard.css', 'resources/css/sb-admin-2.css', 'resources/vendor/fontawesome-free/css/all.min.css', 'resources/js/app.js', 'resources/vendor/jquery/jquery.min.js', 'resources/vendor/bootstrap/js/bootstrap.bundle.min.js', 'resources/vendor/jquery-easing/jquery.easing.min.js', 'resources/js/sb-admin-2.min.js', 'resources/vendor/chart.js/Chart.min.js', 'resources/js/demo/chart-area-demo.js', 'resources/js/demo/chart-pie-demo.js'])
 
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
-
 
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap");
@@ -56,9 +54,7 @@
             width: 100% !important;
             height: 100% !important;
             z-index: 1040;
-            /* Bootstrap uses this for modals */
             background-color: rgba(0, 0, 0, 0.5);
-            /* semi-transparent black */
         }
 
         a {
@@ -79,10 +75,8 @@
             transition: .5s;
         }
 
-
         .header-content {
             height: 100%;
-
             width: 90vw;
             display: flex;
             align-items: center;
@@ -94,19 +88,13 @@
             box-shadow: 1px 1px 10px 2px #33333311, 1px -30px 15px 20px #f5f5f5;
             padding: 10px;
             background-color: white;
-
-
-
-
         }
-
 
         .header_toggle {
             color: var(--first-color);
             font-size: 1.5rem;
             cursor: pointer
         }
-
 
         .l-navbar {
             position: fixed;
@@ -161,8 +149,6 @@
         .nav_link:hover {
             color: var(--white-color);
             text-decoration-line: none;
-
-
         }
 
         .nav_icon {
@@ -194,6 +180,33 @@
             height: 100vh
         }
 
+        /* Make the nav_list scrollable with minimal scrollbar */
+        .nav_list {
+            overflow-y: auto;
+            max-height: calc(100vh - 120px); /* Adjust based on logo and logout heights */
+            scrollbar-width: thin; /* Minimal scrollbar for Firefox */
+            scrollbar-color: transparent transparent; /* Hide scrollbar in Firefox */
+        }
+
+        /* Webkit scrollbar styling for minimal appearance */
+        .nav_list::-webkit-scrollbar {
+            width: 4px; /* Extremely thin scrollbar */
+        }
+
+        .nav_list::-webkit-scrollbar-thumb {
+            background-color: rgba(175, 165, 217, 0.3); /* Low-opacity thumb matching --first-color-light */
+            border-radius: 2px;
+        }
+
+        .nav_list::-webkit-scrollbar-track {
+            background-color: transparent; /* Transparent track */
+        }
+
+        /* Hide scrollbar when not hovering, show on hover for usability */
+        .nav_list:hover::-webkit-scrollbar-thumb {
+            background-color: rgba(175, 165, 217, 0.5); /* Slightly more visible on hover */
+        }
+
         @media screen and (min-width: 768px) {
             body {
                 margin: calc(var(--header-height) + 1rem) 0 0 0;
@@ -214,14 +227,8 @@
                 width: calc(var(--nav-width) + 156px)
             }
 
-            .l-navbar.show {
-                width: calc(var(--nav-width) + 156px)
-            }
-
             .body-pd {
                 padding-left: calc(var(--nav-width) + 188px);
-
-
             }
         }
 
@@ -235,13 +242,11 @@
             transition: width 0.4s;
             overflow: hidden;
             width: 40px;
-            /* collapsed */
             cursor: pointer;
         }
 
         .search-container.active {
             width: 200px;
-            /* expanded */
         }
 
         .search-input {
@@ -262,22 +267,16 @@
             color: #333;
         }
 
-
         #profileDropdown img {
             height: 40px;
             width: 40px;
             object-fit: cover;
             border: 1px solid #8585866b;
-
-
         }
 
         #profileDropdown img:hover {
             outline: 1px solid #4723D9;
-
-
         }
-
 
         .dropdown {
             position: relative;
@@ -294,15 +293,11 @@
         .notifications-container button {
             border: none;
             background: none;
-
         }
-
 
         .notifications-container button i {
             color: #424242 !important;
-
             font-size: 25px !important;
-
         }
 
         .notifications-container button i:hover {
@@ -311,7 +306,6 @@
         }
 
         #searshBarContainer {
-
             height: 100%;
             width: 90vw;
             padding: 0 1rem;
@@ -321,20 +315,14 @@
             box-shadow: 1px 1px 10px 2px #33333311, 1px -30px 15px 20px #f5f5f5;
             padding: 10px;
             background-color: white;
-
-
         }
 
-
         #searchBar {
-
             display: flex;
             height: 100%;
             width: 100%;
             z-index: var(--z-fixed);
-
         }
-
 
         #searchBar input {
             width: 100%;
@@ -342,7 +330,6 @@
             padding-left: 10px;
             border: none;
             background: transparent;
-
         }
 
         #searchBar input:focus {
@@ -353,14 +340,11 @@
             border: none;
             width: 40px;
             background: none;
-
-
         }
 
         .hidden {
             display: none !important;
         }
-
 
         .notification-menu {
             max-width: 350px;
@@ -368,9 +352,7 @@
             box-shadow: 1px 1px 10px 2px #3333332d;
             overflow-x: hidden;
             white-space: normal;
-            /* Allows content to wrap */
             word-wrap: break-word;
-            /* Support older browsers */
             overflow-wrap: break-word;
         }
 
@@ -379,74 +361,48 @@
             white-space: normal;
         }
 
-        /* Optional: add spacing if needed */
         .notification-menu a.dropdown-item {
             font-size: 14px;
             padding: 10px 15px;
             white-space: normal;
-            /* Allow line breaks in the <a> */
         }
     </style>
 
-
-
-
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
-
-
-
 </head>
 
 <body id="body-pd">
-
-
     @php
         $notifications = Auth::user()->notifications()->latest()->take(5)->get();
         $unreadCount = auth()->user()->unreadNotifications->count();
-
     @endphp
 
     <header class="header mt-3" id="header">
-
         <div id="searshBarContainer" class="hidden">
-
             <div id="searchBar">
                 <button><i class='bx bx-search' id="search-icon"></i></button>
                 <input type="text" name="search" id="search-input" placeholder="search..">
                 <button onclick="closeSearchBar()"><i style="font-size: 27px;" class="bi bi-x"></i></button>
-
             </div>
-
         </div>
 
-
-        <div id="header-content" class="header-content ">
-
+        <div id="header-content" class="header-content">
             <div class="header_toggle">
                 <i class='bx bx-menu' id="header-toggle"></i>
             </div>
 
-
-
-
-
             <div class="d-flex align-items-center">
-
                 <div class="notifications-container ml-2" id="notifications-container">
                     <button onclick="showSearchBar()"><i class='bx bx-search' id="search-icon"></i></button>
                 </div>
 
-
                 <!-- Notification Dropdown -->
                 <div class="dropdown ms-2">
-
-
                     <div class="notifications-container ml-2" id="notifications-container" data-bs-toggle="dropdown"
                         aria-expanded="false">
                         <button id="notification"><i class='bx bx-bell'></i>
                             @if ($unreadCount > 0)
-                                <span class="position-absolute  translate-middle badge rounded-pill bg-danger">
+                                <span class="position-absolute translate-middle badge rounded-pill bg-danger">
                                     {{ $unreadCount }}
                                 </span>
                             @endif
@@ -459,7 +415,6 @@
                             <h6 class="dropdown-header" style="color: white;">Notifications</h6>
                         </li>
                         @if (!$notifications)
-
                             <li><a class="dropdown-item text-muted" href="#">No notifications</a></li>
                         @else
                             @foreach ($notifications as $notification)
@@ -471,7 +426,6 @@
                                             {{ $notification->data['message'] }}
                                             <br><small
                                                 class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
-
                                         </a>
                                     @else
                                         <a class="dropdown-item" style="border-bottom: 1px solid #3333331b;"
@@ -481,29 +435,23 @@
                                                 class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
                                         </a>
                                     @endif
-
                                 </li>
                             @endforeach
                             <li class="text-center pt-1"><a href="#">Voir tous les notifications</a></li>
-
                         @endif
-
                     </ul>
                 </div>
 
-                <div class="d-flex flex-column  ml-3">
-
+                <div class="d-flex flex-column ml-3">
                     <p style="color: #504f4f; font-weight: 600; font-size: 15px;" class="p-0 m-0">
                         {{ Auth()->user()->firstname }} {{ Auth()->user()->lastname }}</p>
-
                     @if (auth()->user()->user_details)
-                        <p style=" {{ Auth()->user()->user_details->status === 'active' ? 'color: #10a386;' : 'color: #cd4c35;' }} font-weight: 500; font-size: 12px;"
+                        <p style="{{ Auth()->user()->user_details->status === 'active' ? 'color: #10a386;' : 'color: #cd4c35;' }} font-weight: 500; font-size: 12px;"
                             class="p-0 m-0 text-end">{{ Auth()->user()->user_details->status }}</p>
                     @else
                         <p style="color: #cd4c35; font-weight: 500; font-size: 12px;" class="p-0 m-0 text-end">inactive
                         </p>
                     @endif
-
                 </div>
 
                 <!-- Profile picture dropdown -->
@@ -512,16 +460,15 @@
                         aria-expanded="false">
                         @if (Auth()->user()->user_details)
                             @if (Auth()->user()->user_details->profile_img != null)
-                                <img style=" border-radius:50%;"
+                                <img style="border-radius:50%;"
                                     src="{{ asset('storage/' . Auth()->user()->user_details->profile_img) }}">
                             @else
-                                <img style=" border-radius:50%;"
+                                <img style="border-radius:50%;"
                                     src="{{ asset('storage/images/default_profile_img.png') }}">
                             @endif
                         @else
                             <img style="width: 35px; border-radius:50%;"
                                 src="{{ asset('storage/images/default_profile_img.png') }}">
-
                         @endif
                     </a>
 
@@ -532,7 +479,6 @@
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-
                         <li>
                             <form action="{{ url('/login') }}" method="post">
                                 @csrf
@@ -543,23 +489,17 @@
                     </ul>
                 </div>
             </div>
-
-
-
         </div>
-
     </header>
 
-    <!-- sidebar-->
-
+    <!-- sidebar -->
     <div class="l-navbar" id="nav-bar">
         <nav class="nav">
             <div>
                 <a href="#" class="nav_logo"> <i class='bx bx-layer nav_logo-icon'></i> <span
                         class="nav_logo-name">AssignPro</span></a>
                 <div class="nav_list">
-                    <!-- sidebar items-->
-
+                    <!-- sidebar items -->
                     <a href="{{ url('/') }}" class="nav_link {{ request()->is('/') ? 'active' : '' }}">
                         <i class='bx bx-grid-alt nav_icon'></i>
                         <span class="nav_name">Dashboard</span>
@@ -571,25 +511,21 @@
                             <i class='bx bx-buildings nav_icon'></i>
                             <span class="nav_name">Departements</span>
                         </a>
-
                         <a href="{{ url('/filieres') }}"
                             class="nav_link {{ request()->is('filieres') ? 'active' : '' }}">
                             <i class='bx bx-book-open nav_icon'></i>
                             <span class="nav_name">Filieres</span>
                         </a>
-
                         <a href="{{ url('/professeurs') }}"
                             class="nav_link {{ request()->is('professeurs') ? 'active' : '' }}">
                             <i class="bi bi-person-video3" style="padding-left: 2px; font-size: 17px;"></i>
                             <span class="nav_name">Professeurs</span>
                         </a>
-
                         <a href="{{ url('/etudiants') }}"
                             class="nav_link {{ request()->is('etudiants') ? 'active' : '' }}">
                             <i class="bi bi-people-fill" style="padding-left: 2px; font-size: 16px;"></i>
                             <span class="nav_name">Etudiants</span>
                         </a>
-
                         <a href="{{ url('/admins') }}"
                             class="nav_link {{ request()->is('admins') ? 'active' : '' }}">
                             <i class="bi bi-person-gear" style="padding-left: 2px; font-size: 18px;"></i>
@@ -597,94 +533,69 @@
                         </a>
                     @endif
 
+                    @if (auth()->user()->role->isprof)
+                        <!-- Divider stylé -->
+                        <hr class="sidebar-divider-centered"
+                            style="width: 80%; margin: 1rem auto; border-top: 1px solid rgb(255, 255, 255);" />
+                        <!-- Ou avec une classe personnalisée -->
+                        <style>
+                            .sidebar-divider {
+                                border-top: 1px solid rgba(255, 255, 255, 0.712);
+                                margin: 1rem 0;
+                            }
 
-                    <!-- Divider stylé -->
-                    <hr class="sidebar-divider-centered"
-                        style="width: 80%; margin: 1rem auto; border-top: 1px solid rgb(255, 255, 255);" />
-                    <!-- Ou avec une classe personnalisée -->
-                    <style>
-                        .sidebar-divider {
-                            border-top: 1px solid rgba(255, 255, 255, 0.712);
-                            /* ligne claire */
-                            margin: 1rem 0;
-                        }
+                            .sidebar-divider-centered {
+                                width: 80%;
+                                margin: 1rem auto;
+                                border-top: 1px solid rgba(255, 255, 255, 0.89);
+                                transition: all 0.3s ease;
+                            }
 
-                        .sidebar-divider-centered {
-                            width: 80%;
-                            margin: 1rem auto;
-                            border-top: 1px solid rgba(255, 255, 255, 0.89);
-                            transition: all 0.3s ease;
-                        }
-
-                        .sidebar.collapsed .sidebar-divider-centered {
-                            width: 40%;
-                            /* smaller width when collapsed */
-                        }
-                    </style>
-                    {{-- devider here to ashow also the other action --}}
-                    <a href="{{ route('mesModules') }}"
-                        class="nav_link {{ request()->is('mesModules') ? 'active' : '' }}">
-                        <i class="fas fa-book"></i> <!-- Changed from fa-book-open to fa-book (simpler book icon) -->
-                        <span class="nav_name">Mes Modules</span>
-                    </a>
-
-                    <a href="{{ route('professor.myRequests') }}"
-                        class="nav_link {{ request()->is('my-requests') ? 'active' : '' }}">
-                        <i class="fas fa-clipboard-list"></i>
-                        <!-- Changed to clipboard with list - clearer for "demandes" -->
-                        <span class="nav_name">Mes Demandes</span>
-                    </a>
-
-                    <a href="{{ route('availableModules') }}"
-                        class="nav_link {{ request()->is('availableModules') ? 'active' : '' }}">
-                        <i class="fas fa-book-medical"></i>
-                        <!-- Changed to book with plus sign - indicates availability -->
-                        <span class="nav_name">Modules vacantes</span>
-                    </a>
-
-
-
-                    <a href="{{ route('emploi.myTimetable') }}"
-                        class="nav_link {{ request()->is('my-timetable') ? 'active' : '' }}">
-                        <i class="fas fa-table"></i> <!-- Changed to table icon - represents timetable better -->
-                        <span class="nav_name">Emploi du Temps</span>
-                    </a>
-
-                    <a href="{{ route('notes_upload_page') }}"
-                        class="nav_link {{ request()->is('upload-notes') ? 'active' : '' }}">
-                        <i class="fas fa-edit"></i> <!-- Changed to edit icon - more appropriate for "saisir" -->
-                        <span class="nav_name">Saisir les notes</span>
-                    </a>
-
-
-
-
-
-
-
-
-
-
-
+                            .sidebar.collapsed .sidebar-divider-centered {
+                                width: 40%;
+                            }
+                        </style>
+                        <a href="{{ route('mesModules') }}"
+                            class="nav_link {{ request()->is('mesModules') ? 'active' : '' }}">
+                            <i class="fas fa-book"></i>
+                            <span class="nav_name">Mes Modules</span>
+                        </a>
+                        <a href="{{ route('professor.myRequests') }}"
+                            class="nav_link {{ request()->is('my-requests') ? 'active' : '' }}">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span class="nav_name">Mes Demandes</span>
+                        </a>
+                        <a href="{{ route('availableModules') }}"
+                            class="nav_link {{ request()->is('availableModules') ? 'active' : '' }}">
+                            <i class="fas fa-book-medical"></i>
+                            <span class="nav_name">Modules vacantes</span>
+                        </a>
+                        <a href="{{ route('emploi.myTimetable') }}"
+                            class="nav_link {{ request()->is('my-timetable') ? 'active' : '' }}">
+                            <i class="fas fa-table"></i>
+                            <span class="nav_name">Emploi du Temps</span>
+                        </a>
+                        <a href="{{ route('notes_upload_page') }}"
+                            class="nav_link {{ request()->is('upload-notes') ? 'active' : '' }}">
+                            <i class="fas fa-edit"></i>
+                            <span class="nav_name">Saisir les notes</span>
+                        </a>
+                    @endif
 
                     <a href="{{ url('/profile') }}" class="nav_link {{ request()->is('profile') ? 'active' : '' }}">
                         <i class='bx bx-id-card nav_icon'></i>
                         <span class="nav_name">Profile</span>
                     </a>
-
                 </div>
             </div>
-            <a href="{{ url('/login') }}" class="nav_link"> <i class='bx bx-log-out nav_icon'></i> <span
-                    class="nav_name">Deconnexion
-
-                </span> </a>
+            <a href="{{ url('/login') }}" class="nav_link">
+                <i class='bx bx-log-out nav_icon'></i>
+                <span class="nav_name">Deconnexion</span>
+            </a>
         </nav>
     </div>
     <!--Container Main start-->
-
-
     {{ $slot }}
-
     <!--Container Main end-->
 
     <script>
@@ -696,30 +607,22 @@
         function closeSearchBar() {
             document.getElementById('searshBarContainer').classList.add('hidden');
             document.getElementById('header-content').classList.remove('hidden');
-
         }
     </script>
 
-
     <script>
         document.addEventListener("DOMContentLoaded", function(event) {
-
             const showNavbar = (toggleId, navId, bodyId, headerId) => {
                 const toggle = document.getElementById(toggleId),
                     nav = document.getElementById(navId),
                     bodypd = document.getElementById(bodyId),
                     headerpd = document.getElementById(headerId)
 
-                // Validate that all variables exist
                 if (toggle && nav && bodypd && headerpd) {
                     toggle.addEventListener('click', () => {
-                        // show navbar
                         nav.classList.toggle('show')
-                        // change icon
                         toggle.classList.toggle('bx-x')
-                        // add padding to body
                         bodypd.classList.toggle('body-pd')
-                        // add padding to header
                         headerpd.classList.toggle('body-pd')
                     })
                 }
@@ -727,7 +630,6 @@
 
             showNavbar('header-toggle', 'nav-bar', 'body-pd', 'header')
 
-            /*===== LINK ACTIVE =====*/
             const linkColor = document.querySelectorAll('.nav_link')
 
             function colorLink() {
@@ -737,11 +639,8 @@
                 }
             }
             linkColor.forEach(l => l.addEventListener('click', colorLink))
-
-            // Your code to run since DOM is loaded and ready
         });
     </script>
 </body>
-
 
 </html>

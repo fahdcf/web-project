@@ -31,7 +31,7 @@ class professorsController extends Controller
 {
     public function index(){
         
-        $departments=Departement::all();
+        $departments=Departement::whereNot('id',1)->get();
 
         $professors = User::WhereHas('role', function ($query) {
             $query->where('isprof', true);
@@ -43,7 +43,7 @@ class professorsController extends Controller
     }
 
     public function filter(){
-        $departments=Departement::all();
+        $departments=Departement::whereNot('id',1)->get();
 
         $query = User::WhereHas('role', function ($query) {
             $query->where('isprof', true);
@@ -82,7 +82,7 @@ class professorsController extends Controller
 
     public function showadd(){
         
-        $departements=Departement::all();
+        $departements=Departement::whereNot('id',1)->get();
 
         return view('admin.add_professeur',['Departements'=>$departements]);
         

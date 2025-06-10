@@ -10,6 +10,8 @@ use App\Models\Student;
 use App\Models\User;
 use App\Models\Task;
 use App\Models\Filiere;
+use App\Models\Module;
+
 use App\Models\user_log;
 use Illuminate\Support\Facades\Auth;
 
@@ -74,6 +76,53 @@ class homeController extends Controller
             
             if (Auth()->user()->role->ischef) {
 
+
+
+
+                  $modules = Module::all();
+
+    $totalUnassignedHours = 0;
+    $totalassignedHours = 0;
+        $totalHours = 0;
+
+
+
+    foreach ($modules as $module) {
+        if (!$module->ProfCours) {
+            $totalUnassignedHours += $module->cm_hours ?? 0;
+        }
+        else{
+         $totalassignedHours += $module->cm_hours ?? 0;
+
+        }
+        if (!$module->ProfTd) {
+            $totalUnassignedHours += $module->td_hours ?? 0;
+        }
+
+         else{
+         $totalassignedHours += $module->td_hours ?? 0;
+
+        }
+
+        if (!$module->ProfTp) {
+            $totalUnassignedHours += $module->tp_hours ?? 0;
+        }
+
+         else{
+         $totalassignedHours += $module->tp_hours ?? 0;
+
+        }
+
+      $totalHours = $totalHours +$module->cm_hours + $module->tp_hours + $module->td_hours;
+
+    }
+
+     
+
+
+
+
+
                   $studentCount = Student::get()->count();
                 $professorCount = User::get()->count();
                 $chefHistory = chef_action::latest()->take(4)->get();
@@ -88,6 +137,32 @@ class homeController extends Controller
                   $FilieretargetIDs = Filiere::where('department_id', auth()->user()->manage->id)
         ->pluck('id'); // Plucks all the IDs into a collection
    
+ $modulesvacantesCount = Module::whereIn('filiere_id', $FilieretargetIDs)
+    ->where(function ($query) {
+        $query->whereDoesntHave('assignment', function ($q) {
+            $q->where('teach_tp', 1);
+        })->orWhereDoesntHave('assignment', function ($q) {
+            $q->where('teach_td', 1);
+        })->orWhereDoesntHave('assignment', function ($q) {
+            $q->where('teach_cm', 1);
+        });
+    })
+    ->count();
+
+    $modulesCount = Module::whereIn('filiere_id', $FilieretargetIDs)
+    ->where(function ($query) {
+        $query->whereHas('assignment', function ($q) {
+            $q->where('teach_tp', 1);
+        })->orWhereDoesntHave('assignment', function ($q) {
+            $q->where('teach_td', 1);
+        })->orWhereDoesntHave('assignment', function ($q) {
+            $q->where('teach_cm', 1);
+        });
+    })
+    ->count();
+
+
+
         $module_requests = prof_request::whereIn('module_id', $FilieretargetIDs)->where('status','pending')->latest()->take(3)->get();
 
 
@@ -113,7 +188,7 @@ class homeController extends Controller
 
 
 
-                return View('chef_departement.chef_dashboard',['tasks' => $tasks, 'studentCount' => $studentCount, 'professorCount' => $professorCount, 'chefHistory' => $chefHistory, 'professorsMin' => $professorsMin, 'loginCounts' => $loginCounts , 'module_requests' => $module_requests]);
+                return View('chef_departement.chef_dashboard',['tasks' => $tasks, 'studentCount' => $studentCount, 'professorCount' => $professorCount, 'chefHistory' => $chefHistory, 'professorsMin' => $professorsMin, 'loginCounts' => $loginCounts , 'module_requests' => $module_requests, 'totalUnassignedHours'=>$totalUnassignedHours,'totalassignedHours'=>$totalassignedHours,'totalHours'=>$totalHours,'modulesCount'=>$modulesCount,'modulesvacantesCount'=>$modulesvacantesCount]);
             }
 
 

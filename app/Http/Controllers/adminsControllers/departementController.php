@@ -15,11 +15,12 @@ use App\Models\admin_action;
 class departementController extends Controller
 {
     public function index(){
-        $departments=Departement::all();
+        $departments=Departement::whereNot('id',1)->get();
 
         $professors = User::WhereHas('role', function ($query) {
-            $query->where('isprof', true);
+            $query->where('isprof', true)->where('ischef',false);
         })->get();
+        
     
     return view('admin.departments',['departements'=>$departments, 'professors'=>$professors]);
     
@@ -28,7 +29,7 @@ class departementController extends Controller
     public function showadd(){
         
         $professors = User::WhereHas('role', function ($query) {
-            $query->where('isprof', true);
+            $query->where('isprof', true)->where('ischef',false);
         })->get();
         
     return view('admin.add_department',['professors'=>$professors]);
