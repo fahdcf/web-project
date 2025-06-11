@@ -113,7 +113,7 @@ class professorsController extends Controller
             $email=request('email');
    
    
-       Mail::to($email)->send(new ProfessorAccountCreated($firstname, $lastname, $password, $email));
+       Mail::to($email)->queue(new ProfessorAccountCreated($firstname, $lastname, $password, $email));
 
 
         $userdata=[

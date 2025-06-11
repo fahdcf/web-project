@@ -72,7 +72,7 @@ class DatabaseSeeder extends Seeder
             [
                 'firstname' => 'Fahd',
                 'lastname' => 'Chafai',
-                'email' => 'fahdfahd427@gmail.com',
+                'email' => 'fahdchafai427@gmail.com',
                 'departement' => 'GI',
                 'password' => Hash::make('password'),
                 'role' => ['isadmin' => true, 'iscoordonnateur' => false, 'isprof' => true, 'isvocataire' => false, 'ischef' => false],
@@ -88,7 +88,7 @@ class DatabaseSeeder extends Seeder
             [
                 'firstname' => 'coord',
                 'lastname' => 'ahmed',
-                'email' => 'mohssine888@gmail.com',
+                'email' => 'mohssineechlaihi85@gmail.com',
                 'departement' => 'GI',
                 'password' => Hash::make('password'),
                 'role' => ['isadmin' => false, 'iscoordonnateur' => true, 'isprof' => true, 'isvocataire' => false, 'ischef' => false],
@@ -143,15 +143,15 @@ class DatabaseSeeder extends Seeder
         $chef = User::where('email', 'fahd@gmail.com')->first();
 
         return Departement::create([
-            'name' => 'mathematiques informatique',
-            'description' => 'Département de Mathématiques Informatique',
+            'name' => 'GI',
+            'description' => 'Département de Génie Informatique',
             'user_id' => $chef->id,
         ]);
     }
 
     private function createGiFiliere(Departement $department): Filiere
     {
-        $coordinator = User::where('email', 'mohssine888@gmail.com')->first();
+        $coordinator = User::where('email', 'mohssineechlaihi85@gmail.com')->first();
 
         return Filiere::create([
             'name' => 'genie informatique',

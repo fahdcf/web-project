@@ -1,6 +1,5 @@
 <x-coordonnateur_layout>
     <div class="container py-4">
-        <x-global_alert />
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2><i class="fas fa-list-check me-2" aria-hidden="true"></i> Mes Demandes</h2>

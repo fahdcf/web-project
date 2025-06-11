@@ -13,12 +13,34 @@
             box-sizing: border-box;
         }
 
-        .container-fluid {
-            padding: 1.5rem 1rem !important;
-        }
+        /* .container-fluid {
+            padding: 1.5rem !important;
+            max-width: 1400px;
+            margin: 0 auto;
+        } */
 
-        .welcome {
-            background: linear-gradient(135deg, var(--primary) 70%, transparent 100%), url('{{ asset('storage/images/adminavatar.png') }}') no-repeat right center / 120px auto;
+
+         .welcome{
+            margin-top: 1.3rem;
+    border-radius: 15px;
+    background-color: #4723d9;
+    color: white;
+            padding: 1.5rem;
+    box-shadow: 0px 3px 15px 1px #3838381d;
+    background-image: url('{{ asset('storage/images/adminavatar.png') }}');
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: 150px auto;
+    /* padding: 15px; */
+    width: 100%; /* or your preferred width */
+            min-height: 140px;
+
+  }
+
+
+  
+        /* .welcome {
+    background-color: #4723d9;
             color: white;
             padding: 1.5rem;
             border-radius: var(--border-radius);
@@ -26,10 +48,10 @@
             display: flex;
             align-items: center;
             min-height: 140px;
-        }
+        } */
 
         .welcome-content {
-            max-width: 60%;
+            max-width: 70%;
         }
 
         .welcome h3 {
@@ -52,11 +74,12 @@
             border-radius: 5px;
             font-weight: 500;
             font-size: 0.875rem;
-            transition: background 0.2s;
+            transition: background 0.2s, transform 0.2s;
         }
 
         .addbtn:hover {
             background: rgba(255, 255, 255, 0.8) !important;
+            transform: translateY(-1px);
         }
 
         .seebtn {
@@ -67,18 +90,19 @@
             border-radius: 5px;
             font-weight: 500;
             font-size: 0.875rem;
-            transition: background 0.2s;
+            transition: background 0.2s, transform 0.2s;
         }
 
         .seebtn:hover {
             background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
         }
 
         .numbers-card {
             background: white;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
-            padding: 1rem;
+            padding: 1.25rem;
             display: flex;
             align-items: center;
             gap: 1rem;
@@ -114,10 +138,12 @@
             font-size: 0.75rem;
             text-decoration: none;
             font-weight: 500;
+            transition: color 0.2s;
         }
 
         .numbers-card .seemore:hover {
             text-decoration: underline;
+            color: #6f58d8;
         }
 
         .chart-container {
@@ -129,7 +155,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 90%;
+            width: 100%;
         }
 
         .chart-container h6 {
@@ -143,6 +169,7 @@
         .chart-container canvas {
             max-height: 250px;
             width: 100% !important;
+            max-width: 100%;
         }
 
         .tasks-container,
@@ -152,6 +179,7 @@
             box-shadow: var(--shadow);
             overflow: hidden;
             height: 100%;
+            flex: 1;
         }
 
         .tasks-header,
@@ -233,6 +261,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        #task-add-button:hover {
+            background: #f8f9fa !important;
+            transform: scale(1.1);
         }
 
         .dropdown-menu {
@@ -243,16 +277,24 @@
 
         .dropdown-item {
             padding: 0.5rem 1rem;
+            transition: background 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background: var(--secondary);
         }
 
         .tasks-history-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
             gap: 1rem;
             margin-top: 1rem;
         }
 
         @media (max-width: 1400px) {
+            /* .container-fluid {
+                padding: 1.25rem !important;
+            } */
+
             .numbers-card img {
                 width: 50px;
                 height: 50px;
@@ -268,6 +310,16 @@
             }
         }
 
+        @media (max-width: 1200px) {
+            .welcome-content {
+                max-width: 80%;
+            }
+
+            .chart-container {
+                padding: 1.25rem;
+            }
+        }
+
         @media (max-width: 992px) {
             .welcome {
                 background-size: 100px auto;
@@ -275,7 +327,7 @@
             }
 
             .welcome-content {
-                max-width: 70%;
+                max-width: 100%;
             }
 
             .buttons-wrapper {
@@ -294,7 +346,7 @@
             }
 
             .tasks-history-container {
-                grid-template-columns: 1fr;
+                flex-direction: column;
             }
         }
 
@@ -304,14 +356,11 @@
                 background-image: none;
             }
 
-            .welcome-content {
-                max-width: 100%;
-            }
-
             .numbers-card {
                 flex-direction: column;
                 text-align: center;
                 padding: 1rem;
+                gap: 0.75rem;
             }
 
             .numbers-card img {
@@ -336,9 +385,9 @@
         }
 
         @media (max-width: 576px) {
-            .container-fluid {
-                padding: 1rem 0.5rem !important;
-            }
+            /* .container-fluid {
+                padding: 1rem !important;
+            } */
 
             .welcome h3 {
                 font-size: 1rem;
@@ -354,7 +403,6 @@
         }
     </style>
 
-    <div class="container-fluid border">
         <!-- Welcome Section -->
         <div class="welcome">
             <div class="welcome-content">
@@ -366,7 +414,6 @@
                     <a href="{{ route('coordonnateur.modules.index') }}" class="addbtn">Gérer Modules</a>
                     <a href="{{ route('coordonnateur.assignments') }}" class="addbtn">Gérer Heures</a>
                     <a href="{{ route('emploi.index') }}" class="addbtn">Gérer Emplois</a>
-                    {{-- <a href="{{ route('seances.index') }}" class="addbtn">Gérer Séances</a> --}}
                     <a href="{{ route('coordonnateur.vacataires.index') }}" class="addbtn">Gérer Vacataires</a>
                 </div>
             </div>
@@ -420,7 +467,7 @@
                     <canvas id="seancesChart"></canvas>
                 </div>
             </div>
-            <div class="col-12 col-md-4 col-lg-4">
+            <div class="col-12 col-md-4">
                 <div class="chart-container">
                     <h6>Modules Vacants/Non Vacants</h6>
                     <canvas id="modulesVacantChart"></canvas>
@@ -525,15 +572,12 @@
                                     @case('affecter')
                                         <i style="color: #21b524" class="bi bi-plus-circle-fill"></i>
                                     @break
-
                                     @case('retirer')
                                         <i style="color: #ee5951" class="bi bi-trash3-fill"></i>
                                     @break
-
                                     @case('modifier')
                                         <i style="color: #5e3de3" class="bi bi-pencil-square"></i>
                                     @break
-
                                     @default
                                         <i style="color: #ff914d" class="bi bi-check-circle-fill"></i>
                                 @endswitch
@@ -569,164 +613,182 @@
                                 </ul>
                             </div>
                         </div>
-                        @empty
-                            <p class="text-center text-muted">Aucun historique disponible</p>
-                        @endforelse
-                        <div class="text-center mt-2">
-                            <a href="#" class="text-primary text-decoration-none small">Voir tous</a>
-                        </div>
+                    @empty
+                        <p class="text-center text-muted">Aucun historique disponible</p>
+                    @endforelse
+                    <div class="text-center mt-2">
+                        <a href="#" class="text-primary text-decoration-none small">Voir tous</a>
                     </div>
                 </div>
             </div>
         </div>
-        </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-            // Répartition des Groupes TD/TP/CM Chart
-            const groupesCtx = document.getElementById('groupesChart').getContext('2d');
-            new Chart(groupesCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['TD', 'TP', 'CM'],
-                    datasets: [{
-                        data: @json($groupesData),
-                        backgroundColor: ['#a48de8', '#4723d9', '#6f58d8'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '60%',
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                usePointStyle: true,
-                                pointStyle: 'circle',
-                                boxWidth: 10,
-                                padding: 15,
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.parsed;
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = ((value / total) * 100).toFixed(1);
-                                    return `${label}: ${value} (${percentage}%)`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Get dynamic data from Blade variables
-            const totalModules = @json($totalModules);
-            const moduleVacantes = @json($moduleVacantes);
-            const moduleNonVacantes = totalModules - moduleVacantes;
-
-            const modulesVacantCtx = document.getElementById('modulesVacantChart').getContext('2d');
-            new Chart(modulesVacantCtx, {
-                type: 'pie',
-                data: {
-                    labels: ['Vacants', 'Non Vacants'],
-                    datasets: [{
-                        data: [moduleVacantes, moduleNonVacantes],
-                        backgroundColor: ['#ff6b6b', '#4ade80'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                usePointStyle: true,
-                                pointStyle: 'circle',
-                                boxWidth: 10,
-                                padding: 15,
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.parsed;
-                                    const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-                                    const percentage = ((value / total) * 100).toFixed(1);
-                                    return `${label}: ${percentage}% (${value})`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Nombre de Séances par Jour Chart
-            const seancesCtx = document.getElementById('seancesChart').getContext('2d');
-            new Chart(seancesCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
-                    datasets: [{
-                        label: 'Nombre de séances',
-                        data: @json($seancesParJour),
-                        backgroundColor: ['#4723d9', '#6f58d8', '#a48de8', '#4723d9', '#6f58d8', '#a48de8'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1
-                            },
-                            title: {
-                                display: true,
-                                text: 'Nombre de séances'
-                            },
-                            grid: {
-                                color: 'rgba(0,0,0,0.06)'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Jours de la semaine'
-                            },
-                            grid: {
-                                display: false
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Répartition des Groupes TD/TP/CM Chart
+        const groupesCtx = document.getElementById('groupesChart').getContext('2d');
+        new Chart(groupesCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['TD', 'TP', 'CM'],
+                datasets: [{
+                    data: @json($groupesData),
+                    backgroundColor: ['#a48de8', '#4723d9', '#6f58d8'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '60%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            boxWidth: 10,
+                            padding: 15,
+                            font: {
+                                size: 12
                             }
                         }
                     },
-                    plugins: {
-                        legend: {
-                            display: false
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
                         }
                     }
                 }
-            });
+            }
+        });
 
-            function addtask() {
-                const taskAddButton = document.getElementById('task-add-button');
-                const taskAdd = document.getElementById('task-add');
-                if (taskAddButton.innerHTML === 'x') {
-                    taskAdd.style.display = 'none';
-                    taskAddButton.innerHTML = '+';
-                } else {
-                    taskAddButton.innerHTML = 'x';
-                    taskAdd.style.display = 'block';
-                    document.getElementById('task-input').focus();
+        // Modules Vacants/Non Vacants Chart
+        const totalModules = @json($totalModules);
+        const moduleVacantes = @json($moduleVacantes);
+        const moduleNonVacantes = totalModules - moduleVacantes;
+
+        const modulesVacantCtx = document.getElementById('modulesVacantChart').getContext('2d');
+        new Chart(modulesVacantCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Vacants', 'Non Vacants'],
+                datasets: [{
+                    data: [moduleVacantes, moduleNonVacantes],
+                    backgroundColor: ['#a48de8', '#6f58d8'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            boxWidth: 10,
+                            padding: 15,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed;
+                                const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `${label}: ${percentage}% (${value})`;
+                            }
+                        }
+                    }
                 }
             }
-        </script>
-    </x-coordonnateur_layout>
+        });
+
+        // Nombre de Séances par Jour Chart
+        const seancesCtx = document.getElementById('seancesChart').getContext('2d');
+        new Chart(seancesCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+                datasets: [{
+                    label: 'Nombre de séances',
+                    data: @json($seancesParJour),
+                    backgroundColor: ['#4723d9', '#6f58d8', '#a48de8', '#4723d9', '#6f58d8', '#a48de8'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            font: {
+                                size: 12
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Nombre de séances',
+                            font: {
+                                size: 12
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0,0,0,0.06)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Jours de la semaine',
+                            font: {
+                                size: 12
+                            }
+                        },
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        function addtask() {
+            const taskAddButton = document.getElementById('task-add-button');
+            const taskAdd = document.getElementById('task-add');
+            if (taskAddButton.innerHTML === 'x') {
+                taskAdd.style.display = 'none';
+                taskAddButton.innerHTML = '+';
+            } else {
+                taskAddButton.innerHTML = 'x';
+                taskAdd.style.display = 'block';
+                document.getElementById('task-input').focus();
+            }
+        }
+    </script>
+</x-coordonnateur_layout>

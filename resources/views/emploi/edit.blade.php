@@ -201,8 +201,6 @@
         }
     </style>
 
-    <div class="container-fluid p-0 pt-4">
-        <x-global_alert />
 
         @if ($errors->any())
             <div class="alert alert-danger error-message">
@@ -366,7 +364,6 @@
                     </div>
                 </div>
             </div>
-        </div>
     </div>
 
     <script>

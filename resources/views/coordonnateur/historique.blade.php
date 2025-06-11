@@ -156,7 +156,6 @@
         }
     </style>
 
-    <div class="container-fluid px-4 py-5">
         <div class="header-grid">
             <div class="d-flex align-items-center gap-3">
                 <i class="fas fa-history fa-2x" style="color: #330bcf;"></i>
@@ -312,6 +311,5 @@
                 @endif
             @endif
         </div>
-    </div>
 </x-coordonnateur_layout>
 ```

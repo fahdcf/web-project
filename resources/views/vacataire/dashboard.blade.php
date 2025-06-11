@@ -220,7 +220,6 @@
         }
     </style>
 
-    <div class="container-fluid p-0 pt-5 d-flex flex-column">
         <div class="page-wrapper w-100 row m-0">
             <section class="main-section col-12 col-md-8 col-lg-9 p-0 pr-md-4">
                 <div class="welcome p-4">
@@ -462,7 +461,6 @@
                 </div>
             </section>
         </div>
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>

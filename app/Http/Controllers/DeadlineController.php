@@ -39,7 +39,7 @@ class DeadlineController extends Controller
 
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // send notifications to professors and vacataires
 
@@ -57,15 +57,15 @@ class DeadlineController extends Controller
 
 
             //about ue_selecion to professors only
-        } else if ($validated['type'] === 'ue_selecion') {
-            $vacataires = User::whereHas('role', function ($query) {
-                $query->where('isvocataire', true);
+        } else {
+            $professors = User::whereHas('role', function ($query) {
+                $query->where('isprof', true);
             })->get();
 
             $message = 'Une nouvelle échéance a été fixée pour la sélection des UE.';
             $url = route('availableModules');
 
-        Notification::send($vacataires, new DeadlineNotification($message, $deadline, $url));
+            Notification::send($professors, new DeadlineNotification($message, $deadline, $url));
         }
 
 

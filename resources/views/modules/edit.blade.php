@@ -1,7 +1,5 @@
 <x-coordonnateur_layout>
-    <div class="container-fluid p-0 pt-4">
         <!-- Alerts -->
-        <x-global_alert />
 
         @if ($errors->any())
             <div class="alert alert-danger alert-dismissible fade show mb-4">
@@ -279,7 +277,6 @@
                 </div>
             </form>
         </div>
-    </div>
 
     <style>
         /* Base Styles */

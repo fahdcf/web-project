@@ -113,7 +113,7 @@ class adminsController extends Controller
         
    
 
-       Mail::to($email)->send(new AdminAccountCreated($firstname, $lastname, $email, $password));
+       Mail::to($email)->queue(new AdminAccountCreated($firstname, $lastname, $email, $password));
 
 
         user_detail::create($userdetails);

@@ -114,9 +114,7 @@
         }
     </style>
 
-    <div class="container-fluid p-0 pt-4">
 
-        <x-global_alert />
 
 
         {{-- heading --}}
@@ -248,5 +246,4 @@
                 @endif
             </div>
         </div>
-    </div>
 </x-coordonnateur_layout>

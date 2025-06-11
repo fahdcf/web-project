@@ -1,5 +1,4 @@
 <x-coordonnateur_layout>
-    <div class="container-fluid p-4">
         <!-- Header Section -->
         <div class="card mb-4 rounded-4 shadow-sm border-0 bg-primary text-white"
             style="background-color: #4723d9 !important;">
@@ -311,7 +310,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     @push('styles')
         <style>

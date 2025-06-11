@@ -218,8 +218,6 @@
         }
     </style>
 
-    <div class="container-fluid p-0 pt-4">
-        <x-global_alert />
 
         @include('components.heading', [
             'icon' => '<i class="fas fa-calendar-alt fa-2x" style="color: #330bcf;"></i>',
@@ -527,7 +525,6 @@
             </div>
         </div>
 
-    </div>
 
 
     <script>

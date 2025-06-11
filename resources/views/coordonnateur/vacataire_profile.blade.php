@@ -1,6 +1,4 @@
 <x-coordonnateur_layout>
-    <div class="container-fluid py-5">
-        <x-global_alert />
         <div class="profile-container">
 
             <h1 class="profile-name text-center pb-2">{{ $user->firstname }} {{ $user->lastname }}
@@ -355,7 +353,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <script>
         // Tab switching

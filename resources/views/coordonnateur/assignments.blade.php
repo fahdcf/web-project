@@ -1,6 +1,4 @@
 <x-coordonnateur_layout>
-    <div class="container-fluid py-5">
-        <x-global_alert />
         <div class="profile-container ">
             <h1 class="profile-name text-center pb-2">Affectations des Modules</h1>
 
@@ -189,7 +187,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <script>
         // Store professors data for client-side rendering

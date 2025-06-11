@@ -44,27 +44,6 @@ class ModuleController extends Controller
         return view('modules.show', compact('module', 'responsables'));
     }
 
-    // public function update(Request $request, Module $module)
-    // {
-    //     $validated = $request->validate([
-    //         'name' => 'required|string|max:255',
-    //         'type' => 'required|in:complet,partiel',
-    //         'cm_hours' => 'nullable|numeric|min:0',
-    //         'td_hours' => 'nullable|numeric|min:0',
-    //         'tp_hours' => 'nullable|numeric|min:0',
-    //         'semester' => 'required|integer|between:1,6',
-    //         'status' => 'required|in:active,inactive',
-    //         'credit' => 'nullable|integer|min:0',
-    //         'evaluation' => 'nullable|string|max:255',
-    //         'description' => 'nullable|string',
-    //         'responsable_id' => 'nullable|exists:users,id',
-    //     ]);
-
-    //     $module->update($validated);
-
-    //     return redirect()->route('coordonnateur.modules.show', $module)->with('success', 'Module mis à jour avec succès.');
-    // }
-
 
     public function update(Request $request, Module $module)
     {
@@ -143,15 +122,14 @@ class ModuleController extends Controller
 
     public function create()
     {
-        //cpas bonne pour le chef deparemtent
+
+
         $filiere = auth()->user()->manage;
-        $professeurs = User::whereHas('role', function ($query) {
-            $query->where('isprof', true);
+        $professeurs = User::with('role')->where('departement', auth()->user()->departement)->whereHas('role', function ($query) {
+            $query->where('isprof', true)->orWhere('isvocataire', true);
         })
-            ->whereHas('filieres', function ($query) {
-                $query->where('filieres.id', auth()->user()->filiere_id);
-            })
             ->get();
+            // dd($professeurs);
         $parentModules = Module::where('type', 'complet')->get();
 
         return view('modules.create', compact('professeurs', 'parentModules', 'filiere'));
@@ -557,8 +535,9 @@ class ModuleController extends Controller
     public function availableModules(Request $request)
     {
         $department = Departement::where('name', auth()->user()->departement)->first();
-        // dd(auth()->user()->departement->id);
-        // dd($department);
+
+        // dd($department,auth()->user()->departement);
+        // dd($department->name,auth()->user()->departement);
 
         $FilieretargetIDs = Filiere::where('department_id',  $department->id)
             ->pluck('id'); // Plucks all the IDs into a collection

@@ -22,6 +22,8 @@
             width: 100%;
         }
 
+         
+
         .welcome,
         .tasks,
         .courses,
@@ -217,371 +219,399 @@
                 color: #4723d9;
             }
         }
+
+
+        .tasks-container,
+        .history-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            height: 100%;
+            flex: 1;
+        }
+
+        .tasks-header,
+        .history-header {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tasks-header p,
+        .history-header p {
+            margin: 0;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .tasks-content,
+        .history-content {
+            padding: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .task-item,
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .task-item:last-child,
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-desc,
+        .history-desc {
+            margin: 0;
+            font-size: 0.875rem;
+            word-break: break-word;
+        }
+
+        .task-time,
+        .history-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        #task-add {
+            border: 1px solid var(--primary);
+            border-radius: 7px;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        #task-input {
+            border: none;
+            background: #f8f9fa;
+            border-radius: 7px;
+            padding: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        #task-add-button {
+            background: white !important;
+            color: var(--primary);
+            width: 24px;
+            height: 24px;
+            font-size: 1rem;
+            line-height: 1;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        #task-add-button:hover {
+            background: #f8f9fa !important;
+            transform: scale(1.1);
+        }
+
+        .dropdown-menu {
+            border-radius: 7px;
+            box-shadow: var(--shadow);
+            font-size: 0.875rem;
+        }
+
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+            transition: background 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background: var(--secondary);
+        }
+
+        .tasks-history-container {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+         .chart-container {
+            box-shadow: 0px 3px 15px 1px #3838381d;
+            border-radius: 15px;
+        }
     </style>
 
 
-    {{-- <div class="notifications">
-        <div class="notifications-header">Notifications</div>
-        <div class="notifications-content">
-            @forelse (auth()->user()->unreadNotifications as $notification)
-                <div class="notification-item">
-                    <div>
-                        <p class="notification-desc">{{ $notification->data['message'] }}</p>
-                        <p class="notification-time">Échéance: {{ $notification->data['deadline_date'] }}</p>
+
+
+
+
+    <section class="border main-section ">
+        <div class="welcome p-4">
+            <div class="d-flex flex-column justify-content-between col-8">
+                <h3 style="font-weight: 500; padding-bottom: 10px;">Bienvenue
+                    <strong>{{ auth()->user()->firstname . ' ' . auth()->user()->lastname }}</strong>
+                </h3>
+                <p style="font-size: 14px;">Gérez vos cours, saisissez les notes et consultez votre emploi du
+                    temps.</p>
+                <div class="buttons-wrapper d-flex gap-3">
+                    <a href="{{ route('emploi.myTimetable') }}" class="addbtn btn">Voir mon emploi du temps</a>
+                    <a href="#" class="seebtn btn">Saisir les notes</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="numbers row w-100 m-0 mt-4">
+            <div class="p-2 col-6 col-lg-4">
+                <div class="numbers-card bg-white d-flex p-2 gap-3 gap-md-4 align-items-center">
+                    <img src="{{ asset('storage/images/1.png') }}" alt="Etudiants">
+                    <div class="d-flex flex-column justify-content-start align-items-start">
+                        <p class="title">Étudiants</p>
+                        <p class="num">Total: <strong>{{ $totalStudents ?? 142 }}</strong></p>
+                        <a href="#" class="seemore">> Voir Plus</a>
                     </div>
-                    <form action="{{ route('notifications.markAsRead', $notification->id) }}" method="POST">
+                </div>
+            </div>
+
+            <div class="p-2 col-6 col-lg-4">
+                <div class="numbers-card bg-white d-flex p-2 gap-3 gap-md-4 align-items-center">
+                    <img src="{{ asset('storage/images/3.png') }}" alt="Modules">
+                    <div class="d-flex flex-column justify-content-start align-items-start">
+                        <p class="title">Mes cours</p>
+                        <p class="num">Total: <strong>{{ $totalCourses }}</strong></p>
+                        <a href="#" class="seemore">> Voir Plus</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-2 col-6 col-lg-4">
+                <div class="numbers-card bg-white d-flex p-2 gap-3 gap-md-4 align-items-center">
+                    <img src="{{ asset('storage/images/grades_icon.png') }}" alt="Grades Icon">
+                    <div class="d-flex flex-column justify-content-start align-items-start">
+                        <p class="title">Notes à saisir</p>
+                        <p class="num">En attente: <strong>{{ $pendingGrades ?? 3 }}</strong></p>
+                        <a href="#" class="seemore">> Voir Plus</a>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="row m-0 mt-4">
+            <!-- Weekly Schedule Chart -->
+            <div class="col-12 mb-4 p-2">
+                <div class="chart-container p-3 bg-white d-flex flex-column justify-content-start align-items-center"
+                    style="height: 350px; width: 100%;">
+                    <h6 class="pt-1 pb-4 m-0 text-center" style="color: #252525">Emploi du temps hebdomadaire
+                    </h6>
+                    <canvas id="scheduleChart" style="width: 90%; max-height: 250px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+
+    </section>
+
+    <section class="row">
+        <div class="upcoming-classes  col-12 col-lg-6 " style="background-color: white">
+            <div style="border: none; background-color: #4723d9;"
+                class="upcoming-header d-flex justify-content-between align-items-center">
+                <p style="color: #f1eded; font-size: 15px; font-weight: 600; margin: 0">Prochains cours:</p>
+            </div>
+
+            <div class="upcoming-content px-3 px-md-4 pt-0">
+                @forelse ($upcomingSeances as $seance)
+                    <div class="class-item mt-3 d-flex justify-content-between align-items-center pb-3">
+                        <div class="d-flex gap-3 align-items-center">
+                            <i style="color: #4723d9" class="bi bi-book-fill"></i>
+                            <div>
+                                <p class="class-desc m-0"><strong>{{ $seance->module->name }}</strong> - Salle
+                                    {{ $seance->salle ?? 'Non défini' }}</p>
+                                <p class="class-time m-0">{{ $seance->jour }},
+                                    {{ substr($seance->heure_debut, 0, 5) }} -
+                                    {{ substr($seance->heure_fin, 0, 5) }}</p>
+                            </div>
+                        </div>
+                        <a href="{{ route('emploi.myTimetable') }}"><i class="bi bi-arrow-right-circle-fill"></i></a>
+                    </div>
+                @empty
+                    <div class="class-item mt-3 d-flex justify-content-between align-items-center pb-3">
+                        <div class="d-flex gap-3 align-items-center">
+                            <i style="color: #4723d9" class="bi bi-book-fill"></i>
+                            <div>
+                                <p class="class-desc m-0"><strong>Algèbre Linéaire</strong> - Salle A12</p>
+                                <p class="class-time m-0">Aujourd'hui, 10:00 - 12:00</p>
+                            </div>
+                        </div>
+                        <a href="{{ route('emploi.myTimetable') }}"><i class="bi bi-arrow-right-circle-fill"></i></a>
+                    </div>
+                    <div class="class-item mt-3 d-flex justify-content-between align-items-center pb-3">
+                        <div class="d-flex gap-3 align-items-center">
+                            <i style="color: #4723d9" class="bi bi-book-fill"></i>
+                            <div>
+                                <p class="class-desc m-0"><strong>Analyse Numérique</strong> - Salle B05</p>
+                                <p class="class-time m-0">Aujourd'hui, 14:00 - 16:00</p>
+                            </div>
+                        </div>
+                        <a href="{{ route('emploi.myTimetable') }}"><i class="bi bi-arrow-right-circle-fill"></i></a>
+                    </div>
+                @endforelse
+                <a href="{{ route('emploi.myTimetable') }}" class="text-center">
+                    <p class="pt-2 m-0">Voir tous</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="tasks  col-12 col-lg-6" style="background-color: white">
+            <div style="border: none; background-color: #4723d9;"
+                class="tasks-header d-flex justify-content-between align-items-center">
+                <p style="color: #f1eded; font-size: 15px; font-weight: 600; margin: 0">Tâches:</p>
+                <button id="task-add-button" onclick="addTask()">+</button>
+            </div>
+
+            <div class="task-content p-3 p-md-4 pt-0">
+                <div id="task-add" style="display: none">
+                    <form action="{{ url('/addtask') }}" method="POST" class="d-flex gap-2">
                         @csrf
-                        @method('PATCH')
-                        <button type="submit"><i class="bi bi-check-circle"></i></button>
+                        <input id="task-input" name="task" type="text" class="flex-grow-1"
+                            placeholder="Ajouter une tâche...">
+                        <button type="submit" class="btn btn-sm">+</button>
                     </form>
                 </div>
-            @empty
-                <div class="notification-item">
-                    <p class="notification-desc">Aucune nouvelle notification</p>
-                </div>
-            @endforelse
-            <a href="#" class="text-center">Voir toutes les notifications</a>
+
+
+                @forelse ($tasks as $task)
+                    <div class="task-item bg-light" style="border-radius: 10px;">
+                        <div class="d-flex gap-2 align-items-center">
+                            @if ($task['isdone'])
+                                <i class="bi bi-check-circle-fill text-success"></i>
+                            @else
+                                <i class="bi bi-clock-fill text-warning"></i>
+                            @endif
+                            <div>
+                                <p
+                                    class="task-desc @if ($task['isdone']) text-decoration-line-through text-muted @endif">
+                                    {{ $task['description'] }}</p>
+                                <p class="task-time">{{ $task->created_at->diffForHumans() }}</p>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-link text-secondary p-0" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                @if ($task->isdone)
+                                    <li>
+                                        <form action="{{ url('mark-task-aspending/' . $task->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="dropdown-item"><i
+                                                    class="bi bi-clock me-2"></i>Marquer en attente</button>
+                                        </form>
+                                    </li>
+                                @else
+                                    <li>
+                                        <form action="{{ url('mark-task-asdone/' . $task->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="dropdown-item"><i
+                                                    class="bi bi-check-circle me-2"></i>Marquer comme
+                                                fait</button>
+                                        </form>
+                                    </li>
+                                @endif
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <form action="{{ url('delete-task/' . $task->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item text-danger"><i
+                                                class="bi bi-trash me-2"></i>Supprimer</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center py-4">
+                        <i class="bi bi-clipboard2-check fs-1 text-muted"></i>
+                        <p class="text-muted mt-2 mb-0">Aucune tâche pour le moment</p>
+                        <small class="text-muted">Cliquez sur "+" pour ajouter une tâche</small>
+                    </div>
+                @endforelse
+                @if ($tasks->count() > 0)
+                    <div class="text-center mt-2">
+                        <a href="#" class="text-primary text-decoration-none small">Voir tous</a>
+                    </div>
+                @endif
+            </div>
         </div>
-    </div> --}}
 
 
+    </section>
 
-    <div class="container-fluid p-0 pt-5 d-flex flex-column">
-            <section class="main-section col-12 col-md-8 col-lg-9 p-0 pr-md-4">
-                <div class="welcome p-4">
-                    <div class="d-flex flex-column justify-content-between col-8">
-                        <h3 style="font-weight: 500; padding-bottom: 10px;">Bienvenue
-                            <strong>{{ auth()->user()->firstname . ' ' . auth()->user()->lastname }}</strong>
-                        </h3>
-                        <p style="font-size: 14px;">Gérez vos cours, saisissez les notes et consultez votre emploi du
-                            temps.</p>
-                        <div class="buttons-wrapper d-flex gap-3">
-                            <a href="{{ route('emploi.myTimetable') }}" class="addbtn btn">Voir mon emploi du temps</a>
-                            <a href="#" class="seebtn btn">Saisir les notes</a>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="numbers row w-100 m-0 mt-4">
-                    <div class="p-2 col-6 col-lg-3">
-                        <div class="numbers-card bg-white d-flex p-2 gap-3 gap-md-4 align-items-center">
-                            <img src="{{ asset('storage/images/students_icon.png') }}" alt="Students Icon">
-                            <div class="d-flex flex-column justify-content-start align-items-start">
-                                <p class="title">Étudiants</p>
-                                <p class="num">Total: <strong>{{ $totalStudents ?? 142 }}</strong></p>
-                                <a href="#" class="seemore">> Voir Plus</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="p-2 col-6 col-lg-3">
-                        <div class="numbers-card bg-white d-flex p-2 gap-3 gap-md-4 align-items-center">
-                            <img src="{{ asset('storage/images/courses_icon.png') }}" alt="Courses Icon">
-                            <div class="d-flex flex-column justify-content-start align-items-start">
-                                <p class="title">Cours</p>
-                                <p class="num">Total: <strong>{{ $totalCourses }}</strong></p>
-                                <a href="#" class="seemore">> Voir Plus</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="p-2 col-6 col-lg-3">
-                        <div class="numbers-card bg-white d-flex p-2 gap-3 gap-md-4 align-items-center">
-                            <img src="{{ asset('storage/images/grades_icon.png') }}" alt="Grades Icon">
-                            <div class="d-flex flex-column justify-content-start align-items-start">
-                                <p class="title">Notes à saisir</p>
-                                <p class="num">En attente: <strong>{{ $pendingGrades ?? 3 }}</strong></p>
-                                <a href="#" class="seemore">> Voir Plus</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="p-2 col-6 col-lg-3">
-                        <div class="numbers-card bg-white d-flex p-2 gap-3 gap-md-4 align-items-center">
-                            <img src="{{ asset('storage/images/schedule_icon.png') }}" alt="Schedule Icon">
-                            <div class="d-flex flex-column justify-content-start align-items-start">
-                                <p class="title">Prochains cours</p>
-                                <p class="num">Cette semaine: <strong>{{ $upcomingClasses }}</strong></p>
-                                <a href="{{ route('emploi.myTimetable') }}" class="seemore">> Voir Plus</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row m-0 mt-3">
-                    <!-- Grades Chart -->
-                    <div class="col-12 col-lg-6 mb-4 p-2">
-                        <div class="chart-container p-3 bg-white d-flex flex-column justify-content-start align-items-center"
-                            style="height: 350px; width: 100%;">
-                            <h6 class="pt-1 pb-4 m-0 text-center" style="color: #252525">Répartition des notes (Algèbre)
-                            </h6>
-                            <canvas id="gradesChart" style="width: 90%; max-height: 250px;"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Course Load Chart -->
-                    <div class="col-12 col-lg-6 mb-4 p-2">
-                        <div class="chart-container p-3 bg-white d-flex flex-column justify-content-start align-items-center"
-                            style="height: 350px; width: 100%;">
-                            <h6 class="pt-1 pb-4 text-center" style="color: #252525">Charge horaire par cours</h6>
-                            <canvas id="courseLoadChart" style="width: 90%; max-height: 250px;"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="upcoming-classes p-0" style="background-color: white">
-                    <div style="border: none; background-color: #4723d9;"
-                        class="upcoming-header d-flex justify-content-between align-items-center">
-                        <p style="color: #f1eded; font-size: 15px; font-weight: 600; margin: 0">Prochains cours:</p>
-                    </div>
-
-                    <div class="upcoming-content px-3 px-md-4 pt-0">
-                        @forelse ($upcomingSeances as $seance)
-                            <div class="class-item mt-3 d-flex justify-content-between align-items-center pb-3">
-                                <div class="d-flex gap-3 align-items-center">
-                                    <i style="color: #4723d9" class="bi bi-book-fill"></i>
-                                    <div>
-                                        <p class="class-desc m-0"><strong>{{ $seance->module->name }}</strong> - Salle
-                                            {{ $seance->salle ?? 'Non défini' }}</p>
-                                        <p class="class-time m-0">{{ $seance->jour }},
-                                            {{ substr($seance->heure_debut, 0, 5) }} -
-                                            {{ substr($seance->heure_fin, 0, 5) }}</p>
-                                    </div>
-                                </div>
-                                <a href="{{ route('emploi.myTimetable') }}"><i
-                                        class="bi bi-arrow-right-circle-fill"></i></a>
-                            </div>
-                        @empty
-                            <div class="class-item mt-3 d-flex justify-content-between align-items-center pb-3">
-                                <div class="d-flex gap-3 align-items-center">
-                                    <i style="color: #4723d9" class="bi bi-book-fill"></i>
-                                    <div>
-                                        <p class="class-desc m-0"><strong>Algèbre Linéaire</strong> - Salle A12</p>
-                                        <p class="class-time m-0">Aujourd'hui, 10:00 - 12:00</p>
-                                    </div>
-                                </div>
-                                <a href="{{ route('emploi.myTimetable') }}"><i
-                                        class="bi bi-arrow-right-circle-fill"></i></a>
-                            </div>
-                            <div class="class-item mt-3 d-flex justify-content-between align-items-center pb-3">
-                                <div class="d-flex gap-3 align-items-center">
-                                    <i style="color: #4723d9" class="bi bi-book-fill"></i>
-                                    <div>
-                                        <p class="class-desc m-0"><strong>Analyse Numérique</strong> - Salle B05</p>
-                                        <p class="class-time m-0">Aujourd'hui, 14:00 - 16:00</p>
-                                    </div>
-                                </div>
-                                <a href="{{ route('emploi.myTimetable') }}"><i
-                                        class="bi bi-arrow-right-circle-fill"></i></a>
-                            </div>
-                        @endforelse
-                        <a href="{{ route('emploi.myTimetable') }}" class="text-center">
-                            <p class="pt-2 m-0">Voir tous</p>
-                        </a>
-                    </div>
-                </div>
-            </section>
-
-            <section class="side-section col-12 col-md-4 col-lg-3 p-0 pt-4 p-md-0">
-                <div class="courses p-0" style="background-color: white">
-                    <div style="border: none; background-color: #4723d9;"
-                        class="courses-header d-flex justify-content-between align-items-center">
-                        <p style="color: #f1eded; font-size: 15px; font-weight: 600; margin: 0">Mes cours:</p>
-                    </div>
-
-                    <div class="courses-content p-3 p-md-4 pt-0">
-                        @forelse ($courses as $course)
-                            <div class="course-item mt-3 d-flex justify-content-between align-items-center pb-3">
-                                <div class="d-flex gap-3 align-items-center">
-                                    <i style="color: #4723d9" class="bi bi-book-fill"></i>
-                                    <div>
-                                        <p class="course-desc m-0">{{ $course->name }}</p>
-                                        <p class="course-time m-0">S{{ $course->semester }} -
-                                            {{ $course->groupe ?? 'Tous' }}</p>
-                                    </div>
-                                </div>
-                                <div class="dropdown">
-                                    <button data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end mt-2">
-                                        <li><a class="dropdown-item" href="#">Voir les étudiants</a></li>
-                                        <li><a class="dropdown-item" href="#">Saisir les notes</a></li>
-                                        <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
-                                        <li><a class="dropdown-item" href="#">Détails</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="course-item mt-3 d-flex justify-content-between align-items-center pb-3">
-                                <div class="d-flex gap-3 align-items-center">
-                                    <i style="color: #4723d9" class="bi bi-book-fill"></i>
-                                    <div>
-                                        <p class="course-desc m-0">Algèbre Linéaire</p>
-                                        <p class="course-time m-0">S1 - Groupe A</p>
-                                    </div>
-                                </div>
-                                <div class="dropdown">
-                                    <button data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end mt-2">
-                                        <li><a class="dropdown-item" href="#">Voir les étudiants</a></li>
-                                        <li><a class="dropdown-item" href="#">Saisir les notes</a></li>
-                                        <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
-                                        <li><a class="dropdown-item" href="#">Détails</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="course-item mt-3 d-flex justify-content-between align-items-center pb-3">
-                                <div class="d-flex gap-3 align-items-center">
-                                    <i style="color: #4723d9" class="bi bi-book-fill"></i>
-                                    <div>
-                                        <p class="course-desc m-0">Analyse Numérique</p>
-                                        <p class="course-time m-0">S2 - Groupe B</p>
-                                    </div>
-                                </div>
-                                <div class="dropdown">
-                                    <button data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end mt-2">
-                                        <li><a class="dropdown-item" href="#">Voir les étudiants</a></li>
-                                        <li><a class="dropdown-item" href="#">Saisir les notes</a></li>
-                                        <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
-                                        <li><a class="dropdown-item" href="#">Détails</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        @endforelse
-                        <a href="#" class="text-center">
-                            <p class="pt-2 m-0">Voir tous</p>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="tasks p-0 mt-4" style="background-color: white">
-                    <div style="border: none; background-color: #4723d9;"
-                        class="tasks-header d-flex justify-content-between align-items-center">
-                        <p style="color: #f1eded; font-size: 15px; font-weight: 600; margin: 0">Tâches:</p>
-                        <button id="task-add-button" onclick="addTask()">+</button>
-                    </div>
-
-                    <div class="task-content p-3 p-md-4 pt-0">
-                        <div id="task-add" style="display: none">
-                            <form action="#" method="post">
-                                @csrf
-                                <input id="task-input" name="task" type="text"
-                                    placeholder="Ajouter une tâche...">
-                            </form>
-                        </div>
-
-                        <div class="task-item mt-3 d-flex justify-content-between align-items-center pb-3">
-                            <div class="d-flex gap-3 align-items-center">
-                                <i style="color: #ff914d" class="bi bi-clock-fill"></i>
-                                <div>
-                                    <p class="task-desc m-0">Saisir les notes d'Algèbre</p>
-                                    <p class="task-time m-0">Date limite: 15/06/2025</p>
-                                </div>
-                            </div>
-                            <button><i class="bi bi-check-circle"></i></button>
-                        </div>
-
-                        <div class="task-item mt-3 d-flex justify-content-between align-items-center pb-3">
-                            <div class="d-flex gap-3 align-items-center">
-                                <i style="color: #21b524" class="bi bi-check-circle-fill"></i>
-                                <div>
-                                    <p class="task-desc m-0">Préparer le TP d'Analyse</p>
-                                    <p class="task-time m-0">Terminé</p>
-                                </div>
-                            </div>
-                            <button><i class="bi bi-trash"></i></button>
-                        </div>
-
-                        <div class="task-item mt-3 d-flex justify-content-between align-items-center pb-3">
-                            <div class="d-flex gap-3 align-items-center">
-                                <i style="color: #ff914d" class="bi bi-clock-fill"></i>
-                                <div>
-                                    <p class="task-desc m-0">Corriger les examens</p>
-                                    <p class="task-time m-0">Date limite: 20/06/2025</p>
-                                </div>
-                            </div>
-                            <button><i class="bi bi-check-circle"></i></button>
-                        </div>
-
-                        <a href="#" class="text-center">
-                            <p class="pt-2 m-0">Voir tous</p>
-                        </a>
-                    </div>
-                </div>
-            </section>
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Grades Distribution Chart
-        const gradesCtx = document.getElementById('gradesChart').getContext('2d');
-        new Chart(gradesCtx, {
+        // Weekly Schedule Chart
+        const scheduleCtx = document.getElementById('scheduleChart').getContext('2d');
+        new Chart(scheduleCtx, {
             type: 'bar',
             data: {
-                labels: ['0-5', '5-10', '10-15', '15-20'],
+                labels: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
                 datasets: [{
-                    label: 'Nombre d\'étudiants',
-                    data: [2, 8, 25, 15],
-                    backgroundColor: ['#a48de8', '#8a72e0', '#6f58d8', '#4723d9'],
+                    label: 'Heures enseignées',
+                    data: {!! json_encode($scheduleData ?? [4, 0, 2, 0, 2, 0]) !!},
+                    backgroundColor: ['#4723d9', '#8a72e0', '#a48de8', '#6f57d8', '#5029ef', '#3b2a91'],
                     borderWidth: 0
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Nombre d\'étudiants'
+                            text: 'Heures',
+                            color: '#252525',
+                            font: {
+                                size: 12
+                            }
+                        },
+                        ticks: {
+                            color: '#252525'
+                        },
+                        grid: {
+                            color: '#e8e8e8'
                         }
                     },
                     x: {
                         title: {
                             display: true,
-                            text: 'Intervalles de notes'
+                            text: 'Jours',
+                            color: '#252525',
+                            font: {
+                                size: 12
+                            }
+                        },
+                        ticks: {
+                            color: '#252525'
+                        },
+                        grid: {
+                            display: false
                         }
                     }
                 },
                 plugins: {
                     legend: {
                         display: false
-                    }
-                }
-            }
-        });
-
-        // Course Load Chart
-        const courseLoadCtx = document.getElementById('courseLoadChart').getContext('2d');
-        new Chart(courseLoadCtx, {
-            type: 'pie',
-            data: {
-                labels: ['Algèbre Linéaire', 'Analyse Numérique', 'Structures de Données'],
-                datasets: [{
-                    label: 'Heures par cours',
-                    data: [20, 15, 10],
-                    backgroundColor: ['#4723d9', '#8a72e0', '#a48de8'],
-                    borderColor: '#fff',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
                     },
                     title: {
                         display: false
@@ -605,3 +635,5 @@
         }
     </script>
 </x-coordonnateur_layout>
+
+<!-- Tasks Section -->
