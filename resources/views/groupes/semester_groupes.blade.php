@@ -1,6 +1,4 @@
 <x-coordonnateur_layout>
-    <div class="container-fluid px-4 py-5">
-        <x-global_alert />
 
 
         {{-- <!-- Deadline Banner -->
@@ -409,7 +407,6 @@
                     </form>
                 </div>
             </div>
-        </div>
 
 
         {{-- <!-- Popup Template -->

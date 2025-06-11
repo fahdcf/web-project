@@ -234,8 +234,6 @@
     </style>
 
 
-    <div class="container-fluid">
-        <x-global_alert />
 
 
         @php
@@ -376,5 +374,4 @@
                 </table>
             </div>
         </div>
-    </div>
 </x-coordonnateur_layout>

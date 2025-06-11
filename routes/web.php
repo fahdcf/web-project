@@ -144,6 +144,13 @@ Route::middleware(['auth'])
         Route::get('/my-timetable/export', [EmploiController::class, 'myTimetableExport'])->name('emploi.my-timetable.export');
     });
 
+//test route
+Route::get('/timetable', function () {
+    return view('exports.prof_timetable');
+});
+
+
+
 
 
 

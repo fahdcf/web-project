@@ -1,6 +1,4 @@
 <x-coordonnateur_layout>
-    <div class="container-fluid px-4 py-5">
-        <x-global_alert />
         <!-- Header Section -->
 
         {{--  --}}
@@ -1151,5 +1149,4 @@
                 document.body.style.overflow = 'auto';
             }
         </script>
-    </div>
 </x-coordonnateur_layout>

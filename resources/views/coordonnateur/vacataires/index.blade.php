@@ -2,13 +2,10 @@
 
     <style>
         /* Main Container */
-        .vacataire-container {
-            padding: 2rem;
-            min-height: 80vh;
-        }
+       
 
         /* Header */
-        .header-grid {
+        .header_grid {
             display: grid;
             grid-template-columns: 1fr auto;
             gap: 1rem;
@@ -21,7 +18,7 @@
         }
 
         /* Filter Section */
-        .header-grid.mb-4 {
+        .header_grid.mb-4 {
             background: white;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -298,11 +295,11 @@
 
         /* Responsive Adjustments */
         @media (max-width: 768px) {
-            .header-grid {
+            .header_grid {
                 grid-template-columns: 1fr;
             }
 
-            .header-grid .d-flex.gap-2 {
+            .header_grid .d-flex.gap-2 {
                 justify-content: center;
             }
 
@@ -312,34 +309,31 @@
         }
     </style>
 
-    <div class="vacataire-container">
-        <div class="header-grid">
-            <div class="d-flex align-items-center gap-3">
-                <i class="fas fa-user-graduate fa-2x" style="color: #330bcf;"></i>
-                <h3 style="color: #330bcf; font-weight: 500;">Gestion des Vacataires</h3>
-            </div>
-            <div class="d-flex gap-2 flex-wrap">
-                <a href="{{ route('coordonnateur.vacataires.create') }}" class="btn btn-primary rounded fw-semibold">
-                    <i class="fas fa-plus-circle"></i> Ajouter un compte vacataire
-                </a>
-                <div class="dropdown">
-                    <button class="btn btn-success rounded fw-semibold dropdown-toggle" type="button"
-                        id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-file-export"></i> Exporter
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="exportDropdown">
-                        <li>
-                            <a class="dropdown-item" href="{{ route('coordonnateur.vacataires.export') }}">
-                                Tous les Vacataires
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+
+        @include('components.heading', [
+            'icon' => '<i class="fas fa-user-graduate fa-2x" style="color: #330bcf;"></i>',
+            'heading' => 'Gestion des Vacataires',
+            'buttons' => [
+                [
+                    'route' => route('coordonnateur.vacataires.create'),
+                    'text' => 'Ajouter un compte vacataire',
+                    'bicon' => '<i class="fas fa-plus-circle"></i>',
+                    'type' => 'primary',
+                ],
+            ],
+        
+            'exportData' => [
+                'buttonText' => 'Exporter',
+                'options' => [
+                    ['label' => 'Tous les Vacataires', 'route' => route("coordonnateur.vacataires.export")],
+                ],
+            ],
+        ])
+
+
 
         <!-- Filters Section -->
-        <div class="header-grid mb-4">
+        <div class="header_grid mb-4">
             <div class="row g-2">
                 <div class="col-md-3 col-sm-6 col-lg-3 filter-dropdown">
                     <label for="status" class="form-label small fw-bold text-muted">Statut</label>
@@ -480,10 +474,9 @@
                 </table>
             </div>
         </div>
-    </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Cache des éléments DOM
             const searchInput = document.getElementById('moduleSearch');
             const statusFilter = document.getElementById('status');

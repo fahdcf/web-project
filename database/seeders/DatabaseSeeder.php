@@ -72,7 +72,7 @@ class DatabaseSeeder extends Seeder
             [
                 'firstname' => 'Fahd',
                 'lastname' => 'Chafai',
-                'email' => 'fahdfahd427@gmail.com',
+                'email' => 'fahdchafai427@gmail.com',
                 'departement' => 'GI',
                 'password' => Hash::make('password'),
                 'role' => ['isadmin' => true, 'iscoordonnateur' => false, 'isprof' => true, 'isvocataire' => false, 'ischef' => false],
@@ -88,7 +88,7 @@ class DatabaseSeeder extends Seeder
             [
                 'firstname' => 'coord',
                 'lastname' => 'ahmed',
-                'email' => 'mohssine888@gmail.com',
+                'email' => 'mohssineechlaihi85@gmail.com',
                 'departement' => 'GI',
                 'password' => Hash::make('password'),
                 'role' => ['isadmin' => false, 'iscoordonnateur' => true, 'isprof' => true, 'isvocataire' => false, 'ischef' => false],
@@ -143,15 +143,15 @@ class DatabaseSeeder extends Seeder
         $chef = User::where('email', 'fahd@gmail.com')->first();
 
         return Departement::create([
-            'name' => 'mathematiques informatique',
-            'description' => 'Département de Mathématiques Informatique',
+            'name' => 'GI',
+            'description' => 'Département de Génie Informatique',
             'user_id' => $chef->id,
         ]);
     }
 
     private function createGiFiliere(Departement $department): Filiere
     {
-        $coordinator = User::where('email', 'mohssine888@gmail.com')->first();
+        $coordinator = User::where('email', 'mohssineechlaihi85@gmail.com')->first();
 
         return Filiere::create([
             'name' => 'genie informatique',
@@ -372,12 +372,17 @@ class DatabaseSeeder extends Seeder
         $typesToSchedule = [];
         if ($assignment->teach_cm) {
             $typesToSchedule[] = ['type' => 'CM', 'count' => 1];
+            $prof=$assignment->user;
         }
         if ($assignment->teach_td) {
             $typesToSchedule[] = ['type' => 'TD', 'count' => $module->nbr_groupes_td > 0 ? $module->nbr_groupes_td : 1];
+            $prof=$assignment->user;
+
         }
         if ($assignment->teach_tp) {
             $typesToSchedule[] = ['type' => 'TP', 'count' => $module->nbr_groupes_tp > 0 ? $module->nbr_groupes_tp : 1];
+            $prof=$assignment->user;
+
         }
 
         foreach ($typesToSchedule as $typeData) {
@@ -389,12 +394,12 @@ class DatabaseSeeder extends Seeder
                     $group = 'TP' . ($i + 1);
                 }
 
-                $this->scheduleSeance($module, $emploi, $typeData['type'], $group, $occupiedSlots);
+                $this->scheduleSeance($prof, $module, $emploi, $typeData['type'], $group, $occupiedSlots);
             }
         }
     }
 
-    private function scheduleSeance(Module $module, Emploi $emploi, string $type, ?string $group, array &$occupiedSlots): void
+    private function scheduleSeance(User $prof, Module $module, Emploi $emploi, string $type, ?string $group, array &$occupiedSlots): void
     {
         $maxRetries = 10;
         $retryCount = 0;
@@ -416,6 +421,7 @@ class DatabaseSeeder extends Seeder
                     'heure_fin' => $timeSlot[1],
                     'salle' => $room,
                     'groupe' => $group,
+                    'prof_id'=>$prof->id
                 ]);
 
                 $occupiedSlots[$emploi->id][] = $slotKey;

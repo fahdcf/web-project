@@ -7,15 +7,19 @@ use App\Models\Filiere;
 use App\Models\Module;
 use App\Models\prof_request;
 use App\Models\Seance;
+use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ProfessorController extends Controller
 {
-    
+
 
     public function dashboard()
     {
+
+        $tasks = Task::where('user_id', auth()->user()->id)->latest()->take(5)->get();
+
         $user = Auth::user();
         $totalStudents = 142; // Replace with query to count students in professor's courses
         $totalCourses = Module::whereHas('assignments', fn($q) => $q->where('prof_id', $user->id))->count();
@@ -32,7 +36,40 @@ class ProfessorController extends Controller
             ->take(3)
             ->get();
 
-        return view('professor.index', compact('totalStudents', 'totalCourses', 'pendingGrades', 'upcomingClasses', 'courses', 'upcomingSeances'));
+        $modules = Module::whereHas('assignments', fn($q) => $q->where('prof_id', $user->id))
+            ->with('assignments')
+            ->get();
+
+        // Initialize schedule data
+        $scheduleData = [
+            'Lundi' => 0,
+            'Mardi' => 0,
+            'Mercredi' => 0,
+            'Jeudi' => 0,
+            'Vendredi' => 0,
+            'Samedi' => 0,
+        ];
+
+        // Fetch seances for the vacataire
+        $seances = Seance::with('module')
+            ->whereIn('module_id', $modules->pluck('id'))
+            ->whereHas('emploi', fn($q) => $q->where('is_active', true))
+            ->whereIn('jour', array_keys($scheduleData))
+            ->get();
+
+        // Calculate hours per day
+        foreach ($seances as $seance) {
+            $day = $seance->jour;
+            if (array_key_exists($day, $scheduleData)) {
+                $duration = (strtotime($seance->heure_fin) - strtotime($seance->heure_debut)) / 3600;
+                $scheduleData[$day] += max($duration, 0); // Prevent negative durations
+            }
+        }
+
+        // Convert to array for Chart.js
+        $scheduleData = array_values($scheduleData);
+
+        return view('professor.index', compact('scheduleData','tasks', 'totalStudents', 'totalCourses', 'pendingGrades', 'upcomingClasses', 'courses', 'upcomingSeances'));
     }
 
 
@@ -71,6 +108,7 @@ class ProfessorController extends Controller
 
         $modules = $professor->assignedModules()
             ->with('filiere') // Chargement anticipé de la filière
+            ->where('status', true)
             ->orderBy('semester')
             ->get();
 

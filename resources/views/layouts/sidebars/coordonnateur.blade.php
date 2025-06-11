@@ -14,20 +14,20 @@
 
 <!-- Groupes TD / TP -->
 <a href="{{ route('coordonnateur.groupes.current_semester') }}"
-    class="nav_link {{ request()->is('coordonnateur/groupes') ? 'active' : '' }} ">
+    class="nav_link {{ request()->is('coordonnateur/groupes/current_semester') ? 'active' : '' }} ">
     <i class="bx bx-group nav_icon"></i>
     <span class="nav_name">Groupes TD / TP</span>
 </a>
 
 <!-- Emploi du Temps -->
-<a href="{{ route('emploi.index') }}" class="nav_link {{ request()->is('coordonnateur/emplois') ? 'active' : '' }} ">
+<a href="{{ route('emploi.index') }}" class="nav_link {{ request()->is('emplois') ? 'active' : '' }} ">
     <i class="bx bx-calendar nav_icon"></i>
     <span class="nav_name">Emploi du Temps</span>
 </a>
 
 <!-- Validations / Affectations -->
 <a href="{{ route('coordonnateur.assignments') }}"
-    class="nav_link {{ request()->is('coordonnateur/assignments') ? 'active' : '' }} ">
+    class="nav_link {{ request()->is('assignations') ? 'active' : '' }} ">
     <i class="bx bx-check-circle nav_icon"></i>
     <span class="nav_name">Affectations Validées</span>
 </a>

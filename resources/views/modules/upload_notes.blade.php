@@ -1,9 +1,7 @@
 <x-coordonnateur_layout>
-    @vite(['resources/css/notes.css'])
+    {{-- @vite(['resources/css/notes.css']) --}}
 
     {{-- upload-container --}}
-    <div class="container-fluid px-4 py-5 ">
-        <x-global_alert />
 
 
 
@@ -343,7 +341,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <!-- CSS -->
     <style>

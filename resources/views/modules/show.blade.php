@@ -1,6 +1,4 @@
 <x-coordonnateur_layout>
-    <div class="container-fluid px-4 py-5">
-        <x-global_alert />
         <div class="header-container mb-4">
             <style>
                 .header-container {
@@ -317,7 +315,6 @@
                 </div>
             </form>
         </div>
-    </div>
 
 
 

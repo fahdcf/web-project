@@ -23,4 +23,9 @@ class Seance extends Model
     {
         return $this->belongsTo(Emploi::class);
     }
+
+   public function professor()
+    {
+        return $this->belongsTo(User::class, 'prof_id');
+    }
 }

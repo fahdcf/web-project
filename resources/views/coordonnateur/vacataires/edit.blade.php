@@ -1,4 +1,3 @@
-```html
 <x-coordonnateur_layout>
     <style>
         /* Header */
@@ -128,7 +127,6 @@
         }
     </style>
 
-    <div class="container-fluid px-4 py-5">
         <div class="header-grid">
             <div class="d-flex align-items-center gap-3">
                 <i class="fas fa-user-graduate fa-2x" style="color: #330bcf;"></i>
@@ -318,6 +316,4 @@
                 </div>
             </form>
         </div>
-    </div>
 </x-coordonnateur_layout>
-```

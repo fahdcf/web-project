@@ -19,6 +19,12 @@ return new class extends Migration
             $table->integer('emploi_id')->nullable();
             $table->foreign('emploi_id')->references('id')->on('emplois')->cascadeOnDelete();
 
+
+            $table->integer('prof_id')->nullable();
+            $table->foreign('prof_id')->references('id')->on('users')->cascadeOnDelete();
+
+
+
             $table->enum('type', ['CM', 'TD', 'TP']);
             $table->enum('jour', ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']);
 

@@ -370,336 +370,329 @@
     </style>
 
 
-    <div class="container-fluid px-4 py-5">
 
 
-        @include('components.heading', [
-            'icon' => ' <i class="fas fa-clipboard-list fa-2x" style="color: #330bcf;"></i>',
-            'heading' => 'Mes demandes :',
-            
-        ])
+    @include('components.heading', [
+        'icon' => ' <i class="fas fa-clipboard-list fa-2x" style="color: #330bcf;"></i>',
+        'heading' => 'Mes demandes :',
+    ])
 
 
 
-            <div class="page-header">
+    <div class="page-header">
 
-                <div class="requests-tabs">
-                    <button class="tab-btn active" onclick="toggleSection('pending')">
-                        <i class="bi bi-hourglass-split"></i> Pending Requests
-                    </button>
-                    <button class="tab-btn" onclick="toggleSection('approved')">
-                        <i class="bi bi-check-circle"></i> Approved Requests
-                    </button>
-                    <button class="tab-btn" onclick="toggleSection('rejected')">
-                        <i class="bi bi-x-circle"></i> Rejected Requests
+        <div class="requests-tabs">
+            <button class="tab-btn active" onclick="toggleSection('pending')">
+                <i class="bi bi-hourglass-split"></i> Pending Requests
+            </button>
+            <button class="tab-btn" onclick="toggleSection('approved')">
+                <i class="bi bi-check-circle"></i> Approved Requests
+            </button>
+            <button class="tab-btn" onclick="toggleSection('rejected')">
+                <i class="bi bi-x-circle"></i> Rejected Requests
+            </button>
+        </div>
+    </div>
+
+    <!-- Module Requests Sections -->
+    <section id="pending" class="request-section">
+        <!-- Pending Requests -->
+        <div class="section-header" data-bs-toggle="collapse" data-bs-target="#mpendingRequests" aria-expanded="true">
+            <h3>Pending Requests <span class="badge">{{ $module_requests->where('status', 'pending')->count() }}</span>
+            </h3>
+            <i class='bx bx-chevron-down'></i>
+        </div>
+
+        <div id="mpendingRequests" class="section-body collapse show">
+            <div class="table-responsive mt-4">
+                <table class="table table-borderless">
+                    <thead>
+                        <tr style="color: #535050; font-weight: 600; font-size: 15px;">
+                            <th>Module</th>
+                            <th>Elements</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th class="pAlso">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($module_requests->where('status', 'pending') as $module_request)
+                            <tr class="module_request-row">
+                                <td colspan="6" style="padding: 0; background: #ffffff;">
+                                    <div class="custom-row-wrapper" style="width: 100%">
+                                        <div class="custom-row d-flex" style="width: 100%">
+
+                                            <p>{{ $module_request->target->name }}</p>
+                                            <p>
+                                                @if ($module_request->toTeach_cm)
+                                                    <span class="badge bg-success">Cours</span>
+                                                @endif
+                                                @if ($module_request->toTeach_tp)
+                                                    <span class="badge bg-success">Tp</span>
+                                                    @endif @if ($module_request->toTeach_td)
+                                                        <span class="badge bg-success">Td</span>
+                                                    @endif
+
+                                            </p>
+                                            <p><span
+                                                    style="background-color: #eaa454; color: white; padding: 5px 6px; border-radius: 15px;">pending</span>
+                                            </p>
+                                            <p>{{ $module_request->created_at->format('Y-m-d') }}</p>
+                                            <div class="pAlso d-flex align-items-center gap-2">
+                                                <input type="number" hidden
+                                                    id="pending_user_id_{{ $module_request['id'] }}"
+                                                    value="{{ $module_request['id'] }}">
+                                                <button style="background-color: #4723d9; color: white;"
+                                                    class="btn btn-sm" data-toggle="modal"
+                                                    data-target="#acceptModalforid{{ $module_request['id'] }}"><i
+                                                        class="bi bi-check-square"></i></button>
+                                                <button class="btn ml-1 btn-danger btn-sm" data-toggle="modal"
+                                                    data-target="#AnullerModal{{ $module_request['id'] }}"><i
+                                                        class="bi bi-x-square"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                        @empty
+                            <tr>
+                                <td colspan="6">
+                                    <div class="empty-state">No pending module requests found</div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section id="approved" class="request-section hidden">
+        <!-- Approved Requests -->
+        <div class="section-header" data-bs-toggle="collapse" data-bs-target="#mapprovedRequests" aria-expanded="true">
+            <h3>Approved Requests <span
+                    class="badge">{{ $module_requests->where('status', 'approved')->count() }}</span></h3>
+            <i class='bx bx-chevron-down'></i>
+        </div>
+
+        <div id="mapprovedRequests" class="section-body collapse show">
+            <div class="table-responsive mt-4">
+                <table class="table table-borderless">
+                    <thead>
+                        <tr style="color: #535050; font-weight: 600; font-size: 15px;">
+                            <th>Module</th>
+                            <th>Element</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th class="pAlso">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($module_requests->where('status', 'approved') as $module_request)
+                            <tr class="module_request-row">
+                                <td colspan="6" style="padding: 0; background: #ffffff;">
+                                    <div class="custom-row-wrapper" style="width: 100%">
+                                        <div class="custom-row d-flex" style="width: 100%">
+
+                                            <p>{{ $module_request->target->name }}</p>
+                                            <p>{{ $module_request->type }}</p>
+                                            <p><span
+                                                    style="background-color: #13ab50; color: white; padding: 5px 6px; border-radius: 15px;">approved</span>
+                                            </p>
+                                            <p>{{ $module_request->created_at->format('Y-m-d') }}</p>
+                                            <div class="pAlso d-flex align-items-center justify-content-center gap-2">
+                                                <input type="number" hidden
+                                                    id="pending_user_id_{{ $module_request['id'] }}"
+                                                    value="{{ $module_request['id'] }}">
+                                                <button style="background-color: #4723d9; color: white;"
+                                                    class="btn btn-sm"
+                                                    onclick="showPopup({{ $module_request['id'] }}, '{{ $module_request->target->name }}')"><i
+                                                        class="bi bi-info-square"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6">
+                                    <div class="empty-state">No approved module requests found</div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section id="rejected" class="request-section hidden">
+        <!-- Rejected Requests -->
+        <div class="section-header" data-bs-toggle="collapse" data-bs-target="#mrejectedRequests" aria-expanded="true">
+            <h3>Rejected Requests <span
+                    class="badge">{{ $module_requests->where('status', 'rejected')->count() }}</span></h3>
+            <i class='bx bx-chevron-down'></i>
+        </div>
+
+        <div id="mrejectedRequests" class="section-body collapse show">
+            <div class="table-responsive mt-4">
+                <table class="table table-borderless">
+                    <thead>
+                        <tr style="color: #535050; font-weight: 600; font-size: 15px;">
+                            <th>Module</th>
+                            <th>Element</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th class="pAlso">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($module_requests->where('status', 'rejected') as $module_request)
+                            <tr class="module_request-row">
+                                <td colspan="6" style="padding: 0; background: #ffffff;">
+                                    <div class="custom-row-wrapper" style="width: 100%">
+                                        <div class="custom-row d-flex" style="width: 100%">
+
+                                            <p>{{ $module_request->target->name }}</p>
+                                            <p>{{ $module_request->type }}</p>
+                                            <p><span
+                                                    style="background-color: #ea5e54; color: white; padding: 5px 6px; border-radius: 15px;">refusee</span>
+                                            </p>
+                                            <p>{{ $module_request->created_at->format('Y-m-d') }}</p>
+                                            <div class="pAlso d-flex align-items-center justify-content-center gap-2">
+                                                <input type="number" hidden
+                                                    id="pending_user_id_{{ $module_request['id'] }}"
+                                                    value="{{ $module_request['id'] }}">
+                                                <button style="background-color: #4723d9; color: white;"
+                                                    class="btn btn-sm"
+                                                    onclick="showPopup({{ $module_request['id'] }}, '{{ $module_request->target->name }}')"><i
+                                                        class="bi bi-info-square"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6">
+                                    <div class="empty-state">No rejected module requests found</div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Details Popup -->
+    @foreach ($module_requests as $module_request)
+        <div id="popupfor{{ $module_request['id'] }}" class="overlay">
+            <div class="popup">
+                <div class="popup-header">
+                    <h5>Request Details</h5>
+                    <button type="button" class="btn-close"
+                        onclick="closePopup({{ $module_request['id'] }})"></button>
+                </div>
+                <div class="popup-body">
+                    <div class="detail-item">
+                        <span class="detail-label">Professeur</span>
+                        <span class="detail-value">{{ $module_request->prof->firstname }}
+                            {{ $module_request->prof->lastname }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Module</span>
+                        <span class="detail-value">{{ $module_request->target->name }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Type</span>
+                        <span class="detail-value">{{ $module_request->type }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value">
+                            @if ($module_request->status == 'pending')
+                                <span
+                                    style="background-color: #eaa454; color: white; padding: 5px 6px; border-radius: 15px;">pending</span>
+                            @elseif ($module_request->status == 'rejected')
+                                <span
+                                    style="background-color: #ea5e54; color: white; padding: 5px 6px; border-radius: 15px;">refusee</span>
+                            @elseif ($module_request->status == 'approved')
+                                <span
+                                    style="background-color: #13ab50; color: white; padding: 5px 6px; border-radius: 15px;">approved</span>
+                            @endif
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Date</span>
+                        <span class="detail-value">{{ $module_request->created_at->format('Y-m-d') }}</span>
+                    </div>
+                    @if ($module_request->status == 'rejected' && $module_request->rejection_reason)
+                        <div class="detail-item">
+                            <span class="detail-label">Rejection Reason</span>
+                            <span class="detail-value">{{ $module_request->rejection_reason }}</span>
+                        </div>
+                    @endif
+                </div>
+                <div class="popup-footer">
+                    <button type="button" class="btn btn-primary px-4 rounded-pill"
+                        onclick="closePopup({{ $module_request['id'] }})">
+                        <i class="bi bi-x-lg me-1"></i>Close
                     </button>
                 </div>
             </div>
-
-            <!-- Module Requests Sections -->
-            <section id="pending" class="request-section">
-                <!-- Pending Requests -->
-                <div class="section-header" data-bs-toggle="collapse" data-bs-target="#mpendingRequests"
-                    aria-expanded="true">
-                    <h3>Pending Requests <span
-                            class="badge">{{ $module_requests->where('status', 'pending')->count() }}</span></h3>
-                    <i class='bx bx-chevron-down'></i>
-                </div>
-
-                <div id="mpendingRequests" class="section-body collapse show">
-                    <div class="table-responsive mt-4">
-                        <table class="table table-borderless">
-                            <thead>
-                                <tr style="color: #535050; font-weight: 600; font-size: 15px;">
-                                    <th>Module</th>
-                                    <th>Elements</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
-                                    <th class="pAlso">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($module_requests->where('status', 'pending') as $module_request)
-                                    <tr class="module_request-row">
-                                        <td colspan="6" style="padding: 0; background: #ffffff;">
-                                            <div class="custom-row-wrapper" style="width: 100%">
-                                                <div class="custom-row d-flex" style="width: 100%">
-                                                    
-                                                    <p>{{ $module_request->target->name }}</p>
-                                                    <p>
-                                                        @if ($module_request->toTeach_cm)
-                                                            <span class="badge bg-success">Cours</span>
-                                                        @endif
-                                                        @if ($module_request->toTeach_tp)
-                                                            <span class="badge bg-success">Tp</span>
-                                                            @endif @if ($module_request->toTeach_td)
-                                                                <span class="badge bg-success">Td</span>
-                                                            @endif
-
-                                                    </p>
-                                                    <p><span
-                                                            style="background-color: #eaa454; color: white; padding: 5px 6px; border-radius: 15px;">pending</span>
-                                                    </p>
-                                                    <p>{{ $module_request->created_at->format('Y-m-d') }}</p>
-                                                    <div class="pAlso d-flex align-items-center gap-2">
-                                                        <input type="number" hidden
-                                                            id="pending_user_id_{{ $module_request['id'] }}"
-                                                            value="{{ $module_request['id'] }}">
-                                                        <button style="background-color: #4723d9; color: white;"
-                                                            class="btn btn-sm" data-toggle="modal"
-                                                            data-target="#acceptModalforid{{ $module_request['id'] }}"><i
-                                                                class="bi bi-check-square"></i></button>
-                                                        <button class="btn ml-1 btn-danger btn-sm" data-toggle="modal"
-                                                            data-target="#AnullerModal{{ $module_request['id'] }}"><i
-                                                                class="bi bi-x-square"></i></button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    
-                                @empty
-                                    <tr>
-                                        <td colspan="6">
-                                            <div class="empty-state">No pending module requests found</div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <section id="approved" class="request-section hidden">
-                <!-- Approved Requests -->
-                <div class="section-header" data-bs-toggle="collapse" data-bs-target="#mapprovedRequests"
-                    aria-expanded="true">
-                    <h3>Approved Requests <span
-                            class="badge">{{ $module_requests->where('status', 'approved')->count() }}</span></h3>
-                    <i class='bx bx-chevron-down'></i>
-                </div>
-
-                <div id="mapprovedRequests" class="section-body collapse show">
-                    <div class="table-responsive mt-4">
-                        <table class="table table-borderless">
-                            <thead>
-                                <tr style="color: #535050; font-weight: 600; font-size: 15px;">
-                                    <th>Module</th>
-                                    <th>Element</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
-                                    <th class="pAlso">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($module_requests->where('status', 'approved') as $module_request)
-                                    <tr class="module_request-row">
-                                        <td colspan="6" style="padding: 0; background: #ffffff;">
-                                            <div class="custom-row-wrapper" style="width: 100%">
-                                                <div class="custom-row d-flex" style="width: 100%">
-                                                  
-                                                    <p>{{ $module_request->target->name }}</p>
-                                                    <p>{{ $module_request->type }}</p>
-                                                    <p><span
-                                                            style="background-color: #13ab50; color: white; padding: 5px 6px; border-radius: 15px;">approved</span>
-                                                    </p>
-                                                    <p>{{ $module_request->created_at->format('Y-m-d') }}</p>
-                                                    <div
-                                                        class="pAlso d-flex align-items-center justify-content-center gap-2">
-                                                        <input type="number" hidden
-                                                            id="pending_user_id_{{ $module_request['id'] }}"
-                                                            value="{{ $module_request['id'] }}">
-                                                        <button style="background-color: #4723d9; color: white;"
-                                                            class="btn btn-sm"
-                                                            onclick="showPopup({{ $module_request['id'] }}, '{{ $module_request->target->name }}')"><i
-                                                                class="bi bi-info-square"></i></button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="6">
-                                            <div class="empty-state">No approved module requests found</div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <section id="rejected" class="request-section hidden">
-                <!-- Rejected Requests -->
-                <div class="section-header" data-bs-toggle="collapse" data-bs-target="#mrejectedRequests"
-                    aria-expanded="true">
-                    <h3>Rejected Requests <span
-                            class="badge">{{ $module_requests->where('status', 'rejected')->count() }}</span></h3>
-                    <i class='bx bx-chevron-down'></i>
-                </div>
-
-                <div id="mrejectedRequests" class="section-body collapse show">
-                    <div class="table-responsive mt-4">
-                        <table class="table table-borderless">
-                            <thead>
-                                <tr style="color: #535050; font-weight: 600; font-size: 15px;">
-                                    <th>Module</th>
-                                    <th>Element</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
-                                    <th class="pAlso">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($module_requests->where('status', 'rejected') as $module_request)
-                                    <tr class="module_request-row">
-                                        <td colspan="6" style="padding: 0; background: #ffffff;">
-                                            <div class="custom-row-wrapper" style="width: 100%">
-                                                <div class="custom-row d-flex" style="width: 100%">
-                                                   
-                                                    <p>{{ $module_request->target->name }}</p>
-                                                    <p>{{ $module_request->type }}</p>
-                                                    <p><span
-                                                            style="background-color: #ea5e54; color: white; padding: 5px 6px; border-radius: 15px;">refusee</span>
-                                                    </p>
-                                                    <p>{{ $module_request->created_at->format('Y-m-d') }}</p>
-                                                    <div
-                                                        class="pAlso d-flex align-items-center justify-content-center gap-2">
-                                                        <input type="number" hidden
-                                                            id="pending_user_id_{{ $module_request['id'] }}"
-                                                            value="{{ $module_request['id'] }}">
-                                                        <button style="background-color: #4723d9; color: white;"
-                                                            class="btn btn-sm"
-                                                            onclick="showPopup({{ $module_request['id'] }}, '{{ $module_request->target->name }}')"><i
-                                                                class="bi bi-info-square"></i></button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="6">
-                                            <div class="empty-state">No rejected module requests found</div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Details Popup -->
-            @foreach ($module_requests as $module_request)
-                <div id="popupfor{{ $module_request['id'] }}" class="overlay">
-                    <div class="popup">
-                        <div class="popup-header">
-                            <h5>Request Details</h5>
-                            <button type="button" class="btn-close"
-                                onclick="closePopup({{ $module_request['id'] }})"></button>
-                        </div>
-                        <div class="popup-body">
-                            <div class="detail-item">
-                                <span class="detail-label">Professeur</span>
-                                <span class="detail-value">{{ $module_request->prof->firstname }}
-                                    {{ $module_request->prof->lastname }}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Module</span>
-                                <span class="detail-value">{{ $module_request->target->name }}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Type</span>
-                                <span class="detail-value">{{ $module_request->type }}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Status</span>
-                                <span class="detail-value">
-                                    @if ($module_request->status == 'pending')
-                                        <span
-                                            style="background-color: #eaa454; color: white; padding: 5px 6px; border-radius: 15px;">pending</span>
-                                    @elseif ($module_request->status == 'rejected')
-                                        <span
-                                            style="background-color: #ea5e54; color: white; padding: 5px 6px; border-radius: 15px;">refusee</span>
-                                    @elseif ($module_request->status == 'approved')
-                                        <span
-                                            style="background-color: #13ab50; color: white; padding: 5px 6px; border-radius: 15px;">approved</span>
-                                    @endif
-                                </span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Date</span>
-                                <span class="detail-value">{{ $module_request->created_at->format('Y-m-d') }}</span>
-                            </div>
-                            @if ($module_request->status == 'rejected' && $module_request->rejection_reason)
-                                <div class="detail-item">
-                                    <span class="detail-label">Rejection Reason</span>
-                                    <span class="detail-value">{{ $module_request->rejection_reason }}</span>
-                                </div>
-                            @endif
-                        </div>
-                        <div class="popup-footer">
-                            <button type="button" class="btn btn-primary px-4 rounded-pill"
-                                onclick="closePopup({{ $module_request['id'] }})">
-                                <i class="bi bi-x-lg me-1"></i>Close
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
+        </div>
+    @endforeach
 
 
-        {{--  --}}
+    {{--  --}}
 
-        {{--  --}}
+    {{--  --}}
 
-        <script>
-            // Toggle between tabs
-            function toggleSection(sectionId) {
-                // Update tab buttons
-                document.querySelectorAll('.tab-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                event.currentTarget.classList.add('active');
+    <script>
+        // Toggle between tabs
+        function toggleSection(sectionId) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
 
-                // Show/hide sections
-                document.querySelectorAll('.request-section').forEach(section => {
-                    section.classList.add('hidden');
-                });
-                document.getElementById(sectionId).classList.remove('hidden');
-            }
+            // Show/hide sections
+            document.querySelectorAll('.request-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
 
-            // Initialize Bootstrap collapse components
-            document.addEventListener('DOMContentLoaded', function() {
-                // Add event listeners to section headers
-                document.querySelectorAll('.section-header').forEach(header => {
-                    header.addEventListener('click', function() {
-                        const icon = this.querySelector('i');
-                        if (this.classList.contains('collapsed')) {
-                            icon.classList.remove('bx-chevron-down');
-                            icon.classList.add('bx-chevron-up');
-                        } else {
-                            icon.classList.remove('bx-chevron-up');
-                            icon.classList.add('bx-chevron-down');
-                        }
-                    });
+        // Initialize Bootstrap collapse components
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listeners to section headers
+            document.querySelectorAll('.section-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+                    if (this.classList.contains('collapsed')) {
+                        icon.classList.remove('bx-chevron-down');
+                        icon.classList.add('bx-chevron-up');
+                    } else {
+                        icon.classList.remove('bx-chevron-up');
+                        icon.classList.add('bx-chevron-down');
+                    }
                 });
             });
+        });
 
-            // Popup functions
-            function showPopup(requestId, requestName) {
-                document.getElementById('popupfor' + requestId).style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-            }
+        // Popup functions
+        function showPopup(requestId, requestName) {
+            document.getElementById('popupfor' + requestId).style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
 
-            function closePopup(requestId) {
-                document.getElementById('popupfor' + requestId).style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }
-        </script>
+        function closePopup(requestId) {
+            document.getElementById('popupfor' + requestId).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    </script>
 </x-coordonnateur_layout>

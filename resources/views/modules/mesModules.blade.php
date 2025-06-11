@@ -1,6 +1,4 @@
 <x-coordonnateur_layout>
-    <div class="container-fluid px-4 py-5">
-        <x-global_alert />
 
         @if (auth()->user()->role->isprof==true)
             @include('components.heading', [

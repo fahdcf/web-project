@@ -9,6 +9,7 @@ use App\Models\Filiere;
 use App\Models\Module;
 use App\Models\Role;
 use App\Models\Seance;
+use App\Models\Task;
 use App\Models\User;
 use App\Models\user_detail;
 use Carbon\Carbon;
@@ -25,11 +26,27 @@ class VacataireController extends Controller
 
 
 
-    public function dashboard()
+     public function dashboard()
     {
-        $user = Auth::user();
 
-        // Fetch modules assigned to the vacataire
+        $tasks = Task::where('user_id', auth()->user()->id)->latest()->take(5)->get();
+
+        $user = Auth::user();
+        $totalStudents = 142; // Replace with query to count students in professor's courses
+        $totalCourses = Module::whereHas('assignments', fn($q) => $q->where('prof_id', $user->id))->count();
+        $pendingGrades = 3; // Replace with query for pending grade submissions
+        $upcomingClasses = Seance::whereHas('module.assignments', fn($q) => $q->where('prof_id', $user->id))
+            ->where('jour', '>=', now()->startOfWeek())
+            ->count();
+        $courses = Module::whereHas('assignments', fn($q) => $q->where('prof_id', $user->id))->get();
+        $upcomingSeances = Seance::with('module')
+            ->whereHas('module.assignments', fn($q) => $q->where('prof_id', $user->id))
+            ->where('jour', '>=', now())
+            ->orderBy('jour')
+            ->orderBy('heure_debut')
+            ->take(3)
+            ->get();
+
         $modules = Module::whereHas('assignments', fn($q) => $q->where('prof_id', $user->id))
             ->with('assignments')
             ->get();
@@ -63,25 +80,11 @@ class VacataireController extends Controller
         // Convert to array for Chart.js
         $scheduleData = array_values($scheduleData);
 
-        // Other dashboard data
-        $totalCourses = $modules->count();
-        $pendingGrades = 2; // Replace with grade query
-        $upcomingClasses = Seance::whereIn('module_id', $modules->pluck('id'))
-            ->whereHas('emploi', fn($q) => $q->where('is_active', true))
-            ->whereIn('jour', array_keys($scheduleData))
-            ->count();
-        $courses = $modules;
-        $upcomingSeances = Seance::with('module')
-            ->whereIn('module_id', $modules->pluck('id'))
-            ->whereHas('emploi', fn($q) => $q->where('is_active', true))
-            ->whereIn('jour', array_keys($scheduleData))
-            ->orderByRaw("FIELD(jour, 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi')")
-            ->orderBy('heure_debut')
-            ->take(2)
-            ->get();
-
-        return view('vacataire.dashboard', compact('totalCourses', 'pendingGrades', 'upcomingClasses', 'courses', 'upcomingSeances', 'scheduleData'));
+        //since they has the same dashborsd no noeed to duplicate
+        return view('professor.index', compact('scheduleData','tasks', 'totalStudents', 'totalCourses', 'pendingGrades', 'upcomingClasses', 'courses', 'upcomingSeances'));
+        // return view('professor.index', compact('scheduleData','tasks', 'totalStudents', 'totalCourses', 'pendingGrades', 'upcomingClasses', 'courses', 'upcomingSeances'));
     }
+
 
     // public function uploadGrades(Module $module)
     // {
